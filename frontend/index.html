@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HomeFlix — Seu Cinema & TV ao Vivo Pessoal</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22%20width=%22100%22%20height=%22100%22><text y=%22.9em%22 font-size=%2290%22>🎬</text></svg>">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <!-- HLS.js para streaming HLS/m3u8 no navegador -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+</head>
+<body>
+
+  <!-- Navbar Superior Estilo Netflix -->
+  <header class="navbar">
+    <div class="nav-left">
+      <div class="brand-logo">🎬 HOMEFLIX</div>
+      <ul class="nav-links">
+        <li class="nav-item active" data-tab="home">Início</li>
+        <li class="nav-item" data-tab="movies">Filmes</li>
+        <li class="nav-item" data-tab="series">Séries</li>
+        <li class="nav-item" data-tab="live">TV ao Vivo</li>
+        <li class="nav-item" data-tab="watchlist">Minha Lista</li>
+      </ul>
+    </div>
+
+    <div class="nav-right">
+      <div class="search-box">
+        <span>🔍</span>
+        <input type="text" id="searchInput" class="search-input" placeholder="Títulos, animes, gêneros..." />
+      </div>
+
+      <div class="profile-btn" id="profileBtn">
+        <span class="profile-avatar-mini" id="navProfileAvatar">🦊</span>
+        <span class="profile-name-mini" id="navProfileName">Almeida</span>
+        <span style="font-size: 10px; color: #888;">▼</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Banner Principal -->
+  <section class="hero" id="heroSection">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-badge">⭐ EM DESTAQUE</div>
+      <h1 class="hero-title" id="heroTitle">Carregando...</h1>
+      <div class="hero-meta">
+        <span class="hero-rating" id="heroRating">★ 9.5</span>
+        <span id="heroYear">2026</span>
+        <span id="heroType" style="border: 1px solid rgba(255,255,255,0.3); padding: 2px 6px; border-radius: 4px; font-size: 11px;">FILME</span>
+        <span style="background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 4px; font-size: 11px;">4K ULTRA HD</span>
+      </div>
+      <p class="hero-overview" id="heroOverview">Buscando as melhores histórias do cinema mundial e lançamentos imperdíveis...</p>
+      <div class="hero-actions">
+        <button class="btn btn-primary" id="heroPlayBtn">▶ Assistir Agora</button>
+        <button class="btn btn-secondary" id="heroInfoBtn">ℹ Mais Informações</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Carrosséis de Conteúdo (Início) -->
+  <main class="sections-container" id="sectionsContainer">
+    <!-- Seção Continuar Assistindo (Quick Resume) -->
+    <section class="media-section" id="continueWatchingSection" style="display: none;">
+      <div class="section-header">
+        <h2 class="section-title">⚡ Continuar Assistindo</h2>
+      </div>
+      <div class="carousel-wrapper">
+        <div class="media-carousel" id="continueWatchingCarousel"></div>
+      </div>
+    </section>
+
+    <!-- Em Alta -->
+    <section class="media-section">
+      <div class="section-header">
+        <h2 class="section-title">🔥 Em Alta no HomeFlix</h2>
+      </div>
+      <div class="carousel-wrapper">
+        <div class="media-carousel" id="trendingCarousel"></div>
+      </div>
+    </section>
+
+    <!-- Filmes Populares -->
+    <section class="media-section">
+      <div class="section-header">
+        <h2 class="section-title">🎬 Filmes Populares</h2>
+      </div>
+      <div class="carousel-wrapper">
+        <div class="media-carousel" id="popularMoviesCarousel"></div>
+      </div>
+    </section>
+
+    <!-- Séries Populares -->
+    <section class="media-section">
+      <div class="section-header">
+        <h2 class="section-title">📺 Séries de Sucesso</h2>
+      </div>
+      <div class="carousel-wrapper">
+        <div class="media-carousel" id="popularSeriesCarousel"></div>
+      </div>
+    </section>
+
+    <!-- Top Avaliados -->
+    <section class="media-section">
+      <div class="section-header">
+        <h2 class="section-title">🏆 Aclamados pela Crítica</h2>
+      </div>
+      <div class="carousel-wrapper">
+        <div class="media-carousel" id="topMoviesCarousel"></div>
+      </div>
+    </section>
+
+    <!-- Animes & Animações -->
+    <section class="media-section">
+      <div class="section-header">
+        <h2 class="section-title">✨ Animes & Animações Japonesas</h2>
+      </div>
+      <div class="carousel-wrapper">
+        <div class="media-carousel" id="animesCarousel"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- TV ao Vivo View -->
+  <section class="live-tv-container" id="liveTvContainer" style="display: none;">
+    <h1 style="font-size: 32px; font-weight: 900; margin-bottom: 20px;">📡 TV ao Vivo & Canais Contínuos</h1>
+    <div class="category-pills" id="liveCategoryPills"></div>
+    <div class="channels-grid" id="liveChannelsGrid"></div>
+  </section>
+
+  <!-- Busca & Minha Lista View -->
+  <section class="live-tv-container" id="searchContainer" style="display: none;">
+    <h1 style="font-size: 30px; font-weight: 800; margin-bottom: 24px;" id="searchTitle">Resultados</h1>
+    <div class="channels-grid" id="searchGrid" style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));"></div>
+  </section>
+
+  <!-- Modal de Detalhes do Título -->
+  <div class="modal-backdrop" id="detailsModal">
+    <div class="modal-content">
+      <button class="modal-close-btn" id="detailsCloseBtn">✕</button>
+      <div class="modal-hero" id="modalHero">
+        <div class="modal-hero-overlay"></div>
+        <div class="modal-hero-content">
+          <h2 style="font-size: 36px; font-weight: 900; margin-bottom: 10px;" id="modalTitle">Título</h2>
+          <div style="display: flex; gap: 14px; align-items: center; margin-bottom: 16px;">
+            <span style="color: #46d369; font-weight: 700;" id="modalRating">★ 9.0</span>
+            <span id="modalYear">2026</span>
+            <span style="border: 1px solid rgba(255,255,255,0.3); padding: 2px 6px; border-radius: 4px; font-size: 11px;">HD / 4K</span>
+          </div>
+          <div style="display: flex; gap: 12px;">
+            <button class="btn btn-primary" id="modalPlayBtn">▶ Assistir Agora</button>
+            <button class="btn btn-secondary" id="modalFavBtn">➕ Minha Lista</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <p style="font-size: 15px; line-height: 1.6; color: #CCC; margin-bottom: 16px;" id="modalOverview"></p>
+        <div style="font-size: 13px; color: #888; margin-bottom: 20px;" id="modalGenres"></div>
+
+        <!-- Seletor de Temporadas (Séries) -->
+        <div id="modalTvControls" style="display: none; margin-bottom: 24px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+            <h3 style="font-size: 18px; font-weight: 700;">Temporadas & Episódios</h3>
+            <select id="modalSeasonSelect" style="background:#222; color:#fff; border:1px solid #444; padding:6px 12px; border-radius:6px; font-size:13px;"></select>
+          </div>
+          <div id="modalEpisodesList" style="display:flex; flex-direction:column; gap:8px; max-height:280px; overflow-y:auto;"></div>
+        </div>
+
+        <!-- Fontes / Servidores Resolvidos -->
+        <div class="stream-sources-box" id="modalSourcesBox" style="display: none;">
+          <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">Opções de Servidor & Streaming</h3>
+          <div id="modalSourcesList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Player de Vídeo Fullscreen -->
+  <div class="player-overlay" id="playerOverlay">
+    <div class="player-topbar">
+      <button class="player-back-btn" id="playerBackBtn">
+        <span>←</span> Voltar
+      </button>
+      <div class="player-title-display" id="playerTitle">HomeFlix Cinema</div>
+      <div style="width: 80px;"></div>
+    </div>
+
+    <video id="videoPlayer" class="player-video" playsinline></video>
+
+    <div class="player-controls-bottom">
+      <div class="player-progress-bar" id="playerProgressBar">
+        <div class="player-progress-current" id="playerProgressCurrent"></div>
+      </div>
+
+      <div class="player-controls-row">
+        <div class="controls-left">
+          <button class="ctrl-btn" id="playPauseBtn">▶</button>
+          <button class="ctrl-btn" id="playerRewindBtn" title="Voltar 10s">↺ 10</button>
+          <button class="ctrl-btn" id="playerForwardBtn" title="Avançar 10s">↻ 10</button>
+          <button class="ctrl-btn" id="playerVolumeBtn">🔊</button>
+          <span class="time-display" id="playerTimeDisplay">00:00 / 00:00</span>
+        </div>
+
+        <div class="controls-right">
+          <select id="playerSourceSelect" style="background: rgba(0,0,0,0.6); color:#fff; border:1px solid rgba(255,255,255,0.3); border-radius:4px; padding:4px 10px; font-size:12px;"></select>
+          <button class="ctrl-btn" id="playerFullscreenBtn" title="Tela Cheia">⛶</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Troca de Perfis ("Quem está assistindo?") -->
+  <div class="modal-backdrop" id="profileModal">
+    <div class="modal-content" style="max-width: 600px; text-align: center; padding: 30px;">
+      <button class="modal-close-btn" id="profileCloseBtn">✕</button>
+      <h2 style="font-size: 32px; font-weight: 800; margin-bottom: 10px;">Quem está assistindo?</h2>
+      <p style="color: #888; font-size: 14px; margin-bottom: 24px;">Escolha seu perfil para acessar seus favoritos e histórico</p>
+      
+      <div class="profile-modal-grid" id="profileModalGrid"></div>
+
+      <button class="btn btn-secondary" id="createNewProfileBtn" style="margin-top: 10px;">+ Adicionar Perfil</button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/static/js/api.js"></script>
+  <script src="/static/js/player.js"></script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
