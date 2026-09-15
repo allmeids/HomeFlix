@@ -153,33 +153,28 @@ class HomeFlixApp {
   }
 
   async loadHome() {
-    // 1. Trending para o Hero Banner
-    const trending = await API.getTrending('all');
-    if (trending.length > 0) {
-      this.renderHero(trending[0]);
+    // 1. Carrega o catálogo completo em 1 chamada ultra-rápida (com cache no backend)
+    const homeData = await API.getHomeCatalog();
+
+    if (homeData) {
+      if (homeData.trending && homeData.trending.length > 0) {
+        this.renderHero(homeData.trending[0]);
+      }
+      this.renderCarousel('trendingCarousel', homeData.trending || []);
+      this.renderCarousel('popularMoviesCarousel', homeData.popular_movies || []);
+      this.renderCarousel('popularSeriesCarousel', homeData.popular_series || []);
+      this.renderCarousel('topMoviesCarousel', homeData.top_rated || homeData.top_movies || []);
+      this.renderCarousel('animesCarousel', homeData.animes || []);
+      this.renderCarousel('superheroesCarousel', homeData.superheroes || []);
+      this.renderCarousel('actionCarousel', homeData.action || []);
+      this.renderCarousel('scifiCarousel', homeData.scifi || []);
+      this.renderCarousel('comedyCarousel', homeData.comedy || []);
+      this.renderCarousel('horrorCarousel', homeData.horror || []);
+      this.renderCarousel('familyCarousel', homeData.family || []);
     }
 
     // 2. Continuar Assistindo (Quick Resume)
     await this.loadContinueWatching();
-
-    // 3. Em Alta
-    this.renderCarousel('trendingCarousel', trending);
-
-    // 4. Filmes Populares
-    const popularMovies = await API.getPopularMovies();
-    this.renderCarousel('popularMoviesCarousel', popularMovies);
-
-    // 5. Séries Populares
-    const popularSeries = await API.getPopularSeries();
-    this.renderCarousel('popularSeriesCarousel', popularSeries);
-
-    // 6. Top Filmes
-    const topMovies = await API.getTopRatedMovies();
-    this.renderCarousel('topMoviesCarousel', topMovies);
-
-    // 7. Animes
-    const animes = await API.getAnimes();
-    this.renderCarousel('animesCarousel', animes);
   }
 
   async loadMoviesTab() {
@@ -225,6 +220,7 @@ class HomeFlixApp {
         : (item.poster_path ? `https://image.tmdb.org/t/p/w500${item.poster_path}` : '');
 
       card.innerHTML = `
+        <button class="continue-remove-btn" title="Remover da lista" aria-label="Remover">✕</button>
         <img class="media-card-poster" src="${bgImg}" alt="${item.title}" loading="lazy" />
         <div class="progress-bar-container">
           <div class="progress-bar-fill" style="width: ${pct}%;"></div>
@@ -237,6 +233,18 @@ class HomeFlixApp {
           </div>
         </div>
       `;
+
+      const removeBtn = card.querySelector('.continue-remove-btn');
+      if (removeBtn) {
+        removeBtn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          await API.deleteProgress(this.currentProfile.id, item.media_id);
+          card.remove();
+          if (carousel.children.length === 0) {
+            section.style.display = 'none';
+          }
+        });
+      }
 
       card.onclick = () => {
         this.openMediaDetails(item.media_type, item.media_id, {
@@ -386,14 +394,21 @@ class HomeFlixApp {
       tvBox.style.display = 'none';
     }
 
-    // Checagem e exibição de badge de Cinema (CAM)
+    // Checagem instantânea de Cinema CAM baseada na data de lançamento dos cinemas (0ms de lag)
     const cinemaBadge = document.getElementById('modalCinemaBadge');
-    if (cinemaBadge) cinemaBadge.style.display = 'none';
-    API.resolveStreams(mediaType, tmdbId, currentSeason, currentEpisode).then(res => {
-      if (res?.is_cinema_version && cinemaBadge) {
-        cinemaBadge.style.display = 'inline-flex';
+    if (cinemaBadge) {
+      cinemaBadge.style.display = 'none';
+      if (mediaType === 'movie' && details.release_date) {
+        try {
+          const relDate = new Date(details.release_date);
+          const now = new Date();
+          const diffDays = (now - relDate) / (1000 * 60 * 60 * 24);
+          if (diffDays < 75) {
+            cinemaBadge.style.display = 'inline-flex';
+          }
+        } catch (e) {}
       }
-    }).catch(() => {});
+    }
 
     // Botão Principal de Assistir no Modal (Auto-Play Melhor Servidor PT-BR)
     document.getElementById('modalPlayBtn').onclick = () => {

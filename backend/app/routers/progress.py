@@ -30,6 +30,11 @@ class FavoriteToggle(BaseModel):
 def get_continue_watching(profile_id: int = Query(...)):
     return {"results": database.get_continue_watching(profile_id)}
 
+@router.delete("/progress/{profile_id}/{media_id}")
+def delete_continue_watching(profile_id: int, media_id: str):
+    database.delete_progress(profile_id, media_id)
+    return {"status": "ok"}
+
 @router.post("/progress/save")
 def save_progress(data: ProgressSave):
     res = database.save_progress(

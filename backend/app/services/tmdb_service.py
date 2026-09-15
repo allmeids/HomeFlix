@@ -9,7 +9,7 @@ REGION = "BR"
 
 # Cache em memória simples com TTL
 _CACHE: Dict[str, Dict[str, Any]] = {}
-CACHE_TTL = 1800  # 30 minutos
+CACHE_TTL = 3600  # 1 hora para alta performance
 
 def _get_cached(key: str) -> Optional[Any]:
     record = _CACHE.get(key)
@@ -69,6 +69,60 @@ def get_now_playing(page: int = 1) -> List[Dict[str, Any]]:
     data = tmdb_request("movie/now_playing", {"page": page})
     return data.get("results", [])
 
+def get_superheroes(page: int = 1) -> List[Dict[str, Any]]:
+    # Marvel Studios (420), Marvel Ent (7505), DC Entertainment (9993), DC Films (128064)
+    data = tmdb_request("discover/movie", {
+        "with_companies": "420|7505|9993|128064",
+        "sort_by": "popularity.desc",
+        "page": page
+    })
+    return data.get("results", [])
+
+def get_action_movies(page: int = 1) -> List[Dict[str, Any]]:
+    # Ação (28) e Aventura (12)
+    data = tmdb_request("discover/movie", {
+        "with_genres": "28,12",
+        "sort_by": "popularity.desc",
+        "page": page
+    })
+    return data.get("results", [])
+
+def get_scifi_movies(page: int = 1) -> List[Dict[str, Any]]:
+    # Ficção Científica (878) e Fantasia (14)
+    data = tmdb_request("discover/movie", {
+        "with_genres": "878,14",
+        "sort_by": "popularity.desc",
+        "page": page
+    })
+    return data.get("results", [])
+
+def get_comedy_movies(page: int = 1) -> List[Dict[str, Any]]:
+    # Comédia (35)
+    data = tmdb_request("discover/movie", {
+        "with_genres": "35",
+        "sort_by": "popularity.desc",
+        "page": page
+    })
+    return data.get("results", [])
+
+def get_horror_movies(page: int = 1) -> List[Dict[str, Any]]:
+    # Terror (27) e Suspense (53)
+    data = tmdb_request("discover/movie", {
+        "with_genres": "27,53",
+        "sort_by": "popularity.desc",
+        "page": page
+    })
+    return data.get("results", [])
+
+def get_family_movies(page: int = 1) -> List[Dict[str, Any]]:
+    # Família (10751)
+    data = tmdb_request("discover/movie", {
+        "with_genres": "10751,16",
+        "sort_by": "popularity.desc",
+        "page": page
+    })
+    return data.get("results", [])
+
 def get_animes(page: int = 1) -> List[Dict[str, Any]]:
     # Animação japonesa (Genre 16 = Animation, Original Language = ja)
     data = tmdb_request("discover/tv", {
@@ -78,6 +132,28 @@ def get_animes(page: int = 1) -> List[Dict[str, Any]]:
         "page": page
     })
     return data.get("results", [])
+
+def get_home_catalog() -> Dict[str, Any]:
+    cached = _get_cached("home_catalog_complete")
+    if cached:
+        return cached
+
+    catalog = {
+        "trending": get_trending("all", "week"),
+        "superheroes": get_superheroes(1),
+        "action": get_action_movies(1),
+        "popular_movies": get_popular_movies(1),
+        "popular_series": get_popular_series(1),
+        "scifi": get_scifi_movies(1),
+        "comedy": get_comedy_movies(1),
+        "horror": get_horror_movies(1),
+        "top_rated": get_top_rated_movies(1),
+        "animes": get_animes(1),
+        "family": get_family_movies(1),
+    }
+
+    _set_cached("home_catalog_complete", catalog)
+    return catalog
 
 def search_multi(query: str, page: int = 1) -> List[Dict[str, Any]]:
     if not query:

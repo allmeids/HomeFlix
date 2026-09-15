@@ -1,6 +1,10 @@
 import requests
 import datetime
 import time
+import uuid
+import re
+import urllib.parse
+from fastapi import Response
 from typing import List, Dict, Any, Optional
 
 _CHANNELS_CACHE = {
@@ -8,7 +12,14 @@ _CHANNELS_CACHE = {
     "categories": [],
     "updated_at": 0
 }
-CACHE_TTL = 300  # 5 minutos para manter o EPG do que está passando atualizado
+CACHE_TTL = 300  # 5 minutos
+
+_BOOT_CACHE = {
+    "token": "",
+    "stitcher_url": "",
+    "stitcher_params": "",
+    "ts": 0
+}
 
 CATEGORY_MAP = {
     "Filmes": "Filmes e Séries",
@@ -25,6 +36,41 @@ CATEGORY_MAP = {
     "Investigação": "Documentários & Ciência",
     "Esportes": "Esportes & Lutas",
 }
+
+def get_pluto_boot():
+    global _BOOT_CACHE
+    now = time.time()
+    if _BOOT_CACHE["token"] and (now - _BOOT_CACHE["ts"] < 1800):
+        return _BOOT_CACHE
+
+    now_utc = datetime.datetime.now(datetime.timezone.utc)
+    params = {
+        "appName": "web",
+        "appVersion": "7.0.0",
+        "deviceVersion": "122.0.0",
+        "deviceModel": "web",
+        "deviceMake": "chrome",
+        "deviceType": "web",
+        "clientID": str(uuid.uuid4()),
+        "clientModelNumber": "1.0.0",
+        "serverSideAds": "false",
+        "clientTime": now_utc.strftime("%Y-%m-%dT%H:%M:%SZ"),
+    }
+    headers = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36"}
+    try:
+        r = requests.get("https://boot.pluto.tv/v4/start", params=params, headers=headers, timeout=8)
+        if r.status_code == 200:
+            data = r.json()
+            _BOOT_CACHE = {
+                "token": data.get("sessionToken", ""),
+                "stitcher_url": (data.get("servers", {}) or {}).get("stitcher", "https://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv"),
+                "stitcher_params": (data.get("stitcherParams", "") or "").lstrip("?&"),
+                "ts": now
+            }
+    except Exception as exc:
+        print(f"[Pluto Boot Error] {exc}")
+
+    return _BOOT_CACHE
 
 def get_live_channels(force_refresh: bool = False) -> Dict[str, Any]:
     global _CHANNELS_CACHE
@@ -52,31 +98,28 @@ def get_live_channels(force_refresh: bool = False) -> Dict[str, Any]:
             category_set = set()
 
             for c in raw_channels:
-                # 1. Stream URL
-                stream_urls = c.get("stitched", {}).get("urls", [])
-                stream_url = stream_urls[0].get("url") if stream_urls else None
-                if not stream_url:
+                real_id = c.get("_id") or c.get("id") or str(c.get("number"))
+                if not real_id:
                     continue
 
-                # 2. Categoria
                 raw_cat = c.get("category") or "Geral"
                 norm_cat = CATEGORY_MAP.get(raw_cat, raw_cat)
                 category_set.add(norm_cat)
 
-                # 3. Logos Oficiais em Alta Resolução
+                # Logos Oficiais em Alta Resolução
                 logo = (
                     (c.get("colorLogoPNG") or {}).get("path") or
                     (c.get("logo") or {}).get("path") or
                     (c.get("solidLogoPNG") or {}).get("path")
                 )
 
-                # 4. Banner Panorâmico de Fundo (Featured Image 16:9)
+                # Banner Panorâmico de Fundo (Featured Image 16:9)
                 featured_image = (
                     (c.get("featuredImage") or {}).get("path") or
                     (c.get("thumbnail") or {}).get("path")
                 )
 
-                # 5. Guia de Programação Atual (Now Playing EPG)
+                # Guia de Programação Atual (Now Playing EPG)
                 timelines = c.get("timelines", [])
                 current_show = "Transmissão Ao Vivo"
                 episode_title = ""
@@ -90,7 +133,6 @@ def get_live_channels(force_refresh: bool = False) -> Dict[str, Any]:
                     episode_title = ep.get("name") or ""
                     synopsis = ep.get("description") or synopsis
 
-                    # Calcula progresso aproximado do programa no ar
                     try:
                         start_time = datetime.datetime.fromisoformat(tl.get("start").replace("Z", "+00:00"))
                         stop_time = datetime.datetime.fromisoformat(tl.get("stop").replace("Z", "+00:00"))
@@ -101,8 +143,11 @@ def get_live_channels(force_refresh: bool = False) -> Dict[str, Any]:
                     except Exception:
                         progress_pct = 40
 
+                # URL do stream via proxy local anti-CORS
+                stream_url = f"/api/live/stream/{real_id}.m3u8"
+
                 channels.append({
-                    "id": c.get("id") or str(c.get("number")),
+                    "id": real_id,
                     "number": c.get("number"),
                     "name": c.get("name"),
                     "category": norm_cat,
@@ -136,6 +181,65 @@ def get_live_channels(force_refresh: bool = False) -> Dict[str, Any]:
         "categories": _CHANNELS_CACHE["categories"],
         "total": len(_CHANNELS_CACHE["data"])
     }
+
+def get_channel_live_playlist(channel_id: str) -> Response:
+    boot = get_pluto_boot()
+    token = boot.get("token", "")
+    stitcher_params = boot.get("stitcher_params", "")
+    stitcher_url = boot.get("stitcher_url", "https://cfd-v4-service-channel-stitcher-use1-1.prd.pluto.tv")
+
+    master_url = f"{stitcher_url}/v2/stitch/hls/channel/{channel_id}/master.m3u8?jwt={token}&masterJWTPassthrough=true"
+    if stitcher_params:
+        master_url += f"&{stitcher_params}"
+
+    headers = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36"}
+    try:
+        r = requests.get(master_url, headers=headers, timeout=8)
+        if r.status_code != 200:
+            # Se expirou token, força refresh do boot
+            _BOOT_CACHE["ts"] = 0
+            boot = get_pluto_boot()
+            master_url = f"{boot['stitcher_url']}/v2/stitch/hls/channel/{channel_id}/master.m3u8?jwt={boot['token']}&masterJWTPassthrough=true&{boot['stitcher_params']}"
+            r = requests.get(master_url, headers=headers, timeout=8)
+
+        if r.status_code != 200:
+            return Response(content="#EXTM3U\n# Canal Indisponível\n", status_code=r.status_code)
+
+        base_variant_url = master_url.rsplit("/", 1)[0] + "/"
+        rewritten_lines = []
+
+        for line in r.text.splitlines():
+            line_strip = line.strip()
+            if not line_strip:
+                continue
+            if line_strip.startswith("#"):
+                if "URI=" in line_strip:
+                    def repl_sub(m):
+                        sub_uri = m.group(2)
+                        full_sub = urllib.parse.urljoin(base_variant_url, sub_uri)
+                        proxied_sub = f"/api/proxy/stream?url={urllib.parse.quote(full_sub)}"
+                        return f"URI={m.group(1)}{proxied_sub}{m.group(1)}"
+                    line_strip = re.sub(r'URI=("|\')(.*?)(\1)', repl_sub, line_strip)
+                rewritten_lines.append(line_strip)
+            else:
+                full_variant = urllib.parse.urljoin(base_variant_url, line_strip)
+                proxied = f"/api/proxy/stream?url={urllib.parse.quote(full_variant)}"
+                rewritten_lines.append(proxied)
+
+        content = "\n".join(rewritten_lines) + "\n"
+        return Response(
+            content=content,
+            media_type="application/vnd.apple.mpegurl",
+            headers={
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "GET, OPTIONS",
+                "Access-Control-Allow-Headers": "*",
+                "Cache-Control": "no-cache, no-store"
+            }
+        )
+    except Exception as exc:
+        print(f"[Playlist Proxy Error] {exc}")
+        return Response(content=f"# Error: {str(exc)}", status_code=500)
 
 def get_channel_by_id(channel_id: str) -> Optional[Dict[str, Any]]:
     catalog = get_live_channels()

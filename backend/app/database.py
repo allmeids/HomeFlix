@@ -142,6 +142,13 @@ def get_continue_watching(profile_id: int) -> List[Dict[str, Any]]:
     conn.close()
     return [dict(r) for r in rows]
 
+def delete_progress(profile_id: int, media_id: str) -> bool:
+    conn = get_db_connection()
+    conn.execute("DELETE FROM progress WHERE profile_id = ? AND media_id = ?", (profile_id, str(media_id)))
+    conn.commit()
+    conn.close()
+    return True
+
 def get_media_progress(profile_id: int, media_id: str, season: int = 1, episode: int = 1) -> Optional[Dict[str, Any]]:
     conn = get_db_connection()
     row = conn.execute("""

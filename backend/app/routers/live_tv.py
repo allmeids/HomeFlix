@@ -13,3 +13,7 @@ def get_channel(channel_id: str):
     if not channel:
         raise HTTPException(status_code=404, detail="Canal não encontrado")
     return channel
+
+@router.get("/stream/{channel_id}.m3u8")
+def get_channel_stream(channel_id: str):
+    return live_tv_service.get_channel_live_playlist(channel_id)

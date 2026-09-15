@@ -3,6 +3,10 @@ from app.services import tmdb_service
 
 router = APIRouter(prefix="/api/media", tags=["Media"])
 
+@router.get("/home")
+def get_home_catalog():
+    return tmdb_service.get_home_catalog()
+
 @router.get("/trending")
 def get_trending(type: str = Query("all", pattern="^(all|movie|tv)$"), window: str = Query("week", pattern="^(day|week)$")):
     return {"results": tmdb_service.get_trending(type, window)}

@@ -12,24 +12,38 @@ HEADERS = {
 FROSTSTREAM_URL = "https://froststream.cloutteam.com"
 SUPERSTREAM_URL = "https://da5f663b4690-superstream.baby-beamup.club"
 
+from datetime import datetime
+
+def is_recent_theatrical_release(release_date_str: Optional[str]) -> bool:
+    """Verifica se o filme ainda está na janela de exibição de cinema (menos de 75 dias de lançamento)."""
+    if not release_date_str:
+        return False
+    try:
+        rel_date = datetime.strptime(release_date_str.strip(), "%Y-%m-%d").date()
+        today = datetime.now().date()
+        # Se foi lançado há menos de 75 dias ou data futura, lançamentos online ainda são gravações de cinema (CAM/TS)
+        return (today - rel_date).days < 75
+    except Exception:
+        return False
+
 def is_cinema_cam(title: str, name: str) -> bool:
     combined = f"{name} {title}".upper()
-    cam_pattern = r'\b(CAM|HDCAM|CAM-RIP|CAMRIP|TELESYNC|HDTS|TS|TELECINE|TC|CINEMA|GRAVADO)\b'
+    cam_pattern = r'\b(CAM|HDCAM|CAM-RIP|CAMRIP|TELESYNC|HDTS|TS|TELECINE|TC|CINEMA|GRAVADO|1XBET|BET|PROPAGANDA)\b'
     return bool(re.search(cam_pattern, combined))
 
-def parse_quality(title: str, name: str) -> str:
-    combined = f"{name} {title}".upper()
-    is_cam = is_cinema_cam(title, name)
-    suffix = " (Cinema CAM)" if is_cam else ""
-
-    if "4K" in combined or "2160P" in combined:
-        return f"4K Ultra HD{suffix}"
-    if "1080P" in combined or "FHD" in combined:
-        return f"1080p Full HD{suffix}"
-    if "720P" in combined or "HD" in combined:
-        return f"720p HD{suffix}"
+def parse_quality(title: str, name: str, is_cam: bool = False) -> str:
     if is_cam:
         return "Qualidade Cinema (CAM)"
+
+    # Limpar tags de provedor/servidor como CDN4K, Server4K para não gerar falso positivo de 4K
+    clean_text = re.sub(r'\b(CDN\w*|SERVER\w*|HOST\w*)\b', '', f"{name} {title}", flags=re.IGNORECASE)
+
+    if re.search(r'\b(4K|2160P|UHD|ULTRA\s*HD)\b', clean_text, re.IGNORECASE):
+        return "4K Ultra HD"
+    if re.search(r'\b(1080P|FHD|FULL\s*HD)\b', clean_text, re.IGNORECASE):
+        return "1080p Full HD"
+    if re.search(r'\b(720P|HD)\b', clean_text, re.IGNORECASE):
+        return "720p HD"
     return "SD / 480p"
 
 def parse_audio(title: str, name: str) -> str:
@@ -107,6 +121,12 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
             s["_provider"] = "SuperStream"
             raw_streams.append(s)
 
+    theatrical_cam = False
+    if media_type in ("movie", "filme"):
+        release_date = details.get("release_date")
+        if is_recent_theatrical_release(release_date):
+            theatrical_cam = True
+
     # 4. Normalizar streams encontrados
     normalized = []
     for idx, s in enumerate(raw_streams):
@@ -116,8 +136,8 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
 
         raw_title = s.get("title", "") or ""
         name = s.get("name", "") or s.get("_provider", "Servidor")
-        is_cam = is_cinema_cam(raw_title, name)
-        quality = parse_quality(raw_title, name)
+        is_cam = is_cinema_cam(raw_title, name) or theatrical_cam
+        quality = parse_quality(raw_title, name, is_cam=is_cam)
         audio = parse_audio(raw_title, name)
 
         clean_name = f"{quality} • {audio}"

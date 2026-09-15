@@ -359,25 +359,28 @@ body {
 /* Media Cards */
 .media-card {
   flex: 0 0 auto;
-  width: 180px;
+  width: 185px;
   cursor: pointer;
   position: relative;
   border-radius: 8px;
   overflow: hidden;
   background-color: var(--bg-card);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 .media-card:hover {
   transform: scale(1.06);
   z-index: 30;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.85);
 }
 
 .media-card-poster {
   width: 100%;
   aspect-ratio: 2 / 3;
   object-fit: cover;
+  object-position: center top;
   display: block;
   background: #222;
 }
@@ -410,11 +413,46 @@ body {
 
 /* Continuar Assistindo Card Especial */
 .continue-card {
-  width: 240px;
+  width: 280px;
+  position: relative;
 }
 
 .continue-card .media-card-poster {
   aspect-ratio: 16 / 9;
+  object-fit: cover;
+  object-position: center 20%;
+}
+
+.continue-remove-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 26px;
+  height: 26px;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 35;
+  opacity: 0;
+  transition: opacity 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.continue-card:hover .continue-remove-btn {
+  opacity: 1;
+}
+
+.continue-remove-btn:hover {
+  background: var(--accent-red);
+  border-color: var(--accent-red);
+  transform: scale(1.15);
 }
 
 .progress-bar-container {

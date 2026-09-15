@@ -16,6 +16,10 @@ const API = {
   },
 
   // TMDB / Catálogo
+  async getHomeCatalog() {
+    return await this.request('/api/media/home');
+  },
+
   async getTrending(type = 'all') {
     const data = await this.request(`/api/media/trending?type=${type}`);
     return data?.results || [];
@@ -103,6 +107,12 @@ const API = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(progressData)
+    });
+  },
+
+  async deleteProgress(profileId, mediaId) {
+    return await this.request(`/api/progress/${profileId}/${mediaId}`, {
+      method: 'DELETE'
     });
   },
 

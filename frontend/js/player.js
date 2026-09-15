@@ -165,7 +165,11 @@ class HomeFlixPlayer {
       this.hls = new Hls({
         debug: false,
         enableWorker: true,
-        lowLatencyMode: true
+        lowLatencyMode: true,
+        manifestLoadingTimeOut: 10000,
+        manifestLoadingMaxRetry: 3,
+        levelLoadingTimeOut: 10000,
+        levelLoadingMaxRetry: 3
       });
       this.hls.loadSource(url);
       this.hls.attachMedia(this.video);
@@ -173,7 +177,31 @@ class HomeFlixPlayer {
         if (resumeTime > 0 && !this.isLive) {
           this.video.currentTime = resumeTime;
         }
-        this.video.play().catch(e => console.log('Autoplay blocked:', e));
+        const p = this.video.play();
+        if (p !== undefined) {
+          p.catch(e => {
+            console.log('Autoplay blocked, user interaction required:', e);
+            this.playBtn.innerHTML = '▶';
+          });
+        }
+      });
+      this.hls.on(Hls.Events.ERROR, (event, data) => {
+        if (data.fatal) {
+          switch (data.type) {
+            case Hls.ErrorTypes.NETWORK_ERROR:
+              console.warn('[HLS] Network error, tentando recuperar...', data);
+              this.hls.startLoad();
+              break;
+            case Hls.ErrorTypes.MEDIA_ERROR:
+              console.warn('[HLS] Media error, tentando recuperar...', data);
+              this.hls.recoverMediaError();
+              break;
+            default:
+              console.error('[HLS] Erro fatal não recuperável', data);
+              this.hls.destroy();
+              break;
+          }
+        }
       });
     } else {
       // Direct MP4 ou Safari nativo HLS
@@ -182,7 +210,13 @@ class HomeFlixPlayer {
         if (resumeTime > 0 && !this.isLive) {
           this.video.currentTime = resumeTime;
         }
-        this.video.play().catch(e => console.log('Autoplay blocked:', e));
+        const p = this.video.play();
+        if (p !== undefined) {
+          p.catch(e => {
+            console.log('Autoplay blocked:', e);
+            this.playBtn.innerHTML = '▶';
+          });
+        }
       };
     }
   }
