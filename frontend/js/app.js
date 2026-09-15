@@ -499,20 +499,39 @@ class HomeFlixApp {
     filtered.forEach(ch => {
       const card = document.createElement('div');
       card.className = 'channel-card';
+      
+      const bgImg = ch.featured_image || 'https://images.pluto.tv/channels/5f120e94a5714d00074576a1/featuredImage.jpg';
       const logoHtml = ch.logo
-        ? `<img class="channel-logo" src="${ch.logo}" alt="${ch.name}" loading="lazy" />`
-        : `<div class="channel-logo" style="display:flex;align-items:center;justify-content:center;font-size:24px;">📺</div>`;
+        ? `<img class="channel-logo-img" src="${ch.logo}" alt="${ch.name}" loading="lazy" />`
+        : `<span style="font-weight:900; font-size:14px; color:#fff; text-shadow:0 1px 2px #000;">${ch.name}</span>`;
 
       card.innerHTML = `
-        <div class="channel-header">
-          ${logoHtml}
-          <div class="channel-meta">
-            <div class="channel-number">Canal ${ch.number || ''}</div>
-            <div class="channel-name">${ch.name}</div>
-            <div class="channel-badge-live">● AO VIVO</div>
+        <div class="channel-card-backdrop" style="background-image: url('${bgImg}')"></div>
+        <div class="channel-card-overlay"></div>
+        <div class="channel-card-content">
+          <div class="channel-top-row">
+            <div class="channel-logo-wrap">
+              ${logoHtml}
+            </div>
+            <div class="channel-badge-box">
+              <span class="channel-number-tag">CH ${ch.number || ''}</span>
+              <span class="channel-badge-live-pulse">
+                <span class="live-pulse-dot"></span> AO VIVO
+              </span>
+            </div>
+          </div>
+          
+          <div class="channel-bottom-info">
+            <div class="channel-name-title">${ch.name}</div>
+            <div class="channel-now-playing">
+              <span>▶</span> <span>${ch.current_show || 'Transmissão Ao Vivo'}</span>
+            </div>
+            <div class="channel-synopsis-text">${ch.summary || ''}</div>
+            <div class="channel-progress-track">
+              <div class="channel-progress-bar" style="width: ${ch.progress_pct || 40}%;"></div>
+            </div>
           </div>
         </div>
-        <div class="channel-show">${ch.current_show || ch.summary}</div>
       `;
 
       card.onclick = () => {
