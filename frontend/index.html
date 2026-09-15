@@ -146,6 +146,7 @@
             <span style="color: #46d369; font-weight: 700;" id="modalRating">★ 9.0</span>
             <span id="modalYear">2026</span>
             <span style="border: 1px solid rgba(255,255,255,0.3); padding: 2px 6px; border-radius: 4px; font-size: 11px;">HD / 4K</span>
+            <span id="modalCinemaBadge" class="cinema-badge" style="display: none;">⚠️ Imagem de Cinema (CAM)</span>
           </div>
           <div style="display: flex; gap: 12px;">
             <button class="btn btn-primary" id="modalPlayBtn">▶ Assistir Agora</button>
@@ -184,6 +185,12 @@
       </button>
       <div class="player-title-display" id="playerTitle">HomeFlix Cinema</div>
       <div style="width: 80px;"></div>
+    </div>
+
+    <!-- Banner de aviso Cinema CAM -->
+    <div class="cinema-warning-banner" id="playerCinemaWarning" style="display: none;">
+      <span>⚠️</span>
+      <span><strong>Aviso de Qualidade:</strong> Este título ainda está em exibição nos cinemas. Imagem e áudio gravados de sala de exibição.</span>
     </div>
 
     <video id="videoPlayer" class="player-video" playsinline></video>

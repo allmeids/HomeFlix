@@ -13,10 +13,12 @@ class HomeFlixPlayer {
     this.rewindBtn = document.getElementById('playerRewindBtn');
     this.forwardBtn = document.getElementById('playerForwardBtn');
     this.sourceSelector = document.getElementById('playerSourceSelect');
+    this.cinemaWarning = document.getElementById('playerCinemaWarning');
 
     this.hls = null;
     this.heartbeatTimer = null;
     this.hideControlsTimer = null;
+    this.cinemaWarningTimer = null;
     this.currentMedia = null;
     this.sources = [];
     this.isLive = false;
@@ -110,6 +112,21 @@ class HomeFlixPlayer {
 
     this.titleDisplay.textContent = options.title + (options.episodeTitle ? ` - ${options.episodeTitle}` : '');
     this.overlay.classList.add('open');
+
+    // Aviso de imagem de cinema (CAM)
+    if (this.cinemaWarning) {
+      if (options.isCinema) {
+        this.cinemaWarning.style.display = 'flex';
+        this.cinemaWarning.style.opacity = '1';
+        clearTimeout(this.cinemaWarningTimer);
+        this.cinemaWarningTimer = setTimeout(() => {
+          this.cinemaWarning.style.opacity = '0';
+          setTimeout(() => { if (this.cinemaWarning) this.cinemaWarning.style.display = 'none'; }, 500);
+        }, 8000);
+      } else {
+        this.cinemaWarning.style.display = 'none';
+      }
+    }
 
     // Popula seletor de qualidade/fontes
     this.sourceSelector.innerHTML = '';

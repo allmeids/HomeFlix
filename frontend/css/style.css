@@ -671,6 +671,44 @@ body {
   color: #46d369;
 }
 
+/* Cinema CAM Warning */
+.cinema-warning-banner {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(230, 81, 0, 0.92);
+  color: #fff;
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  z-index: 520;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 183, 77, 0.5);
+  backdrop-filter: blur(8px);
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+.cinema-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(230, 81, 0, 0.3);
+  color: #ffb74d;
+  border: 1px solid rgba(230, 81, 0, 0.7);
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
 /* Player Fullscreen Overlay */
 .player-overlay {
   position: fixed;

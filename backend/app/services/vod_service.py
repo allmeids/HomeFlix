@@ -12,21 +12,31 @@ HEADERS = {
 FROSTSTREAM_URL = "https://froststream.cloutteam.com"
 SUPERSTREAM_URL = "https://da5f663b4690-superstream.baby-beamup.club"
 
+def is_cinema_cam(title: str, name: str) -> bool:
+    combined = f"{name} {title}".upper()
+    cam_pattern = r'\b(CAM|HDCAM|CAM-RIP|CAMRIP|TELESYNC|HDTS|TS|TELECINE|TC|CINEMA|GRAVADO)\b'
+    return bool(re.search(cam_pattern, combined))
+
 def parse_quality(title: str, name: str) -> str:
     combined = f"{name} {title}".upper()
+    is_cam = is_cinema_cam(title, name)
+    suffix = " (Cinema CAM)" if is_cam else ""
+
     if "4K" in combined or "2160P" in combined:
-        return "4K Ultra HD"
+        return f"4K Ultra HD{suffix}"
     if "1080P" in combined or "FHD" in combined:
-        return "1080p Full HD"
+        return f"1080p Full HD{suffix}"
     if "720P" in combined or "HD" in combined:
-        return "720p HD"
+        return f"720p HD{suffix}"
+    if is_cam:
+        return "Qualidade Cinema (CAM)"
     return "SD / 480p"
 
 def parse_audio(title: str, name: str) -> str:
     combined = f"{name} {title}".lower()
-    if "português" in combined or "dublado" in combined or "pt-br" in combined or "pt" in combined or "dual" in combined:
+    if any(k in combined for k in ["português", "portugues", "dublado", "pt-br", "ptbr", "dual"]):
         return "Português (Dublado)"
-    if "legendado" in combined or "leg" in combined or "sub" in combined:
+    if any(k in combined for k in ["legendado", "leg", "sub"]):
         return "Legendado"
     return "Original / Multiaudio"
 
@@ -70,8 +80,16 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
     imdb_id = external_ids.get("imdb_id")
 
     if not imdb_id:
-        # Fallback se não tiver imdb_id direto
-        return {"streams": [], "imdb_id": None, "title": details.get("title") or details.get("name")}
+        return {
+            "title": details.get("title") or details.get("name") or "Vídeo",
+            "imdb_id": None,
+            "tmdb_id": tmdb_id,
+            "count": 0,
+            "streams": [],
+            "best_stream": None,
+            "is_cinema_version": False,
+            "has_dubbed": False
+        }
 
     title = details.get("title") or details.get("name") or "Vídeo"
     raw_streams = []
@@ -98,10 +116,10 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
 
         raw_title = s.get("title", "") or ""
         name = s.get("name", "") or s.get("_provider", "Servidor")
+        is_cam = is_cinema_cam(raw_title, name)
         quality = parse_quality(raw_title, name)
         audio = parse_audio(raw_title, name)
 
-        # Montar label amigável
         clean_name = f"{quality} • {audio}"
         details_label = raw_title.replace("\n", " • ").strip()
 
@@ -110,6 +128,7 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
             "name": name,
             "quality": quality,
             "audio": audio,
+            "is_cinema": is_cam,
             "label": clean_name,
             "details": details_label,
             "url": url,
@@ -117,20 +136,43 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
             "behaviorHints": s.get("behaviorHints", {})
         })
 
-    # Ordenar: 4K/1080p primeiro, Português primeiro
-    def sort_score(item):
+    # 5. Algoritmo de Priorização Inteligente (Best Stream Selection):
+    # - Português (Dublado): Prioridade Máxima (+100)
+    # - Qualidade Digital WEB-DL/Bluray ganha de Cinema CAM (+50 vs -80)
+    # - Resolução (4K: +40, 1080p: +30, 720p: +20)
+    def calculate_score(item):
         score = 0
+        # Áudio: Português Dublado é rei
+        if "Português" in item["audio"]:
+            score += 100
+        elif "Legendado" in item["audio"]:
+            score += 35
+        else:
+            score += 10
+
+        # Resolução
         if "4K" in item["quality"]:
             score += 40
         elif "1080p" in item["quality"]:
             score += 30
         elif "720p" in item["quality"]:
             score += 20
-        if "Português" in item["audio"]:
-            score += 15
+        else:
+            score += 10
+
+        # Versão Digital vs Cinema CAM
+        if item["is_cinema"]:
+            score -= 80  # Penaliza versão gravada se houver versão digital limpa
+        else:
+            score += 50  # Bônus para versão digital de alta fidelidade
+
         return score
 
-    normalized.sort(key=sort_score, reverse=True)
+    normalized.sort(key=calculate_score, reverse=True)
+
+    best_stream = normalized[0] if normalized else None
+    is_cinema_version = best_stream.get("is_cinema", False) if best_stream else False
+    has_dubbed = any("Português" in s["audio"] for s in normalized)
 
     return {
         "title": title,
@@ -139,5 +181,8 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
         "season": season,
         "episode": episode,
         "count": len(normalized),
+        "best_stream": best_stream,
+        "is_cinema_version": is_cinema_version,
+        "has_dubbed": has_dubbed,
         "streams": normalized
     }

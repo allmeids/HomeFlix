@@ -386,7 +386,16 @@ class HomeFlixApp {
       tvBox.style.display = 'none';
     }
 
-    // Botão Principal de Assistir no Modal
+    // Checagem e exibição de badge de Cinema (CAM)
+    const cinemaBadge = document.getElementById('modalCinemaBadge');
+    if (cinemaBadge) cinemaBadge.style.display = 'none';
+    API.resolveStreams(mediaType, tmdbId, currentSeason, currentEpisode).then(res => {
+      if (res?.is_cinema_version && cinemaBadge) {
+        cinemaBadge.style.display = 'inline-flex';
+      }
+    }).catch(() => {});
+
+    // Botão Principal de Assistir no Modal (Auto-Play Melhor Servidor PT-BR)
     document.getElementById('modalPlayBtn').onclick = () => {
       this.fetchAndPlay(mediaType, tmdbId, title, details, currentSeason, currentEpisode, null, opts.resumeTime);
     };
@@ -414,71 +423,37 @@ class HomeFlixApp {
   }
 
   async fetchAndPlay(mediaType, tmdbId, title, details, season = 1, episode = 1, epTitle = null, resumeTime = 0) {
-    const sourcesBox = document.getElementById('modalSourcesBox');
-    const sourcesList = document.getElementById('modalSourcesList');
-    sourcesBox.style.display = 'block';
-    sourcesList.innerHTML = '<p style="color:#888; font-size:13px; padding:10px 0;">🔍 Buscando melhores servidores e fontes de streaming...</p>';
+    const playBtn = document.getElementById('modalPlayBtn');
+    if (playBtn) playBtn.textContent = '⏳ Conectando ao melhor servidor...';
 
     const resolved = await API.resolveStreams(mediaType, tmdbId, season, episode);
-    const streams = resolved?.streams || [];
+    if (playBtn) playBtn.textContent = '▶ Assistir Agora';
 
-    if (streams.length === 0) {
-      sourcesList.innerHTML = '<p style="color:#ff6b6b; font-size:13px; padding:10px 0;">Nenhuma fonte direta disponível no momento. Tente novamente mais tarde.</p>';
+    const streams = resolved?.streams || [];
+    const bestStream = resolved?.best_stream || (streams.length > 0 ? streams[0] : null);
+    const isCinema = !!resolved?.is_cinema_version || (bestStream && bestStream.is_cinema);
+
+    if (!bestStream) {
+      alert('Nenhuma fonte de reprodução disponível no momento para este título.');
       return;
     }
 
-    sourcesList.innerHTML = '';
-    streams.forEach(s => {
-      const opt = document.createElement('div');
-      opt.className = 'stream-option';
-      opt.innerHTML = `
-        <div>
-          <div style="font-weight:700; font-size:14px;">${s.label}</div>
-          <div style="font-size:11px; color:#888;">${s.details}</div>
-        </div>
-        <div style="display:flex; align-items:center; gap:10px;">
-          <span class="stream-quality-badge">${s.quality}</span>
-          <button class="btn btn-primary" style="padding:6px 14px; font-size:12px;">▶ Reproduzir</button>
-        </div>
-      `;
-
-      opt.onclick = () => {
-        document.getElementById('detailsModal').classList.remove('open');
-        this.player.play({
-          mediaId: tmdbId,
-          mediaType: mediaType,
-          title: title,
-          poster: details.poster_path,
-          backdrop: details.backdrop_path,
-          season: season,
-          episode: episode,
-          episodeTitle: epTitle,
-          initialTime: resumeTime,
-          streams: streams,
-          currentStreamUrl: s.url
-        });
-      };
-
-      sourcesList.appendChild(opt);
+    // Fecha o modal e inicia o player instantaneamente com o melhor servidor
+    document.getElementById('detailsModal').classList.remove('open');
+    this.player.play({
+      mediaId: tmdbId,
+      mediaType: mediaType,
+      title: title,
+      poster: details.poster_path,
+      backdrop: details.backdrop_path,
+      season: season,
+      episode: episode,
+      episodeTitle: epTitle,
+      initialTime: resumeTime,
+      streams: streams,
+      currentStreamUrl: bestStream.url,
+      isCinema: isCinema
     });
-
-    // Se autoPlay ou primeira fonte
-    if (streams.length > 0) {
-      document.getElementById('detailsModal').classList.remove('open');
-      this.player.play({
-        mediaId: tmdbId,
-        mediaType: mediaType,
-        title: title,
-        poster: details.poster_path,
-        backdrop: details.backdrop_path,
-        season: season,
-        episode: episode,
-        episodeTitle: epTitle,
-        initialTime: resumeTime,
-        streams: streams,
-        currentStreamUrl: streams[0].url
-      });
-    }
   }
 
   async loadLiveTv() {
