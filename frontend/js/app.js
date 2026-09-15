@@ -161,16 +161,16 @@ class HomeFlixApp {
         this.renderHero(homeData.trending[0]);
       }
       this.renderCarousel('trendingCarousel', homeData.trending || []);
+      this.renderCarousel('superheroesCarousel', homeData.superheroes || []);
+      this.renderCarousel('actionMoviesCarousel', homeData.action || []);
       this.renderCarousel('popularMoviesCarousel', homeData.popular_movies || []);
       this.renderCarousel('popularSeriesCarousel', homeData.popular_series || []);
+      this.renderCarousel('scifiMoviesCarousel', homeData.scifi || []);
+      this.renderCarousel('comedyMoviesCarousel', homeData.comedy || []);
+      this.renderCarousel('horrorMoviesCarousel', homeData.horror || []);
       this.renderCarousel('topMoviesCarousel', homeData.top_rated || homeData.top_movies || []);
+      this.renderCarousel('familyMoviesCarousel', homeData.family || []);
       this.renderCarousel('animesCarousel', homeData.animes || []);
-      this.renderCarousel('superheroesCarousel', homeData.superheroes || []);
-      this.renderCarousel('actionCarousel', homeData.action || []);
-      this.renderCarousel('scifiCarousel', homeData.scifi || []);
-      this.renderCarousel('comedyCarousel', homeData.comedy || []);
-      this.renderCarousel('horrorCarousel', homeData.horror || []);
-      this.renderCarousel('familyCarousel', homeData.family || []);
     }
 
     // 2. Continuar Assistindo (Quick Resume)
@@ -290,11 +290,21 @@ class HomeFlixApp {
 
   renderCarousel(containerId, items) {
     const container = document.getElementById(containerId);
-    if (!container) return;
+    if (!container) {
+      console.warn(`[renderCarousel] Element #${containerId} não foi encontrado no DOM.`);
+      return;
+    }
+    const section = container.closest('.media-section');
+    if (!items || items.length === 0) {
+      if (section) section.style.display = 'none';
+      return;
+    }
+    if (section) section.style.display = 'block';
     container.innerHTML = '';
 
     items.forEach(item => {
-      if (!item.poster_path) return;
+      const posterPath = item.poster_path || item.backdrop_path;
+      if (!posterPath) return;
       const title = item.title || item.name || '';
       const mediaType = item.media_type || (item.title ? 'movie' : 'tv');
       const rating = item.vote_average ? item.vote_average.toFixed(1) : '';
@@ -304,7 +314,7 @@ class HomeFlixApp {
       const card = document.createElement('div');
       card.className = 'media-card';
       card.innerHTML = `
-        <img class="media-card-poster" src="https://image.tmdb.org/t/p/w342${item.poster_path}" alt="${title}" loading="lazy" />
+        <img class="media-card-poster" src="https://image.tmdb.org/t/p/w342${posterPath}" alt="${title}" loading="lazy" onerror="this.onerror=null; this.src='https://images.placeholders.dev/?width=342&height=513&text=Sem+Imagem&theme=dark';" />
         <div class="media-card-info">
           <div class="media-card-title">${title}</div>
           <div class="media-card-sub">
