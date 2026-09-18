@@ -16,12 +16,24 @@ class HomeFlixApp {
   }
 
   async init() {
+    this.setupPwa();
     this.setupNavbar();
     this.setupCategoryBar();
     this.setupModals();
     this.setupCarouselArrows();
+    this.setupTvNavigation();
     await this.loadProfiles();
     await this.loadHome();
+  }
+
+  setupPwa() {
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then((reg) => console.log('[HomeFlix PWA] Service Worker registrado:', reg.scope))
+          .catch((err) => console.warn('[HomeFlix PWA] Erro ao registrar SW:', err));
+      });
+    }
   }
 
   setupNavbar() {
@@ -44,17 +56,29 @@ class HomeFlixApp {
 
     // Nav items
     document.querySelectorAll('.nav-item').forEach(item => {
+      item.setAttribute('tabindex', '0');
       item.addEventListener('click', (e) => {
         const tab = e.currentTarget.getAttribute('data-tab');
         this.switchTab(tab);
+      });
+      item.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          item.click();
+        }
       });
     });
 
     // Profile button
     const profileBtn = document.getElementById('profileBtn');
     if (profileBtn) {
+      profileBtn.setAttribute('tabindex', '0');
       profileBtn.addEventListener('click', () => {
         this.openProfileModal();
+      });
+      profileBtn.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          profileBtn.click();
+        }
       });
     }
 
@@ -94,6 +118,12 @@ class HomeFlixApp {
 
     // Clique nos cartões de categorias estilo Prime Video
     document.querySelectorAll('.cat-card').forEach(card => {
+      card.setAttribute('tabindex', '0');
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          card.click();
+        }
+      });
       card.addEventListener('click', () => {
         const catKey = card.getAttribute('data-category');
         const scrollTargetId = card.getAttribute('data-scroll');
@@ -141,6 +171,407 @@ class HomeFlixApp {
         }
       }
     });
+  }
+
+  /* ================================================================
+     MODO SMART TV & NAVEGAÇÃO POR CONTROLE REMOTO / 10-FOOT UI
+     ================================================================ */
+
+  setupTvNavigation() {
+    // Sincroniza classes visuais de foco (.tv-focused)
+    document.addEventListener('focusin', (e) => {
+      document.querySelectorAll('.tv-focused').forEach(el => {
+        if (el !== e.target) el.classList.remove('tv-focused');
+      });
+      if (e.target && e.target.classList) {
+        e.target.classList.add('tv-focused');
+      }
+    });
+
+    document.addEventListener('focusout', (e) => {
+      if (e.target && e.target.classList) {
+        e.target.classList.remove('tv-focused');
+      }
+    });
+
+    // Manipulador Global de Navegação Direcional
+    window.addEventListener('keydown', (e) => {
+      // 1. Se o player de vídeo estiver aberto, delega 100% para o player.js
+      if (this.player && this.player.overlay && this.player.overlay.classList.contains('open')) {
+        return;
+      }
+
+      const key = e.key;
+      const navKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', 'Escape', 'Backspace'];
+      if (!navKeys.includes(key)) return;
+
+      // 2. Modal do Trailer Oficial aberto
+      const trailerModal = document.getElementById('trailerModal');
+      if (trailerModal && trailerModal.classList.contains('active')) {
+        if (key === 'Escape' || key === 'Backspace') {
+          e.preventDefault();
+          const closeBtn = document.getElementById('trailerCloseBtn');
+          if (closeBtn) closeBtn.click();
+        }
+        return;
+      }
+
+      // 3. Modal de Perfis aberto ("Quem está assistindo?")
+      const profileModal = document.getElementById('profileModal');
+      if (profileModal && profileModal.classList.contains('active')) {
+        if (key === 'Escape' || key === 'Backspace') {
+          e.preventDefault();
+          const closeBtn = document.getElementById('profileCloseBtn');
+          const cancelBtn = document.getElementById('cancelProfileBtn');
+          const formBox = document.getElementById('profileFormBox');
+          if (formBox && formBox.style.display !== 'none' && cancelBtn) {
+            cancelBtn.click();
+          } else if (closeBtn) {
+            closeBtn.click();
+          }
+          return;
+        }
+
+        this.navigateInContainer(profileModal, key, e);
+        return;
+      }
+
+      // 4. Tela de Detalhes Dedicada (#detailsView)
+      const detailsView = document.getElementById('detailsView');
+      if (detailsView && detailsView.style.display !== 'none') {
+        if (key === 'Escape' || key === 'Backspace') {
+          e.preventDefault();
+          const backBtn = document.getElementById('detailsViewBackBtn');
+          if (backBtn) backBtn.click();
+          return;
+        }
+
+        this.navigateDetailsView(key, e);
+        return;
+      }
+
+      // 5. Navegação na Tela Principal (Home, Categorias, TV ao Vivo, Busca, Minha Lista)
+      this.navigateMainView(key, e);
+    });
+  }
+
+  navigateDetailsView(key, e) {
+    const detailsView = document.getElementById('detailsView');
+    const active = document.activeElement;
+
+    // Coleta zonas interativas na tela de detalhes
+    const topBtns = Array.from(detailsView.querySelectorAll('.details-topbar button:not([disabled])'));
+    const actionBtns = Array.from(detailsView.querySelectorAll('.details-action-buttons button:not([disabled])'));
+    const episodeCards = Array.from(detailsView.querySelectorAll('#detailsEpisodesGrid .episode-card'));
+    const sourceCards = Array.from(detailsView.querySelectorAll('#detailsSourcesGrid .stream-source-card'));
+    const castCards = Array.from(detailsView.querySelectorAll('#detailsCastGrid .details-cast-card'));
+    const similarCards = Array.from(detailsView.querySelectorAll('#detailsSimilarCarousel .media-card'));
+
+    const zones = [];
+    if (topBtns.length) zones.push({ name: 'top', items: topBtns, type: 'row' });
+    if (actionBtns.length) zones.push({ name: 'actions', items: actionBtns, type: 'row' });
+    if (episodeCards.length) zones.push({ name: 'episodes', items: episodeCards, type: 'grid' });
+    if (sourceCards.length) zones.push({ name: 'sources', items: sourceCards, type: 'grid' });
+    if (castCards.length) zones.push({ name: 'cast', items: castCards, type: 'carousel' });
+    if (similarCards.length) zones.push({ name: 'similar', items: similarCards, type: 'carousel' });
+
+    let currentZoneIndex = -1;
+    let currentItemIndex = -1;
+
+    for (let z = 0; z < zones.length; z++) {
+      const idx = zones[z].items.indexOf(active);
+      if (idx !== -1) {
+        currentZoneIndex = z;
+        currentItemIndex = idx;
+        break;
+      }
+    }
+
+    if (currentZoneIndex === -1) {
+      if (['ArrowDown', 'ArrowUp', 'ArrowRight', 'ArrowLeft'].includes(key)) {
+        e.preventDefault();
+        const initial = actionBtns[0] || topBtns[0];
+        if (initial) {
+          initial.focus();
+          initial.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+      return;
+    }
+
+    const currentZone = zones[currentZoneIndex];
+
+    if (key === 'ArrowRight') {
+      e.preventDefault();
+      if (currentItemIndex < currentZone.items.length - 1) {
+        const next = currentZone.items[currentItemIndex + 1];
+        next.focus();
+        next.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      }
+    } else if (key === 'ArrowLeft') {
+      e.preventDefault();
+      if (currentItemIndex > 0) {
+        const prev = currentZone.items[currentItemIndex - 1];
+        prev.focus();
+        prev.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      }
+    } else if (key === 'ArrowDown') {
+      e.preventDefault();
+      if (currentZoneIndex < zones.length - 1) {
+        const nextZone = zones[currentZoneIndex + 1];
+        const targetIndex = Math.min(currentItemIndex, nextZone.items.length - 1);
+        const target = nextZone.items[targetIndex >= 0 ? targetIndex : 0];
+        if (target) {
+          target.focus();
+          target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+    } else if (key === 'ArrowUp') {
+      e.preventDefault();
+      if (currentZoneIndex > 0) {
+        const prevZone = zones[currentZoneIndex - 1];
+        const targetIndex = Math.min(currentItemIndex, prevZone.items.length - 1);
+        const target = prevZone.items[targetIndex >= 0 ? targetIndex : 0];
+        if (target) {
+          target.focus();
+          target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+    } else if (key === 'Enter') {
+      if (active && typeof active.click === 'function') {
+        active.click();
+      }
+    }
+  }
+
+  navigateMainView(key, e) {
+    const active = document.activeElement;
+    const isLiveTab = this.currentTab === 'live';
+    const isSearchTab = this.currentTab === 'search' || document.getElementById('searchContainer').style.display !== 'none';
+
+    // 1. Zona Navbar
+    const navItems = Array.from(document.querySelectorAll('.navbar .nav-item, #searchInput, #profileBtn'));
+
+    // 2. Zona Hero Banner
+    const heroSection = document.getElementById('heroSection');
+    const heroVisible = heroSection && heroSection.style.display !== 'none';
+    const heroBtns = heroVisible
+      ? Array.from(heroSection.querySelectorAll('#heroPlayBtn, #heroInfoBtn'))
+      : [];
+
+    // 3. Zona Barra de Categorias
+    const catWrapper = document.getElementById('categoriesBarWrapper');
+    const catVisible = catWrapper && catWrapper.style.display !== 'none';
+    const catCards = catVisible
+      ? Array.from(catWrapper.querySelectorAll('.cat-card'))
+      : [];
+
+    // 4. Zonas de Conteúdo
+    const contentZones = [];
+
+    if (isLiveTab) {
+      const catPills = Array.from(document.querySelectorAll('#liveCategoryPills .category-pill'));
+      if (catPills.length) contentZones.push({ el: document.getElementById('liveCategoryPills'), items: catPills, type: 'carousel' });
+
+      const channels = Array.from(document.querySelectorAll('#liveChannelsGrid .channel-card'));
+      if (channels.length) contentZones.push({ el: document.getElementById('liveChannelsGrid'), items: channels, type: 'grid' });
+    } else if (isSearchTab) {
+      const searchItems = Array.from(document.querySelectorAll('#searchGrid .media-card'));
+      if (searchItems.length) contentZones.push({ el: document.getElementById('searchGrid'), items: searchItems, type: 'grid' });
+    } else {
+      // Continuar Assistindo (se presente)
+      const continueSection = document.getElementById('continueWatchingSection');
+      if (continueSection && continueSection.style.display !== 'none') {
+        const contItems = Array.from(continueSection.querySelectorAll('.continue-card'));
+        if (contItems.length) contentZones.push({ el: continueSection, items: contItems, type: 'carousel' });
+      }
+
+      // Carrosséis verticais de filmes, séries e coleções
+      const sections = Array.from(document.querySelectorAll('#sectionsContainer .media-section'));
+      sections.forEach(sec => {
+        if (sec.id === 'continueWatchingSection') return;
+        if (sec.style.display === 'none') return;
+        const items = Array.from(sec.querySelectorAll('.media-carousel .media-card'));
+        if (items.length) {
+          contentZones.push({ el: sec, items, type: 'carousel' });
+        }
+      });
+    }
+
+    const allZones = [];
+    if (navItems.length) allZones.push({ name: 'navbar', items: navItems, type: 'row' });
+    if (heroBtns.length) allZones.push({ name: 'hero', items: heroBtns, type: 'row' });
+    if (catCards.length) allZones.push({ name: 'categories', items: catCards, type: 'carousel' });
+    contentZones.forEach(cz => allZones.push({ name: 'content', el: cz.el, items: cz.items, type: cz.type }));
+
+    let currentZoneIndex = -1;
+    let currentItemIndex = -1;
+
+    for (let z = 0; z < allZones.length; z++) {
+      const idx = allZones[z].items.indexOf(active);
+      if (idx !== -1) {
+        currentZoneIndex = z;
+        currentItemIndex = idx;
+        break;
+      }
+    }
+
+    // Se nenhum item estiver focado, foca no Hero ou no primeiro card visível
+    if (currentZoneIndex === -1) {
+      if (['ArrowDown', 'ArrowUp', 'ArrowRight', 'ArrowLeft'].includes(key)) {
+        e.preventDefault();
+        const initial = heroBtns[0] || (allZones[3] ? allZones[3].items[0] : navItems[0]);
+        if (initial) {
+          initial.focus();
+          initial.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+      return;
+    }
+
+    const currentZone = allZones[currentZoneIndex];
+
+    // Escape / Backspace: Volta para o Início ou Topo
+    if (key === 'Escape' || key === 'Backspace') {
+      if (this.currentTab !== 'home') {
+        e.preventDefault();
+        this.switchTab('home');
+      } else if (currentZoneIndex > 1) {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        if (heroBtns[0]) heroBtns[0].focus();
+        else navItems[0].focus();
+      }
+      return;
+    }
+
+    // Enter: Selecionar / Executar
+    if (key === 'Enter') {
+      if (active && typeof active.click === 'function') {
+        active.click();
+      }
+      return;
+    }
+
+    // Navegação Horizontal (Seta Esquerda / Seta Direita)
+    if (key === 'ArrowRight') {
+      e.preventDefault();
+      if (currentItemIndex < currentZone.items.length - 1) {
+        const next = currentZone.items[currentItemIndex + 1];
+        next.focus();
+        next.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      }
+    } else if (key === 'ArrowLeft') {
+      e.preventDefault();
+      if (currentItemIndex > 0) {
+        const prev = currentZone.items[currentItemIndex - 1];
+        prev.focus();
+        prev.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      }
+    }
+    // Navegação Vertical (Seta Baixo / Seta Cima entre Carrosséis)
+    else if (key === 'ArrowDown') {
+      e.preventDefault();
+      if (currentZone.type === 'grid') {
+        const cols = this.calcGridColumns(currentZone.items);
+        const nextIndex = currentItemIndex + cols;
+        if (nextIndex < currentZone.items.length) {
+          const target = currentZone.items[nextIndex];
+          target.focus();
+          target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return;
+        }
+      }
+
+      if (currentZoneIndex < allZones.length - 1) {
+        const nextZone = allZones[currentZoneIndex + 1];
+        const targetIndex = this.findClosestHorizontalIndex(currentZone.items[currentItemIndex], nextZone.items);
+        const target = nextZone.items[targetIndex];
+        if (target) {
+          target.focus();
+          target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+    } else if (key === 'ArrowUp') {
+      e.preventDefault();
+      if (currentZone.type === 'grid') {
+        const cols = this.calcGridColumns(currentZone.items);
+        const prevIndex = currentItemIndex - cols;
+        if (prevIndex >= 0) {
+          const target = currentZone.items[prevIndex];
+          target.focus();
+          target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return;
+        }
+      }
+
+      if (currentZoneIndex > 0) {
+        const prevZone = allZones[currentZoneIndex - 1];
+        const targetIndex = this.findClosestHorizontalIndex(currentZone.items[currentItemIndex], prevZone.items);
+        const target = prevZone.items[targetIndex];
+        if (target) {
+          target.focus();
+          target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+  }
+
+  calcGridColumns(items) {
+    if (!items || items.length < 2) return 1;
+    const firstTop = items[0].getBoundingClientRect().top;
+    for (let i = 1; i < items.length; i++) {
+      if (Math.abs(items[i].getBoundingClientRect().top - firstTop) > 10) {
+        return i;
+      }
+    }
+    return items.length;
+  }
+
+  findClosestHorizontalIndex(currentEl, targetItems) {
+    if (!currentEl || !targetItems || targetItems.length === 0) return 0;
+    const curRect = currentEl.getBoundingClientRect();
+    const curCenterX = curRect.left + curRect.width / 2;
+
+    let closestIndex = 0;
+    let minDistance = Infinity;
+
+    for (let i = 0; i < targetItems.length; i++) {
+      const r = targetItems[i].getBoundingClientRect();
+      const centerX = r.left + r.width / 2;
+      const dist = Math.abs(curCenterX - centerX);
+      if (dist < minDistance) {
+        minDistance = dist;
+        closestIndex = i;
+      }
+    }
+
+    return closestIndex;
+  }
+
+  navigateInContainer(containerEl, key, e) {
+    const focusable = Array.from(containerEl.querySelectorAll('button:not([disabled]), input, .profile-avatar-choice, .profile-card, [tabindex="0"]'))
+      .filter(el => el.offsetParent !== null);
+    if (!focusable.length) return;
+
+    const active = document.activeElement;
+    const idx = focusable.indexOf(active);
+
+    if (key === 'ArrowRight' || key === 'ArrowDown') {
+      e.preventDefault();
+      const next = idx < focusable.length - 1 ? focusable[idx + 1] : focusable[0];
+      next.focus();
+    } else if (key === 'ArrowLeft' || key === 'ArrowUp') {
+      e.preventDefault();
+      const prev = idx > 0 ? focusable[idx - 1] : focusable[focusable.length - 1];
+      prev.focus();
+    } else if (key === 'Enter') {
+      if (active && typeof active.click === 'function') {
+        active.click();
+      }
+    }
   }
 
   switchTab(tab) {
@@ -417,6 +848,7 @@ class HomeFlixApp {
       const pct = item.duration > 0 ? (item.position / item.duration) * 100 : 0;
       const card = document.createElement('div');
       card.className = 'media-card continue-card';
+      card.setAttribute('tabindex', '0');
       const bgImg = item.backdrop_path 
         ? `https://image.tmdb.org/t/p/w500${item.backdrop_path}`
         : (item.poster_path ? `https://image.tmdb.org/t/p/w500${item.poster_path}` : '');
@@ -455,6 +887,9 @@ class HomeFlixApp {
           episode: item.episode_number
         });
       };
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') card.click();
+      });
 
       carousel.appendChild(card);
     });
@@ -727,6 +1162,7 @@ class HomeFlixApp {
         (sData?.episodes || []).forEach(ep => {
           const epRow = document.createElement('div');
           epRow.className = 'episode-card';
+          epRow.setAttribute('tabindex', '0');
           const epThumb = ep.still_path 
             ? `https://image.tmdb.org/t/p/w300${ep.still_path}`
             : poster;
@@ -749,6 +1185,9 @@ class HomeFlixApp {
             currentEpisode = ep.episode_number;
             this.fetchAndPlay(mediaType, tmdbId, title, details, currentSeason, currentEpisode, ep.name);
           };
+          epRow.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') epRow.click();
+          });
 
           episodesGrid.appendChild(epRow);
         });
@@ -776,6 +1215,7 @@ class HomeFlixApp {
 
         const card = document.createElement('div');
         card.className = 'media-card';
+        card.setAttribute('tabindex', '0');
         card.innerHTML = `
           <img class="media-card-poster" src="https://image.tmdb.org/t/p/w342${rec.poster_path}" alt="${rTitle}" loading="lazy" />
           <div class="media-card-info">
@@ -789,6 +1229,9 @@ class HomeFlixApp {
         card.onclick = () => {
           this.openMediaDetails(mediaType, rec.id);
         };
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') card.click();
+        });
         similarCarousel.appendChild(card);
       });
     } else {
@@ -1077,6 +1520,7 @@ class HomeFlixApp {
     items.forEach(item => {
       const card = document.createElement('div');
       card.className = 'media-card';
+      card.setAttribute('tabindex', '0');
       card.innerHTML = `
         <img class="media-card-poster" src="https://image.tmdb.org/t/p/w342${item.poster_path}" alt="${item.title}" loading="lazy" />
         <div class="media-card-info">
@@ -1088,6 +1532,9 @@ class HomeFlixApp {
         </div>
       `;
       card.onclick = () => this.openMediaDetails(item.media_type, item.media_id);
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') card.click();
+      });
       grid.appendChild(card);
     });
   }
@@ -1130,6 +1577,7 @@ class HomeFlixApp {
 
       const card = document.createElement('div');
       card.className = 'media-card';
+      card.setAttribute('tabindex', '0');
       card.innerHTML = `
         <img class="media-card-poster" src="https://image.tmdb.org/t/p/w342${item.poster_path}" alt="${title}" loading="lazy" />
         <div class="media-card-info">
@@ -1141,6 +1589,9 @@ class HomeFlixApp {
         </div>
       `;
       card.onclick = () => this.openMediaDetails(mediaType, item.id);
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') card.click();
+      });
       grid.appendChild(card);
     });
   }

@@ -2,6 +2,7 @@ from fastapi import APIRouter, Query, HTTPException
 from pydantic import BaseModel
 from typing import Optional
 from app import database
+from app.services import cloud_sync_service
 
 router = APIRouter(prefix="/api", tags=["Progress & Favorites"])
 
@@ -33,6 +34,7 @@ def get_continue_watching(profile_id: int = Query(...)):
 @router.delete("/progress/{profile_id}/{media_id}")
 def delete_continue_watching(profile_id: int, media_id: str):
     database.delete_progress(profile_id, media_id)
+    cloud_sync_service.schedule_cloud_upload(delay_seconds=1.0)
     return {"status": "ok"}
 
 @router.post("/progress/save")
@@ -50,6 +52,8 @@ def save_progress(data: ProgressSave):
         episode_number=data.episode_number or 1,
         episode_title=data.episode_title
     )
+    # Agenda sincronização para o Supabase sem bloquear a resposta do heartbeat
+    cloud_sync_service.schedule_cloud_upload(delay_seconds=6.0)
     return res
 
 @router.get("/progress/media")
@@ -72,8 +76,20 @@ def toggle_favorite(data: FavoriteToggle):
         poster_path=data.poster_path,
         vote_average=data.vote_average or 0.0
     )
+    cloud_sync_service.schedule_cloud_upload(delay_seconds=1.5)
     return res
 
 @router.get("/favorites")
 def get_favorites(profile_id: int = Query(...)):
     return {"results": database.get_favorites(profile_id)}
+
+@router.post("/cloud/sync")
+def trigger_cloud_sync():
+    """Força sincronização bidirecional entre o SQLite e o Supabase Storage."""
+    return cloud_sync_service.sync_bidirectional()
+
+@router.get("/cloud/status")
+def get_cloud_status():
+    """Retorna o status atual da sincronização com o Supabase Storage."""
+    return cloud_sync_service.get_sync_status()
+

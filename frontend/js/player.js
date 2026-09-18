@@ -16,6 +16,14 @@ class HomeFlixPlayer {
     this.sourceSelector = document.getElementById('playerSourceSelect');
     this.cinemaWarning = document.getElementById('playerCinemaWarning');
 
+    // Elementos de Legendas Externas PT-BR
+    this.subtitlesBtn = document.getElementById('playerSubtitlesBtn');
+    this.subtitlesMenu = document.getElementById('playerSubtitlesMenu');
+    this.subtitlesCloseBtn = document.getElementById('playerSubtitlesCloseBtn');
+    this.subtitlesTrackList = document.getElementById('playerSubtitlesTrackList');
+    this.availableSubtitles = [];
+    this.activeSubtitleId = 'off';
+
     // Elementos de TV ao Vivo & Zapping
     this.prevChannelBtn = document.getElementById('playerPrevChannelBtn');
     this.nextChannelBtn = document.getElementById('playerNextChannelBtn');
@@ -155,6 +163,19 @@ class HomeFlixPlayer {
       }
     });
 
+    // Legendas externas PT-BR
+    if (this.subtitlesBtn) {
+      this.subtitlesBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.toggleSubtitlesMenu();
+      });
+    }
+    if (this.subtitlesCloseBtn) {
+      this.subtitlesCloseBtn.addEventListener('click', () => {
+        this.toggleSubtitlesMenu(false);
+      });
+    }
+
     // Teclas de atalho e Controle Remoto de TV
     window.addEventListener('keydown', (e) => {
       if (!this.overlay.classList.contains('open')) return;
@@ -182,7 +203,9 @@ class HomeFlixPlayer {
       }
       // 3. Voltar / Sair
       else if (key === 'Escape' || key === 'Back' || key === 'BrowserBack') {
-        if (this.sidebar.classList.contains('open')) {
+        if (this.subtitlesMenu && this.subtitlesMenu.style.display !== 'none') {
+          this.toggleSubtitlesMenu(false);
+        } else if (this.sidebar.classList.contains('open')) {
           this.toggleSidebar(false);
         } else if (document.fullscreenElement) {
           document.exitFullscreen().catch(() => {});
@@ -190,10 +213,15 @@ class HomeFlixPlayer {
           this.close();
         }
       }
-      // 4. Teclas para Guia de Canais (C, G, L)
-      else if (this.isLive && (key === 'c' || key === 'C' || key === 'g' || key === 'G' || key === 'l' || key === 'L')) {
+      // 4. Teclas para Guia de Canais (C, G) na TV ao Vivo
+      else if (this.isLive && (key === 'c' || key === 'C' || key === 'g' || key === 'G')) {
         e.preventDefault();
         this.toggleSidebar();
+      }
+      // 4.1 Teclas para Legendas (L ou C) em VOD / Filmes e Séries
+      else if (!this.isLive && (key === 'l' || key === 'L' || key === 'c' || key === 'C')) {
+        e.preventDefault();
+        this.toggleSubtitlesMenu();
       }
       // 5. Tecla Info (I)
       else if (key === 'i' || key === 'I') {
@@ -294,6 +322,8 @@ class HomeFlixPlayer {
       this.forwardBtn.style.display = 'none';
       this.progressBar.style.display = 'none';
       this.timeDisplay.textContent = 'AO VIVO';
+      if (this.subtitlesBtn) this.subtitlesBtn.style.display = 'none';
+      if (this.subtitlesMenu) this.subtitlesMenu.style.display = 'none';
 
       // Identifica índice do canal atual
       if (options.channel) {
@@ -315,6 +345,11 @@ class HomeFlixPlayer {
       this.forwardBtn.style.display = 'flex';
       this.progressBar.style.display = 'block';
       this.liveOsd.classList.remove('show');
+      if (this.subtitlesBtn) this.subtitlesBtn.style.display = 'inline-flex';
+      if (this.subtitlesMenu) this.subtitlesMenu.style.display = 'none';
+
+      // Busca e disponibiliza legendas externas PT-BR
+      this.fetchSubtitles(options.mediaType, options.mediaId, options.season, options.episode);
     }
 
     // Aviso de imagem de cinema (CAM)
@@ -858,6 +893,8 @@ class HomeFlixPlayer {
     this.overlay.classList.remove('open');
     this.sidebar.classList.remove('open');
     if (this.liveOsd) this.liveOsd.classList.remove('show');
+    if (this.subtitlesMenu) this.subtitlesMenu.style.display = 'none';
+    this.clearSubtitles();
     if (document.fullscreenElement) {
       document.exitFullscreen().catch(() => {});
     }
@@ -867,4 +904,139 @@ class HomeFlixPlayer {
       window.app.loadRecommendations();
     }
   }
+
+  toggleSubtitlesMenu(forceState) {
+    if (!this.subtitlesMenu) return;
+    const isShowing = this.subtitlesMenu.style.display === 'block';
+    const show = forceState !== undefined ? forceState : !isShowing;
+    this.subtitlesMenu.style.display = show ? 'block' : 'none';
+    if (show) {
+      this.showControlsTemporarily();
+      const activeItem = this.subtitlesTrackList?.querySelector('.subtitles-track-item.active') ||
+                         this.subtitlesTrackList?.querySelector('.subtitles-track-item');
+      if (activeItem) activeItem.focus();
+    }
+  }
+
+  async fetchSubtitles(mediaType, tmdbId, season, episode) {
+    if (!tmdbId || this.isLive) return;
+    this.availableSubtitles = [];
+    this.renderSubtitlesMenu();
+
+    try {
+      const url = `/api/subtitles/${mediaType}/${tmdbId}?season=${season || 1}&episode=${episode || 1}`;
+      const res = await fetch(url);
+      if (res.ok) {
+        const data = await res.json();
+        this.availableSubtitles = data.subtitles || [];
+        this.renderSubtitlesMenu();
+
+        // Se o título não for dublado em português, auto-seleciona a melhor legenda PT-BR
+        const isDubbed = this.currentMedia?.streams?.some(s => s.audio && (s.audio.includes('Dublado') || s.audio.includes('Português')));
+        if (!isDubbed && this.availableSubtitles.length > 0 && this.activeSubtitleId === 'off') {
+          const ptSub = this.availableSubtitles.find(s => s.is_pt);
+          if (ptSub) {
+            this.selectSubtitle(ptSub.id, false);
+          }
+        }
+      }
+    } catch (err) {
+      console.warn('[Player] Falha ao carregar legendas externas:', err);
+    }
+  }
+
+  renderSubtitlesMenu() {
+    if (!this.subtitlesTrackList) return;
+    this.subtitlesTrackList.innerHTML = '';
+
+    // Opção 1: Desativado
+    const offItem = document.createElement('div');
+    offItem.className = `subtitles-track-item ${this.activeSubtitleId === 'off' ? 'active' : ''}`;
+    offItem.setAttribute('tabindex', '0');
+    offItem.innerHTML = `
+      <span class="sub-track-indicator">${this.activeSubtitleId === 'off' ? '✓' : ''}</span>
+      <span class="sub-track-label">Desativado</span>
+    `;
+    offItem.addEventListener('click', () => {
+      this.selectSubtitle('off');
+      this.toggleSubtitlesMenu(false);
+    });
+    offItem.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { offItem.click(); }
+    });
+    this.subtitlesTrackList.appendChild(offItem);
+
+    // Opções: Legendas encontradas
+    this.availableSubtitles.forEach(sub => {
+      const item = document.createElement('div');
+      const isSelected = String(this.activeSubtitleId) === String(sub.id);
+      item.className = `subtitles-track-item ${isSelected ? 'active' : ''}`;
+      item.setAttribute('tabindex', '0');
+      item.innerHTML = `
+        <span class="sub-track-indicator">${isSelected ? '✓' : ''}</span>
+        <div class="sub-track-info">
+          <span class="sub-track-label">${sub.label}</span>
+          ${sub.is_pt ? '<span class="sub-track-badge">PT-BR</span>' : ''}
+        </div>
+      `;
+      item.addEventListener('click', () => {
+        this.selectSubtitle(String(sub.id));
+        this.toggleSubtitlesMenu(false);
+      });
+      item.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { item.click(); }
+      });
+      this.subtitlesTrackList.appendChild(item);
+    });
+  }
+
+  selectSubtitle(subId, showToast = true) {
+    this.activeSubtitleId = subId;
+    this.clearSubtitles();
+
+    if (subId === 'off') {
+      if (showToast) this.showToastNotice('💬 Legendas desativadas');
+      this.renderSubtitlesMenu();
+      if (this.subtitlesBtn) this.subtitlesBtn.classList.remove('active');
+      return;
+    }
+
+    const sub = this.availableSubtitles.find(s => String(s.id) === String(subId));
+    if (!sub) return;
+
+    // Cria elemento <track> com WebVTT PT-BR
+    const track = document.createElement('track');
+    track.kind = 'subtitles';
+    track.label = sub.label;
+    track.srclang = sub.lang || 'pt';
+    track.src = sub.vtt_url;
+    track.default = true;
+
+    this.video.appendChild(track);
+
+    track.addEventListener('load', () => {
+      if (track.track) {
+        track.track.mode = 'showing';
+      }
+    });
+
+    setTimeout(() => {
+      for (let i = 0; i < this.video.textTracks.length; i++) {
+        this.video.textTracks[i].mode = 'showing';
+      }
+    }, 80);
+
+    if (this.subtitlesBtn) this.subtitlesBtn.classList.add('active');
+    if (showToast) this.showToastNotice(`💬 Legenda: ${sub.label}`);
+    this.renderSubtitlesMenu();
+  }
+
+  clearSubtitles() {
+    const existingTracks = this.video.querySelectorAll('track');
+    existingTracks.forEach(t => t.remove());
+    for (let i = 0; i < this.video.textTracks.length; i++) {
+      this.video.textTracks[i].mode = 'disabled';
+    }
+  }
 }
+

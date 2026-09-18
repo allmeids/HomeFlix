@@ -4,7 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HomeFlix — Seu Cinema & TV ao Vivo Pessoal</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22%20width=%22100%22%20height=%22100%22><text y=%22.9em%22 font-size=%2290%22>🎬</text></svg>">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0e0e10">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="HomeFlix">
+  <link rel="apple-touch-icon" href="/static/icons/icon-192.png">
+  <link rel="icon" href="/static/icons/icon-192.png">
   <link rel="stylesheet" href="/static/css/style.css">
   <!-- HLS.js para streaming HLS/m3u8 no navegador -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
@@ -535,8 +541,23 @@
 
         <div class="controls-right">
           <button class="ctrl-btn live-btn-guide" id="playerChannelGuideBtn" title="Guia de Canais (C)">📋 Canais (C)</button>
+          <button class="ctrl-btn" id="playerSubtitlesBtn" title="Legendas e Faixas de Áudio (CC / L)">💬 CC</button>
           <select id="playerSourceSelect" style="background: rgba(0,0,0,0.7); color:#fff; border:1px solid rgba(255,255,255,0.3); border-radius:6px; padding:6px 12px; font-size:12px;"></select>
           <button class="ctrl-btn" id="playerFullscreenBtn" title="Tela Cheia (F)">⛶</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Menu Pop-up de Legendas Externas PT-BR -->
+    <div class="player-subtitles-menu" id="playerSubtitlesMenu" style="display: none;">
+      <div class="subtitles-menu-header">
+        <div class="subtitles-menu-title">💬 Legendas PT-BR & Áudio</div>
+        <button class="subtitles-close-btn" id="playerSubtitlesCloseBtn" title="Fechar (ESC)">✕</button>
+      </div>
+      <div class="subtitles-track-list" id="playerSubtitlesTrackList">
+        <div class="subtitles-track-item active" data-track-id="off">
+          <span class="sub-track-indicator">✓</span>
+          <span class="sub-track-label">Desativado</span>
         </div>
       </div>
     </div>
