@@ -455,12 +455,23 @@ class HomeFlixApp {
     if (playBtn) playBtn.textContent = '▶ Assistir Agora';
 
     const streams = resolved?.streams || [];
-    const bestStream = resolved?.best_stream || (streams.length > 0 ? streams[0] : null);
+    let bestStream = resolved?.best_stream || (streams.length > 0 ? streams[0] : null);
     const isCinema = !!resolved?.is_cinema_version || (bestStream && bestStream.is_cinema);
 
     if (!bestStream) {
       alert('Nenhuma fonte de reprodução disponível no momento para este título.');
       return;
+    }
+
+    // Se o navegador não suporta HEVC (ex: Google Chrome no Linux), evita auto-selecionar 4K que causa tela preta
+    const canPlayHevc = this.player ? this.player.isHevcSupported() : false;
+    if (!canPlayHevc && bestStream.quality && bestStream.quality.includes('4K')) {
+      const compatible1080 = streams.find(s => !s.quality.includes('4K') && s.audio === bestStream.audio)
+                          || streams.find(s => !s.quality.includes('4K'));
+      if (compatible1080) {
+        console.log('[HomeFlix] 4K HEVC não suportado neste navegador. Auto-selecionando Full HD compatível:', compatible1080.label);
+        bestStream = compatible1080;
+      }
     }
 
     // Fecha o modal e inicia o player instantaneamente com o melhor servidor

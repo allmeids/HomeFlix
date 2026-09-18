@@ -130,12 +130,17 @@ class HomeFlixPlayer {
 
     // Popula seletor de qualidade/fontes
     this.sourceSelector.innerHTML = '';
+    const hevcSupported = this.isHevcSupported();
     if (this.sources.length > 0) {
       this.sourceSelector.style.display = 'block';
       this.sources.forEach(s => {
         const opt = document.createElement('option');
         opt.value = s.url;
-        opt.textContent = `${s.quality} • ${s.audio}`;
+        let suffix = '';
+        if (!hevcSupported && s.quality && s.quality.includes('4K')) {
+          suffix = ' ⚠️ (Requer TV/Win)';
+        }
+        opt.textContent = `${s.quality} • ${s.audio}${suffix}`;
         if (s.url === options.currentStreamUrl) opt.selected = true;
         this.sourceSelector.appendChild(opt);
       });
@@ -151,6 +156,36 @@ class HomeFlixPlayer {
     }
 
     this.loadStream(startUrl, options.initialTime || 0);
+  }
+
+  isHevcSupported() {
+    if (this._hevcSupported !== undefined) return this._hevcSupported;
+    const testEl = document.createElement('video');
+    const hevc1 = testEl.canPlayType('video/mp4; codecs="hev1.1.6.L93.B0"');
+    const hevc2 = testEl.canPlayType('video/mp4; codecs="hvc1.1.6.L93.B0"');
+    this._hevcSupported = (hevc1 === 'probably' || hevc1 === 'maybe' || hevc2 === 'probably' || hevc2 === 'maybe');
+    return this._hevcSupported;
+  }
+
+  showNotice(msg, duration = 6000) {
+    let notice = document.getElementById('playerCodecNotice');
+    if (!notice) {
+      notice = document.createElement('div');
+      notice.id = 'playerCodecNotice';
+      notice.className = 'cinema-warning-banner';
+      notice.style.background = 'rgba(20, 20, 20, 0.95)';
+      notice.style.border = '1px solid #e50914';
+      notice.style.top = '130px';
+      this.overlay.appendChild(notice);
+    }
+    notice.innerHTML = `<span>⚡</span><span>${msg}</span>`;
+    notice.style.display = 'flex';
+    notice.style.opacity = '1';
+    clearTimeout(this.noticeTimer);
+    this.noticeTimer = setTimeout(() => {
+      notice.style.opacity = '0';
+      setTimeout(() => { if (notice) notice.style.display = 'none'; }, 500);
+    }, duration);
   }
 
   loadStream(url, resumeTime = 0) {
@@ -206,7 +241,30 @@ class HomeFlixPlayer {
     } else {
       // Direct MP4 ou Safari nativo HLS
       this.video.src = url;
+
+      this.video.onerror = () => {
+        console.warn('[Player] Erro de mídia ao reproduzir stream:', this.video.error);
+        const fallback = this.sources.find(s => s.url !== url && (!s.quality.includes('4K') || this.isHevcSupported()));
+        if (fallback) {
+          this.showNotice('⚠️ Erro ao reproduzir stream. Alternando para servidor compatível...');
+          this.sourceSelector.value = fallback.url;
+          this.loadStream(fallback.url, resumeTime);
+        }
+      };
+
       this.video.onloadedmetadata = () => {
+        // Se a resolução for 0x0, o navegador leu o container MP4 mas não suporta o codec de vídeo (ex: 4K HEVC no Chrome Linux)
+        if (!this.isLive && this.video.videoWidth === 0 && this.video.videoHeight === 0) {
+          console.warn('[Player] Dimensões 0x0 detectadas (codec HEVC incompatível com este navegador). Buscando alternativa...');
+          const fallback = this.sources.find(s => s.url !== url && (!s.quality.includes('4K') || this.isHevcSupported()));
+          if (fallback) {
+            this.showNotice('ℹ️ Stream 4K HEVC não suportado neste navegador. Alternando para 1080p Full HD...');
+            this.sourceSelector.value = fallback.url;
+            this.loadStream(fallback.url, resumeTime);
+            return;
+          }
+        }
+
         if (resumeTime > 0 && !this.isLive) {
           this.video.currentTime = resumeTime;
         }
