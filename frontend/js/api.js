@@ -25,34 +25,43 @@ const API = {
     return data?.results || [];
   },
 
-  async getPopularMovies() {
-    const data = await this.request('/api/media/movies/popular');
+  async getPopularMovies(page = 1) {
+    const data = await this.request(`/api/media/movies/popular?page=${page}`);
     return data?.results || [];
   },
 
-  async getPopularSeries() {
-    const data = await this.request('/api/media/series/popular');
+  async getPopularSeries(page = 1) {
+    const data = await this.request(`/api/media/series/popular?page=${page}`);
     return data?.results || [];
   },
 
-  async getTopRatedMovies() {
-    const data = await this.request('/api/media/movies/top');
+  async getTopRatedMovies(page = 1) {
+    const data = await this.request(`/api/media/movies/top?page=${page}`);
     return data?.results || [];
   },
 
-  async getTopRatedSeries() {
-    const data = await this.request('/api/media/series/top');
+  async getTopRatedSeries(page = 1) {
+    const data = await this.request(`/api/media/series/top?page=${page}`);
     return data?.results || [];
   },
 
-  async getNowPlaying() {
-    const data = await this.request('/api/media/now-playing');
+  async getNowPlaying(page = 1) {
+    const data = await this.request(`/api/media/now-playing?page=${page}`);
     return data?.results || [];
   },
 
-  async getAnimes() {
-    const data = await this.request('/api/media/animes');
+  async getAnimes(page = 1) {
+    const data = await this.request(`/api/media/animes?page=${page}`);
     return data?.results || [];
+  },
+
+  async getRecommendations(profileId) {
+    const data = await this.request(`/api/media/recommendations?profile_id=${profileId}`);
+    return data?.results || [];
+  },
+
+  async getCategoryItems(categoryKey, page = 1) {
+    return await this.request(`/api/media/category/${categoryKey}?page=${page}`);
   },
 
   async getMediaDetails(mediaType, tmdbId) {
@@ -78,8 +87,9 @@ const API = {
   },
 
   // Live TV
-  async getLiveChannels() {
-    return await this.request('/api/live/channels');
+  async getLiveChannels(refresh = false) {
+    const url = refresh ? '/api/live/channels?refresh=true' : '/api/live/channels';
+    return await this.request(url);
   },
 
   // Perfis
@@ -93,6 +103,20 @@ const API = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, avatar })
+    });
+  },
+
+  async updateProfile(profileId, name, avatar) {
+    return await this.request(`/api/profiles/${profileId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, avatar })
+    });
+  },
+
+  async deleteProfile(profileId) {
+    return await this.request(`/api/profiles/${profileId}`, {
+      method: 'DELETE'
     });
   },
 

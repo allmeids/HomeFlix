@@ -133,6 +133,8 @@ def get_live_channels(force_refresh: bool = False) -> Dict[str, Any]:
                     episode_title = ep.get("name") or ""
                     synopsis = ep.get("description") or synopsis
 
+                    time_range = ""
+                    next_show = ""
                     try:
                         start_time = datetime.datetime.fromisoformat(tl.get("start").replace("Z", "+00:00"))
                         stop_time = datetime.datetime.fromisoformat(tl.get("stop").replace("Z", "+00:00"))
@@ -140,6 +142,19 @@ def get_live_channels(force_refresh: bool = False) -> Dict[str, Any]:
                         elapsed_sec = (now_utc - start_time).total_seconds()
                         if total_sec > 0:
                             progress_pct = max(5, min(95, int((elapsed_sec / total_sec) * 100)))
+
+                        # Converter para fuso horário local
+                        local_tz = datetime.datetime.now().astimezone().tzinfo
+                        start_local = start_time.astimezone(local_tz)
+                        stop_local = stop_time.astimezone(local_tz)
+                        time_range = f"{start_local.strftime('%H:%M')} - {stop_local.strftime('%H:%M')}"
+
+                        if len(timelines) > 1:
+                            next_tl = timelines[1]
+                            next_title = next_tl.get("title") or ""
+                            if next_title:
+                                next_start = datetime.datetime.fromisoformat(next_tl.get("start").replace("Z", "+00:00")).astimezone(local_tz)
+                                next_show = f"A seguir: {next_title} ({next_start.strftime('%H:%M')})"
                     except Exception:
                         progress_pct = 40
 
@@ -154,6 +169,8 @@ def get_live_channels(force_refresh: bool = False) -> Dict[str, Any]:
                     "summary": synopsis,
                     "current_show": current_show,
                     "episode_title": episode_title,
+                    "time_range": time_range,
+                    "next_show": next_show,
                     "progress_pct": progress_pct,
                     "logo": logo,
                     "featured_image": featured_image,

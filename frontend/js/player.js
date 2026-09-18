@@ -3,6 +3,7 @@ class HomeFlixPlayer {
     this.overlay = document.getElementById('playerOverlay');
     this.video = document.getElementById('videoPlayer');
     this.titleDisplay = document.getElementById('playerTitle');
+    this.subtitleDisplay = document.getElementById('playerSubtitle');
     this.playBtn = document.getElementById('playPauseBtn');
     this.progressBar = document.getElementById('playerProgressBar');
     this.progressFill = document.getElementById('playerProgressCurrent');
@@ -15,13 +16,52 @@ class HomeFlixPlayer {
     this.sourceSelector = document.getElementById('playerSourceSelect');
     this.cinemaWarning = document.getElementById('playerCinemaWarning');
 
+    // Elementos de TV ao Vivo & Zapping
+    this.prevChannelBtn = document.getElementById('playerPrevChannelBtn');
+    this.nextChannelBtn = document.getElementById('playerNextChannelBtn');
+    this.guideBtn = document.getElementById('playerChannelGuideBtn');
+    this.guideBtnTop = document.getElementById('playerToggleSidebarBtnTop');
+    this.sidebar = document.getElementById('playerChannelsSidebar');
+    this.sidebarCloseBtn = document.getElementById('playerSidebarCloseBtn');
+    this.sidebarOpenTab = document.getElementById('playerSidebarOpenTab');
+    this.sidebarChannelsList = document.getElementById('playerSidebarChannelsList');
+    this.sidebarCategories = document.getElementById('playerSidebarCategories');
+    this.sidebarSearch = document.getElementById('sidebarChannelSearch');
+
+    // EPG OSD Banner & Indicador Numérico
+    this.liveOsd = document.getElementById('playerLiveOsd');
+    this.osdLogoWrap = document.getElementById('liveOsdLogoWrap');
+    this.osdChannelBadge = document.getElementById('liveOsdChannelBadge');
+    this.osdChannelName = document.getElementById('liveOsdChannelName');
+    this.osdShowTitle = document.getElementById('liveOsdShowTitle');
+    this.osdShowDesc = document.getElementById('liveOsdShowDesc');
+    this.osdTimeRange = document.getElementById('liveOsdTimeRange');
+    this.osdProgressBar = document.getElementById('liveOsdProgressBar');
+    this.osdNextShow = document.getElementById('liveOsdNextShow');
+
+    this.numberIndicator = document.getElementById('playerChannelNumberIndicator');
+    this.numberValue = document.getElementById('playerChannelNumberValue');
+
     this.hls = null;
     this.heartbeatTimer = null;
     this.hideControlsTimer = null;
     this.cinemaWarningTimer = null;
+    this.osdTimer = null;
+    this.numberInputTimer = null;
+    this.currentDigits = '';
+
     this.currentMedia = null;
     this.sources = [];
+    this.failedUrls = new Set();
+    this.stallWatchdogTimer = null;
+    this.noticeTimer = null;
     this.isLive = false;
+    this.liveChannels = [];
+    this.currentChannelIndex = 0;
+    this.activeSidebarCategory = 'Todos';
+
+    this.spinner = document.getElementById('playerSpinner');
+    this.spinnerText = document.getElementById('playerSpinnerText');
 
     this.initListeners();
   }
@@ -29,7 +69,14 @@ class HomeFlixPlayer {
   initListeners() {
     // Play / Pause
     this.playBtn.addEventListener('click', () => this.togglePlay());
-    this.video.addEventListener('click', () => this.togglePlay());
+    this.video.addEventListener('click', (e) => {
+      // Se clicou fora dos controles, fecha a sidebar se estiver aberta ou alterna play
+      if (this.sidebar.classList.contains('open')) {
+        this.toggleSidebar(false);
+      } else {
+        this.togglePlay();
+      }
+    });
 
     // Atualização de tempo e progresso
     this.video.addEventListener('timeupdate', () => this.onTimeUpdate());
@@ -41,17 +88,32 @@ class HomeFlixPlayer {
       this.playBtn.innerHTML = '▶';
       this.stopHeartbeat();
       this.syncProgress();
+      this.hideSpinner();
     });
+
+    // Eventos de buffer e fluidez visual
+    this.video.addEventListener('waiting', () => this.showSpinner('Carregando transmissão...'));
+    this.video.addEventListener('seeking', () => this.showSpinner('Buscando ponto do vídeo...'));
+    this.video.addEventListener('canplay', () => this.hideSpinner());
+    this.video.addEventListener('playing', () => {
+      this.hideSpinner();
+      this.clearStallWatchdog();
+    });
+    this.video.addEventListener('error', (e) => this.handleMediaError(e));
 
     // Seek na barra
     this.progressBar.addEventListener('click', (e) => this.seek(e));
 
     // Pular 10s
     this.rewindBtn.addEventListener('click', () => {
-      this.video.currentTime = Math.max(0, this.video.currentTime - 10);
+      if (!this.isLive) {
+        this.video.currentTime = Math.max(0, this.video.currentTime - 10);
+      }
     });
     this.forwardBtn.addEventListener('click', () => {
-      this.video.currentTime = Math.min(this.video.duration || 0, this.video.currentTime + 10);
+      if (!this.isLive) {
+        this.video.currentTime = Math.min(this.video.duration || 0, this.video.currentTime + 10);
+      }
     });
 
     // Volume / Mudo
@@ -66,6 +128,24 @@ class HomeFlixPlayer {
     // Voltar / Fechar
     this.backBtn.addEventListener('click', () => this.close());
 
+    // Zapping / Próximo e Anterior
+    this.prevChannelBtn.addEventListener('click', () => this.prevLiveChannel());
+    this.nextChannelBtn.addEventListener('click', () => this.nextLiveChannel());
+
+    // Sidebar de Canais
+    this.guideBtn.addEventListener('click', () => this.toggleSidebar());
+    if (this.guideBtnTop) {
+      this.guideBtnTop.addEventListener('click', () => this.toggleSidebar());
+    }
+    this.sidebarCloseBtn.addEventListener('click', () => this.toggleSidebar(false));
+    this.sidebarOpenTab.addEventListener('click', () => this.toggleSidebar(true));
+
+    if (this.sidebarSearch) {
+      this.sidebarSearch.addEventListener('input', (e) => {
+        this.renderSidebarChannels(this.activeSidebarCategory, e.target.value.trim());
+      });
+    }
+
     // Seletor de fontes
     this.sourceSelector.addEventListener('change', (e) => {
       const selectedUrl = e.target.value;
@@ -75,43 +155,167 @@ class HomeFlixPlayer {
       }
     });
 
-    // Teclas de atalho (Espaço para Play/Pause, F para Fullscreen, Esc para sair)
+    // Teclas de atalho e Controle Remoto de TV
     window.addEventListener('keydown', (e) => {
       if (!this.overlay.classList.contains('open')) return;
-      if (e.key === ' ' || e.code === 'Space') {
+
+      const key = e.key;
+      const code = e.code;
+
+      // Se usuário estiver digitando no campo de busca da sidebar
+      if (document.activeElement === this.sidebarSearch) {
+        if (key === 'Escape') {
+          this.toggleSidebar(false);
+          this.video.focus();
+        }
+        return;
+      }
+
+      // 1. Play / Pause
+      if (key === ' ' || code === 'Space') {
         e.preventDefault();
         this.togglePlay();
-      } else if (e.key === 'f' || e.key === 'F') {
+      }
+      // 2. Fullscreen
+      else if (key === 'f' || key === 'F') {
         this.toggleFullscreen();
-      } else if (e.key === 'Escape') {
-        if (!document.fullscreenElement) {
+      }
+      // 3. Voltar / Sair
+      else if (key === 'Escape' || key === 'Back' || key === 'BrowserBack') {
+        if (this.sidebar.classList.contains('open')) {
+          this.toggleSidebar(false);
+        } else if (document.fullscreenElement) {
+          document.exitFullscreen().catch(() => {});
+        } else {
           this.close();
         }
-      } else if (e.key === 'ArrowLeft') {
-        this.video.currentTime = Math.max(0, this.video.currentTime - 10);
-      } else if (e.key === 'ArrowRight') {
-        this.video.currentTime = Math.min(this.video.duration || 0, this.video.currentTime + 10);
+      }
+      // 4. Teclas para Guia de Canais (C, G, L)
+      else if (this.isLive && (key === 'c' || key === 'C' || key === 'g' || key === 'G' || key === 'l' || key === 'L')) {
+        e.preventDefault();
+        this.toggleSidebar();
+      }
+      // 5. Tecla Info (I)
+      else if (key === 'i' || key === 'I') {
+        e.preventDefault();
+        this.triggerLiveOsd(true);
+      }
+      // 6. Zapping no Teclado / Controle Remoto (Seta Cima e Baixo, PageUp/PageDown, ChannelUp/ChannelDown)
+      else if (this.isLive && (key === 'ArrowUp' || key === 'PageUp' || key === 'ChannelUp')) {
+        e.preventDefault();
+        this.prevLiveChannel();
+      }
+      else if (this.isLive && (key === 'ArrowDown' || key === 'PageDown' || key === 'ChannelDown')) {
+        e.preventDefault();
+        this.nextLiveChannel();
+      }
+      // 7. Navegação VOD ou atalhos laterais
+      else if (key === 'ArrowLeft') {
+        e.preventDefault();
+        if (this.isLive) {
+          // Na TV ao vivo, Seta Esquerda abre o Guia de Canais!
+          this.toggleSidebar(true);
+        } else {
+          this.video.currentTime = Math.max(0, this.video.currentTime - 10);
+          this.showControlsTemporarily();
+        }
+      }
+      else if (key === 'ArrowRight') {
+        e.preventDefault();
+        if (this.isLive) {
+          // Na TV ao vivo, Seta Direita mostra a sinopse/OSD
+          this.triggerLiveOsd(true);
+        } else {
+          this.video.currentTime = Math.min(this.video.duration || 0, this.video.currentTime + 10);
+          this.showControlsTemporarily();
+        }
+      }
+      // 8. Entrada Numérica Direta (ex: digitou 105 para canal 105)
+      else if (this.isLive && key >= '0' && key <= '9') {
+        this.handleDigitInput(key);
+      }
+      // 9. Volume em filmes (quando não for TV ao vivo)
+      else if (!this.isLive && key === 'ArrowUp') {
+        e.preventDefault();
+        this.video.volume = Math.min(1, this.video.volume + 0.1);
+        this.showControlsTemporarily();
+      }
+      else if (!this.isLive && key === 'ArrowDown') {
+        e.preventDefault();
+        this.video.volume = Math.max(0, this.video.volume - 0.1);
+        this.showControlsTemporarily();
+      }
+      // 10. Mudo (M)
+      else if (key === 'm' || key === 'M') {
+        this.video.muted = !this.video.muted;
+        this.volumeBtn.innerHTML = this.video.muted ? '🔇' : '🔊';
       }
     });
 
-    // Auto-hide controls
-    this.overlay.addEventListener('mousemove', () => this.resetControlsTimeout());
+    // Auto-hide controls ao mexer o mouse
+    this.overlay.addEventListener('mousemove', () => {
+      this.resetControlsTimeout();
+    });
   }
 
   play(options) {
     /**
      * options = {
      *   mediaId, mediaType, title, poster, backdrop,
-     *   season, episode, episodeTitle,
-     *   initialTime, isLive, streams, currentStreamUrl
+     *   season, episode, episodeTitle, nextEpisode,
+     *   initialTime, isLive, streams, currentStreamUrl,
+     *   channel, liveChannels
      * }
      */
     this.currentMedia = options;
     this.isLive = !!options.isLive;
     this.sources = options.streams || [];
+    this.liveChannels = options.liveChannels || window.app?.channels || [];
 
-    this.titleDisplay.textContent = options.title + (options.episodeTitle ? ` - ${options.episodeTitle}` : '');
+    // Ajusta título e subtítulo
+    this.titleDisplay.textContent = options.title;
+    if (options.episodeTitle) {
+      this.subtitleDisplay.textContent = options.episodeTitle;
+      this.subtitleDisplay.style.display = 'block';
+    } else {
+      this.subtitleDisplay.style.display = 'none';
+    }
+
     this.overlay.classList.add('open');
+
+    // Configura elementos exclusivos de TV ao Vivo vs VOD
+    if (this.isLive) {
+      this.prevChannelBtn.style.display = 'flex';
+      this.nextChannelBtn.style.display = 'flex';
+      this.guideBtn.style.display = 'inline-flex';
+      if (this.guideBtnTop) this.guideBtnTop.style.display = 'inline-flex';
+      this.sidebarOpenTab.style.display = 'flex';
+      this.rewindBtn.style.display = 'none';
+      this.forwardBtn.style.display = 'none';
+      this.progressBar.style.display = 'none';
+      this.timeDisplay.textContent = 'AO VIVO';
+
+      // Identifica índice do canal atual
+      if (options.channel) {
+        this.currentChannelIndex = this.liveChannels.findIndex(c => String(c.id) === String(options.channel.id));
+        if (this.currentChannelIndex < 0) this.currentChannelIndex = 0;
+      }
+
+      this.initSidebarCategories();
+      this.renderSidebarChannels(this.activeSidebarCategory);
+      this.triggerLiveOsd(true, options.channel);
+    } else {
+      this.prevChannelBtn.style.display = 'none';
+      this.nextChannelBtn.style.display = 'none';
+      this.guideBtn.style.display = 'none';
+      if (this.guideBtnTop) this.guideBtnTop.style.display = 'none';
+      this.sidebarOpenTab.style.display = 'none';
+      this.sidebar.classList.remove('open');
+      this.rewindBtn.style.display = 'flex';
+      this.forwardBtn.style.display = 'flex';
+      this.progressBar.style.display = 'block';
+      this.liveOsd.classList.remove('show');
+    }
 
     // Aviso de imagem de cinema (CAM)
     if (this.cinemaWarning) {
@@ -128,7 +332,7 @@ class HomeFlixPlayer {
       }
     }
 
-    // Popula seletor de qualidade/fontes
+    // Popula seletor de fontes
     this.sourceSelector.innerHTML = '';
     const hevcSupported = this.isHevcSupported();
     if (this.sources.length > 0) {
@@ -138,9 +342,9 @@ class HomeFlixPlayer {
         opt.value = s.url;
         let suffix = '';
         if (!hevcSupported && s.quality && s.quality.includes('4K')) {
-          suffix = ' ⚠️ (Requer TV/Win)';
+          suffix = ' ⚠️ (Requer TV/HEVC)';
         }
-        opt.textContent = `${s.quality} • ${s.audio}${suffix}`;
+        opt.textContent = `${s.quality || 'HD'} • ${s.audio || 'Áudio Principal'}${suffix}`;
         if (s.url === options.currentStreamUrl) opt.selected = true;
         this.sourceSelector.appendChild(opt);
       });
@@ -148,6 +352,7 @@ class HomeFlixPlayer {
       this.sourceSelector.style.display = 'none';
     }
 
+    this.failedUrls.clear();
     const startUrl = options.currentStreamUrl || (this.sources[0] ? this.sources[0].url : null);
     if (!startUrl) {
       alert('Nenhuma fonte de vídeo disponível.');
@@ -167,15 +372,29 @@ class HomeFlixPlayer {
     return this._hevcSupported;
   }
 
+  showSpinner(text = 'Carregando...') {
+    if (this.spinner) {
+      if (this.spinnerText) this.spinnerText.textContent = text;
+      this.spinner.style.display = 'flex';
+    }
+  }
+
+  hideSpinner() {
+    if (this.spinner) {
+      this.spinner.style.display = 'none';
+    }
+  }
+
   showNotice(msg, duration = 6000) {
     let notice = document.getElementById('playerCodecNotice');
     if (!notice) {
       notice = document.createElement('div');
       notice.id = 'playerCodecNotice';
       notice.className = 'cinema-warning-banner';
-      notice.style.background = 'rgba(20, 20, 20, 0.95)';
+      notice.style.background = 'rgba(18, 18, 24, 0.95)';
       notice.style.border = '1px solid #e50914';
-      notice.style.top = '130px';
+      notice.style.top = '100px';
+      notice.style.zIndex = '530';
       this.overlay.appendChild(notice);
     }
     notice.innerHTML = `<span>⚡</span><span>${msg}</span>`;
@@ -188,96 +407,333 @@ class HomeFlixPlayer {
     }, duration);
   }
 
+  startStallWatchdog(url, resumeTime = 0) {
+    this.clearStallWatchdog();
+    // Se após 9 segundos o vídeo não começar e não tiver dados, tenta rota alternativa
+    this.stallWatchdogTimer = setTimeout(() => {
+      if (this.video && this.video.readyState < 2 && !this.video.paused) {
+        console.warn('[Watchdog] Stream demorando a carregar ou travado. Verificando rota alternativa...');
+        this.handleMediaError({ reason: 'Watchdog Timeout' }, url, resumeTime);
+      }
+    }, 9000);
+  }
+
+  clearStallWatchdog() {
+    if (this.stallWatchdogTimer) {
+      clearTimeout(this.stallWatchdogTimer);
+      this.stallWatchdogTimer = null;
+    }
+  }
+
+  handleMediaError(e, failedUrl = null, resumeTime = 0) {
+    const url = failedUrl || this.video.src || '';
+    console.warn('[Player] Falha na reprodução do stream:', url, e);
+    this.clearStallWatchdog();
+
+    // 1. Se for URL remota direta de vídeo MP4 e ainda não passou pelo proxy local, tenta via proxy CORS
+    if (url && !url.includes('/api/proxy/stream') && !url.includes('.m3u8') && !url.includes('/api/live/stream/')) {
+      console.log('[Player] Tentando reproduzir com proxy local anti-CORS...');
+      const proxiedUrl = `/api/proxy/stream?url=${encodeURIComponent(url)}`;
+      this.showNotice('⚡ Otimizando conexão via servidor local...');
+      this.loadStream(proxiedUrl, resumeTime || this.video.currentTime || 0);
+      return;
+    }
+
+    // 2. Tenta o próximo servidor da lista de fontes
+    this.failedUrls.add(url);
+    this.tryNextSource(resumeTime || this.video.currentTime || 0, 'Erro de reprodução no servidor');
+  }
+
+  tryNextSource(resumeTime = 0, reason = '') {
+    const hevcSupported = this.isHevcSupported();
+    const nextSource = this.sources.find(s => 
+      !this.failedUrls.has(s.url) && 
+      (!s.quality.includes('4K') || hevcSupported)
+    );
+
+    if (nextSource) {
+      this.showNotice(`ℹ️ ${reason}. Alternando para ${nextSource.quality} • ${nextSource.audio}...`);
+      this.sourceSelector.value = nextSource.url;
+      this.loadStream(nextSource.url, resumeTime);
+    } else {
+      this.hideSpinner();
+      this.showNotice('❌ Todas as fontes disponíveis para este título falharam ou estão indisponíveis no momento.', 8000);
+    }
+  }
+
   loadStream(url, resumeTime = 0) {
     if (this.hls) {
       this.hls.destroy();
       this.hls = null;
     }
 
-    const isHls = url.includes('.m3u8') || url.includes('pluto.tv');
+    this.showSpinner('Conectando ao stream...');
+    this.startStallWatchdog(url, resumeTime);
+
+    const isHls = url.includes('.m3u8') || url.includes('pluto.tv') || url.includes('/api/live/stream/');
 
     if (isHls && window.Hls && Hls.isSupported()) {
       this.hls = new Hls({
         debug: false,
         enableWorker: true,
-        lowLatencyMode: true,
-        manifestLoadingTimeOut: 10000,
-        manifestLoadingMaxRetry: 3,
-        levelLoadingTimeOut: 10000,
-        levelLoadingMaxRetry: 3
+        lowLatencyMode: false,
+        backBufferLength: 45,
+        maxBufferLength: 30,
+        maxMaxBufferLength: 60,
+        maxBufferSize: 60 * 1000 * 1000,
+        manifestLoadingTimeOut: 15000,
+        manifestLoadingMaxRetry: 5,
+        levelLoadingTimeOut: 15000,
+        levelLoadingMaxRetry: 5,
+        fragLoadingTimeOut: 20000,
+        fragLoadingMaxRetry: 6
       });
+
       this.hls.loadSource(url);
       this.hls.attachMedia(this.video);
+      
       this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
         if (resumeTime > 0 && !this.isLive) {
           this.video.currentTime = resumeTime;
         }
         const p = this.video.play();
         if (p !== undefined) {
-          p.catch(e => {
-            console.log('Autoplay blocked, user interaction required:', e);
+          p.then(() => {
+            this.hideSpinner();
+            this.clearStallWatchdog();
+          }).catch(e => {
+            console.log('Autoplay bloqueado pelo navegador, aguardando clique do usuário:', e);
             this.playBtn.innerHTML = '▶';
+            this.hideSpinner();
           });
         }
       });
+
       this.hls.on(Hls.Events.ERROR, (event, data) => {
         if (data.fatal) {
           switch (data.type) {
             case Hls.ErrorTypes.NETWORK_ERROR:
-              console.warn('[HLS] Network error, tentando recuperar...', data);
+              console.warn('[HLS] Falha de rede temporária, recuperando conexão...', data);
               this.hls.startLoad();
               break;
             case Hls.ErrorTypes.MEDIA_ERROR:
-              console.warn('[HLS] Media error, tentando recuperar...', data);
+              console.warn('[HLS] Erro de decodificação de mídia, tentando recuperar áudio/vídeo...', data);
               this.hls.recoverMediaError();
               break;
             default:
-              console.error('[HLS] Erro fatal não recuperável', data);
+              console.error('[HLS] Erro crítico não recuperável', data);
               this.hls.destroy();
+              this.failedUrls.add(url);
+              this.tryNextSource(resumeTime, 'Falha fatal na transmissão');
               break;
           }
         }
       });
     } else {
-      // Direct MP4 ou Safari nativo HLS
+      // Vídeo direto MP4 ou Safari nativo
       this.video.src = url;
 
-      this.video.onerror = () => {
-        console.warn('[Player] Erro de mídia ao reproduzir stream:', this.video.error);
-        const fallback = this.sources.find(s => s.url !== url && (!s.quality.includes('4K') || this.isHevcSupported()));
-        if (fallback) {
-          this.showNotice('⚠️ Erro ao reproduzir stream. Alternando para servidor compatível...');
-          this.sourceSelector.value = fallback.url;
-          this.loadStream(fallback.url, resumeTime);
-        }
-      };
-
       this.video.onloadedmetadata = () => {
-        // Se a resolução for 0x0, o navegador leu o container MP4 mas não suporta o codec de vídeo (ex: 4K HEVC no Chrome Linux)
+        // Se a resolução for 0x0, o navegador leu o container MP4 mas não decodifica o codec (ex: 4K HEVC no Chrome)
         if (!this.isLive && this.video.videoWidth === 0 && this.video.videoHeight === 0) {
-          console.warn('[Player] Dimensões 0x0 detectadas (codec HEVC incompatível com este navegador). Buscando alternativa...');
-          const fallback = this.sources.find(s => s.url !== url && (!s.quality.includes('4K') || this.isHevcSupported()));
-          if (fallback) {
-            this.showNotice('ℹ️ Stream 4K HEVC não suportado neste navegador. Alternando para 1080p Full HD...');
-            this.sourceSelector.value = fallback.url;
-            this.loadStream(fallback.url, resumeTime);
-            return;
-          }
+          console.warn('[Player] Dimensões 0x0 detectadas (codec HEVC não suportado). Alternando...');
+          this.failedUrls.add(url);
+          this.tryNextSource(resumeTime, 'Stream 4K HEVC incompatível');
+          return;
         }
 
         if (resumeTime > 0 && !this.isLive) {
           this.video.currentTime = resumeTime;
         }
+
         const p = this.video.play();
         if (p !== undefined) {
-          p.catch(e => {
-            console.log('Autoplay blocked:', e);
+          p.then(() => {
+            this.hideSpinner();
+            this.clearStallWatchdog();
+          }).catch(e => {
             this.playBtn.innerHTML = '▶';
+            this.hideSpinner();
           });
         }
       };
     }
   }
+
+  /* ================================================================
+     CONTROLE DE TV AO VIVO (SIDEBAR ESTILO KODI/PLUTO E ZAPPING)
+     ================================================================ */
+
+  initSidebarCategories() {
+    const cats = ['Todos', 'Filmes e Séries', 'Notícias & Jornalismo', 'Animes & Infantil', 'Variedades & Comédia', 'Esportes & Lutas', 'Documentários & Ciência', 'Música & Cultura'];
+    this.sidebarCategories.innerHTML = '';
+    cats.forEach(c => {
+      const pill = document.createElement('span');
+      pill.className = `sidebar-cat-pill ${c === this.activeSidebarCategory ? 'active' : ''}`;
+      pill.textContent = c;
+      pill.onclick = () => {
+        this.activeSidebarCategory = c;
+        this.sidebarCategories.querySelectorAll('.sidebar-cat-pill').forEach(p => p.classList.toggle('active', p.textContent === c));
+        this.renderSidebarChannels(c, this.sidebarSearch?.value?.trim() || '');
+      };
+      this.sidebarCategories.appendChild(pill);
+    });
+  }
+
+  renderSidebarChannels(category = 'Todos', search = '') {
+    if (!this.sidebarChannelsList) return;
+    this.sidebarChannelsList.innerHTML = '';
+
+    const list = this.liveChannels.filter(ch => {
+      const matchesCat = category === 'Todos' || ch.category === category;
+      const matchesSearch = !search || 
+        ch.name.toLowerCase().includes(search.toLowerCase()) || 
+        String(ch.number).includes(search) || 
+        (ch.current_show && ch.current_show.toLowerCase().includes(search.toLowerCase()));
+      return matchesCat && matchesSearch;
+    });
+
+    if (list.length === 0) {
+      this.sidebarChannelsList.innerHTML = '<div style="color:#888; padding:30px 16px; text-align:center;">Nenhum canal encontrado.</div>';
+      return;
+    }
+
+    const currentCh = this.liveChannels[this.currentChannelIndex];
+
+    list.forEach(ch => {
+      const isActive = currentCh && String(ch.id) === String(currentCh.id);
+      const row = document.createElement('div');
+      row.className = `sidebar-channel-item ${isActive ? 'active' : ''}`;
+
+      const logoHtml = ch.logo
+        ? `<img class="sb-ch-logo" src="${ch.logo}" alt="${ch.name}" loading="lazy" />`
+        : `<span style="font-weight:800; font-size:12px; color:#fff;">${ch.name.substring(0, 10)}</span>`;
+
+      row.innerHTML = `
+        <div class="sb-ch-left">
+          <span class="sb-ch-num">${ch.number || ''}</span>
+          <div class="sb-ch-logo-wrap">${logoHtml}</div>
+        </div>
+        <div class="sb-ch-info">
+          <div class="sb-ch-name">${ch.name}</div>
+          <div class="sb-ch-now">▶ ${ch.current_show || 'Transmissão Ao Vivo'}</div>
+          <div class="sb-ch-progress-track">
+            <div class="sb-ch-progress-bar" style="width: ${ch.progress_pct || 40}%;"></div>
+          </div>
+        </div>
+        ${isActive ? '<span class="sb-ch-playing-dot"></span>' : ''}
+      `;
+
+      row.onclick = () => {
+        this.switchLiveChannel(ch);
+      };
+
+      this.sidebarChannelsList.appendChild(row);
+
+      // Auto-scroll para manter o canal ativo visível
+      if (isActive) {
+        setTimeout(() => {
+          row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        }, 100);
+      }
+    });
+  }
+
+  toggleSidebar(forceState = null) {
+    if (!this.isLive) return;
+    const shouldOpen = forceState !== null ? forceState : !this.sidebar.classList.contains('open');
+    if (shouldOpen) {
+      this.sidebar.classList.add('open');
+      this.renderSidebarChannels(this.activeSidebarCategory);
+    } else {
+      this.sidebar.classList.remove('open');
+    }
+  }
+
+  switchLiveChannel(channelObj) {
+    if (!channelObj) return;
+    this.currentChannelIndex = this.liveChannels.findIndex(c => String(c.id) === String(channelObj.id));
+    if (this.currentChannelIndex < 0) this.currentChannelIndex = 0;
+
+    const ch = this.liveChannels[this.currentChannelIndex] || channelObj;
+    this.titleDisplay.textContent = ch.name;
+    this.subtitleDisplay.textContent = ch.current_show || 'Ao Vivo';
+
+    this.loadStream(ch.stream_url, 0);
+    this.triggerLiveOsd(true, ch);
+    this.renderSidebarChannels(this.activeSidebarCategory);
+  }
+
+  nextLiveChannel() {
+    if (!this.isLive || this.liveChannels.length === 0) return;
+    this.currentChannelIndex = (this.currentChannelIndex + 1) % this.liveChannels.length;
+    this.switchLiveChannel(this.liveChannels[this.currentChannelIndex]);
+  }
+
+  prevLiveChannel() {
+    if (!this.isLive || this.liveChannels.length === 0) return;
+    this.currentChannelIndex = (this.currentChannelIndex - 1 + this.liveChannels.length) % this.liveChannels.length;
+    this.switchLiveChannel(this.liveChannels[this.currentChannelIndex]);
+  }
+
+  handleDigitInput(digit) {
+    clearTimeout(this.numberInputTimer);
+    this.currentDigits += digit;
+    
+    if (this.numberIndicator) {
+      this.numberValue.textContent = this.currentDigits;
+      this.numberIndicator.classList.add('show');
+    }
+
+    this.numberInputTimer = setTimeout(() => {
+      if (this.numberIndicator) this.numberIndicator.classList.remove('show');
+      const targetNum = parseInt(this.currentDigits, 10);
+      this.currentDigits = '';
+
+      if (!isNaN(targetNum)) {
+        // Encontra canal pelo número exato ou aproximado
+        const found = this.liveChannels.find(c => c.number === targetNum);
+        if (found) {
+          this.switchLiveChannel(found);
+        } else {
+          console.log(`Canal ${targetNum} não encontrado.`);
+        }
+      }
+    }, 900);
+  }
+
+  triggerLiveOsd(force = true, channel = null) {
+    if (!this.isLive || !this.liveOsd) return;
+    const ch = channel || this.liveChannels[this.currentChannelIndex];
+    if (!ch) return;
+
+    clearTimeout(this.osdTimer);
+
+    // Popula banner OSD EPG
+    if (ch.logo) {
+      this.osdLogoWrap.innerHTML = `<img src="${ch.logo}" alt="${ch.name}" style="max-height: 40px; max-width: 90px; object-fit: contain;" />`;
+    } else {
+      this.osdLogoWrap.innerHTML = `<span>📡</span>`;
+    }
+
+    this.osdChannelBadge.textContent = `CH ${ch.number || ''} • AO VIVO`;
+    this.osdChannelName.textContent = ch.name;
+    this.osdShowTitle.textContent = ch.current_show || 'Transmissão Ao Vivo';
+    this.osdShowDesc.textContent = ch.summary || 'Transmissão em alta definição via satélite digital.';
+    this.osdTimeRange.textContent = ch.time_range || 'Ao Vivo';
+    this.osdProgressBar.style.width = `${ch.progress_pct || 50}%`;
+    this.osdNextShow.textContent = ch.next_show || '';
+
+    this.liveOsd.classList.add('show');
+
+    this.osdTimer = setTimeout(() => {
+      this.liveOsd.classList.remove('show');
+    }, 4500);
+  }
+
+  /* ================================================================
+     CONTROLES DE REPRODUÇÃO GERAIS (PLAY, SEEK, PROGRESSO)
+     ================================================================ */
 
   togglePlay() {
     if (this.video.paused) {
@@ -362,8 +818,16 @@ class HomeFlixPlayer {
     if (!document.fullscreenElement) {
       this.overlay.requestFullscreen().catch(err => console.log(err));
     } else {
-      document.exitFullscreen();
+      document.exitFullscreen().catch(err => console.log(err));
     }
+  }
+
+  showControlsTemporarily() {
+    const top = document.querySelector('.player-topbar');
+    const bottom = document.querySelector('.player-controls-bottom');
+    if (top) top.style.opacity = '1';
+    if (bottom) bottom.style.opacity = '1';
+    this.resetControlsTimeout();
   }
 
   resetControlsTimeout() {
@@ -374,11 +838,12 @@ class HomeFlixPlayer {
 
     clearTimeout(this.hideControlsTimer);
     this.hideControlsTimer = setTimeout(() => {
-      if (!this.video.paused) {
+      // Não esconde se o vídeo estiver pausado ou se a sidebar estiver aberta
+      if (!this.video.paused && !this.sidebar.classList.contains('open')) {
         if (top) top.style.opacity = '0';
         if (bottom) bottom.style.opacity = '0';
       }
-    }, 3500);
+    }, 3800);
   }
 
   close() {
@@ -391,12 +856,15 @@ class HomeFlixPlayer {
     }
     this.video.src = '';
     this.overlay.classList.remove('open');
+    this.sidebar.classList.remove('open');
+    if (this.liveOsd) this.liveOsd.classList.remove('show');
     if (document.fullscreenElement) {
-      document.exitFullscreen();
+      document.exitFullscreen().catch(() => {});
     }
     // Atualiza a home e continuar assistindo se disponível
     if (window.app) {
       window.app.loadContinueWatching();
+      window.app.loadRecommendations();
     }
   }
 }

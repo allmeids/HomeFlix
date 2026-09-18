@@ -43,6 +43,15 @@ def get_details(media_type: str, tmdb_id: str):
 def get_season(tv_id: str, season_number: int):
     return tmdb_service.get_season_details(tv_id, season_number)
 
+@router.get("/recommendations")
+def get_recommendations(profile_id: int = Query(1, ge=1)):
+    return {"results": tmdb_service.get_personalized_recommendations(profile_id)}
+
+@router.get("/category/{category_key}")
+def get_category(category_key: str, page: int = Query(1, ge=1)):
+    return tmdb_service.get_category_items(category_key, page)
+
 @router.get("/search")
 def search(q: str = Query(..., min_length=1), page: int = Query(1, ge=1)):
     return {"results": tmdb_service.search_multi(q, page)}
+

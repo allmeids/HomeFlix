@@ -54,6 +54,11 @@ def parse_audio(title: str, name: str) -> str:
         return "Legendado"
     return "Original / Multiaudio"
 
+import concurrent.futures
+
+_STREAM_CACHE: Dict[str, Any] = {}
+_STREAM_CACHE_TTL = 900  # 15 minutos
+
 def fetch_froststream(media_type: str, imdb_id: str, season: Optional[int] = None, episode: Optional[int] = None) -> List[Dict[str, Any]]:
     if media_type in ("movie", "filme"):
         url = f"{FROSTSTREAM_URL}/stream/movie/{imdb_id}.json"
@@ -63,7 +68,7 @@ def fetch_froststream(media_type: str, imdb_id: str, season: Optional[int] = Non
         url = f"{FROSTSTREAM_URL}/stream/series/{imdb_id}:{s}:{ep}.json"
 
     try:
-        r = requests.get(url, headers=HEADERS, timeout=6)
+        r = requests.get(url, headers=HEADERS, timeout=12)
         if r.status_code == 200:
             return r.json().get("streams", [])
     except Exception as exc:
@@ -80,7 +85,7 @@ def fetch_superstream(media_type: str, imdb_id: str, season: Optional[int] = Non
         url = f"{SUPERSTREAM_URL}/stream/movie/{imdb_id}.json"
 
     try:
-        r = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=6)
+        r = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=12)
         if r.status_code == 200:
             return r.json().get("streams", [])
     except Exception as exc:
@@ -88,6 +93,13 @@ def fetch_superstream(media_type: str, imdb_id: str, season: Optional[int] = Non
     return []
 
 def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None, episode: Optional[int] = None) -> Dict[str, Any]:
+    cache_key = f"{media_type}_{tmdb_id}_{season}_{episode}"
+    now_ts = datetime.now().timestamp()
+    if cache_key in _STREAM_CACHE:
+        cached_entry = _STREAM_CACHE[cache_key]
+        if now_ts - cached_entry["timestamp"] < _STREAM_CACHE_TTL:
+            return cached_entry["data"]
+
     # 1. Obter IMDb ID via TMDB se necessário
     details = get_media_details(media_type, tmdb_id)
     external_ids = details.get("external_ids", {})
@@ -108,18 +120,26 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
     title = details.get("title") or details.get("name") or "Vídeo"
     raw_streams = []
 
-    # 2. Busca FrostStream
-    frost_streams = fetch_froststream(media_type, imdb_id, season, episode)
-    for s in frost_streams:
-        s["_provider"] = "FrostStream"
-        raw_streams.append(s)
+    # 2. Busca paralela de alta velocidade (FrostStream + SuperStream simultaneamente)
+    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+        f_frost = executor.submit(fetch_froststream, media_type, imdb_id, season, episode)
+        f_super = executor.submit(fetch_superstream, media_type, imdb_id, season, episode)
 
-    # 3. Se necessário, busca SuperStream
-    if len(raw_streams) < 3:
-        super_streams = fetch_superstream(media_type, imdb_id, season, episode)
-        for s in super_streams:
-            s["_provider"] = "SuperStream"
-            raw_streams.append(s)
+        try:
+            frost_streams = f_frost.result(timeout=14)
+            for s in frost_streams:
+                s["_provider"] = "FrostStream"
+                raw_streams.append(s)
+        except Exception as exc:
+            print(f"[Parallel FrostStream Error] {exc}")
+
+        try:
+            super_streams = f_super.result(timeout=14)
+            for s in super_streams:
+                s["_provider"] = "SuperStream"
+                raw_streams.append(s)
+        except Exception as exc:
+            print(f"[Parallel SuperStream Error] {exc}")
 
     theatrical_cam = False
     if media_type in ("movie", "filme"):
@@ -194,7 +214,7 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
     is_cinema_version = best_stream.get("is_cinema", False) if best_stream else False
     has_dubbed = any("Português" in s["audio"] for s in normalized)
 
-    return {
+    result = {
         "title": title,
         "imdb_id": imdb_id,
         "tmdb_id": tmdb_id,
@@ -206,3 +226,11 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
         "has_dubbed": has_dubbed,
         "streams": normalized
     }
+
+    if normalized:
+        _STREAM_CACHE[cache_key] = {
+            "timestamp": now_ts,
+            "data": result
+        }
+
+    return result

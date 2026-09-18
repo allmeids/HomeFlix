@@ -5,14 +5,14 @@ setlocal enabledelayedexpansion
 cd /d "%~dp0"
 
 echo ==========================================================
-echo  HomeFlix - Servidor de Streaming Pessoal & TV ao Vivo
+echo  HomeFlix - Servidor de Streaming Pessoal ^& TV ao Vivo
 echo ==========================================================
 echo  Local:            http://localhost:8080
 
 rem Obter IP local da máquina
 for /f "tokens=2 delims=:" %%a in ('ipconfig ^| findstr /i /c:"IPv4" ^| findstr /v /c:"127.0.0.1"') do (
     set "LOCAL_IP=%%a"
-    goto :ip_found
+    goto ip_found
 )
 :ip_found
 if defined LOCAL_IP (
@@ -21,7 +21,7 @@ if defined LOCAL_IP (
 )
 echo ==========================================================
 
-rem Detectar executável Python (venv local ou do sistema)
+rem Detectar executavel Python (venv local ou do sistema)
 if exist "%~dp0.venv\Scripts\python.exe" (
     set "PYTHON_EXE=%~dp0.venv\Scripts\python.exe"
 ) else if exist "%~dp0backend\.venv\Scripts\python.exe" (

@@ -11,15 +11,20 @@
 </head>
 <body>
 
-  <!-- Navbar Superior Estilo Netflix -->
+  <!-- Navbar Superior Estilo Netflix / Prime Video -->
   <header class="navbar">
     <div class="nav-left">
-      <div class="brand-logo">🎬 HOMEFLIX</div>
+      <div class="brand-logo" id="navLogo">
+        <span class="logo-icon">🎬</span>
+        <span class="logo-text">HOME<span class="logo-accent">FLIX</span></span>
+        <span class="logo-badge">4K ULTRA HD</span>
+      </div>
       <ul class="nav-links">
         <li class="nav-item active" data-tab="home">Início</li>
         <li class="nav-item" data-tab="movies">Filmes</li>
         <li class="nav-item" data-tab="series">Séries</li>
         <li class="nav-item" data-tab="live">TV ao Vivo</li>
+        <li class="nav-item" data-tab="categories">Categorias</li>
         <li class="nav-item" data-tab="watchlist">Minha Lista</li>
       </ul>
     </div>
@@ -27,13 +32,13 @@
     <div class="nav-right">
       <div class="search-box">
         <span>🔍</span>
-        <input type="text" id="searchInput" class="search-input" placeholder="Títulos, animes, gêneros..." />
+        <input type="text" id="searchInput" class="search-input" placeholder="Títulos, atores, gêneros..." />
       </div>
 
-      <div class="profile-btn" id="profileBtn">
+      <div class="profile-btn" id="profileBtn" title="Trocar ou Gerenciar Perfis">
         <span class="profile-avatar-mini" id="navProfileAvatar">🦊</span>
         <span class="profile-name-mini" id="navProfileName">Almeida</span>
-        <span style="font-size: 10px; color: #888;">▼</span>
+        <span style="font-size: 10px; color: #aaa;">▼</span>
       </div>
     </div>
   </header>
@@ -42,23 +47,86 @@
   <section class="hero" id="heroSection">
     <div class="hero-overlay"></div>
     <div class="hero-content">
-      <div class="hero-badge">⭐ EM DESTAQUE</div>
+      <div class="hero-badge">⭐ DESTAQUE EXCLUSIVO</div>
       <h1 class="hero-title" id="heroTitle">Carregando...</h1>
       <div class="hero-meta">
         <span class="hero-rating" id="heroRating">★ 9.5</span>
         <span id="heroYear">2026</span>
-        <span id="heroType" style="border: 1px solid rgba(255,255,255,0.3); padding: 2px 6px; border-radius: 4px; font-size: 11px;">FILME</span>
-        <span style="background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 4px; font-size: 11px;">4K ULTRA HD</span>
+        <span id="heroType" class="meta-pill">FILME</span>
+        <span class="meta-pill meta-4k">4K ULTRA HD</span>
+        <span class="meta-pill meta-audio">DOLBY AUDIO</span>
       </div>
       <p class="hero-overview" id="heroOverview">Buscando as melhores histórias do cinema mundial e lançamentos imperdíveis...</p>
       <div class="hero-actions">
         <button class="btn btn-primary" id="heroPlayBtn">▶ Assistir Agora</button>
-        <button class="btn btn-secondary" id="heroInfoBtn">ℹ Mais Informações</button>
+        <button class="btn btn-secondary" id="heroInfoBtn">ℹ Detalhes & Trailer</button>
       </div>
     </div>
   </section>
 
-  <!-- Carrosséis de Conteúdo (Início) -->
+  <!-- Barra / Carrossel de Categorias Estilo Prime Video -->
+  <div class="categories-bar-wrapper" id="categoriesBarWrapper">
+    <div class="categories-bar-header">
+      <span class="categories-bar-title">✨ Navegue por Categorias</span>
+      <span class="categories-bar-sub">Explore gêneros selecionados com centenas de opções sem repetição</span>
+    </div>
+    <div class="categories-carousel-container">
+      <button class="cat-nav-btn cat-nav-left" id="catNavLeft">‹</button>
+      <div class="categories-carousel" id="categoriesCarousel">
+        <div class="cat-card cat-action" data-category="action" data-scroll="actionMoviesCarousel">
+          <span class="cat-card-icon">💥</span>
+          <span class="cat-card-name">Ação & Aventura</span>
+        </div>
+        <div class="cat-card cat-scifi" data-category="scifi" data-scroll="scifiMoviesCarousel">
+          <span class="cat-card-icon">🚀</span>
+          <span class="cat-card-name">Ficção & Fantasia</span>
+        </div>
+        <div class="cat-card cat-heroes" data-category="superheroes" data-scroll="superheroesCarousel">
+          <span class="cat-card-icon">🦸</span>
+          <span class="cat-card-name">Marvel & DC</span>
+        </div>
+        <div class="cat-card cat-movies" data-category="popular_movies" data-scroll="popularMoviesCarousel">
+          <span class="cat-card-icon">🎬</span>
+          <span class="cat-card-name">Grandes Filmes</span>
+        </div>
+        <div class="cat-card cat-series" data-category="popular_series" data-scroll="popularSeriesCarousel">
+          <span class="cat-card-icon">📺</span>
+          <span class="cat-card-name">Séries de TV</span>
+        </div>
+        <div class="cat-card cat-comedy" data-category="comedy" data-scroll="comedyMoviesCarousel">
+          <span class="cat-card-icon">🍿</span>
+          <span class="cat-card-name">Comédias</span>
+        </div>
+        <div class="cat-card cat-horror" data-category="horror" data-scroll="horrorMoviesCarousel">
+          <span class="cat-card-icon">😱</span>
+          <span class="cat-card-name">Terror & Suspense</span>
+        </div>
+        <div class="cat-card cat-thriller" data-category="thriller" data-scroll="thrillerMoviesCarousel">
+          <span class="cat-card-icon">🔪</span>
+          <span class="cat-card-name">Crime & Mistério</span>
+        </div>
+        <div class="cat-card cat-animes" data-category="animes" data-scroll="animesCarousel">
+          <span class="cat-card-icon">✨</span>
+          <span class="cat-card-name">Animes & Japão</span>
+        </div>
+        <div class="cat-card cat-family" data-category="family" data-scroll="familyMoviesCarousel">
+          <span class="cat-card-icon">👶</span>
+          <span class="cat-card-name">Família & Kids</span>
+        </div>
+        <div class="cat-card cat-top" data-category="top_rated" data-scroll="topMoviesCarousel">
+          <span class="cat-card-icon">🏆</span>
+          <span class="cat-card-name">Aclamados pela Crítica</span>
+        </div>
+        <div class="cat-card cat-live" data-category="live">
+          <span class="cat-card-icon">📡</span>
+          <span class="cat-card-name">TV ao Vivo (179 Canais)</span>
+        </div>
+      </div>
+      <button class="cat-nav-btn cat-nav-right" id="catNavRight">›</button>
+    </div>
+  </div>
+
+  <!-- Carrosséis de Conteúdo Principal (Home) -->
   <main class="sections-container" id="sectionsContainer">
     <!-- Seção Continuar Assistindo (Quick Resume) -->
     <section class="media-section" id="continueWatchingSection" style="display: none;">
@@ -66,7 +134,21 @@
         <h2 class="section-title">⚡ Continuar Assistindo</h2>
       </div>
       <div class="carousel-wrapper">
+        <button class="carousel-nav-btn carousel-nav-left">‹</button>
         <div class="media-carousel" id="continueWatchingCarousel"></div>
+        <button class="carousel-nav-btn carousel-nav-right">›</button>
+      </div>
+    </section>
+
+    <!-- Recomendações Personalizadas por Perfil -->
+    <section class="media-section" id="recommendationsSection">
+      <div class="section-header">
+        <h2 class="section-title" id="recommendationsTitle">✨ Recomendados para Você</h2>
+      </div>
+      <div class="carousel-wrapper">
+        <button class="carousel-nav-btn carousel-nav-left">‹</button>
+        <div class="media-carousel" id="recommendationsCarousel"></div>
+        <button class="carousel-nav-btn carousel-nav-right">›</button>
       </div>
     </section>
 
@@ -76,7 +158,9 @@
         <h2 class="section-title">🔥 Em Alta no HomeFlix</h2>
       </div>
       <div class="carousel-wrapper">
+        <button class="carousel-nav-btn carousel-nav-left">‹</button>
         <div class="media-carousel" id="trendingCarousel"></div>
+        <button class="carousel-nav-btn carousel-nav-right">›</button>
       </div>
     </section>
 
@@ -86,7 +170,9 @@
         <h2 class="section-title">🦸 Universo Marvel & DC (Heróis)</h2>
       </div>
       <div class="carousel-wrapper">
+        <button class="carousel-nav-btn carousel-nav-left">‹</button>
         <div class="media-carousel" id="superheroesCarousel"></div>
+        <button class="carousel-nav-btn carousel-nav-right">›</button>
       </div>
     </section>
 
@@ -96,27 +182,33 @@
         <h2 class="section-title">💥 Ação & Aventura Explosiva</h2>
       </div>
       <div class="carousel-wrapper">
+        <button class="carousel-nav-btn carousel-nav-left">‹</button>
         <div class="media-carousel" id="actionMoviesCarousel"></div>
+        <button class="carousel-nav-btn carousel-nav-right">›</button>
       </div>
     </section>
 
     <!-- Filmes Populares -->
     <section class="media-section">
       <div class="section-header">
-        <h2 class="section-title">🎬 Filmes Populares</h2>
+        <h2 class="section-title">🎬 Grandes Sucessos do Cinema</h2>
       </div>
       <div class="carousel-wrapper">
+        <button class="carousel-nav-btn carousel-nav-left">‹</button>
         <div class="media-carousel" id="popularMoviesCarousel"></div>
+        <button class="carousel-nav-btn carousel-nav-right">›</button>
       </div>
     </section>
 
     <!-- Séries Populares -->
     <section class="media-section">
       <div class="section-header">
-        <h2 class="section-title">📺 Séries de Sucesso</h2>
+        <h2 class="section-title">📺 Séries Mais Maratonadas</h2>
       </div>
       <div class="carousel-wrapper">
+        <button class="carousel-nav-btn carousel-nav-left">‹</button>
         <div class="media-carousel" id="popularSeriesCarousel"></div>
+        <button class="carousel-nav-btn carousel-nav-right">›</button>
       </div>
     </section>
 
@@ -126,7 +218,9 @@
         <h2 class="section-title">🚀 Ficção Científica & Fantasia</h2>
       </div>
       <div class="carousel-wrapper">
+        <button class="carousel-nav-btn carousel-nav-left">‹</button>
         <div class="media-carousel" id="scifiMoviesCarousel"></div>
+        <button class="carousel-nav-btn carousel-nav-right">›</button>
       </div>
     </section>
 
@@ -136,17 +230,33 @@
         <h2 class="section-title">🍿 Comédias para Rir Muito</h2>
       </div>
       <div class="carousel-wrapper">
+        <button class="carousel-nav-btn carousel-nav-left">‹</button>
         <div class="media-carousel" id="comedyMoviesCarousel"></div>
+        <button class="carousel-nav-btn carousel-nav-right">›</button>
       </div>
     </section>
 
     <!-- Terror & Suspense -->
     <section class="media-section">
       <div class="section-header">
-        <h2 class="section-title">😱 Terror & Suspense</h2>
+        <h2 class="section-title">😱 Terror & Arrepios</h2>
       </div>
       <div class="carousel-wrapper">
+        <button class="carousel-nav-btn carousel-nav-left">‹</button>
         <div class="media-carousel" id="horrorMoviesCarousel"></div>
+        <button class="carousel-nav-btn carousel-nav-right">›</button>
+      </div>
+    </section>
+
+    <!-- Suspense, Crime & Mistério -->
+    <section class="media-section">
+      <div class="section-header">
+        <h2 class="section-title">🔪 Crime, Suspense & Mistério</h2>
+      </div>
+      <div class="carousel-wrapper">
+        <button class="carousel-nav-btn carousel-nav-left">‹</button>
+        <div class="media-carousel" id="thrillerMoviesCarousel"></div>
+        <button class="carousel-nav-btn carousel-nav-right">›</button>
       </div>
     </section>
 
@@ -156,17 +266,21 @@
         <h2 class="section-title">🏆 Aclamados pela Crítica</h2>
       </div>
       <div class="carousel-wrapper">
+        <button class="carousel-nav-btn carousel-nav-left">‹</button>
         <div class="media-carousel" id="topMoviesCarousel"></div>
+        <button class="carousel-nav-btn carousel-nav-right">›</button>
       </div>
     </section>
 
     <!-- Família & Infantil -->
     <section class="media-section">
       <div class="section-header">
-        <h2 class="section-title">👶 Sessão em Família & Infantil</h2>
+        <h2 class="section-title">👶 Sessão em Família & Kids</h2>
       </div>
       <div class="carousel-wrapper">
+        <button class="carousel-nav-btn carousel-nav-left">‹</button>
         <div class="media-carousel" id="familyMoviesCarousel"></div>
+        <button class="carousel-nav-btn carousel-nav-right">›</button>
       </div>
     </section>
 
@@ -176,85 +290,230 @@
         <h2 class="section-title">✨ Animes & Animações Japonesas</h2>
       </div>
       <div class="carousel-wrapper">
+        <button class="carousel-nav-btn carousel-nav-left">‹</button>
         <div class="media-carousel" id="animesCarousel"></div>
+        <button class="carousel-nav-btn carousel-nav-right">›</button>
       </div>
     </section>
   </main>
 
-  <!-- TV ao Vivo View -->
+  <!-- TELA DEDICADA DE DETALHES DO FILME / SÉRIE (SUBSTITUI O MODAL) -->
+  <section class="details-view-container" id="detailsView" style="display: none;">
+    <!-- Barra superior de navegação da tela de detalhes -->
+    <div class="details-topbar">
+      <button class="details-back-nav-btn" id="detailsViewBackBtn">
+        <span>←</span> Voltar
+      </button>
+      <div class="details-top-title" id="detailsViewTopTitle">HomeFlix Cinema</div>
+      <div class="details-top-actions">
+        <button class="btn btn-secondary btn-sm" id="detailsViewFavBtnTop">➕ Minha Lista</button>
+      </div>
+    </div>
+
+    <!-- Hero Cinematográfico da Tela de Detalhes -->
+    <div class="details-hero-banner" id="detailsHeroBanner">
+      <div class="details-hero-gradient"></div>
+      
+      <div class="details-hero-body">
+        <div class="details-poster-box">
+          <img class="details-poster-img" id="detailsPosterImg" src="" alt="Poster" />
+          <div class="details-poster-badge" id="detailsCinemaBadge" style="display: none;">⚠️ Imagem Cinema (CAM)</div>
+        </div>
+
+        <div class="details-content-info">
+          <div class="details-tagline" id="detailsTagline"></div>
+          <h1 class="details-main-title" id="detailsMainTitle">Título</h1>
+          
+          <div class="details-meta-row">
+            <span class="meta-rating" id="detailsRating">★ 9.0</span>
+            <span class="meta-year" id="detailsYear">2026</span>
+            <span class="meta-runtime" id="detailsRuntime">2h 15m</span>
+            <span class="meta-pill" id="detailsTypeBadge">FILME</span>
+            <span class="meta-pill meta-4k">4K ULTRA HD</span>
+            <span class="meta-pill meta-audio">DUBLADO / DUAL ÁUDIO</span>
+          </div>
+
+          <div class="details-action-buttons">
+            <button class="btn btn-primary btn-lg" id="detailsPlayBtn">
+              <span>▶</span> Assistir Agora
+            </button>
+            <button class="btn btn-secondary btn-lg" id="detailsTrailerBtn">
+              <span>🎬</span> Assistir Trailer
+            </button>
+            <button class="btn btn-secondary btn-lg" id="detailsFavBtn">
+              <span>➕</span> Minha Lista
+            </button>
+            <button class="btn btn-dark btn-lg" id="detailsToggleSourcesBtn">
+              <span>⚙️</span> Servidores & Qualidade
+            </button>
+          </div>
+
+          <p class="details-overview-text" id="detailsOverview">Carregando sinopse...</p>
+
+          <div class="details-crew-info">
+            <div id="detailsDirectorsRow"><strong>Direção:</strong> <span id="detailsDirectorsText">-</span></div>
+            <div id="detailsGenresRow"><strong>Gêneros:</strong> <span id="detailsGenresText">-</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="details-extra-sections">
+      <!-- Elenco Principal com Fotos -->
+      <section class="details-section" id="detailsCastSection">
+        <h2 class="details-section-title">🎭 Elenco Principal</h2>
+        <div class="details-cast-grid" id="detailsCastGrid"></div>
+      </section>
+
+      <!-- Seletor de Temporadas e Episódios (Para Séries) -->
+      <section class="details-section" id="detailsTvSection" style="display: none;">
+        <div class="details-tv-header">
+          <h2 class="details-section-title">📺 Temporadas & Episódios</h2>
+          <select class="details-season-dropdown" id="detailsSeasonDropdown"></select>
+        </div>
+        <div class="details-episodes-grid" id="detailsEpisodesGrid"></div>
+      </section>
+
+      <!-- Opções de Servidores & Fontes -->
+      <section class="details-section" id="detailsSourcesSection" style="display: none;">
+        <h2 class="details-section-title">📡 Servidores e Fontes Disponíveis</h2>
+        <div class="stream-sources-grid" id="detailsSourcesGrid"></div>
+      </section>
+
+      <!-- Títulos Semelhantes & Recomendações TMDB -->
+      <section class="details-section" id="detailsSimilarSection">
+        <h2 class="details-section-title">✨ Quem viu este título também assistiu</h2>
+        <div class="carousel-wrapper">
+          <button class="carousel-nav-btn carousel-nav-left">‹</button>
+          <div class="media-carousel" id="detailsSimilarCarousel"></div>
+          <button class="carousel-nav-btn carousel-nav-right">›</button>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <!-- TV ao Vivo View (Catálogo de Canais na Grade) -->
   <section class="live-tv-container" id="liveTvContainer" style="display: none;">
-    <h1 style="font-size: 32px; font-weight: 900; margin-bottom: 20px;">📡 TV ao Vivo & Canais Contínuos</h1>
+    <div class="live-tv-header-box">
+      <div>
+        <h1 class="live-tv-main-title">📡 TV ao Vivo & Canais Contínuos</h1>
+        <p class="live-tv-main-sub">179 canais com transmissão em alta resolução, guia EPG em tempo real e zapping no controle remoto</p>
+      </div>
+      <button class="btn btn-primary" id="startLivePlayerBtn">▶ Abrir no Modo TV Fullscreen</button>
+    </div>
     <div class="category-pills" id="liveCategoryPills"></div>
     <div class="channels-grid" id="liveChannelsGrid"></div>
   </section>
 
-  <!-- Busca & Minha Lista View -->
+  <!-- Busca, Categorias & Minha Lista View -->
   <section class="live-tv-container" id="searchContainer" style="display: none;">
-    <h1 style="font-size: 30px; font-weight: 800; margin-bottom: 24px;" id="searchTitle">Resultados</h1>
-    <div class="channels-grid" id="searchGrid" style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));"></div>
+    <div class="search-page-header">
+      <h1 style="font-size: 30px; font-weight: 800;" id="searchTitle">Resultados</h1>
+      <button class="btn btn-secondary btn-sm" id="searchBackBtn" style="display:none;">← Voltar ao Início</button>
+    </div>
+    <div class="channels-grid" id="searchGrid" style="grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));"></div>
   </section>
 
-  <!-- Modal de Detalhes do Título -->
-  <div class="modal-backdrop" id="detailsModal">
-    <div class="modal-content">
-      <button class="modal-close-btn" id="detailsCloseBtn">✕</button>
-      <div class="modal-hero" id="modalHero">
-        <div class="modal-hero-overlay"></div>
-        <div class="modal-hero-content">
-          <h2 style="font-size: 36px; font-weight: 900; margin-bottom: 10px;" id="modalTitle">Título</h2>
-          <div style="display: flex; gap: 14px; align-items: center; margin-bottom: 16px;">
-            <span style="color: #46d369; font-weight: 700;" id="modalRating">★ 9.0</span>
-            <span id="modalYear">2026</span>
-            <span style="border: 1px solid rgba(255,255,255,0.3); padding: 2px 6px; border-radius: 4px; font-size: 11px;">HD / 4K</span>
-            <span id="modalCinemaBadge" class="cinema-badge" style="display: none;">⚠️ Imagem de Cinema (CAM)</span>
-          </div>
-          <div style="display: flex; gap: 12px;">
-            <button class="btn btn-primary" id="modalPlayBtn">▶ Assistir Agora</button>
-            <button class="btn btn-secondary" id="modalFavBtn">➕ Minha Lista</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="modal-body">
-        <p style="font-size: 15px; line-height: 1.6; color: #CCC; margin-bottom: 16px;" id="modalOverview"></p>
-        <div style="font-size: 13px; color: #888; margin-bottom: 20px;" id="modalGenres"></div>
-
-        <!-- Seletor de Temporadas (Séries) -->
-        <div id="modalTvControls" style="display: none; margin-bottom: 24px;">
-          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
-            <h3 style="font-size: 18px; font-weight: 700;">Temporadas & Episódios</h3>
-            <select id="modalSeasonSelect" style="background:#222; color:#fff; border:1px solid #444; padding:6px 12px; border-radius:6px; font-size:13px;"></select>
-          </div>
-          <div id="modalEpisodesList" style="display:flex; flex-direction:column; gap:8px; max-height:280px; overflow-y:auto;"></div>
-        </div>
-
-        <!-- Fontes / Servidores Resolvidos -->
-        <div class="stream-sources-box" id="modalSourcesBox" style="display: none;">
-          <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">Opções de Servidor & Streaming</h3>
-          <div id="modalSourcesList"></div>
-        </div>
+  <!-- Modal do Trailer Oficial (YouTube Player) -->
+  <div class="modal-backdrop" id="trailerModal">
+    <div class="modal-content trailer-modal-content">
+      <button class="modal-close-btn" id="trailerCloseBtn">✕</button>
+      <h3 class="trailer-modal-title" id="trailerTitle">Trailer Oficial</h3>
+      <div class="trailer-iframe-container" id="trailerIframeContainer">
+        <!-- iframe inserido via JS -->
       </div>
     </div>
   </div>
 
-  <!-- Player de Vídeo Fullscreen -->
+  <!-- PLAYER DE VÍDEO CINEMATOGRÁFICO & TV AO VIVO (COM SIDEBAR ESTILO KODI / PLUTO TV) -->
   <div class="player-overlay" id="playerOverlay">
+    <!-- Barra Superior do Player -->
     <div class="player-topbar">
       <button class="player-back-btn" id="playerBackBtn">
         <span>←</span> Voltar
       </button>
-      <div class="player-title-display" id="playerTitle">HomeFlix Cinema</div>
-      <div style="width: 80px;"></div>
+      <div class="player-title-box">
+        <div class="player-title-display" id="playerTitle">HomeFlix Cinema</div>
+        <div class="player-sub-display" id="playerSubtitle"></div>
+      </div>
+      <div class="player-top-actions">
+        <button class="btn-icon" id="playerToggleSidebarBtnTop" title="Abrir Guia de Canais (Tecla C ou Seta Esquerda)">📋 Guia de Canais</button>
+      </div>
     </div>
 
-    <!-- Banner de aviso Cinema CAM -->
+    <!-- Indicador de Canal Numérico no Canto (Zapping por Teclado/Controle) -->
+    <div class="player-channel-number-indicator" id="playerChannelNumberIndicator">
+      <span class="p-num-prefix">CANAL</span>
+      <span class="p-num-val" id="playerChannelNumberValue">105</span>
+    </div>
+
+    <!-- Aviso de Qualidade Cinema CAM -->
     <div class="cinema-warning-banner" id="playerCinemaWarning" style="display: none;">
       <span>⚠️</span>
-      <span><strong>Aviso de Qualidade:</strong> Este título ainda está em exibição nos cinemas. Imagem e áudio gravados de sala de exibição.</span>
+      <span><strong>Aviso de Qualidade:</strong> Título em exibição nos cinemas. Imagem e áudio gravados de sala.</span>
     </div>
 
+    <!-- BANNER EPG / OSD AO VIVO (ESTILO BROADCAST / PLUTO TV / KODI) -->
+    <div class="player-live-osd" id="playerLiveOsd">
+      <div class="live-osd-channel-col">
+        <div class="live-osd-logo-wrap" id="liveOsdLogoWrap">
+          <span id="liveOsdLogo">📡</span>
+        </div>
+        <div class="live-osd-ch-meta">
+          <div class="live-osd-ch-badge" id="liveOsdChannelBadge">CH 105 • AO VIVO</div>
+          <div class="live-osd-ch-name" id="liveOsdChannelName">Pluto TV Cine Sucessos</div>
+        </div>
+      </div>
+
+      <div class="live-osd-show-col">
+        <div class="live-osd-show-title" id="liveOsdShowTitle">Transmissão Ao Vivo</div>
+        <div class="live-osd-show-desc" id="liveOsdShowDesc">Carregando sinopse do programa...</div>
+        
+        <div class="live-osd-progress-row">
+          <span class="live-osd-time" id="liveOsdTimeRange">21:00 - 23:00</span>
+          <div class="live-osd-progress-track">
+            <div class="live-osd-progress-bar" id="liveOsdProgressBar" style="width: 50%;"></div>
+          </div>
+          <span class="live-osd-next" id="liveOsdNextShow">A seguir: Próximo programa</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- GAVETA LATERAL DE CANAIS AO VIVO (SIDEBAR ESTILO KODI / PLUTO TV) -->
+    <div class="player-channels-sidebar" id="playerChannelsSidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title-row">
+          <div class="sidebar-title">📡 Guia de Canais Ao Vivo</div>
+          <button class="sidebar-close-btn" id="playerSidebarCloseBtn" title="Fechar Guia (ESC ou C)">✕</button>
+        </div>
+        <div class="sidebar-search-box">
+          <span>🔍</span>
+          <input type="text" id="sidebarChannelSearch" placeholder="Buscar canal ou número..." />
+        </div>
+        <div class="sidebar-categories" id="playerSidebarCategories"></div>
+      </div>
+
+      <div class="sidebar-channels-list" id="playerSidebarChannelsList">
+        <!-- Itens dos canais ao vivo inseridos via JS -->
+      </div>
+    </div>
+
+    <!-- Aba flutuante lateral para abrir os canais com facilidade -->
+    <div class="sidebar-open-tab" id="playerSidebarOpenTab" title="Abrir Guia de Canais (C)">
+      <span>📡</span>
+      <span class="tab-label">CANAIS</span>
+    </div>
+
+    <!-- Elemento Vídeo Principal -->
     <video id="videoPlayer" class="player-video" playsinline></video>
 
+    <!-- Indicador de Carregamento & Buffer Cinematográfico -->
+    <div class="player-spinner" id="playerSpinner" style="display: none;">
+      <div class="spinner-circle"></div>
+      <div class="spinner-text" id="playerSpinnerText">Carregando transmissão...</div>
+    </div>
+
+    <!-- Controles Inferiores do Player -->
     <div class="player-controls-bottom">
       <div class="player-progress-bar" id="playerProgressBar">
         <div class="player-progress-current" id="playerProgressCurrent"></div>
@@ -262,31 +521,55 @@
 
       <div class="player-controls-row">
         <div class="controls-left">
-          <button class="ctrl-btn" id="playPauseBtn">▶</button>
-          <button class="ctrl-btn" id="playerRewindBtn" title="Voltar 10s">↺ 10</button>
-          <button class="ctrl-btn" id="playerForwardBtn" title="Avançar 10s">↻ 10</button>
-          <button class="ctrl-btn" id="playerVolumeBtn">🔊</button>
+          <button class="ctrl-btn" id="playPauseBtn" title="Play / Pause (Espaço)">▶</button>
+          
+          <!-- Botões de Zapping / Próximo para TV ao Vivo ou Episódio de Série -->
+          <button class="ctrl-btn ctrl-channel-btn" id="playerPrevChannelBtn" title="Canal Anterior (Seta Cima / PageUp)">⏮</button>
+          <button class="ctrl-btn ctrl-channel-btn" id="playerNextChannelBtn" title="Próximo Canal (Seta Baixo / PageDown)">⏭</button>
+
+          <button class="ctrl-btn" id="playerRewindBtn" title="Voltar 10s (Seta Esquerda)">↺ 10</button>
+          <button class="ctrl-btn" id="playerForwardBtn" title="Avançar 10s (Seta Direita)">↻ 10</button>
+          <button class="ctrl-btn" id="playerVolumeBtn" title="Mudo / Volume">🔊</button>
           <span class="time-display" id="playerTimeDisplay">00:00 / 00:00</span>
         </div>
 
         <div class="controls-right">
-          <select id="playerSourceSelect" style="background: rgba(0,0,0,0.6); color:#fff; border:1px solid rgba(255,255,255,0.3); border-radius:4px; padding:4px 10px; font-size:12px;"></select>
-          <button class="ctrl-btn" id="playerFullscreenBtn" title="Tela Cheia">⛶</button>
+          <button class="ctrl-btn live-btn-guide" id="playerChannelGuideBtn" title="Guia de Canais (C)">📋 Canais (C)</button>
+          <select id="playerSourceSelect" style="background: rgba(0,0,0,0.7); color:#fff; border:1px solid rgba(255,255,255,0.3); border-radius:6px; padding:6px 12px; font-size:12px;"></select>
+          <button class="ctrl-btn" id="playerFullscreenBtn" title="Tela Cheia (F)">⛶</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Modal de Troca de Perfis ("Quem está assistindo?") -->
+  <!-- Modal de Perfis / Contas ("Quem está assistindo?") -->
   <div class="modal-backdrop" id="profileModal">
-    <div class="modal-content" style="max-width: 600px; text-align: center; padding: 30px;">
+    <div class="modal-content profile-modal-wrapper">
       <button class="modal-close-btn" id="profileCloseBtn">✕</button>
-      <h2 style="font-size: 32px; font-weight: 800; margin-bottom: 10px;">Quem está assistindo?</h2>
-      <p style="color: #888; font-size: 14px; margin-bottom: 24px;">Escolha seu perfil para acessar seus favoritos e histórico</p>
+      <h2 class="profile-modal-heading">Quem está assistindo?</h2>
+      <p class="profile-modal-sub">Escolha seu perfil para acessar suas recomendações personalizadas, favoritos e histórico</p>
       
       <div class="profile-modal-grid" id="profileModalGrid"></div>
 
-      <button class="btn btn-secondary" id="createNewProfileBtn" style="margin-top: 10px;">+ Adicionar Perfil</button>
+      <!-- Formulário de Criar / Editar Perfil (Toggle) -->
+      <div class="profile-form-box" id="profileFormBox" style="display: none;">
+        <h3 style="font-size: 18px; margin-bottom: 12px;" id="profileFormTitle">Criar Novo Perfil</h3>
+        <input type="text" id="profileFormNameInput" class="profile-name-input" placeholder="Nome do perfil (ex: Maria, Quarto, Filhos)" maxlength="20" />
+        
+        <div style="margin: 14px 0 8px; font-size: 13px; color: #aaa;">Escolha um avatar:</div>
+        <div class="avatar-picker-grid" id="avatarPickerGrid"></div>
+
+        <div style="display: flex; gap: 12px; justify-content: center; margin-top: 20px;">
+          <button class="btn btn-primary" id="saveProfileBtn">Salvar Perfil</button>
+          <button class="btn btn-secondary" id="cancelProfileBtn">Cancelar</button>
+          <button class="btn btn-dark" id="deleteProfileBtn" style="display:none; color:#e50914;">Excluir</button>
+        </div>
+      </div>
+
+      <div class="profile-modal-footer-btns" id="profileModalFooterBtns">
+        <button class="btn btn-secondary" id="createNewProfileBtn">+ Adicionar Perfil</button>
+        <button class="btn btn-dark" id="manageProfilesToggleBtn">⚙️ Gerenciar Perfis</button>
+      </div>
     </div>
   </div>
 

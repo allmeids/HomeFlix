@@ -43,7 +43,7 @@ def stream_remote_media(target_url: str, request: Request) -> Response:
 
         def iterfile():
             try:
-                for chunk in remote_resp.iter_content(chunk_size=64 * 1024):
+                for chunk in remote_resp.iter_content(chunk_size=256 * 1024):
                     if chunk:
                         yield chunk
             finally:

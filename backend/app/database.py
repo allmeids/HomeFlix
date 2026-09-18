@@ -88,11 +88,41 @@ def create_profile(name: str, avatar: str = "🦊") -> Dict[str, Any]:
     conn.close()
     return dict(row)
 
+def get_profile_by_id(profile_id: int) -> Optional[Dict[str, Any]]:
+    conn = get_db_connection()
+    row = conn.execute("SELECT * FROM profiles WHERE id = ?", (profile_id,)).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+def update_profile(profile_id: int, name: str, avatar: str = "🦊") -> Optional[Dict[str, Any]]:
+    conn = get_db_connection()
+    conn.execute("UPDATE profiles SET name = ?, avatar = ? WHERE id = ?", (name, avatar, profile_id))
+    conn.commit()
+    row = conn.execute("SELECT * FROM profiles WHERE id = ?", (profile_id,)).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
 def delete_profile(profile_id: int):
     conn = get_db_connection()
     conn.execute("DELETE FROM profiles WHERE id = ?", (profile_id,))
     conn.commit()
     conn.close()
+
+def get_profile_recent_media_ids(profile_id: int, limit: int = 6) -> List[Dict[str, Any]]:
+    """Retorna itens recentemente assistidos ou favoritados para gerar recomendações personalizadas"""
+    conn = get_db_connection()
+    rows = conn.execute("""
+    SELECT media_id, media_type, title FROM (
+        SELECT media_id, media_type, title, updated_at as ts FROM progress WHERE profile_id = ?
+        UNION ALL
+        SELECT media_id, media_type, title, added_at as ts FROM favorites WHERE profile_id = ?
+    )
+    ORDER BY ts DESC
+    LIMIT ?
+    """, (profile_id, profile_id, limit)).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
 
 # Helper functions para progresso (Continuar Assistindo)
 def save_progress(
