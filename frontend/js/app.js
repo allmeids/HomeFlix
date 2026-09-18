@@ -767,27 +767,38 @@ class HomeFlixApp {
      CARREGAMENTO DO CATÁLOGO & RECOMENDAÇÕES
      ================================================================ */
 
-  async loadHome() {
+  async loadHome(retryCount = 0) {
     // 1. Carrega o catálogo completo da Home (desduplicado pelo backend)
     const homeData = await API.getHomeCatalog();
 
-    if (homeData) {
-      if (homeData.trending && homeData.trending.length > 0) {
-        this.renderHero(homeData.trending[0]);
+    if (!homeData) {
+      if (retryCount < 8) {
+        console.warn(`[HomeFlix] Catálogo ainda não respondeu. Reconectando ao servidor em 1.5s (tentativa ${retryCount + 1}/8)...`);
+        setTimeout(() => this.loadHome(retryCount + 1), 1500);
+      } else {
+        const heroTitle = document.getElementById('heroTitle');
+        const heroOverview = document.getElementById('heroOverview');
+        if (heroTitle) heroTitle.textContent = 'Servidor HomeFlix Offline';
+        if (heroOverview) heroOverview.textContent = 'Certifique-se de que o servidor HomeFlix está em execução (execute ./start.sh ou abra pelo menu).';
       }
-      this.renderCarousel('trendingCarousel', homeData.trending || []);
-      this.renderCarousel('superheroesCarousel', homeData.superheroes || []);
-      this.renderCarousel('actionMoviesCarousel', homeData.action || []);
-      this.renderCarousel('popularMoviesCarousel', homeData.popular_movies || []);
-      this.renderCarousel('popularSeriesCarousel', homeData.popular_series || []);
-      this.renderCarousel('scifiMoviesCarousel', homeData.scifi || []);
-      this.renderCarousel('comedyMoviesCarousel', homeData.comedy || []);
-      this.renderCarousel('horrorMoviesCarousel', homeData.horror || []);
-      this.renderCarousel('thrillerMoviesCarousel', homeData.thriller || []);
-      this.renderCarousel('topMoviesCarousel', homeData.top_rated || []);
-      this.renderCarousel('familyMoviesCarousel', homeData.family || []);
-      this.renderCarousel('animesCarousel', homeData.animes || []);
+      return;
     }
+
+    if (homeData.trending && homeData.trending.length > 0) {
+      this.renderHero(homeData.trending[0]);
+    }
+    this.renderCarousel('trendingCarousel', homeData.trending || []);
+    this.renderCarousel('superheroesCarousel', homeData.superheroes || []);
+    this.renderCarousel('actionMoviesCarousel', homeData.action || []);
+    this.renderCarousel('popularMoviesCarousel', homeData.popular_movies || []);
+    this.renderCarousel('popularSeriesCarousel', homeData.popular_series || []);
+    this.renderCarousel('scifiMoviesCarousel', homeData.scifi || []);
+    this.renderCarousel('comedyMoviesCarousel', homeData.comedy || []);
+    this.renderCarousel('horrorMoviesCarousel', homeData.horror || []);
+    this.renderCarousel('thrillerMoviesCarousel', homeData.thriller || []);
+    this.renderCarousel('topMoviesCarousel', homeData.top_rated || []);
+    this.renderCarousel('familyMoviesCarousel', homeData.family || []);
+    this.renderCarousel('animesCarousel', homeData.animes || []);
 
     // 2. Continuar Assistindo (Quick Resume)
     await this.loadContinueWatching();

@@ -56,7 +56,12 @@ def is_port_in_use(port: int = 8080) -> bool:
         return s.connect_ex(('127.0.0.1', port)) == 0
 
 def open_browser_later():
-    time.sleep(1.2)
+    # Aguarda ativamente o servidor iniciar antes de abrir o navegador
+    for _ in range(40):
+        time.sleep(0.3)
+        if is_port_in_use(8080):
+            time.sleep(0.4)
+            break
     try:
         webbrowser.open("http://localhost:8080")
     except Exception:
