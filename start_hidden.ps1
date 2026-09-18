@@ -1,5 +1,5 @@
 $rootDir = "C:\Users\Allme\OneDrive\Documentos\Projetos\HomeFlix"
-$python = "$rootDir\.venv\Scripts\python.exe"
+$python = if (Test-Path "$rootDir\.venv\Scripts\python.exe") { "$rootDir\.venv\Scripts\python.exe" } else { "python" }
 
 # Verificar se já está rodando
 $conn = Get-NetTCPConnection -LocalPort 8080 -State Listen -ErrorAction SilentlyContinue

@@ -21,7 +21,8 @@ if not os.path.exists(venv_python):
 current_python = os.path.normpath(sys.executable)
 if os.path.exists(venv_python) and current_python.lower() != venv_python.lower():
     creationflags = 0x08000000 if (sys.platform == "win32" and is_windowless) else 0 # CREATE_NO_WINDOW
-    sys.exit(subprocess.call([venv_python] + sys.argv, creationflags=creationflags))
+    script_path = os.path.abspath(__file__)
+    sys.exit(subprocess.call([venv_python, script_path] + sys.argv[1:], creationflags=creationflags))
 
 # Redirecionar stdout/stderr para arquivo de log caso esteja sem console (pythonw)
 if sys.stdout is None or sys.stderr is None:
