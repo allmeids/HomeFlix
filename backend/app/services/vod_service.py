@@ -1,5 +1,6 @@
 import requests
 import re
+import urllib.parse
 from typing import List, Dict, Any, Optional
 from app.services.tmdb_service import get_media_details
 
@@ -103,11 +104,83 @@ def fetch_superstream(media_type: str, imdb_id: str, season: Optional[int] = Non
         print(f"[SuperStream Error] {exc}")
     return []
 
+def fetch_embedplayer(media_type: str, imdb_id: str, season: Optional[int] = None, episode: Optional[int] = None) -> List[Dict[str, Any]]:
+    """Provedor agregado EmbedPlayer para filmes e séries PT-BR em alta definição (HLS 1080p DUAL)."""
+    if media_type not in ("movie", "filme"):
+        return []
+
+    streams = []
+    try:
+        url = f"https://embed.embedplayer.site/{imdb_id}"
+        r = _vod_session.get(url, headers={"User-Agent": "Mozilla/5.0 (X11; Linux x86_64)"}, timeout=8)
+        if r.status_code != 200:
+            return []
+
+        items = re.findall(r"class=[\"\']player_select_item[\"\']\s+idS=[\"\']([^\'\"]+)[\"\']", r.text)
+        for idx, ids in enumerate(items[:3]):
+            try:
+                data = {"idS": ids}
+                r_stream = _vod_session.post(
+                    "https://embed.embedplayer.site/stream",
+                    data=data,
+                    headers={
+                        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64)",
+                        "Referer": url,
+                        "Origin": "https://embed.embedplayer.site",
+                        "X-Requested-With": "XMLHttpRequest"
+                    },
+                    timeout=8
+                )
+                if r_stream.status_code != 200:
+                    continue
+                s_json = r_stream.json()
+                sources = s_json.get("resources", {}).get("sources", [])
+                if not sources:
+                    continue
+                video_url = sources[0].get("file", "")
+                video_id = video_url.rstrip("/").split("/")[-1]
+                if not video_id:
+                    continue
+
+                gv_url = f"https://embedplayer2.xyz/player/index.php?data={video_id}&do=getVideo"
+                r_gv = _vod_session.post(
+                    gv_url,
+                    data={"hash": video_id, "r": "https://embed.embedplayer.site/"},
+                    headers={
+                        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64)",
+                        "Referer": f"https://embedplayer2.xyz/video/{video_id}",
+                        "Origin": "https://embedplayer2.xyz",
+                        "X-Requested-With": "XMLHttpRequest"
+                    },
+                    timeout=8
+                )
+                if r_gv.status_code != 200:
+                    continue
+                gv_json = r_gv.json()
+                m3u8 = gv_json.get("securedLink")
+                if m3u8:
+                    proxy_m3u8 = f"/api/proxy/stream?url={urllib.parse.quote(m3u8, safe='')}"
+                    streams.append({
+                        "name": f"EmbedPlayer VIP #{idx+1} (1080p DUAL)",
+                        "title": "🎬 1080p WEB-DL Full HD • Português (Dublado)",
+                        "url": proxy_m3u8,
+                        "_provider": "EmbedPlayer",
+                        "behaviorHints": {"notWebReady": False}
+                    })
+            except Exception:
+                pass
+    except Exception as exc:
+        print(f"[EmbedPlayer Error] {exc}")
+    return streams
+
 def validate_stream_alive(item: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     """Testa se o link remoto está ativo e não expirado (evita repassar streams mortas/404 para o cliente)."""
     url = item.get("url")
     if not url:
         return None
+    # Streams que já vêm via proxy local de provedores ativos não precisam de validação extra
+    if url.startswith("/api/proxy/stream"):
+        return item
     if "froststream.cloutteam.com" in url:
         try:
             r = _vod_session.get(url, headers={"User-Agent": "Stremio/4.4.168"}, allow_redirects=False, timeout=2.5)
@@ -155,10 +228,11 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
     title = details.get("title") or details.get("name") or "Vídeo"
     raw_streams = []
 
-    # 2. Busca paralela de alta velocidade (FrostStream + SuperStream simultaneamente)
-    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+    # 2. Busca paralela de alta velocidade (FrostStream + SuperStream + EmbedPlayer simultaneamente)
+    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
         f_frost = executor.submit(fetch_froststream, media_type, imdb_id, season, episode)
         f_super = executor.submit(fetch_superstream, media_type, imdb_id, season, episode)
+        f_embed = executor.submit(fetch_embedplayer, media_type, imdb_id, season, episode)
 
         try:
             frost_streams = f_frost.result(timeout=14)
@@ -176,6 +250,13 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
         except Exception as exc:
             print(f"[Parallel SuperStream Error] {exc}")
 
+        try:
+            embed_streams = f_embed.result(timeout=14)
+            for s in embed_streams:
+                raw_streams.append(s)
+        except Exception as exc:
+            print(f"[Parallel EmbedPlayer Error] {exc}")
+
     theatrical_cam = False
     if media_type in ("movie", "filme"):
         release_date = details.get("release_date")
@@ -191,7 +272,9 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
 
         raw_title = s.get("title", "") or ""
         name = s.get("name", "") or s.get("_provider", "Servidor")
-        is_cam = is_cinema_cam(raw_title, name) or (theatrical_cam and not is_digital_release(raw_title, name))
+        # Identifica se é CAM apenas se tiver termos de gravação de cinema reais
+        # Não rebaixa streams que já tenham resolução digital declarada
+        is_cam = is_cinema_cam(raw_title, name)
         quality = parse_quality(raw_title, name, is_cam=is_cam)
         audio = parse_audio(raw_title, name)
 
