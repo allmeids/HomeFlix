@@ -461,22 +461,30 @@ class HomeFlixPlayer {
   }
 
   handleMediaError(e, failedUrl = null, resumeTime = 0) {
-    const url = failedUrl || this.video.src || '';
-    console.warn('[Player] Falha na reprodução do stream:', url, e);
+    const rawUrl = failedUrl || (this.video ? this.video.src : '') || '';
+    let originalUrl = rawUrl;
+    if (rawUrl.includes('/api/proxy/stream')) {
+      try {
+        const parsed = new URL(rawUrl, window.location.origin);
+        originalUrl = parsed.searchParams.get('url') || rawUrl;
+      } catch (_) {}
+    }
+    console.warn('[Player] Falha na reprodução do stream:', rawUrl, 'URL Original:', originalUrl, e);
     this.clearStallWatchdog();
 
-    // 1. Se for URL remota direta de vídeo MP4 e ainda não passou pelo proxy local, tenta via proxy CORS
-    if (url && !url.includes('/api/proxy/stream') && !url.includes('.m3u8') && !url.includes('/api/live/stream/')) {
+    // 1. Se for URL remota direta de vídeo MP4 e ainda não passou pelo proxy local (e não for FrostStream que já usa proxy), tenta proxy
+    if (rawUrl && !rawUrl.includes('/api/proxy/stream') && !rawUrl.includes('.m3u8') && !rawUrl.includes('/api/live/stream/')) {
       console.log('[Player] Tentando reproduzir com proxy local anti-CORS...');
-      const proxiedUrl = `/api/proxy/stream?url=${encodeURIComponent(url)}`;
+      const proxiedUrl = `/api/proxy/stream?url=${encodeURIComponent(rawUrl)}`;
       this.showNotice('⚡ Otimizando conexão via servidor local...');
-      this.loadStream(proxiedUrl, resumeTime || this.video.currentTime || 0);
+      this.loadStream(proxiedUrl, resumeTime || (this.video ? this.video.currentTime : 0) || 0);
       return;
     }
 
-    // 2. Tenta o próximo servidor da lista de fontes
-    this.failedUrls.add(url);
-    this.tryNextSource(resumeTime || this.video.currentTime || 0, 'Erro de reprodução no servidor');
+    // 2. Se o proxy também falhou ou o stream é inválido, marca AMBAS as URLs como falha para não re-tentar
+    this.failedUrls.add(rawUrl);
+    this.failedUrls.add(originalUrl);
+    this.tryNextSource(resumeTime || (this.video ? this.video.currentTime : 0) || 0, 'Servidor indisponível');
   }
 
   tryNextSource(resumeTime = 0, reason = '') {
@@ -502,10 +510,17 @@ class HomeFlixPlayer {
       this.hls = null;
     }
 
-    this.showSpinner('Conectando ao stream...');
-    this.startStallWatchdog(url, resumeTime);
+    // Se for URL do FrostStream que requer User-Agent do Stremio, roteia diretamente pelo proxy local
+    let targetStreamUrl = url;
+    if (url && url.includes('froststream.cloutteam.com') && !url.includes('/api/proxy/stream')) {
+      console.log('[Player] FrostStream detectado: roteando diretamente via proxy Stremio local.');
+      targetStreamUrl = `/api/proxy/stream?url=${encodeURIComponent(url)}`;
+    }
 
-    const isHls = url.includes('.m3u8') || url.includes('pluto.tv') || url.includes('/api/live/stream/');
+    this.showSpinner('Conectando ao stream...');
+    this.startStallWatchdog(targetStreamUrl, resumeTime);
+
+    const isHls = targetStreamUrl.includes('.m3u8') || targetStreamUrl.includes('pluto.tv') || targetStreamUrl.includes('/api/live/stream/');
 
     if (isHls && window.Hls && Hls.isSupported()) {
       this.hls = new Hls({
@@ -524,7 +539,7 @@ class HomeFlixPlayer {
         fragLoadingMaxRetry: 6
       });
 
-      this.hls.loadSource(url);
+      this.hls.loadSource(targetStreamUrl);
       this.hls.attachMedia(this.video);
       
       this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
@@ -559,6 +574,7 @@ class HomeFlixPlayer {
               console.error('[HLS] Erro crítico não recuperável', data);
               this.hls.destroy();
               this.failedUrls.add(url);
+              this.failedUrls.add(targetStreamUrl);
               this.tryNextSource(resumeTime, 'Falha fatal na transmissão');
               break;
           }
@@ -566,13 +582,14 @@ class HomeFlixPlayer {
       });
     } else {
       // Vídeo direto MP4 ou Safari nativo
-      this.video.src = url;
+      this.video.src = targetStreamUrl;
 
       this.video.onloadedmetadata = () => {
         // Se a resolução for 0x0, o navegador leu o container MP4 mas não decodifica o codec (ex: 4K HEVC no Chrome)
         if (!this.isLive && this.video.videoWidth === 0 && this.video.videoHeight === 0) {
           console.warn('[Player] Dimensões 0x0 detectadas (codec HEVC não suportado). Alternando...');
           this.failedUrls.add(url);
+          this.failedUrls.add(targetStreamUrl);
           this.tryNextSource(resumeTime, 'Stream 4K HEVC incompatível');
           return;
         }

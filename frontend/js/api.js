@@ -16,8 +16,12 @@ const API = {
   },
 
   // TMDB / Catálogo
-  async getHomeCatalog() {
-    return await this.request('/api/media/home');
+  async getHomeCatalog(refresh = false) {
+    return await this.request(`/api/media/home${refresh ? '?refresh=true' : ''}`);
+  },
+
+  async refreshCatalog() {
+    return await this.request('/api/media/refresh', { method: 'POST' });
   },
 
   async getTrending(type = 'all') {

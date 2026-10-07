@@ -68,6 +68,16 @@ class HomeFlixApp {
       });
     });
 
+    // Refresh Catalog button
+    const refreshBtn = document.getElementById('refreshCatalogBtn');
+    if (refreshBtn) {
+      refreshBtn.setAttribute('tabindex', '0');
+      refreshBtn.addEventListener('click', () => this.refreshCatalog());
+      refreshBtn.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') this.refreshCatalog();
+      });
+    }
+
     // Profile button
     const profileBtn = document.getElementById('profileBtn');
     if (profileBtn) {
@@ -350,7 +360,7 @@ class HomeFlixApp {
     const isSearchTab = this.currentTab === 'search' || document.getElementById('searchContainer').style.display !== 'none';
 
     // 1. Zona Navbar
-    const navItems = Array.from(document.querySelectorAll('.navbar .nav-item, #searchInput, #profileBtn'));
+    const navItems = Array.from(document.querySelectorAll('.navbar .nav-item, #searchInput, #refreshCatalogBtn, #profileBtn'));
 
     // 2. Zona Hero Banner
     const heroSection = document.getElementById('heroSection');
@@ -824,6 +834,39 @@ class HomeFlixApp {
 
     // 3. Recomendações personalizadas
     await this.loadRecommendations();
+  }
+
+  async refreshCatalog() {
+    const btn = document.getElementById('refreshCatalogBtn');
+    const icon = document.getElementById('refreshCatalogIcon');
+    const label = btn ? btn.querySelector('.refresh-label') : null;
+
+    if (icon) icon.style.transform = 'rotate(360deg)';
+    if (label) label.textContent = 'Sincronizando...';
+    if (btn) btn.style.opacity = '0.7';
+
+    try {
+      await API.refreshCatalog();
+      if (this.currentTab === 'home') {
+        await this.loadHome();
+      } else if (this.currentTab === 'movies') {
+        await this.loadMoviesTab();
+      } else if (this.currentTab === 'series') {
+        await this.loadSeriesTab();
+      } else if (this.currentTab === 'categories') {
+        await this.loadCategoriesTab();
+      }
+      if (label) label.textContent = 'Atualizado!';
+    } catch (err) {
+      console.warn('[HomeFlix] Erro ao sincronizar catálogo:', err);
+      if (label) label.textContent = 'Erro ao atualizar';
+    } finally {
+      setTimeout(() => {
+        if (icon) icon.style.transform = 'none';
+        if (label) label.textContent = 'Atualizar Catálogo';
+        if (btn) btn.style.opacity = '1';
+      }, 1500);
+    }
   }
 
   async loadRecommendations() {

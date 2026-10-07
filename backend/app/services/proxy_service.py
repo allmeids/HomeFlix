@@ -4,7 +4,7 @@ from fastapi.responses import StreamingResponse
 from typing import Optional
 
 PROXY_HEADERS = {
-    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+    "User-Agent": "Stremio/4.4.168",
     "Accept": "*/*"
 }
 
@@ -24,6 +24,13 @@ def stream_remote_media(target_url: str, request: Request) -> Response:
             timeout=15,
             allow_redirects=True
         )
+
+        if remote_resp.status_code >= 400:
+            return Response(
+                content=remote_resp.text,
+                status_code=remote_resp.status_code,
+                headers={"Access-Control-Allow-Origin": "*"}
+            )
 
         response_headers = {
             "Access-Control-Allow-Origin": "*",

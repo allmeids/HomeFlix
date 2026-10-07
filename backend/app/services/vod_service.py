@@ -37,6 +37,11 @@ def is_cinema_cam(title: str, name: str) -> bool:
     cam_pattern = r'\b(CAM|HDCAM|CAM-RIP|CAMRIP|TELESYNC|HDTS|TS|TELECINE|TC|CINEMA|GRAVADO|1XBET|BET|PROPAGANDA)\b'
     return bool(re.search(cam_pattern, combined))
 
+def is_digital_release(title: str, name: str) -> bool:
+    combined = f"{name} {title}".upper()
+    digital_pattern = r'\b(WEB-DL|WEBDL|WEBRIP|BLURAY|BDRIP|BRRIP|HDTV|REMUX|PROPER)\b'
+    return bool(re.search(digital_pattern, combined))
+
 def parse_quality(title: str, name: str, is_cam: bool = False) -> str:
     if is_cam:
         return "Qualidade Cinema (CAM)"
@@ -162,7 +167,7 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
 
         raw_title = s.get("title", "") or ""
         name = s.get("name", "") or s.get("_provider", "Servidor")
-        is_cam = is_cinema_cam(raw_title, name) or theatrical_cam
+        is_cam = is_cinema_cam(raw_title, name) or (theatrical_cam and not is_digital_release(raw_title, name))
         quality = parse_quality(raw_title, name, is_cam=is_cam)
         audio = parse_audio(raw_title, name)
 

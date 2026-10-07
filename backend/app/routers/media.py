@@ -4,8 +4,17 @@ from app.services import tmdb_service
 router = APIRouter(prefix="/api/media", tags=["Media"])
 
 @router.get("/home")
-def get_home_catalog():
+def get_home_catalog(refresh: bool = Query(False)):
+    if refresh:
+        tmdb_service.clear_catalog_cache()
     return tmdb_service.get_home_catalog()
+
+@router.post("/refresh")
+@router.get("/refresh")
+def refresh_catalog():
+    tmdb_service.clear_catalog_cache()
+    catalog = tmdb_service.get_home_catalog()
+    return {"status": "ok", "message": "Catálogo sincronizado com as fontes mais recentes", "sections": len(catalog.get("sections", []))}
 
 @router.get("/trending")
 def get_trending(type: str = Query("all", pattern="^(all|movie|tv)$"), window: str = Query("week", pattern="^(day|week)$")):

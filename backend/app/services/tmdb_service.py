@@ -379,3 +379,9 @@ def get_season_details(tv_id: str, season_number: int) -> Dict[str, Any]:
     endpoint = f"tv/{tv_id}/season/{season_number}"
     data = tmdb_request(endpoint)
     return data
+
+def clear_catalog_cache() -> None:
+    """Limpa o cache em memória do catálogo para forçar recarga fresca da API TMDB."""
+    global _CACHE
+    _CACHE.clear()
+

@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-title" content="HomeFlix">
   <link rel="apple-touch-icon" href="/static/icons/icon-192.png">
   <link rel="icon" href="/static/icons/icon-192.png">
-  <link rel="stylesheet" href="/static/css/style.css?v=2.0">
+  <link rel="stylesheet" href="/static/css/style.css?v=3.0">
   <!-- HLS.js para streaming HLS/m3u8 no navegador -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -39,6 +39,11 @@
         <span>🔍</span>
         <input type="text" id="searchInput" class="search-input" placeholder="Buscar filmes, séries, atores..." />
       </div>
+
+      <button class="nav-refresh-btn" id="refreshCatalogBtn" title="Sincronizar Novidades e Atualizar Catálogo" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #ccc; border-radius: 6px; padding: 6px 12px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 13px; transition: all 0.2s ease;">
+        <span id="refreshCatalogIcon" style="display: inline-block; transition: transform 0.5s ease;">🔄</span>
+        <span class="refresh-label">Atualizar Catálogo</span>
+      </button>
 
       <div class="profile-btn" id="profileBtn" title="Trocar ou Gerenciar Perfis">
         <span class="profile-avatar-mini" id="navProfileAvatar">🦊</span>
@@ -577,8 +582,8 @@
   </div>
 
   <!-- Scripts -->
-  <script src="/static/js/api.js?v=2.0"></script>
-  <script src="/static/js/player.js?v=2.0"></script>
-  <script src="/static/js/app.js?v=2.0"></script>
+  <script src="/static/js/api.js?v=3.0"></script>
+  <script src="/static/js/player.js?v=3.0"></script>
+  <script src="/static/js/app.js?v=3.0"></script>
 </body>
 </html>
