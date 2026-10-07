@@ -304,35 +304,51 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
                     valid_streams.append(res)
         normalized = valid_streams
 
-    # 5. Algoritmo de Priorização Inteligente (Best Stream Selection):
-    # - Português (Dublado): Prioridade Máxima (+100)
-    # - Qualidade Digital WEB-DL/Bluray ganha de Cinema CAM (+50 vs -80)
-    # - Resolução (4K: +40, 1080p: +30, 720p: +20)
+    # 4.2 Filtragem Estrita Anti-Cinema: Se já existe qualquer versão digital limpa (4K, 1080p, 720p),
+    # descarta 100% das gravações de cinema (CAM/TS) para não poluir a lista nem correr risco de tocar CAM
+    has_digital_clean = any(not s.get("is_cinema", False) for s in normalized)
+    if has_digital_clean:
+        normalized = [s for s in normalized if not s.get("is_cinema", False)]
+
+    # 5. Algoritmo de Priorização Máxima de Qualidade (Best Stream Selection):
+    # Foco total na melhor experiência possível:
+    # 1º: Versão Digital limpa (WEB-DL/BluRay)
+    # 2º: Áudio em Português Dublado ou Dual Audio
+    # 3º: Máxima Resolução (4K Ultra HD > 1080p Full HD > 720p HD)
     def calculate_score(item):
         score = 0
-        # Áudio: Português Dublado é rei
-        if "Português" in item["audio"]:
-            score += 100
-        elif "Legendado" in item["audio"]:
-            score += 35
+        # Resolução e fidelidade visual
+        q = item.get("quality", "")
+        if "4K" in q:
+            score += 160
+        elif "1080p" in q:
+            score += 110
+        elif "720p" in q:
+            score += 50
         else:
-            score += 10
-
-        # Resolução
-        if "4K" in item["quality"]:
-            score += 40
-        elif "1080p" in item["quality"]:
-            score += 30
-        elif "720p" in item["quality"]:
             score += 20
+
+        # Áudio: Português Dublado é rei no conforto nacional
+        a = item.get("audio", "")
+        if "Português" in a:
+            score += 100
+        elif "Legendado" in a:
+            score += 40
         else:
-            score += 10
+            score += 15
 
         # Versão Digital vs Cinema CAM
-        if item["is_cinema"]:
-            score -= 80  # Penaliza versão gravada se houver versão digital limpa
+        if item.get("is_cinema", False):
+            score -= 300  # Penaliza brutalmente cópia gravada
         else:
-            score += 50  # Bônus para versão digital de alta fidelidade
+            score += 80   # Bônus para versão digital de alta fidelidade
+
+        # Bônus de rapidez e CDN estável
+        prov = item.get("provider", "")
+        if prov == "EmbedPlayer":
+            score += 25
+        elif prov == "FrostStream":
+            score += 20
 
         return score
 

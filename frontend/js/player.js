@@ -940,6 +940,9 @@ class HomeFlixPlayer {
     if (window.app) {
       window.app.loadContinueWatching();
       window.app.loadRecommendations();
+      if (typeof window.app.onPlayerClose === 'function') {
+        window.app.onPlayerClose();
+      }
     }
   }
 

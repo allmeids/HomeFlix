@@ -130,6 +130,12 @@ const API = {
     return data?.results || [];
   },
 
+  async getMediaProgress(profileId, mediaId, season = 1, episode = 1) {
+    if (!profileId || !mediaId) return null;
+    const data = await this.request(`/api/progress/media?profile_id=${profileId}&media_id=${mediaId}&season=${season}&episode=${episode}`);
+    return data?.progress || null;
+  },
+
   async saveProgress(progressData) {
     return await this.request('/api/progress/save', {
       method: 'POST',

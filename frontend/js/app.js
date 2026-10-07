@@ -1128,20 +1128,10 @@ class HomeFlixApp {
     const directors = (details.directors || []).join(', ');
     document.getElementById('detailsDirectorsText').textContent = directors || 'Não informado';
 
-    // Badge de cinema CAM se for recente
+    // Badge de cinema CAM (oculto por padrão para manter estética limpa)
     const cinemaBadge = document.getElementById('detailsCinemaBadge');
     if (cinemaBadge) {
       cinemaBadge.style.display = 'none';
-      if (mediaType === 'movie' && details.release_date) {
-        try {
-          const relDate = new Date(details.release_date);
-          const now = new Date();
-          const diffDays = (now - relDate) / (1000 * 60 * 60 * 24);
-          if (diffDays < 75) {
-            cinemaBadge.style.display = 'block';
-          }
-        } catch (e) {}
-      }
     }
 
     // Botão Voltar
@@ -1290,7 +1280,16 @@ class HomeFlixApp {
         });
       };
 
-      seasonSelect.onchange = (e) => loadEpisodes(e.target.value);
+      seasonSelect.onchange = (e) => {
+        currentSeason = Number(e.target.value);
+        currentEpisode = 1;
+        if (this.activeDetailsMedia) {
+          this.activeDetailsMedia.season = currentSeason;
+          this.activeDetailsMedia.episode = currentEpisode;
+          this.updateDetailsPlayButton(mediaType, tmdbId, title, details, currentSeason, currentEpisode);
+        }
+        loadEpisodes(currentSeason);
+      };
       loadEpisodes(currentSeason);
     } else {
       tvSec.style.display = 'none';
@@ -1335,14 +1334,59 @@ class HomeFlixApp {
       similarSec.style.display = 'none';
     }
 
-    // Botão Principal: Assistir Agora
-    const playBtn = document.getElementById('detailsPlayBtn');
-    playBtn.onclick = () => {
-      this.fetchAndPlay(mediaType, tmdbId, title, details, currentSeason, currentEpisode, null, opts.resumeTime);
-    };
+    // Registra mídia ativa dos detalhes para atualizações dinâmicas
+    this.activeDetailsMedia = { mediaType, tmdbId, title, details, season: currentSeason, episode: currentEpisode };
+
+    // Botão Principal: Continuar Assistindo vs Assistir Agora
+    await this.updateDetailsPlayButton(mediaType, tmdbId, title, details, currentSeason, currentEpisode, opts.resumeTime);
 
     if (opts.autoPlay) {
       this.fetchAndPlay(mediaType, tmdbId, title, details, currentSeason, currentEpisode, null, opts.resumeTime);
+    }
+  }
+
+  async updateDetailsPlayButton(mediaType, tmdbId, title, details, season = 1, episode = 1, forceResumeTime = null) {
+    const playBtn = document.getElementById('detailsPlayBtn');
+    if (!playBtn) return;
+
+    let resumeTime = (forceResumeTime !== null && forceResumeTime !== undefined) ? Number(forceResumeTime) : 0;
+    let savedProgress = null;
+
+    if (!resumeTime && this.currentProfile?.id) {
+      savedProgress = await API.getMediaProgress(this.currentProfile.id, tmdbId, season, episode);
+      if (savedProgress && savedProgress.position > 15) {
+        const isNearEnd = savedProgress.duration > 0 && (savedProgress.position / savedProgress.duration) > 0.95;
+        if (!isNearEnd) {
+          resumeTime = savedProgress.position;
+        }
+      }
+    }
+
+    if (resumeTime > 15) {
+      const min = Math.floor(resumeTime / 60);
+      let remText = '';
+      if (savedProgress?.duration && savedProgress.duration > resumeTime) {
+        const remMin = Math.round((savedProgress.duration - resumeTime) / 60);
+        remText = ` • ${remMin}m restantes`;
+      }
+      playBtn.innerHTML = `<span>▶</span> Continuar Assistindo${remText ? `<small style="font-size:12px; font-weight:normal; opacity:0.85; margin-left:6px;">${remText}</small>` : ''}`;
+      playBtn.title = `Continuar aos ${min} min`;
+      playBtn.onclick = () => {
+        this.fetchAndPlay(mediaType, tmdbId, title, details, season, episode, null, resumeTime);
+      };
+    } else {
+      playBtn.innerHTML = `<span>▶</span> Assistir Agora`;
+      playBtn.title = `Iniciar reprodução`;
+      playBtn.onclick = () => {
+        this.fetchAndPlay(mediaType, tmdbId, title, details, season, episode, null, 0);
+      };
+    }
+  }
+
+  onPlayerClose() {
+    if (document.body.classList.contains('in-details-view') && this.activeDetailsMedia) {
+      const { mediaType, tmdbId, title, details, season, episode } = this.activeDetailsMedia;
+      this.updateDetailsPlayButton(mediaType, tmdbId, title, details, season, episode);
     }
   }
 
@@ -1417,7 +1461,9 @@ class HomeFlixApp {
     if (playBtn) playBtn.innerHTML = '<span>⏳</span> Conectando ao melhor servidor...';
 
     const resolved = await API.resolveStreams(mediaType, tmdbId, season, episode);
-    if (playBtn) playBtn.innerHTML = '<span>▶</span> Assistir Agora';
+    if (playBtn) {
+      this.updateDetailsPlayButton(mediaType, tmdbId, title, details, season, episode, resumeTime);
+    }
 
     const streams = resolved?.streams || [];
     let bestStream = resolved?.best_stream || (streams.length > 0 ? streams[0] : null);
