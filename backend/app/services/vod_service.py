@@ -12,6 +12,12 @@ HEADERS = {
 FROSTSTREAM_URL = "https://froststream.cloutteam.com"
 SUPERSTREAM_URL = "https://da5f663b4690-superstream.baby-beamup.club"
 
+# Sessão persistente para scrapers VOD com Keep-Alive
+_vod_session = requests.Session()
+_vod_adapter = requests.adapters.HTTPAdapter(pool_connections=10, pool_maxsize=20, max_retries=1)
+_vod_session.mount("https://", _vod_adapter)
+_vod_session.mount("http://", _vod_adapter)
+
 from datetime import datetime
 
 def is_recent_theatrical_release(release_date_str: Optional[str]) -> bool:
@@ -68,7 +74,7 @@ def fetch_froststream(media_type: str, imdb_id: str, season: Optional[int] = Non
         url = f"{FROSTSTREAM_URL}/stream/series/{imdb_id}:{s}:{ep}.json"
 
     try:
-        r = requests.get(url, headers=HEADERS, timeout=12)
+        r = _vod_session.get(url, headers=HEADERS, timeout=12)
         if r.status_code == 200:
             return r.json().get("streams", [])
     except Exception as exc:
@@ -85,7 +91,7 @@ def fetch_superstream(media_type: str, imdb_id: str, season: Optional[int] = Non
         url = f"{SUPERSTREAM_URL}/stream/movie/{imdb_id}.json"
 
     try:
-        r = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=12)
+        r = _vod_session.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=12)
         if r.status_code == 200:
             return r.json().get("streams", [])
     except Exception as exc:

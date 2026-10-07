@@ -23,7 +23,6 @@
       <div class="brand-logo" id="navLogo">
         <span class="logo-icon">🎬</span>
         <span class="logo-text">HOME<span class="logo-accent">FLIX</span></span>
-        <span class="logo-badge">4K ULTRA HD</span>
       </div>
       <ul class="nav-links">
         <li class="nav-item active" data-tab="home">Início</li>
@@ -38,7 +37,7 @@
     <div class="nav-right">
       <div class="search-box">
         <span>🔍</span>
-        <input type="text" id="searchInput" class="search-input" placeholder="Títulos, atores, gêneros..." />
+        <input type="text" id="searchInput" class="search-input" placeholder="Buscar filmes, séries, atores..." />
       </div>
 
       <div class="profile-btn" id="profileBtn" title="Trocar ou Gerenciar Perfis">
@@ -53,16 +52,13 @@
   <section class="hero" id="heroSection">
     <div class="hero-overlay"></div>
     <div class="hero-content">
-      <div class="hero-badge">⭐ DESTAQUE EXCLUSIVO</div>
-      <h1 class="hero-title" id="heroTitle">Carregando...</h1>
-      <div class="hero-meta">
-        <span class="hero-rating" id="heroRating">★ 9.5</span>
-        <span id="heroYear">2026</span>
-        <span id="heroType" class="meta-pill">FILME</span>
-        <span class="meta-pill meta-4k">4K ULTRA HD</span>
-        <span class="meta-pill meta-audio">DOLBY AUDIO</span>
+      <h1 class="hero-title" id="heroTitle">Carregando catálogo...</h1>
+      <div class="hero-meta" id="heroMeta">
+        <span class="hero-rating" id="heroRating" style="display:none;"></span>
+        <span id="heroYear" style="display:none;"></span>
+        <span id="heroType" class="meta-pill" style="display:none;">FILME</span>
       </div>
-      <p class="hero-overview" id="heroOverview">Buscando as melhores histórias do cinema mundial e lançamentos imperdíveis...</p>
+      <p class="hero-overview" id="heroOverview">Buscando as melhores histórias do cinema mundial e lançamentos...</p>
       <div class="hero-actions">
         <button class="btn btn-primary" id="heroPlayBtn">▶ Assistir Agora</button>
         <button class="btn btn-secondary" id="heroInfoBtn">ℹ Detalhes & Trailer</button>
@@ -70,61 +66,49 @@
     </div>
   </section>
 
-  <!-- Barra / Carrossel de Categorias Estilo Prime Video -->
+  <!-- Barra / Carrossel de Categorias Estilo Netflix / Prime Video -->
   <div class="categories-bar-wrapper" id="categoriesBarWrapper">
     <div class="categories-bar-header">
-      <span class="categories-bar-title">✨ Navegue por Categorias</span>
-      <span class="categories-bar-sub">Explore gêneros selecionados com centenas de opções sem repetição</span>
+      <span class="categories-bar-title">Navegue por Categorias</span>
+      <span class="categories-bar-sub">Explore gêneros selecionados sem repetição</span>
     </div>
     <div class="categories-carousel-container">
       <button class="cat-nav-btn cat-nav-left" id="catNavLeft">‹</button>
       <div class="categories-carousel" id="categoriesCarousel">
-        <div class="cat-card cat-action" data-category="action" data-scroll="actionMoviesCarousel">
-          <span class="cat-card-icon">💥</span>
+        <div class="cat-card" data-category="action" data-scroll="actionMoviesCarousel">
           <span class="cat-card-name">Ação & Aventura</span>
         </div>
-        <div class="cat-card cat-scifi" data-category="scifi" data-scroll="scifiMoviesCarousel">
-          <span class="cat-card-icon">🚀</span>
-          <span class="cat-card-name">Ficção & Fantasia</span>
+        <div class="cat-card" data-category="scifi" data-scroll="scifiMoviesCarousel">
+          <span class="cat-card-name">Ficção Científica</span>
         </div>
-        <div class="cat-card cat-heroes" data-category="superheroes" data-scroll="superheroesCarousel">
-          <span class="cat-card-icon">🦸</span>
-          <span class="cat-card-name">Marvel & DC</span>
+        <div class="cat-card" data-category="superheroes" data-scroll="superheroesCarousel">
+          <span class="cat-card-name">Heróis & Quadrinhos</span>
         </div>
-        <div class="cat-card cat-movies" data-category="popular_movies" data-scroll="popularMoviesCarousel">
-          <span class="cat-card-icon">🎬</span>
+        <div class="cat-card" data-category="popular_movies" data-scroll="popularMoviesCarousel">
           <span class="cat-card-name">Grandes Filmes</span>
         </div>
-        <div class="cat-card cat-series" data-category="popular_series" data-scroll="popularSeriesCarousel">
-          <span class="cat-card-icon">📺</span>
+        <div class="cat-card" data-category="popular_series" data-scroll="popularSeriesCarousel">
           <span class="cat-card-name">Séries de TV</span>
         </div>
-        <div class="cat-card cat-comedy" data-category="comedy" data-scroll="comedyMoviesCarousel">
-          <span class="cat-card-icon">🍿</span>
+        <div class="cat-card" data-category="comedy" data-scroll="comedyMoviesCarousel">
           <span class="cat-card-name">Comédias</span>
         </div>
-        <div class="cat-card cat-horror" data-category="horror" data-scroll="horrorMoviesCarousel">
-          <span class="cat-card-icon">😱</span>
+        <div class="cat-card" data-category="horror" data-scroll="horrorMoviesCarousel">
           <span class="cat-card-name">Terror & Suspense</span>
         </div>
-        <div class="cat-card cat-thriller" data-category="thriller" data-scroll="thrillerMoviesCarousel">
-          <span class="cat-card-icon">🔪</span>
-          <span class="cat-card-name">Crime & Mistério</span>
+        <div class="cat-card" data-category="thriller" data-scroll="thrillerMoviesCarousel">
+          <span class="cat-card-name">Crime & Investigação</span>
         </div>
-        <div class="cat-card cat-animes" data-category="animes" data-scroll="animesCarousel">
-          <span class="cat-card-icon">✨</span>
+        <div class="cat-card" data-category="animes" data-scroll="animesCarousel">
           <span class="cat-card-name">Animes & Japão</span>
         </div>
-        <div class="cat-card cat-family" data-category="family" data-scroll="familyMoviesCarousel">
-          <span class="cat-card-icon">👶</span>
-          <span class="cat-card-name">Família & Kids</span>
+        <div class="cat-card" data-category="family" data-scroll="familyMoviesCarousel">
+          <span class="cat-card-name">Para Toda a Família</span>
         </div>
-        <div class="cat-card cat-top" data-category="top_rated" data-scroll="topMoviesCarousel">
-          <span class="cat-card-icon">🏆</span>
-          <span class="cat-card-name">Aclamados pela Crítica</span>
+        <div class="cat-card" data-category="top_rated" data-scroll="topMoviesCarousel">
+          <span class="cat-card-name">Mais Bem Avaliados</span>
         </div>
-        <div class="cat-card cat-live" data-category="live">
-          <span class="cat-card-icon">📡</span>
+        <div class="cat-card" data-category="live">
           <span class="cat-card-name">TV ao Vivo (179 Canais)</span>
         </div>
       </div>
@@ -149,7 +133,7 @@
     <!-- Recomendações Personalizadas por Perfil -->
     <section class="media-section" id="recommendationsSection">
       <div class="section-header">
-        <h2 class="section-title" id="recommendationsTitle">✨ Recomendados para Você</h2>
+        <h2 class="section-title" id="recommendationsTitle">Recomendados para Você</h2>
       </div>
       <div class="carousel-wrapper">
         <button class="carousel-nav-btn carousel-nav-left">‹</button>
@@ -161,7 +145,7 @@
     <!-- Em Alta -->
     <section class="media-section">
       <div class="section-header">
-        <h2 class="section-title">🔥 Em Alta no HomeFlix</h2>
+        <h2 class="section-title">Em Alta no HomeFlix</h2>
       </div>
       <div class="carousel-wrapper">
         <button class="carousel-nav-btn carousel-nav-left">‹</button>
@@ -173,7 +157,7 @@
     <!-- Universo Marvel & DC (Heróis) -->
     <section class="media-section">
       <div class="section-header">
-        <h2 class="section-title">🦸 Universo Marvel & DC (Heróis)</h2>
+        <h2 class="section-title">Heróis & Quadrinhos</h2>
       </div>
       <div class="carousel-wrapper">
         <button class="carousel-nav-btn carousel-nav-left">‹</button>
@@ -185,7 +169,7 @@
     <!-- Filmes de Ação & Aventura -->
     <section class="media-section">
       <div class="section-header">
-        <h2 class="section-title">💥 Ação & Aventura Explosiva</h2>
+        <h2 class="section-title">Ação & Aventura</h2>
       </div>
       <div class="carousel-wrapper">
         <button class="carousel-nav-btn carousel-nav-left">‹</button>
@@ -197,7 +181,7 @@
     <!-- Filmes Populares -->
     <section class="media-section">
       <div class="section-header">
-        <h2 class="section-title">🎬 Grandes Sucessos do Cinema</h2>
+        <h2 class="section-title">Grandes Sucessos do Cinema</h2>
       </div>
       <div class="carousel-wrapper">
         <button class="carousel-nav-btn carousel-nav-left">‹</button>
@@ -209,7 +193,7 @@
     <!-- Séries Populares -->
     <section class="media-section">
       <div class="section-header">
-        <h2 class="section-title">📺 Séries Mais Maratonadas</h2>
+        <h2 class="section-title">Séries Populares</h2>
       </div>
       <div class="carousel-wrapper">
         <button class="carousel-nav-btn carousel-nav-left">‹</button>
@@ -221,7 +205,7 @@
     <!-- Ficção Científica & Fantasia -->
     <section class="media-section">
       <div class="section-header">
-        <h2 class="section-title">🚀 Ficção Científica & Fantasia</h2>
+        <h2 class="section-title">Ficção Científica & Fantasia</h2>
       </div>
       <div class="carousel-wrapper">
         <button class="carousel-nav-btn carousel-nav-left">‹</button>
@@ -233,7 +217,7 @@
     <!-- Comédias -->
     <section class="media-section">
       <div class="section-header">
-        <h2 class="section-title">🍿 Comédias para Rir Muito</h2>
+        <h2 class="section-title">Comédias</h2>
       </div>
       <div class="carousel-wrapper">
         <button class="carousel-nav-btn carousel-nav-left">‹</button>
@@ -245,7 +229,7 @@
     <!-- Terror & Suspense -->
     <section class="media-section">
       <div class="section-header">
-        <h2 class="section-title">😱 Terror & Arrepios</h2>
+        <h2 class="section-title">Terror & Suspense</h2>
       </div>
       <div class="carousel-wrapper">
         <button class="carousel-nav-btn carousel-nav-left">‹</button>
@@ -257,7 +241,7 @@
     <!-- Suspense, Crime & Mistério -->
     <section class="media-section">
       <div class="section-header">
-        <h2 class="section-title">🔪 Crime, Suspense & Mistério</h2>
+        <h2 class="section-title">Crime & Investigação</h2>
       </div>
       <div class="carousel-wrapper">
         <button class="carousel-nav-btn carousel-nav-left">‹</button>
@@ -269,7 +253,7 @@
     <!-- Top Avaliados -->
     <section class="media-section">
       <div class="section-header">
-        <h2 class="section-title">🏆 Aclamados pela Crítica</h2>
+        <h2 class="section-title">Mais Bem Avaliados</h2>
       </div>
       <div class="carousel-wrapper">
         <button class="carousel-nav-btn carousel-nav-left">‹</button>
@@ -281,7 +265,7 @@
     <!-- Família & Infantil -->
     <section class="media-section">
       <div class="section-header">
-        <h2 class="section-title">👶 Sessão em Família & Kids</h2>
+        <h2 class="section-title">Para Toda a Família</h2>
       </div>
       <div class="carousel-wrapper">
         <button class="carousel-nav-btn carousel-nav-left">‹</button>
@@ -293,7 +277,7 @@
     <!-- Animes & Animações -->
     <section class="media-section">
       <div class="section-header">
-        <h2 class="section-title">✨ Animes & Animações Japonesas</h2>
+        <h2 class="section-title">Animes & Animações</h2>
       </div>
       <div class="carousel-wrapper">
         <button class="carousel-nav-btn carousel-nav-left">‹</button>
@@ -331,12 +315,10 @@
           <h1 class="details-main-title" id="detailsMainTitle">Título</h1>
           
           <div class="details-meta-row">
-            <span class="meta-rating" id="detailsRating">★ 9.0</span>
-            <span class="meta-year" id="detailsYear">2026</span>
-            <span class="meta-runtime" id="detailsRuntime">2h 15m</span>
+            <span class="meta-rating" id="detailsRating"></span>
+            <span class="meta-year" id="detailsYear"></span>
+            <span class="meta-runtime" id="detailsRuntime"></span>
             <span class="meta-pill" id="detailsTypeBadge">FILME</span>
-            <span class="meta-pill meta-4k">4K ULTRA HD</span>
-            <span class="meta-pill meta-audio">DUBLADO / DUAL ÁUDIO</span>
           </div>
 
           <div class="details-action-buttons">
@@ -344,13 +326,13 @@
               <span>▶</span> Assistir Agora
             </button>
             <button class="btn btn-secondary btn-lg" id="detailsTrailerBtn">
-              <span>🎬</span> Assistir Trailer
+              Assistir Trailer
             </button>
             <button class="btn btn-secondary btn-lg" id="detailsFavBtn">
               <span>➕</span> Minha Lista
             </button>
             <button class="btn btn-dark btn-lg" id="detailsToggleSourcesBtn">
-              <span>⚙️</span> Servidores & Qualidade
+              Servidores & Qualidade
             </button>
           </div>
 
@@ -367,14 +349,14 @@
     <div class="details-extra-sections">
       <!-- Elenco Principal com Fotos -->
       <section class="details-section" id="detailsCastSection">
-        <h2 class="details-section-title">🎭 Elenco Principal</h2>
+        <h2 class="details-section-title">Elenco Principal</h2>
         <div class="details-cast-grid" id="detailsCastGrid"></div>
       </section>
 
       <!-- Seletor de Temporadas e Episódios (Para Séries) -->
       <section class="details-section" id="detailsTvSection" style="display: none;">
         <div class="details-tv-header">
-          <h2 class="details-section-title">📺 Temporadas & Episódios</h2>
+          <h2 class="details-section-title">Temporadas & Episódios</h2>
           <select class="details-season-dropdown" id="detailsSeasonDropdown"></select>
         </div>
         <div class="details-episodes-grid" id="detailsEpisodesGrid"></div>
@@ -382,13 +364,13 @@
 
       <!-- Opções de Servidores & Fontes -->
       <section class="details-section" id="detailsSourcesSection" style="display: none;">
-        <h2 class="details-section-title">📡 Servidores e Fontes Disponíveis</h2>
+        <h2 class="details-section-title">Servidores e Fontes Disponíveis</h2>
         <div class="stream-sources-grid" id="detailsSourcesGrid"></div>
       </section>
 
       <!-- Títulos Semelhantes & Recomendações TMDB -->
       <section class="details-section" id="detailsSimilarSection">
-        <h2 class="details-section-title">✨ Quem viu este título também assistiu</h2>
+        <h2 class="details-section-title">Títulos Semelhantes</h2>
         <div class="carousel-wrapper">
           <button class="carousel-nav-btn carousel-nav-left">‹</button>
           <div class="media-carousel" id="detailsSimilarCarousel"></div>

@@ -2,6 +2,7 @@ import os
 import threading
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
@@ -14,6 +15,9 @@ app = FastAPI(
     description="Plataforma de Streaming Pessoal & TV ao Vivo",
     version="1.0.0"
 )
+
+# Compressão de alta performance para respostas > 1KB (reduz tráfego em até 80%)
+app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 # CORS liberado para rede local e qualquer cliente Web/SmartTV/Mobile
 app.add_middleware(

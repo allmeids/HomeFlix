@@ -58,43 +58,46 @@ body {
 /* Cards de Conteúdo (Filmes, Séries, Continuar Assistindo) */
 .media-card.tv-focused,
 .media-card:focus-visible {
-  transform: scale(1.08) !important;
-  box-shadow: 0 0 0 3.5px var(--accent-red), 0 0 26px rgba(229, 9, 20, 0.8), 0 12px 32px rgba(0,0,0,0.85) !important;
+  transform: scale(1.05) !important;
+  outline: 2.5px solid #ffffff !important;
+  outline-offset: 2px;
   z-index: 35 !important;
-  border-radius: 8px;
-  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.9) !important;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 /* Cards de Canais ao Vivo (Pluto TV 16:9) */
 .channel-card.tv-focused,
 .channel-card:focus-visible {
-  transform: scale(1.05) !important;
-  box-shadow: 0 0 0 3.5px #38bdf8, 0 0 26px rgba(56, 189, 248, 0.8), 0 12px 30px rgba(0,0,0,0.9) !important;
+  transform: scale(1.04) !important;
+  outline: 2.5px solid #ffffff !important;
+  outline-offset: 2px;
   z-index: 30 !important;
-  border-color: #38bdf8 !important;
-  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.9) !important;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
-/* Cards de Categorias (Prime Video Style) */
+/* Cards de Categorias */
 .cat-card.tv-focused,
 .cat-card:focus-visible {
-  transform: scale(1.06) !important;
-  box-shadow: 0 0 0 3px #ff334b, 0 0 22px rgba(255, 51, 75, 0.7) !important;
-  border-color: #ff334b !important;
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease !important;
+  transform: scale(1.04) !important;
+  outline: 2px solid #ffffff !important;
+  background: rgba(255, 255, 255, 0.25) !important;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
-/* Botões do Hero Banner e Botões Principais */
+/* Botões Principais */
 .btn-primary.tv-focused,
 .btn-primary:focus-visible,
 #heroPlayBtn.tv-focused,
 #heroPlayBtn:focus-visible,
 #detailsPlayBtn.tv-focused,
 #detailsPlayBtn:focus-visible {
-  transform: scale(1.06) !important;
-  box-shadow: 0 0 0 3.5px #ffffff, 0 0 28px rgba(255, 255, 255, 0.9) !important;
+  transform: scale(1.05) !important;
+  outline: 3px solid #ffffff !important;
+  outline-offset: 2px;
   z-index: 25 !important;
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease !important;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .btn-secondary.tv-focused,
@@ -105,34 +108,35 @@ body {
 .btn-dark:focus-visible,
 .details-back-nav-btn.tv-focused,
 .details-back-nav-btn:focus-visible {
-  transform: scale(1.05) !important;
-  box-shadow: 0 0 0 3px #38bdf8, 0 0 22px rgba(56, 189, 248, 0.75) !important;
-  background: rgba(255, 255, 255, 0.25) !important;
+  transform: scale(1.04) !important;
+  outline: 2px solid #ffffff !important;
+  outline-offset: 1px;
+  background: rgba(255, 255, 255, 0.2) !important;
   z-index: 25 !important;
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease !important;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 /* Itens da Navbar */
 .nav-item.tv-focused,
 .nav-item:focus-visible {
   color: #fff !important;
-  background: rgba(229, 9, 20, 0.25) !important;
-  box-shadow: 0 0 0 2.5px var(--accent-red), 0 0 16px rgba(229, 9, 20, 0.7) !important;
+  background: rgba(255, 255, 255, 0.15) !important;
+  outline: 2px solid #ffffff !important;
   border-radius: 6px;
-  transform: scale(1.06);
+  transform: scale(1.04);
 }
 
 .profile-btn.tv-focused,
 .profile-btn:focus-visible {
-  box-shadow: 0 0 0 2.5px #38bdf8, 0 0 18px rgba(56, 189, 248, 0.7) !important;
+  outline: 2px solid #ffffff !important;
   background: rgba(255, 255, 255, 0.15) !important;
   border-radius: 8px;
 }
 
 .search-box:has(#searchInput.tv-focused),
 .search-box:has(#searchInput:focus-visible) {
-  box-shadow: 0 0 0 2.5px #38bdf8, 0 0 18px rgba(56, 189, 248, 0.6) !important;
-  border-color: #38bdf8 !important;
+  outline: 2px solid #ffffff !important;
+  border-color: #ffffff !important;
 }
 
 /* Itens de Episódios de Séries, Elenco e Servidores */
@@ -142,17 +146,17 @@ body {
 .stream-source-card:focus-visible,
 .details-cast-card.tv-focused,
 .details-cast-card:focus-visible {
-  transform: scale(1.04) !important;
-  box-shadow: 0 0 0 3px var(--accent-red), 0 0 22px rgba(229, 9, 20, 0.7) !important;
-  border-color: var(--accent-red) !important;
+  transform: scale(1.03) !important;
+  outline: 2px solid #ffffff !important;
+  outline-offset: 2px;
 }
 
 /* Botões do Player de Vídeo */
 .ctrl-btn.tv-focused,
 .ctrl-btn:focus-visible {
-  transform: scale(1.18) !important;
-  box-shadow: 0 0 0 2.5px #38bdf8, 0 0 18px rgba(56, 189, 248, 0.85) !important;
-  background: rgba(255, 255, 255, 0.3) !important;
+  transform: scale(1.15) !important;
+  outline: 2px solid #ffffff !important;
+  background: rgba(255, 255, 255, 0.25) !important;
 }
 
 /* Menu de Legendas PT-BR no Player */
@@ -477,21 +481,6 @@ body {
   margin-top: 50px;
 }
 
-.hero-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: linear-gradient(135deg, rgba(229, 9, 20, 0.3) 0%, rgba(229, 9, 20, 0.1) 100%);
-  border: 1px solid rgba(229, 9, 20, 0.6);
-  color: #ff6b72;
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.8px;
-  padding: 4px 10px;
-  border-radius: 4px;
-  margin-bottom: 14px;
-}
-
 .hero-title {
   font-size: 52px;
   font-weight: 900;
@@ -519,24 +508,12 @@ body {
 
 .meta-pill {
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
   padding: 2px 8px;
   border-radius: 4px;
   background: rgba(255, 255, 255, 0.1);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   color: #ddd;
-}
-
-.meta-4k {
-  background: rgba(229, 9, 20, 0.2);
-  border-color: rgba(229, 9, 20, 0.5);
-  color: #ff858b;
-}
-
-.meta-audio {
-  background: rgba(0, 168, 225, 0.15);
-  border-color: rgba(0, 168, 225, 0.4);
-  color: #5cd0ff;
 }
 
 .hero-overview {
@@ -721,70 +698,37 @@ body {
   flex: 0 0 auto;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 20px;
-  border-radius: 10px;
+  justify-content: center;
+  padding: 10px 20px;
+  border-radius: 20px;
   cursor: pointer;
-  background: #1c1c22;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   user-select: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 .cat-card:hover {
-  transform: translateY(-3px) scale(1.04);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+  background: rgba(255, 255, 255, 0.16);
   border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
 }
 
-.cat-card-icon {
-  font-size: 20px;
+.cat-card.active {
+  background: #ffffff;
+  border-color: #ffffff;
+}
+
+.cat-card.active .cat-card-name {
+  color: #111113;
 }
 
 .cat-card-name {
-  font-size: 13px;
-  font-weight: 700;
-  color: #fff;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #e5e5e5;
   white-space: nowrap;
 }
-
-/* Variações de Cores das Categorias */
-.cat-action { background: linear-gradient(135deg, rgba(255, 87, 34, 0.2) 0%, #1c1c22 70%); }
-.cat-action:hover { border-color: #ff5722; }
-
-.cat-scifi { background: linear-gradient(135deg, rgba(0, 188, 212, 0.2) 0%, #1c1c22 70%); }
-.cat-scifi:hover { border-color: #00bcd4; }
-
-.cat-heroes { background: linear-gradient(135deg, rgba(229, 9, 20, 0.25) 0%, #1c1c22 70%); }
-.cat-heroes:hover { border-color: var(--accent-red); }
-
-.cat-movies { background: linear-gradient(135deg, rgba(156, 39, 176, 0.2) 0%, #1c1c22 70%); }
-.cat-movies:hover { border-color: #9c27b0; }
-
-.cat-series { background: linear-gradient(135deg, rgba(33, 150, 243, 0.2) 0%, #1c1c22 70%); }
-.cat-series:hover { border-color: #2196f3; }
-
-.cat-comedy { background: linear-gradient(135deg, rgba(255, 193, 7, 0.2) 0%, #1c1c22 70%); }
-.cat-comedy:hover { border-color: #ffc107; }
-
-.cat-horror { background: linear-gradient(135deg, rgba(103, 58, 183, 0.25) 0%, #1c1c22 70%); }
-.cat-horror:hover { border-color: #673ab7; }
-
-.cat-thriller { background: linear-gradient(135deg, rgba(233, 30, 99, 0.2) 0%, #1c1c22 70%); }
-.cat-thriller:hover { border-color: #e91e63; }
-
-.cat-animes { background: linear-gradient(135deg, rgba(255, 64, 129, 0.2) 0%, #1c1c22 70%); }
-.cat-animes:hover { border-color: #ff4081; }
-
-.cat-family { background: linear-gradient(135deg, rgba(76, 175, 80, 0.2) 0%, #1c1c22 70%); }
-.cat-family:hover { border-color: #4caf50; }
-
-.cat-top { background: linear-gradient(135deg, rgba(255, 215, 0, 0.25) 0%, #1c1c22 70%); }
-.cat-top:hover { border-color: #ffd700; }
-
-.cat-live { background: linear-gradient(135deg, rgba(229, 9, 20, 0.35) 0%, #1c1c22 70%); border-color: rgba(229, 9, 20, 0.5); }
-.cat-live:hover { border-color: #ff1a24; }
 
 /* ================================================================
    CARROSSÉIS DE MÍDIA COM SETAS LATERAIS (< e >)
@@ -975,7 +919,8 @@ body {
   transition: all 0.2s ease;
 }
 
-.continue-card:hover .continue-remove-btn {
+.continue-card:hover .continue-remove-btn,
+.media-card:hover .continue-remove-btn {
   opacity: 1;
 }
 
@@ -2399,6 +2344,13 @@ body {
 
 .profile-card.active .profile-avatar-large {
   border-color: var(--accent-red);
+}
+
+.profile-card.tv-focused .profile-avatar-large,
+.profile-card:focus-visible .profile-avatar-large {
+  border-color: #fff;
+  transform: scale(1.08);
+  outline: 2px solid #ffffff;
 }
 
 .profile-edit-badge {

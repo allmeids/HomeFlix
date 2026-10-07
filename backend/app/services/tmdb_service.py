@@ -20,6 +20,12 @@ def _get_cached(key: str) -> Optional[Any]:
 def _set_cached(key: str, data: Any):
     _CACHE[key] = {"data": data, "time": time.time()}
 
+# Sessão HTTP persistente para Keep-Alive e alto desempenho
+_session = requests.Session()
+_adapter = requests.adapters.HTTPAdapter(pool_connections=15, pool_maxsize=30, max_retries=2)
+_session.mount("https://", _adapter)
+_session.mount("http://", _adapter)
+
 def tmdb_request(endpoint: str, params: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     query_params = {
         "api_key": TMDB_API_KEY,
@@ -36,7 +42,7 @@ def tmdb_request(endpoint: str, params: Optional[Dict[str, Any]] = None) -> Dict
 
     url = f"{TMDB_BASE_URL}/{endpoint.lstrip('/')}"
     try:
-        response = requests.get(url, params=query_params, timeout=8)
+        response = _session.get(url, params=query_params, timeout=8)
         response.raise_for_status()
         data = response.json()
         _set_cached(cache_key, data)

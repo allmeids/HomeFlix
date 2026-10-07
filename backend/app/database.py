@@ -5,8 +5,12 @@ from typing import List, Dict, Any, Optional
 DB_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "homeflix.db")
 
 def get_db_connection() -> sqlite3.Connection:
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=10.0)
     conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA journal_mode = WAL;")
+    conn.execute("PRAGMA synchronous = NORMAL;")
+    conn.execute("PRAGMA cache_size = -64000;")
+    conn.execute("PRAGMA foreign_keys = ON;")
     return conn
 
 def init_db():
@@ -61,12 +65,16 @@ def init_db():
     )
     """)
 
+    # Índices para alta performance em consultas locais e Smart TVs
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_progress_profile ON progress(profile_id, updated_at DESC);")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_favorites_profile ON favorites(profile_id, added_at DESC);")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_progress_lookup ON progress(profile_id, media_id, season_number, episode_number);")
+
     # Cria perfil padrão se não existir nenhum
     cursor.execute("SELECT COUNT(*) as count FROM profiles")
     if cursor.fetchone()["count"] == 0:
         cursor.execute("INSERT INTO profiles (name, avatar) VALUES (?, ?)", ("Almeida", "🦊"))
         cursor.execute("INSERT INTO profiles (name, avatar) VALUES (?, ?)", ("Família", "🎬"))
-        cursor.execute("INSERT INTO profiles (name, avatar) VALUES (?, ?)", ("Visitante", "🍿"))
 
     conn.commit()
     conn.close()
@@ -75,6 +83,12 @@ def init_db():
 def get_profiles() -> List[Dict[str, Any]]:
     conn = get_db_connection()
     rows = conn.execute("SELECT * FROM profiles ORDER BY id ASC").fetchall()
+    if not rows:
+        # Auto-cria perfil padrão caso banco esteja vazio
+        conn.execute("INSERT INTO profiles (name, avatar) VALUES (?, ?)", ("Almeida", "🦊"))
+        conn.execute("INSERT INTO profiles (name, avatar) VALUES (?, ?)", ("Família", "🎬"))
+        conn.commit()
+        rows = conn.execute("SELECT * FROM profiles ORDER BY id ASC").fetchall()
     conn.close()
     return [dict(r) for r in rows]
 
@@ -106,6 +120,10 @@ def delete_profile(profile_id: int):
     conn = get_db_connection()
     conn.execute("DELETE FROM profiles WHERE id = ?", (profile_id,))
     conn.commit()
+    count = conn.execute("SELECT COUNT(*) as count FROM profiles").fetchone()["count"]
+    if count == 0:
+        conn.execute("INSERT INTO profiles (name, avatar) VALUES (?, ?)", ("Almeida", "🦊"))
+        conn.commit()
     conn.close()
 
 def get_profile_recent_media_ids(profile_id: int, limit: int = 6) -> List[Dict[str, Any]]:

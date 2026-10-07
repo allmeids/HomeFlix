@@ -644,13 +644,14 @@ class HomeFlixApp {
      ================================================================ */
 
   async loadProfiles() {
-    this.profiles = await API.getProfiles();
+    this.profiles = (await API.getProfiles()) || [];
     const savedId = localStorage.getItem('homeflix_active_profile');
     if (savedId) {
       this.currentProfile = this.profiles.find(p => String(p.id) === String(savedId));
     }
     if (!this.currentProfile && this.profiles.length > 0) {
       this.currentProfile = this.profiles[0];
+      localStorage.setItem('homeflix_active_profile', this.currentProfile.id);
     }
     window.currentProfile = this.currentProfile;
     this.updateProfileUI();
@@ -665,12 +666,12 @@ class HomeFlixApp {
 
       const recTitle = document.getElementById('recommendationsTitle');
       if (recTitle) {
-        recTitle.textContent = `✨ Recomendados para Você, ${this.currentProfile.name}`;
+        recTitle.textContent = `Recomendados para Você, ${this.currentProfile.name}`;
       }
     }
   }
 
-  openProfileModal(isManageMode = false) {
+  async openProfileModal(isManageMode = false) {
     const modal = document.getElementById('profileModal');
     const grid = document.getElementById('profileModalGrid');
     const formBox = document.getElementById('profileFormBox');
@@ -679,9 +680,16 @@ class HomeFlixApp {
     grid.style.display = 'flex';
     formBox.style.display = 'none';
     footerBtns.style.display = 'flex';
-    grid.innerHTML = '';
+    
+    if (!this.profiles || this.profiles.length === 0) {
+      grid.innerHTML = '<div style="color:#aaa; padding:20px; text-align:center;">Carregando perfis...</div>';
+      await this.loadProfiles();
+    }
 
-    const avatars = ['🦊', '🍿', '🎬', '👑', '🚀', '🐱', '🦁', '🤖', '🎮', '⚡', '🥷', '💎', '🧙', '🌟', '🍕', '🐉'];
+    grid.innerHTML = '';
+    if (this.profiles.length === 0) {
+      grid.innerHTML = '<div style="color:#aaa; padding:20px; text-align:center;">Nenhum perfil encontrado. Clique em "+ Adicionar Perfil".</div>';
+    }
 
     this.profiles.forEach(p => {
       const isCurrent = this.currentProfile && String(p.id) === String(this.currentProfile.id);
@@ -706,6 +714,11 @@ class HomeFlixApp {
           modal.classList.remove('open');
           this.loadContinueWatching();
           this.loadRecommendations();
+          
+          const activeNav = document.querySelector('.nav-links .nav-item.active');
+          if (activeNav && activeNav.dataset.tab === 'watchlist') {
+            this.loadWatchlist();
+          }
         }
       };
 
@@ -778,8 +791,14 @@ class HomeFlixApp {
       } else {
         const heroTitle = document.getElementById('heroTitle');
         const heroOverview = document.getElementById('heroOverview');
+        const ratingEl = document.getElementById('heroRating');
+        const yearEl = document.getElementById('heroYear');
+        const typeEl = document.getElementById('heroType');
         if (heroTitle) heroTitle.textContent = 'Servidor HomeFlix Offline';
         if (heroOverview) heroOverview.textContent = 'Certifique-se de que o servidor HomeFlix está em execução (execute ./start.sh ou abra pelo menu).';
+        if (ratingEl) ratingEl.style.display = 'none';
+        if (yearEl) yearEl.style.display = 'none';
+        if (typeEl) typeEl.style.display = 'none';
       }
       return;
     }
@@ -911,9 +930,9 @@ class HomeFlixApp {
     const hero = document.getElementById('heroSection');
     const title = item.title || item.name || 'Destaque';
     const overview = item.overview || 'Sem sinopse disponível.';
-    const rating = item.vote_average ? item.vote_average.toFixed(1) : '9.2';
-    const date = item.release_date || item.first_air_date || '2026';
-    const year = date.split('-')[0];
+    const rating = item.vote_average ? item.vote_average.toFixed(1) : '';
+    const date = item.release_date || item.first_air_date || '';
+    const year = date ? date.split('-')[0] : '';
     const mediaType = item.media_type || (item.title ? 'movie' : 'tv');
 
     const backdrop = item.backdrop_path 
@@ -922,9 +941,34 @@ class HomeFlixApp {
 
     hero.style.backgroundImage = `url('${backdrop}')`;
     document.getElementById('heroTitle').textContent = title;
-    document.getElementById('heroRating').textContent = `★ ${rating}`;
-    document.getElementById('heroYear').textContent = year;
-    document.getElementById('heroType').textContent = mediaType === 'movie' ? 'FILME' : 'SÉRIE';
+
+    const ratingEl = document.getElementById('heroRating');
+    const yearEl = document.getElementById('heroYear');
+    const typeEl = document.getElementById('heroType');
+
+    if (ratingEl) {
+      if (rating) {
+        ratingEl.style.display = 'inline-block';
+        ratingEl.textContent = `★ ${rating}`;
+      } else {
+        ratingEl.style.display = 'none';
+      }
+    }
+
+    if (yearEl) {
+      if (year) {
+        yearEl.style.display = 'inline-block';
+        yearEl.textContent = year;
+      } else {
+        yearEl.style.display = 'none';
+      }
+    }
+
+    if (typeEl) {
+      typeEl.style.display = 'inline-block';
+      typeEl.textContent = mediaType === 'movie' ? 'FILME' : 'SÉRIE';
+    }
+
     document.getElementById('heroOverview').textContent = overview;
 
     document.getElementById('heroPlayBtn').onclick = () => {
@@ -1506,42 +1550,105 @@ class HomeFlixApp {
      ================================================================ */
 
   async loadWatchlist() {
-    if (!this.currentProfile) return;
     const heroSection = document.getElementById('heroSection');
+    const categoriesBar = document.getElementById('categoriesBarWrapper');
     const sectionsContainer = document.getElementById('sectionsContainer');
+    const liveTvContainer = document.getElementById('liveTvContainer');
     const searchContainer = document.getElementById('searchContainer');
     const detailsView = document.getElementById('detailsView');
 
     heroSection.style.display = 'none';
+    if (categoriesBar) categoriesBar.style.display = 'none';
     sectionsContainer.style.display = 'none';
+    if (liveTvContainer) liveTvContainer.style.display = 'none';
     if (detailsView) detailsView.style.display = 'none';
     searchContainer.style.display = 'block';
 
     const titleEl = document.getElementById('searchTitle');
     const grid = document.getElementById('searchGrid');
-    titleEl.textContent = `Minha Lista — ${this.currentProfile.name}`;
-    grid.innerHTML = '';
+    const backBtn = document.getElementById('searchBackBtn');
+    if (backBtn) backBtn.style.display = 'none';
 
-    const items = await API.getFavorites(this.currentProfile.id);
-    if (items.length === 0) {
-      grid.innerHTML = '<p style="color:#888; grid-column:1/-1; padding:40px 0; text-align:center;">Sua lista está vazia. Adicione filmes e séries clicando no botão "Minha Lista" nos detalhes do título.</p>';
+    if (!this.currentProfile) {
+      await this.loadProfiles();
+    }
+
+    if (!this.currentProfile) {
+      titleEl.textContent = 'Minha Lista';
+      grid.innerHTML = `
+        <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px;">
+          <p style="color: #aaa; margin-bottom: 16px; font-size: 16px;">Nenhum perfil ativo selecionado.</p>
+          <button class="btn btn-primary" onclick="window.app.openProfileModal()">Escolher Perfil</button>
+        </div>
+      `;
       return;
     }
 
+    titleEl.textContent = `Minha Lista — ${this.currentProfile.name}`;
+    grid.innerHTML = '<div style="color: #aaa; grid-column: 1/-1; text-align: center; padding: 40px;">Carregando sua lista...</div>';
+
+    const items = await API.getFavorites(this.currentProfile.id);
+    if (!items || items.length === 0) {
+      grid.innerHTML = `
+        <div style="grid-column: 1/-1; text-align: center; padding: 70px 20px;">
+          <div style="font-size: 44px; margin-bottom: 14px; opacity: 0.7;">🔖</div>
+          <h3 style="font-size: 22px; margin-bottom: 8px; color: #fff; font-weight: 700;">Sua lista está vazia</h3>
+          <p style="color: #888; max-width: 460px; margin: 0 auto 24px; font-size: 14px; line-height: 1.6;">
+            Adicione filmes e séries clicando no botão "Minha Lista" nos detalhes de qualquer título.
+          </p>
+          <button class="btn btn-primary" id="watchlistExploreBtn">Explorar Catálogo</button>
+        </div>
+      `;
+      const expBtn = document.getElementById('watchlistExploreBtn');
+      if (expBtn) {
+        expBtn.onclick = () => {
+          const homeTab = document.querySelector('.nav-links .nav-item[data-tab="home"]');
+          if (homeTab) homeTab.click();
+        };
+      }
+      return;
+    }
+
+    grid.innerHTML = '';
     items.forEach(item => {
       const card = document.createElement('div');
       card.className = 'media-card';
       card.setAttribute('tabindex', '0');
+      const posterUrl = item.poster_path 
+        ? `https://image.tmdb.org/t/p/w342${item.poster_path}`
+        : 'https://images.placeholders.dev/?width=342&height=513&text=HomeFlix&theme=dark';
+
       card.innerHTML = `
-        <img class="media-card-poster" src="https://image.tmdb.org/t/p/w342${item.poster_path}" alt="${item.title}" loading="lazy" />
+        <button class="continue-remove-btn" title="Remover da Minha Lista" aria-label="Remover">✕</button>
+        <img class="media-card-poster" src="${posterUrl}" alt="${item.title}" loading="lazy" />
         <div class="media-card-info">
           <div class="media-card-title">${item.title}</div>
           <div class="media-card-sub">
             <span>${item.media_type === 'movie' ? 'Filme' : 'Série'}</span>
-            <span class="card-rating">★ ${item.vote_average?.toFixed(1) || ''}</span>
+            <span class="card-rating">${item.vote_average ? `★ ${Number(item.vote_average).toFixed(1)}` : ''}</span>
           </div>
         </div>
       `;
+
+      const removeBtn = card.querySelector('.continue-remove-btn');
+      if (removeBtn) {
+        removeBtn.onclick = async (e) => {
+          e.stopPropagation();
+          await API.toggleFavorite({
+            profile_id: this.currentProfile.id,
+            media_id: String(item.media_id),
+            media_type: item.media_type,
+            title: item.title,
+            poster_path: item.poster_path,
+            vote_average: item.vote_average
+          });
+          card.remove();
+          if (grid.children.length === 0) {
+            this.loadWatchlist();
+          }
+        };
+      }
+
       card.onclick = () => this.openMediaDetails(item.media_type, item.media_id);
       card.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') card.click();
