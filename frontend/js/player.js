@@ -496,15 +496,18 @@ class HomeFlixPlayer {
   }
 
   loadStream(url, resumeTime = 0) {
+    if (!this.overlay || !this.overlay.classList.contains('open')) {
+      return;
+    }
+
     if (this.hls) {
-      this.hls.destroy();
+      try { this.hls.destroy(); } catch (_) {}
       this.hls = null;
     }
 
     // Se for URL do FrostStream que requer User-Agent do Stremio, roteia diretamente pelo proxy local
     let targetStreamUrl = url;
     if (url && url.includes('froststream.cloutteam.com') && !url.includes('/api/proxy/stream')) {
-      console.log('[Player] FrostStream detectado: roteando diretamente via proxy Stremio local.');
       targetStreamUrl = `/api/proxy/stream?url=${encodeURIComponent(url)}`;
     }
 
@@ -534,6 +537,9 @@ class HomeFlixPlayer {
       this.hls.attachMedia(this.video);
       
       this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        if (!this.overlay || !this.overlay.classList.contains('open')) {
+          return;
+        }
         if (resumeTime > 0 && !this.isLive) {
           this.video.currentTime = resumeTime;
         }
@@ -542,8 +548,7 @@ class HomeFlixPlayer {
           p.then(() => {
             this.hideSpinner();
             this.clearStallWatchdog();
-          }).catch(e => {
-            console.log('Autoplay bloqueado pelo navegador, aguardando clique do usuário:', e);
+          }).catch(() => {
             this.playBtn.innerHTML = '▶';
             this.hideSpinner();
           });
@@ -576,9 +581,13 @@ class HomeFlixPlayer {
       this.video.src = targetStreamUrl;
 
       this.video.onloadedmetadata = () => {
+        if (!this.overlay || !this.overlay.classList.contains('open')) {
+          this.video.pause();
+          return;
+        }
+
         // Se a resolução for 0x0, o navegador leu o container MP4 mas não decodifica o codec (ex: 4K HEVC no Chrome)
         if (!this.isLive && this.video.videoWidth === 0 && this.video.videoHeight === 0) {
-          console.warn('[Player] Dimensões 0x0 detectadas (codec HEVC não suportado). Alternando...');
           this.failedUrls.add(url);
           this.failedUrls.add(targetStreamUrl);
           this.tryNextSource(resumeTime, 'Stream 4K HEVC incompatível');
@@ -592,9 +601,13 @@ class HomeFlixPlayer {
         const p = this.video.play();
         if (p !== undefined) {
           p.then(() => {
+            if (!this.overlay || !this.overlay.classList.contains('open')) {
+              this.video.pause();
+              return;
+            }
             this.hideSpinner();
             this.clearStallWatchdog();
-          }).catch(e => {
+          }).catch(() => {
             this.playBtn.innerHTML = '▶';
             this.hideSpinner();
           });
@@ -892,17 +905,34 @@ class HomeFlixPlayer {
   close() {
     this.syncProgress();
     this.stopHeartbeat();
-    this.video.pause();
+    this.clearStallWatchdog();
+    clearTimeout(this.hideControlsTimer);
+    clearTimeout(this.cinemaWarningTimer);
+    clearTimeout(this.osdTimer);
+    clearTimeout(this.numberInputTimer);
+    clearTimeout(this.noticeTimer);
+
+    if (this.video) {
+      this.video.pause();
+      this.video.removeAttribute('src');
+      this.video.load(); // Descarrega a mídia do buffer e cessa todo áudio/decodificação
+    }
     if (this.hls) {
-      this.hls.destroy();
+      try {
+        this.hls.stopLoad();
+        this.hls.destroy();
+      } catch (_) {}
       this.hls = null;
     }
-    this.video.src = '';
+    this.sources = [];
+    this.failedUrls.clear();
     this.overlay.classList.remove('open');
     this.sidebar.classList.remove('open');
     if (this.liveOsd) this.liveOsd.classList.remove('show');
     if (this.subtitlesMenu) this.subtitlesMenu.style.display = 'none';
     this.clearSubtitles();
+    this.hideSpinner();
+
     if (document.fullscreenElement) {
       document.exitFullscreen().catch(() => {});
     }

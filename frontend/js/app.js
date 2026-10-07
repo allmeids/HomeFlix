@@ -598,6 +598,7 @@ class HomeFlixApp {
     const searchContainer = document.getElementById('searchContainer');
 
     // Esconde a tela de detalhes ao trocar de aba principal
+    document.body.classList.remove('in-details-view');
     if (detailsView) detailsView.style.display = 'none';
     if (searchContainer) searchContainer.style.display = 'none';
 
@@ -1075,6 +1076,7 @@ class HomeFlixApp {
     const searchContainer = document.getElementById('searchContainer');
 
     // Esconde as outras telas e exibe a tela de detalhes completa
+    document.body.classList.add('in-details-view');
     heroSection.style.display = 'none';
     if (categoriesBar) categoriesBar.style.display = 'none';
     sectionsContainer.style.display = 'none';
@@ -1082,7 +1084,7 @@ class HomeFlixApp {
     searchContainer.style.display = 'none';
 
     detailsView.style.display = 'block';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'instant' });
 
     // Busca detalhes completos no backend com TMDB
     const details = await API.getMediaDetails(mediaType, tmdbId);
@@ -1146,6 +1148,7 @@ class HomeFlixApp {
     const backBtn = document.getElementById('detailsViewBackBtn');
     backBtn.onclick = () => {
       detailsView.style.display = 'none';
+      document.body.classList.remove('in-details-view');
       this.switchTab(this.currentTab || 'home');
     };
 
