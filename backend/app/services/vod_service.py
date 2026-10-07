@@ -103,6 +103,30 @@ def fetch_superstream(media_type: str, imdb_id: str, season: Optional[int] = Non
         print(f"[SuperStream Error] {exc}")
     return []
 
+def validate_stream_alive(item: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    """Testa se o link remoto está ativo e não expirado (evita repassar streams mortas/404 para o cliente)."""
+    url = item.get("url")
+    if not url:
+        return None
+    if "froststream.cloutteam.com" in url:
+        try:
+            r = _vod_session.get(url, headers={"User-Agent": "Stremio/4.4.168"}, allow_redirects=False, timeout=2.5)
+            # Se retornou 404 ou erro, o stream expirou ou não existe
+            if r.status_code == 404 or r.status_code >= 500:
+                return None
+            # Se retornou 302 com redirecionamento para CDN, verifica se a CDN está ativa
+            if r.status_code == 302 and "Location" in r.headers:
+                cdn_url = r.headers["Location"]
+                try:
+                    r_cdn = _vod_session.head(cdn_url, headers={"User-Agent": "Stremio/4.4.168"}, timeout=2)
+                    if r_cdn.status_code == 404:
+                        return None
+                except Exception:
+                    pass
+        except Exception:
+            pass
+    return item
+
 def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None, episode: Optional[int] = None) -> Dict[str, Any]:
     cache_key = f"{media_type}_{tmdb_id}_{season}_{episode}"
     now_ts = datetime.now().timestamp()
@@ -186,6 +210,16 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
             "provider": s.get("_provider"),
             "behaviorHints": s.get("behaviorHints", {})
         })
+
+    # 4.1 Validação concorrente rápida para descartar streams mortas/expiradas (elimina 404s no cliente)
+    if normalized:
+        valid_streams = []
+        with concurrent.futures.ThreadPoolExecutor(max_workers=min(len(normalized), 8)) as validator:
+            results = validator.map(validate_stream_alive, normalized)
+            for res in results:
+                if res is not None:
+                    valid_streams.append(res)
+        normalized = valid_streams
 
     # 5. Algoritmo de Priorização Inteligente (Best Stream Selection):
     # - Português (Dublado): Prioridade Máxima (+100)

@@ -352,19 +352,9 @@ class HomeFlixPlayer {
       this.fetchSubtitles(options.mediaType, options.mediaId, options.season, options.episode);
     }
 
-    // Aviso de imagem de cinema (CAM)
+    // Aviso de imagem de cinema (CAM) desativado para interface limpa
     if (this.cinemaWarning) {
-      if (options.isCinema) {
-        this.cinemaWarning.style.display = 'flex';
-        this.cinemaWarning.style.opacity = '1';
-        clearTimeout(this.cinemaWarningTimer);
-        this.cinemaWarningTimer = setTimeout(() => {
-          this.cinemaWarning.style.opacity = '0';
-          setTimeout(() => { if (this.cinemaWarning) this.cinemaWarning.style.display = 'none'; }, 500);
-        }, 8000);
-      } else {
-        this.cinemaWarning.style.display = 'none';
-      }
+      this.cinemaWarning.style.display = 'none';
     }
 
     // Popula seletor de fontes
@@ -390,8 +380,7 @@ class HomeFlixPlayer {
     this.failedUrls.clear();
     const startUrl = options.currentStreamUrl || (this.sources[0] ? this.sources[0].url : null);
     if (!startUrl) {
-      alert('Nenhuma fonte de vídeo disponível.');
-      this.close();
+      this.showErrorScreen('Nenhuma transmissão disponível no momento para este título.');
       return;
     }
 
@@ -409,7 +398,11 @@ class HomeFlixPlayer {
 
   showSpinner(text = 'Carregando...') {
     if (this.spinner) {
+      const circle = this.spinner.querySelector('.spinner-circle');
+      if (circle) circle.style.display = 'block';
       if (this.spinnerText) this.spinnerText.textContent = text;
+      const backBtn = this.spinner.querySelector('.player-error-back-btn');
+      if (backBtn) backBtn.remove();
       this.spinner.style.display = 'flex';
     }
   }
@@ -420,37 +413,38 @@ class HomeFlixPlayer {
     }
   }
 
-  showNotice(msg, duration = 6000) {
-    let notice = document.getElementById('playerCodecNotice');
-    if (!notice) {
-      notice = document.createElement('div');
-      notice.id = 'playerCodecNotice';
-      notice.className = 'cinema-warning-banner';
-      notice.style.background = 'rgba(18, 18, 24, 0.95)';
-      notice.style.border = '1px solid #e50914';
-      notice.style.top = '100px';
-      notice.style.zIndex = '530';
-      this.overlay.appendChild(notice);
+  showErrorScreen(msg = 'Transmissão indisponível no momento.') {
+    if (this.spinner) {
+      const circle = this.spinner.querySelector('.spinner-circle');
+      if (circle) circle.style.display = 'none';
+      if (this.spinnerText) this.spinnerText.textContent = msg;
+      let backBtn = this.spinner.querySelector('.player-error-back-btn');
+      if (!backBtn) {
+        backBtn = document.createElement('button');
+        backBtn.className = 'player-error-back-btn';
+        backBtn.textContent = 'Voltar ao Catálogo';
+        backBtn.style.cssText = 'margin-top: 16px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25); color: #fff; padding: 8px 22px; border-radius: 6px; cursor: pointer; font-size: 14px;';
+        backBtn.onclick = () => this.close();
+        this.spinner.appendChild(backBtn);
+      }
+      this.spinner.style.display = 'flex';
     }
-    notice.innerHTML = `<span>⚡</span><span>${msg}</span>`;
-    notice.style.display = 'flex';
-    notice.style.opacity = '1';
-    clearTimeout(this.noticeTimer);
-    this.noticeTimer = setTimeout(() => {
-      notice.style.opacity = '0';
-      setTimeout(() => { if (notice) notice.style.display = 'none'; }, 500);
-    }, duration);
+  }
+
+  showNotice(msg, duration = 6000) {
+    // Desativado: nenhum banner intrusivo ou poluição visual na tela
+    const notice = document.getElementById('playerCodecNotice');
+    if (notice) notice.remove();
   }
 
   startStallWatchdog(url, resumeTime = 0) {
     this.clearStallWatchdog();
-    // Se após 9 segundos o vídeo não começar e não tiver dados, tenta rota alternativa
+    // Se após 8 segundos o vídeo não começar e não tiver dados, tenta rota alternativa silenciosamente
     this.stallWatchdogTimer = setTimeout(() => {
       if (this.video && this.video.readyState < 2 && !this.video.paused) {
-        console.warn('[Watchdog] Stream demorando a carregar ou travado. Verificando rota alternativa...');
         this.handleMediaError({ reason: 'Watchdog Timeout' }, url, resumeTime);
       }
-    }, 9000);
+    }, 8000);
   }
 
   clearStallWatchdog() {
@@ -469,14 +463,12 @@ class HomeFlixPlayer {
         originalUrl = parsed.searchParams.get('url') || rawUrl;
       } catch (_) {}
     }
-    console.warn('[Player] Falha na reprodução do stream:', rawUrl, 'URL Original:', originalUrl, e);
     this.clearStallWatchdog();
 
-    // 1. Se for URL remota direta de vídeo MP4 e ainda não passou pelo proxy local (e não for FrostStream que já usa proxy), tenta proxy
+    // 1. Se for URL remota direta de vídeo MP4 e ainda não passou pelo proxy local (e não for FrostStream que já usa proxy), tenta proxy silenciosamente
     if (rawUrl && !rawUrl.includes('/api/proxy/stream') && !rawUrl.includes('.m3u8') && !rawUrl.includes('/api/live/stream/')) {
-      console.log('[Player] Tentando reproduzir com proxy local anti-CORS...');
       const proxiedUrl = `/api/proxy/stream?url=${encodeURIComponent(rawUrl)}`;
-      this.showNotice('⚡ Otimizando conexão via servidor local...');
+      this.showSpinner('Conectando ao stream...');
       this.loadStream(proxiedUrl, resumeTime || (this.video ? this.video.currentTime : 0) || 0);
       return;
     }
@@ -495,12 +487,11 @@ class HomeFlixPlayer {
     );
 
     if (nextSource) {
-      this.showNotice(`ℹ️ ${reason}. Alternando para ${nextSource.quality} • ${nextSource.audio}...`);
+      this.showSpinner('Conectando ao stream...');
       this.sourceSelector.value = nextSource.url;
       this.loadStream(nextSource.url, resumeTime);
     } else {
-      this.hideSpinner();
-      this.showNotice('❌ Todas as fontes disponíveis para este título falharam ou estão indisponíveis no momento.', 8000);
+      this.showErrorScreen('Transmissão temporariamente indisponível neste servidor.');
     }
   }
 

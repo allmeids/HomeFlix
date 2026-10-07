@@ -849,6 +849,22 @@ class HomeFlixApp {
     }
   }
 
+  showToast(msg, duration = 3500) {
+    let toast = document.getElementById('appToast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'appToast';
+      toast.style.cssText = 'position: fixed; bottom: 35px; left: 50%; transform: translateX(-50%); background: rgba(20, 20, 28, 0.96); border: 1px solid rgba(255, 255, 255, 0.15); color: #fff; padding: 12px 24px; border-radius: 8px; font-size: 14px; z-index: 99999; box-shadow: 0 10px 30px rgba(0,0,0,0.6); pointer-events: none; transition: opacity 0.3s ease; display: flex; align-items: center; gap: 8px;';
+      document.body.appendChild(toast);
+    }
+    toast.textContent = msg;
+    toast.style.opacity = '1';
+    clearTimeout(this._toastTimer);
+    this._toastTimer = setTimeout(() => {
+      toast.style.opacity = '0';
+    }, duration);
+  }
+
   async loadRecommendations() {
     if (!this.currentProfile) return;
     const recSection = document.getElementById('recommendationsSection');
@@ -1405,7 +1421,7 @@ class HomeFlixApp {
     const isCinema = !!resolved?.is_cinema_version || (bestStream && bestStream.is_cinema);
 
     if (!bestStream) {
-      alert('Nenhuma fonte de reprodução encontrada no momento para este título.');
+      this.showToast('Nenhuma transmissão disponível no momento para este título.');
       return;
     }
 
