@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/style.css?v=7.4">
+  <link rel="stylesheet" href="/static/css/style.css?v=7.5">
   <!-- HLS.js para streaming HLS/m3u8 no navegador -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -424,84 +424,71 @@
     <div class="channels-grid" id="liveChannelsGrid"></div>
   </section>
 
-  <!-- TELA DEDICADA DE COLEÇÕES (FRANQUIAS NA ORDEM CRONOLÓGICA ESTILO DISNEY+) -->
-  <section class="live-tv-container categories-page-container" id="collectionsContainer" style="display: none;">
-    <!-- 1. HUB PRINCIPAL DE COLEÇÕES -->
+  <!-- TELA DEDICADA DE COLEÇÕES ESTILO DISNEY+ (EXPLORE / BRAND TILES MINIMALISTAS) -->
+  <section class="live-tv-container categories-page-container disney-collections-page" id="collectionsContainer" style="display: none;">
+    <!-- 1. HUB DE COLEÇÕES DISNEY+ -->
     <div id="collectionsHubView">
-      <div class="categories-page-header">
-        <div class="cat-page-titles">
-          <h1 class="cat-page-main-title">Franquias & Coleções</h1>
-          <p class="cat-page-main-sub">Sagas completas organizadas na ordem cronológica de assistir com filmes e séries canônicos</p>
-        </div>
+      <div class="disney-page-header">
+        <h1 class="disney-page-title">Coleções</h1>
       </div>
 
-      <div class="hub-block-section" id="collectionsSectionBlock">
-        <div class="collections-cards-grid" id="collectionsCardsGrid"></div>
-      </div>
+      <div class="collections-cards-grid" id="collectionsCardsGrid"></div>
     </div>
 
     <!-- 2. DETALHE DA COLEÇÃO SELECIONADA -->
     <div id="collectionDetailView" style="display: none;">
       <div class="view-back-bar">
-        <button class="btn btn-secondary" id="backToHubBtnCol">‹ Voltar para Coleções</button>
+        <button class="btn btn-secondary" id="backToHubBtnCol">‹ Voltar</button>
       </div>
       <div class="collection-hero-banner" id="collectionHeroBanner">
         <div class="collection-hero-overlay"></div>
         <div class="collection-hero-content">
-          <div class="collection-badge-pill" id="colHeroBadge">ORDEM CRONOLÓGICA</div>
           <h1 class="collection-hero-title" id="colHeroTitle">Coleção</h1>
-          <p class="collection-hero-subtitle" id="colHeroSub">Ordem Cronológica Oficial dos Acontecimentos</p>
-          <p class="collection-hero-desc" id="colHeroDesc">A jornada completa...</p>
-          <div class="collection-hero-meta">
-            <span id="colHeroCount" class="meta-pill">Títulos na Ordem</span>
-            <span class="meta-pill meta-gold">Sequência Canônica</span>
-          </div>
+          <p class="collection-hero-subtitle" id="colHeroSub"></p>
         </div>
       </div>
 
-      <!-- Lista / Grid dos Filmes na Ordem Cronológica -->
+      <!-- Grid dos Filmes e Séries da Coleção -->
       <div class="collection-items-container">
-        <div class="collection-items-header">
-          <h2 class="hub-section-title">Sequência de Filmes & Séries</h2>
-          <span class="hub-section-subtitle">Assista na sequência numerada abaixo para compreender toda a linha do tempo</span>
-        </div>
         <div class="collection-items-grid" id="collectionItemsGrid"></div>
       </div>
     </div>
   </section>
 
-  <!-- TELA DEDICADA DE CATEGORIAS & GÊNEROS -->
-  <section class="live-tv-container categories-page-container" id="categoriesContainer" style="display: none;">
-    <!-- 1. HUB PRINCIPAL DE GÊNEROS / CATEGORIAS -->
-    <div id="genresHubView">
-      <div class="categories-page-header">
-        <div class="cat-page-titles">
-          <h1 class="cat-page-main-title">Gêneros & Categorias</h1>
-          <p class="cat-page-main-sub">Explore todo o acervo de filmes e séries organizado por estilos e temas</p>
+  <!-- TELA DEDICADA DE CATEGORIAS ESTILO NETFLIX (SPOTLIGHT HERO + BARRA DE CATEGORIAS + GRID) -->
+  <section class="live-tv-container categories-page-container netflix-categories-page" id="categoriesContainer" style="display: none;">
+    <!-- 1. SPOTLIGHT HERO DA CATEGORIA SELECIONADA (ESTILO NETFLIX) -->
+    <div class="netflix-cat-hero" id="netflixCatHero">
+      <div class="netflix-cat-hero-bg" id="netflixCatHeroBg"></div>
+      <div class="netflix-cat-hero-gradient"></div>
+      <div class="netflix-cat-hero-content">
+        <h1 class="netflix-cat-hero-title" id="netflixCatHeroTitle">Ação & Aventura</h1>
+        <p class="netflix-cat-hero-desc" id="netflixCatHeroDesc">Perseguições eletrizantes, grandes confrontos e aventuras épicas.</p>
+        <div class="netflix-cat-hero-actions" id="netflixCatHeroActions" style="display: none;">
+          <button class="btn btn-primary" id="netflixCatHeroPlayBtn">▶ Assistir Destaque</button>
+          <button class="btn btn-secondary" id="netflixCatHeroInfoBtn">ℹ Detalhes</button>
         </div>
-      </div>
-
-      <div class="hub-block-section" id="genresSectionBlock">
-        <div class="genre-cards-grid" id="genreCardsGrid"></div>
       </div>
     </div>
 
-    <!-- 2. DETALHE DA CATEGORIA SELECIONADA (CATÁLOGO GERAL POR GÊNERO) -->
-    <div id="categoryDetailView" style="display: none;">
-      <div class="view-back-bar">
-        <button class="btn btn-secondary" id="backToHubBtnCat">‹ Voltar para Categorias</button>
+    <!-- 2. BARRA DE CATEGORIAS ESTILO NETFLIX (TILES HORIZONTAIS COM BORDER ATIVA) -->
+    <div class="netflix-cat-bar-wrapper">
+      <div class="netflix-cat-bar-header">
+        <span class="netflix-cat-bar-title">Categorias</span>
       </div>
-      <div class="categories-page-header">
-        <div class="cat-page-titles">
-          <h1 class="cat-page-main-title" id="catPageMainTitle">Categoria</h1>
-          <p class="cat-page-main-sub" id="catPageMainSub">Descrição da categoria selecionada</p>
-        </div>
+      <div class="categories-carousel-container">
+        <button class="cat-nav-btn cat-nav-left" id="netflixCatNavLeft">‹</button>
+        <div class="netflix-categories-carousel" id="netflixCategoriesTrack"></div>
+        <button class="cat-nav-btn cat-nav-right" id="netflixCatNavRight">›</button>
       </div>
-      <!-- Pills para troca rápida opcional -->
-      <div class="category-pills categories-filter-pills" id="categoriesFilterPills"></div>
-      <!-- Grid de títulos -->
+    </div>
+
+    <!-- 3. GRADE DE TÍTULOS DA CATEGORIA SELECIONADA -->
+    <div class="netflix-cat-catalog-section">
+      <div class="netflix-cat-section-header">
+        <h2 class="section-title" id="netflixCatCatalogTitle">Em Destaque</h2>
+      </div>
       <div class="channels-grid" id="categoryGrid" style="grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));"></div>
-      <!-- Botão carregar mais -->
       <div class="category-load-more-box" id="categoryLoadMoreBox" style="text-align: center; padding: 35px 0 20px;">
         <button class="btn btn-secondary btn-lg" id="categoryLoadMoreBtn">Carregar Mais Títulos</button>
       </div>
@@ -706,8 +693,8 @@
   </div>
 
   <!-- Scripts -->
-  <script src="/static/js/api.js?v=7.4"></script>
-  <script src="/static/js/player.js?v=7.4"></script>
-  <script src="/static/js/app.js?v=7.4"></script>
+  <script src="/static/js/api.js?v=7.5"></script>
+  <script src="/static/js/player.js?v=7.5"></script>
+  <script src="/static/js/app.js?v=7.5"></script>
 </body>
 </html>

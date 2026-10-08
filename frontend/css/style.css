@@ -2768,192 +2768,262 @@ body.in-details-view .navbar {
   margin-bottom: 22px;
 }
 
-.hub-section-title {
-  font-size: 24px;
+/* ================================================================
+   TELA DEDICADA DE COLEÇÕES ESTILO DISNEY+ (EXPLORE / BRAND TILES)
+   ================================================================ */
+.disney-collections-page {
+  padding-top: 10px;
+}
+
+.disney-page-header {
+  padding: 16px 0 24px;
+}
+
+.disney-page-title {
+  font-size: 32px;
   font-weight: 800;
+  letter-spacing: -0.5px;
   color: #ffffff;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  letter-spacing: -0.3px;
 }
 
-.hub-section-subtitle {
-  font-size: 14px;
-  color: var(--text-muted);
-  display: block;
-  margin-top: 4px;
-}
-
-/* Grid de Coleções / Franquias Estilo Disney+ */
 .collections-cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 18px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 22px;
+  padding-bottom: 50px;
 }
 
-.collection-hub-card {
+.disney-collection-card {
   position: relative;
   aspect-ratio: 16 / 9;
-  border-radius: 10px;
+  border-radius: 8px;
   overflow: hidden;
   cursor: pointer;
-  border: 2.5px solid rgba(255, 255, 255, 0.16);
-  background: #0f1015;
-  transition: transform 0.28s cubic-bezier(0.2, 0, 0.2, 1), border-color 0.28s ease, box-shadow 0.28s ease;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  background: #11141e;
+  border: 3px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.7);
+  transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.25s ease, box-shadow 0.25s ease;
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
 }
 
-.collection-hub-card:hover,
-.collection-hub-card:focus-visible {
-  transform: scale(1.04) translateY(-2px);
-  border-color: #f9f9f9;
+.disney-collection-card:hover,
+.disney-collection-card:focus-visible {
+  transform: scale(1.05);
+  border-color: #ffffff;
   outline: none;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.85), 0 0 22px rgba(255, 255, 255, 0.35);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.9), 0 0 25px rgba(255, 255, 255, 0.35);
   z-index: 10;
 }
 
-.col-card-backdrop {
+.disney-card-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.85) contrast(1.05);
+  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), filter 0.35s ease;
+}
+
+.disney-collection-card:hover .disney-card-bg {
+  transform: scale(1.08);
+  filter: brightness(0.96) contrast(1.1);
+}
+
+.disney-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(10, 12, 18, 0.2) 0%, rgba(8, 10, 15, 0.75) 100%);
+  pointer-events: none;
+}
+
+.disney-brand-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.disney-brand-title {
+  font-family: 'Bebas Neue', 'Inter', sans-serif;
+  font-size: 30px;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: 2px;
+  line-height: 1.1;
+  text-shadow: 0 3px 12px rgba(0, 0, 0, 0.95), 0 0 24px rgba(0, 0, 0, 0.85);
+  margin-bottom: 2px;
+  text-transform: uppercase;
+}
+
+.disney-brand-sub {
+  font-size: 9.5px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.85);
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95);
+}
+
+/* ================================================================
+   TELA DEDICADA DE CATEGORIAS ESTILO NETFLIX (SPOTLIGHT + TRACK + GRID)
+   ================================================================ */
+.netflix-categories-page {
+  padding-top: 10px;
+}
+
+.netflix-cat-hero {
+  position: relative;
+  min-height: 300px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 26px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 36px 40px;
+  background: #141416;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.netflix-cat-hero-bg {
   position: absolute;
   inset: 0;
   background-size: cover;
   background-position: center top;
-  filter: brightness(0.85) contrast(1.05);
-  transition: transform 0.35s cubic-bezier(0.2, 0, 0.2, 1), filter 0.35s ease;
+  filter: brightness(0.65) contrast(1.05);
+  transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
-.collection-hub-card:hover .col-card-backdrop {
-  transform: scale(1.06);
-  filter: brightness(0.98) contrast(1.08);
-}
-
-.col-card-gradient {
+.netflix-cat-hero-gradient {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(14, 14, 18, 0) 30%, rgba(10, 10, 14, 0.72) 68%, rgba(6, 7, 10, 0.96) 100%);
+  background: linear-gradient(180deg, rgba(14, 14, 18, 0.1) 0%, rgba(14, 14, 18, 0.82) 65%, rgba(14, 14, 18, 0.98) 100%),
+              linear-gradient(90deg, rgba(14, 14, 18, 0.88) 0%, transparent 65%);
   pointer-events: none;
 }
 
-.col-card-badge {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: rgba(229, 9, 20, 0.95);
-  color: #fff;
-  font-size: 9.5px;
-  font-weight: 800;
-  padding: 3px 8px;
-  border-radius: 4px;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  z-index: 2;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
-}
-
-.col-card-content {
+.netflix-cat-hero-content {
   position: relative;
   z-index: 2;
-  padding: 12px 14px;
+  max-width: 650px;
 }
 
-.col-card-icon {
-  display: none;
+.netflix-cat-hero-title {
+  font-size: 36px;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -0.5px;
+  margin-bottom: 8px;
+  text-shadow: 0 3px 12px rgba(0, 0, 0, 0.9);
 }
 
-.col-card-title {
-  font-size: 16px;
+.netflix-cat-hero-desc {
+  font-size: 14.5px;
+  color: #cbd5e1;
+  line-height: 1.45;
+  margin-bottom: 16px;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
+}
+
+.netflix-cat-hero-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.netflix-cat-bar-wrapper {
+  margin-bottom: 28px;
+}
+
+.netflix-cat-bar-header {
+  margin-bottom: 12px;
+}
+
+.netflix-cat-bar-title {
+  font-size: 20px;
   font-weight: 800;
   color: #ffffff;
-  margin-bottom: 2px;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95);
-  letter-spacing: -0.2px;
+  letter-spacing: 0.2px;
 }
 
-.col-card-subtitle {
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1.1px;
-  color: #cbd5e1;
-  margin-bottom: 5px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
-}
-
-.col-card-count {
-  font-size: 10px;
-  font-weight: 700;
-  color: #f1f5f9;
-  background: rgba(255, 255, 255, 0.16);
-  backdrop-filter: blur(6px);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  padding: 2px 7px;
-  border-radius: 4px;
-  display: inline-block;
-  letter-spacing: 0.4px;
-}
-
-/* Grid de Cards Visuais de Gêneros */
-.genre-cards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 14px;
-}
-
-.genre-hub-card {
+.netflix-categories-carousel {
   display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 16px 18px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  cursor: pointer;
-  transition: all 0.22s ease;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 8px 4px;
+  scrollbar-width: none;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
-.genre-hub-card:hover,
-.genre-hub-card:focus-visible {
-  background: rgba(255, 255, 255, 0.14);
-  border-color: #ffffff;
-  transform: translateY(-2px);
-  outline: none;
-}
-
-.genre-card-icon {
+.netflix-categories-carousel::-webkit-scrollbar {
   display: none;
 }
 
-.genre-card-info {
-  flex-grow: 1;
-}
-
-.genre-card-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: #fff;
-  margin-bottom: 2px;
-}
-
-.genre-card-desc {
-  font-size: 12px;
-  color: var(--text-muted);
-  line-height: 1.35;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+.netflix-category-tile {
+  flex: 0 0 auto;
+  min-width: 170px;
+  height: 64px;
+  border-radius: 8px;
+  background: #1c1e26;
+  border: 2px solid rgba(255, 255, 255, 0.14);
+  position: relative;
   overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  transition: all 0.2s cubic-bezier(0.2, 0, 0.2, 1);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+  user-select: none;
 }
 
-.genre-card-arrow {
-  font-size: 22px;
-  color: rgba(255, 255, 255, 0.35);
-  margin-left: auto;
+.netflix-category-tile-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.08) 0%, rgba(0, 0, 0, 0.5) 100%);
+  transition: opacity 0.2s ease;
+}
+
+.netflix-category-tile:hover {
+  transform: translateY(-2px);
+  background: #252834;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.netflix-category-tile.active {
+  border-color: #ffffff;
+  background: #2a2e3d;
+  box-shadow: 0 0 16px rgba(255, 255, 255, 0.35), 0 4px 18px rgba(0, 0, 0, 0.7);
+  transform: scale(1.03);
+}
+
+.netflix-category-tile-name {
+  position: relative;
+  z-index: 2;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #ffffff;
+  text-align: center;
+  white-space: nowrap;
+  letter-spacing: 0.2px;
+}
+
+.netflix-cat-catalog-section {
+  padding-top: 6px;
+}
+
+.netflix-cat-section-header {
+  margin-bottom: 16px;
 }
 
 /* Barra Voltar */
@@ -2964,10 +3034,10 @@ body.in-details-view .navbar {
 /* Hero Banner da Coleção */
 .collection-hero-banner {
   position: relative;
-  min-height: 290px;
-  border-radius: 16px;
+  min-height: 250px;
+  border-radius: 14px;
   overflow: hidden;
-  margin-bottom: 36px;
+  margin-bottom: 30px;
   background-size: cover;
   background-position: center 25%;
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -2984,7 +3054,7 @@ body.in-details-view .navbar {
 .collection-hero-content {
   position: relative;
   z-index: 2;
-  padding: 40px;
+  padding: 36px 40px;
   max-width: 760px;
 }
 
