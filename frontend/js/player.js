@@ -439,12 +439,17 @@ class HomeFlixPlayer {
 
   startStallWatchdog(url, resumeTime = 0) {
     this.clearStallWatchdog();
-    // Se após 8 segundos o vídeo não começar e não tiver dados, tenta rota alternativa silenciosamente
+    // Se após 6 segundos o vídeo não tiver dados prontos (readyState < 2), alterna de fonte automaticamente
     this.stallWatchdogTimer = setTimeout(() => {
-      if (this.video && this.video.readyState < 2 && !this.video.paused) {
+      if (this.video && this.video.readyState < 2) {
+        console.warn('[Player Watchdog] Transmissão travada após 6s, alternando servidor...', url);
+        if (this.hls) {
+          try { this.hls.destroy(); } catch (_) {}
+          this.hls = null;
+        }
         this.handleMediaError({ reason: 'Watchdog Timeout' }, url, resumeTime);
       }
-    }, 8000);
+    }, 6000);
   }
 
   clearStallWatchdog() {
@@ -511,6 +516,7 @@ class HomeFlixPlayer {
       targetStreamUrl = `/api/proxy/stream?url=${encodeURIComponent(url)}`;
     }
 
+    this.hlsNetworkRetries = 0;
     this.showSpinner('Conectando ao stream...');
     this.startStallWatchdog(targetStreamUrl, resumeTime);
 
@@ -558,17 +564,35 @@ class HomeFlixPlayer {
       this.hls.on(Hls.Events.ERROR, (event, data) => {
         if (data.fatal) {
           switch (data.type) {
-            case Hls.ErrorTypes.NETWORK_ERROR:
-              console.warn('[HLS] Falha de rede temporária, recuperando conexão...', data);
-              this.hls.startLoad();
+            case Hls.ErrorTypes.NETWORK_ERROR: {
+              this.hlsNetworkRetries = (this.hlsNetworkRetries || 0) + 1;
+              const isHttpError = data.response && (data.response.code >= 400);
+              if (isHttpError || this.hlsNetworkRetries > 1) {
+                console.warn('[HLS] Falha de rede fatal ou status HTTP de erro (404/500), alternando para próxima fonte...', data);
+                this.hlsNetworkRetries = 0;
+                if (this.hls) {
+                  try { this.hls.destroy(); } catch (_) {}
+                  this.hls = null;
+                }
+                this.failedUrls.add(url);
+                this.failedUrls.add(targetStreamUrl);
+                this.tryNextSource(resumeTime, 'Erro HTTP no stream');
+              } else {
+                console.warn('[HLS] Falha de rede temporária, tentando reconectar...', data);
+                this.hls.startLoad();
+              }
               break;
+            }
             case Hls.ErrorTypes.MEDIA_ERROR:
               console.warn('[HLS] Erro de decodificação de mídia, tentando recuperar áudio/vídeo...', data);
               this.hls.recoverMediaError();
               break;
             default:
               console.error('[HLS] Erro crítico não recuperável', data);
-              this.hls.destroy();
+              if (this.hls) {
+                try { this.hls.destroy(); } catch (_) {}
+                this.hls = null;
+              }
               this.failedUrls.add(url);
               this.failedUrls.add(targetStreamUrl);
               this.tryNextSource(resumeTime, 'Falha fatal na transmissão');

@@ -178,26 +178,57 @@ def validate_stream_alive(item: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     url = item.get("url")
     if not url:
         return None
-    # Streams que já vêm via proxy local de provedores ativos não precisam de validação extra
+
+    # 1. Validação de streams que passam pelo proxy local (/api/proxy/stream?url=...)
     if url.startswith("/api/proxy/stream"):
-        return item
+        try:
+            parsed = urllib.parse.urlparse(url)
+            qs = urllib.parse.parse_qs(parsed.query)
+            target_url = qs.get("url", [None])[0]
+            if not target_url:
+                return None
+            target_url = urllib.parse.unquote(target_url)
+
+            headers = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64)", "Accept": "*/*"}
+            if "embedplayer" in target_url or "plosia" in target_url:
+                headers["Referer"] = "https://embedplayer2.xyz/"
+                headers["Origin"] = "https://embedplayer2.xyz"
+            elif "froststream" in target_url:
+                headers["User-Agent"] = "Stremio/4.4.168"
+
+            r = _vod_session.get(target_url, headers=headers, stream=True, timeout=3.0, allow_redirects=True)
+            if r.status_code >= 400:
+                return None
+            return item
+        except Exception:
+            return None
+
+    # 2. Validação FrostStream
     if "froststream.cloutteam.com" in url:
         try:
             r = _vod_session.get(url, headers={"User-Agent": "Stremio/4.4.168"}, allow_redirects=False, timeout=2.5)
-            # Se retornou 404 ou erro, o stream expirou ou não existe
             if r.status_code == 404 or r.status_code >= 500:
                 return None
-            # Se retornou 302 com redirecionamento para CDN, verifica se a CDN está ativa
             if r.status_code == 302 and "Location" in r.headers:
                 cdn_url = r.headers["Location"]
                 try:
-                    r_cdn = _vod_session.head(cdn_url, headers={"User-Agent": "Stremio/4.4.168"}, timeout=2)
-                    if r_cdn.status_code == 404:
+                    r_cdn = _vod_session.head(cdn_url, headers={"User-Agent": "Stremio/4.4.168"}, timeout=2.0)
+                    if r_cdn.status_code >= 400:
                         return None
                 except Exception:
                     pass
+            return item
         except Exception:
-            pass
+            return None
+
+    # 3. SuperStream ou links diretos
+    try:
+        r = _vod_session.head(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=2.5, allow_redirects=True)
+        if r.status_code >= 400:
+            return None
+    except Exception:
+        pass
+
     return item
 
 def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None, episode: Optional[int] = None) -> Dict[str, Any]:

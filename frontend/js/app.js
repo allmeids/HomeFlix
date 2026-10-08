@@ -649,13 +649,20 @@ class HomeFlixApp {
       sectionsContainer.style.display = 'none';
       liveTvContainer.style.display = 'block';
       this.loadLiveTv();
+    } else if (tab === 'collections') {
+      heroSection.style.display = 'none';
+      if (categoriesBar) categoriesBar.style.display = 'none';
+      sectionsContainer.style.display = 'none';
+      liveTvContainer.style.display = 'none';
+      if (categoriesContainer) categoriesContainer.style.display = 'block';
+      this.loadCollectionsHub(true);
     } else if (tab === 'categories') {
       heroSection.style.display = 'none';
       if (categoriesBar) categoriesBar.style.display = 'none';
       sectionsContainer.style.display = 'none';
       liveTvContainer.style.display = 'none';
       if (categoriesContainer) categoriesContainer.style.display = 'block';
-      this.loadCategoriesTab();
+      this.loadCollectionsHub(false);
     } else if (tab === 'watchlist') {
       heroSection.style.display = 'none';
       if (categoriesBar) categoriesBar.style.display = 'none';
@@ -1845,7 +1852,204 @@ class HomeFlixApp {
   }
 
   /* ================================================================
-     TELA DEDICADA DE CATEGORIAS (ESTILO NETFLIX COM PAGINAÇÃO INFINITA)
+     HUB DE CATEGORIAS & COLEÇÕES (ORDEM CRONOLÓGICA DE ASSISTIR)
+     ================================================================ */
+
+  async loadCollectionsHub(focusCollections = false) {
+    const backBtnCol = document.getElementById('backToHubBtnCol');
+    const backBtnCat = document.getElementById('backToHubBtnCat');
+
+    if (backBtnCol) {
+      backBtnCol.onclick = () => this.showHubView();
+    }
+    if (backBtnCat) {
+      backBtnCat.onclick = () => this.showHubView();
+    }
+
+    this.showHubView();
+
+    // 1. Carrega as Coleções
+    const colGrid = document.getElementById('collectionsCardsGrid');
+    if (colGrid && (!this.collectionsList || this.collectionsList.length === 0)) {
+      colGrid.innerHTML = '<div style="color:#aaa; grid-column:1/-1; text-align:center; padding:30px;">Carregando franquias & coleções...</div>';
+      this.collectionsList = (await API.getCollections()) || [];
+      this.renderCollectionsGrid(this.collectionsList);
+    } else if (colGrid && colGrid.children.length === 0 && this.collectionsList) {
+      this.renderCollectionsGrid(this.collectionsList);
+    }
+
+    // 2. Carrega as Categorias / Gêneros
+    const genreGrid = document.getElementById('genreCardsGrid');
+    if (genreGrid && (!this.allCategoriesList || this.allCategoriesList.length === 0)) {
+      genreGrid.innerHTML = '<div style="color:#aaa; grid-column:1/-1; text-align:center; padding:30px;">Carregando categorias...</div>';
+      this.allCategoriesList = (await API.getCategories()) || [];
+      this.renderGenreCardsGrid(this.allCategoriesList);
+    } else if (genreGrid && genreGrid.children.length === 0 && this.allCategoriesList) {
+      this.renderGenreCardsGrid(this.allCategoriesList);
+    }
+
+    if (focusCollections) {
+      setTimeout(() => {
+        const block = document.getElementById('collectionsSectionBlock');
+        if (block) block.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    } else {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+  }
+
+  showHubView() {
+    const hubView = document.getElementById('categoriesHubView');
+    const colDetailView = document.getElementById('collectionDetailView');
+    const catDetailView = document.getElementById('categoryDetailView');
+    if (hubView) hubView.style.display = 'block';
+    if (colDetailView) colDetailView.style.display = 'none';
+    if (catDetailView) catDetailView.style.display = 'none';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  renderCollectionsGrid(collections) {
+    const colGrid = document.getElementById('collectionsCardsGrid');
+    if (!colGrid) return;
+    colGrid.innerHTML = '';
+
+    collections.forEach(c => {
+      const card = document.createElement('div');
+      card.className = 'collection-hub-card';
+      card.setAttribute('tabindex', '0');
+      const backdropUrl = c.backdrop ? `https://image.tmdb.org/t/p/w780${c.backdrop}` : '';
+      card.innerHTML = `
+        <div class="col-card-backdrop" style="${backdropUrl ? `background-image: url('${backdropUrl}')` : ''}"></div>
+        <div class="col-card-gradient"></div>
+        <div class="col-card-badge">${c.badge}</div>
+        <div class="col-card-content">
+          <span class="col-card-icon">${c.icon}</span>
+          <h3 class="col-card-title">${c.title}</h3>
+          <p class="col-card-subtitle">${c.subtitle}</p>
+          <span class="col-card-count">${c.item_count} Títulos na Sequência</span>
+        </div>
+      `;
+
+      card.onclick = () => this.openCollection(c.key);
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') card.click();
+      });
+      colGrid.appendChild(card);
+    });
+  }
+
+  renderGenreCardsGrid(categories) {
+    const genreGrid = document.getElementById('genreCardsGrid');
+    if (!genreGrid) return;
+    genreGrid.innerHTML = '';
+
+    categories.forEach(cat => {
+      const card = document.createElement('div');
+      card.className = 'genre-hub-card';
+      card.setAttribute('tabindex', '0');
+      card.innerHTML = `
+        <div class="genre-card-icon">${cat.icon}</div>
+        <div class="genre-card-info">
+          <h3 class="genre-card-title">${cat.title}</h3>
+          <p class="genre-card-desc">${cat.description || ''}</p>
+        </div>
+        <div class="genre-card-arrow">›</div>
+      `;
+
+      card.onclick = () => this.openCategory(cat.key);
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') card.click();
+      });
+      genreGrid.appendChild(card);
+    });
+  }
+
+  async openCollection(collectionKey) {
+    const hubView = document.getElementById('categoriesHubView');
+    const colDetailView = document.getElementById('collectionDetailView');
+    const catDetailView = document.getElementById('categoryDetailView');
+    const banner = document.getElementById('collectionHeroBanner');
+    const titleEl = document.getElementById('colHeroTitle');
+    const subEl = document.getElementById('colHeroSub');
+    const descEl = document.getElementById('colHeroDesc');
+    const countEl = document.getElementById('colHeroCount');
+    const badgeEl = document.getElementById('colHeroBadge');
+    const itemsGrid = document.getElementById('collectionItemsGrid');
+
+    if (hubView) hubView.style.display = 'none';
+    if (catDetailView) catDetailView.style.display = 'none';
+    if (colDetailView) colDetailView.style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'instant' });
+
+    if (itemsGrid) {
+      itemsGrid.innerHTML = '<div style="color:#aaa; grid-column:1/-1; text-align:center; padding:60px 20px;">Carregando sequência cronológica da coleção...</div>';
+    }
+
+    const data = await API.getCollection(collectionKey);
+    if (!data) {
+      if (itemsGrid) itemsGrid.innerHTML = '<div style="color:#f87171; grid-column:1/-1; text-align:center;">Não foi possível carregar a coleção.</div>';
+      return;
+    }
+
+    if (banner && data.backdrop) {
+      banner.style.backgroundImage = `url('https://image.tmdb.org/t/p/w1280${data.backdrop}')`;
+    }
+    if (titleEl) titleEl.innerHTML = `${data.icon || '🎬'} ${data.title}`;
+    if (subEl) subEl.textContent = data.subtitle || '';
+    if (descEl) descEl.textContent = data.description || '';
+    if (countEl) countEl.textContent = `${data.total_items} Títulos na Sequência Oficial`;
+    if (badgeEl) badgeEl.textContent = data.badge || 'ORDEM CRONOLÓGICA';
+
+    if (itemsGrid) {
+      itemsGrid.innerHTML = '';
+      data.items.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'chronological-media-card';
+        card.setAttribute('tabindex', '0');
+        const posterUrl = item.poster_path ? `https://image.tmdb.org/t/p/w342${item.poster_path}` : 'https://images.placeholders.dev/?width=342&height=513&text=HomeFlix&theme=dark';
+        const year = item.release_date ? item.release_date.split('-')[0] : '';
+        const rating = item.vote_average ? Number(item.vote_average).toFixed(1) : '';
+
+        card.innerHTML = `
+          <div class="chrono-order-badge">${item.order}º</div>
+          <div class="chrono-poster-box">
+            <img src="${posterUrl}" alt="${item.title}" loading="lazy" />
+            <div class="chrono-play-overlay">▶</div>
+          </div>
+          <div class="chrono-info-box">
+            <div class="chrono-card-title">${item.title}</div>
+            <div class="chrono-meta-row">
+              <span class="chrono-year">${year}</span>
+              ${rating ? `<span class="chrono-rating">★ ${rating}</span>` : ''}
+              <span class="chrono-type">${item.media_type === 'tv' ? 'Série' : 'Filme'}</span>
+            </div>
+            ${item.chronological_note ? `<div class="chrono-note">📌 ${item.chronological_note}</div>` : ''}
+          </div>
+        `;
+
+        card.onclick = () => this.openMediaDetails(item.media_type, item.tmdb_id);
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') card.click();
+        });
+        itemsGrid.appendChild(card);
+      });
+    }
+  }
+
+  openCategory(categoryKey) {
+    const hubView = document.getElementById('categoriesHubView');
+    const colDetailView = document.getElementById('collectionDetailView');
+    const catDetailView = document.getElementById('categoryDetailView');
+
+    if (hubView) hubView.style.display = 'none';
+    if (colDetailView) colDetailView.style.display = 'none';
+    if (catDetailView) catDetailView.style.display = 'block';
+
+    this.loadCategoriesTab(categoryKey, 1, false);
+  }
+
+  /* ================================================================
+     TELA DEDICADA DE CATEGORIAS (CATÁLOGO GERAL POR GÊNERO)
      ================================================================ */
 
   async loadCategoriesTab(categoryKey = null, page = 1, append = false) {

@@ -81,6 +81,15 @@ const API = {
     return data?.categories || [];
   },
 
+  async getCollections() {
+    const data = await this.request('/api/media/collections');
+    return data?.collections || [];
+  },
+
+  async getCollection(key) {
+    return await this.request(`/api/media/collection/${key}`);
+  },
+
   async getAnimeSagas(page = 1) {
     const data = await this.request(`/api/media/animes/sagas?page=${page}`);
     return data?.results || [];

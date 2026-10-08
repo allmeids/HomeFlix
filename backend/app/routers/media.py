@@ -76,3 +76,15 @@ def get_category(category_key: str, page: int = Query(1, ge=1)):
 def search(q: str = Query(..., min_length=1), page: int = Query(1, ge=1)):
     return tmdb_service.smart_search(q, page)
 
+@router.get("/collections")
+def get_collections():
+    return {"collections": tmdb_service.get_collections_list()}
+
+@router.get("/collection/{collection_key}")
+def get_collection(collection_key: str):
+    data = tmdb_service.get_collection_details(collection_key)
+    if not data:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail="Coleção não encontrada")
+    return data
+

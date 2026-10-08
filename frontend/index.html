@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-title" content="HomeFlix">
   <link rel="apple-touch-icon" href="/static/icons/icon-192.png">
   <link rel="icon" href="/static/icons/icon-192.png">
-  <link rel="stylesheet" href="/static/css/style.css?v=7.1">
+  <link rel="stylesheet" href="/static/css/style.css?v=7.2">
   <!-- HLS.js para streaming HLS/m3u8 no navegador -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -28,8 +28,9 @@
         <li class="nav-item active" data-tab="home">Início</li>
         <li class="nav-item" data-tab="movies">Filmes</li>
         <li class="nav-item" data-tab="series">Séries</li>
-        <li class="nav-item" data-tab="live">TV ao Vivo</li>
+        <li class="nav-item" data-tab="collections">Coleções</li>
         <li class="nav-item" data-tab="categories">Categorias</li>
+        <li class="nav-item" data-tab="live">TV ao Vivo</li>
         <li class="nav-item" data-tab="watchlist">Minha Lista</li>
       </ul>
     </div>
@@ -417,21 +418,84 @@
     <div class="channels-grid" id="liveChannelsGrid"></div>
   </section>
 
-  <!-- TELA DEDICADA DE CATEGORIAS ESTILO NETFLIX -->
+  <!-- TELA DEDICADA DE CATEGORIAS & COLEÇÕES (HUB VISUAL ESTILO NETFLIX) -->
   <section class="live-tv-container categories-page-container" id="categoriesContainer" style="display: none;">
-    <div class="categories-page-header">
-      <div class="cat-page-titles">
-        <h1 class="cat-page-main-title" id="catPageMainTitle">⚔️ Sagas Lendárias: Saint Seiya, DBZ & Naruto</h1>
-        <p class="cat-page-main-sub" id="catPageMainSub">Coleções completas de Cavaleiros do Zodíaco, Dragon Ball (todas as sagas), Naruto e clássicos shonen.</p>
+    <!-- 1. HUB PRINCIPAL (CARDS VISUAIS DE COLEÇÕES & CATEGORIAS) -->
+    <div id="categoriesHubView">
+      <div class="categories-page-header">
+        <div class="cat-page-titles">
+          <h1 class="cat-page-main-title" id="catHubTitle">🎭 Coleções & Categorias</h1>
+          <p class="cat-page-main-sub" id="catHubSub">Franquias completas organizadas na ordem cronológica de assistir e catálogos completos por gênero</p>
+        </div>
+      </div>
+
+      <!-- Seção de Franquias & Grandes Coleções na Ordem Cronológica -->
+      <div class="hub-block-section" id="collectionsSectionBlock">
+        <div class="hub-section-header">
+          <h2 class="hub-section-title">⚡ Franquias & Coleções em Ordem de Assistir</h2>
+          <span class="hub-section-subtitle">Sagas completas organizadas cronologicamente para você maratonar na sequência certa</span>
+        </div>
+        <div class="collections-cards-grid" id="collectionsCardsGrid"></div>
+      </div>
+
+      <!-- Seção de Cards Visuais de Gêneros / Categorias -->
+      <div class="hub-block-section" id="genresSectionBlock">
+        <div class="hub-section-header">
+          <h2 class="hub-section-title">🍿 Gêneros & Categorias de Filmes e Séries</h2>
+          <span class="hub-section-subtitle">Explore o acervo por estilos, temas e universos cinematográficos</span>
+        </div>
+        <div class="genre-cards-grid" id="genreCardsGrid"></div>
       </div>
     </div>
-    <!-- Pills horizontais interativos de categorias -->
-    <div class="category-pills categories-filter-pills" id="categoriesFilterPills"></div>
-    <!-- Grid cinematográfico da categoria -->
-    <div class="channels-grid" id="categoryGrid" style="grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));"></div>
-    <!-- Botão de carregar mais filmes/séries -->
-    <div class="category-load-more-box" id="categoryLoadMoreBox" style="text-align: center; padding: 35px 0 20px;">
-      <button class="btn btn-secondary btn-lg" id="categoryLoadMoreBtn">➕ Carregar Mais Títulos</button>
+
+    <!-- 2. DETALHE DA COLEÇÃO SELECIONADA (ORDEM CRONOLÓGICA DE ASSISTIR) -->
+    <div id="collectionDetailView" style="display: none;">
+      <div class="view-back-bar">
+        <button class="btn btn-secondary" id="backToHubBtnCol">‹ Voltar para Coleções & Categorias</button>
+      </div>
+      <div class="collection-hero-banner" id="collectionHeroBanner">
+        <div class="collection-hero-overlay"></div>
+        <div class="collection-hero-content">
+          <div class="collection-badge-pill" id="colHeroBadge">ORDEM CRONOLÓGICA</div>
+          <h1 class="collection-hero-title" id="colHeroTitle">Universo Marvel (MCU)</h1>
+          <p class="collection-hero-subtitle" id="colHeroSub">Ordem Cronológica Oficial dos Acontecimentos</p>
+          <p class="collection-hero-desc" id="colHeroDesc">A jornada completa dos Vingadores...</p>
+          <div class="collection-hero-meta">
+            <span id="colHeroCount" class="meta-pill">27 Títulos na Ordem</span>
+            <span class="meta-pill meta-gold">⭐ Sequência Canônica</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lista / Grid dos Filmes na Ordem Cronológica -->
+      <div class="collection-items-container">
+        <div class="collection-items-header">
+          <h2 class="hub-section-title">🎬 Sequência de Filmes & Sagas</h2>
+          <span class="hub-section-subtitle">Assista na sequência numerada abaixo para compreender toda a linha do tempo</span>
+        </div>
+        <div class="collection-items-grid" id="collectionItemsGrid"></div>
+      </div>
+    </div>
+
+    <!-- 3. DETALHE DA CATEGORIA SELECIONADA (CATÁLOGO GERAL POR GÊNERO) -->
+    <div id="categoryDetailView" style="display: none;">
+      <div class="view-back-bar">
+        <button class="btn btn-secondary" id="backToHubBtnCat">‹ Voltar para Categorias</button>
+      </div>
+      <div class="categories-page-header">
+        <div class="cat-page-titles">
+          <h1 class="cat-page-main-title" id="catPageMainTitle">Categoria</h1>
+          <p class="cat-page-main-sub" id="catPageMainSub">Descrição da categoria selecionada</p>
+        </div>
+      </div>
+      <!-- Pills para troca rápida opcional -->
+      <div class="category-pills categories-filter-pills" id="categoriesFilterPills"></div>
+      <!-- Grid de títulos -->
+      <div class="channels-grid" id="categoryGrid" style="grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));"></div>
+      <!-- Botão carregar mais -->
+      <div class="category-load-more-box" id="categoryLoadMoreBox" style="text-align: center; padding: 35px 0 20px;">
+        <button class="btn btn-secondary btn-lg" id="categoryLoadMoreBtn">➕ Carregar Mais Títulos</button>
+      </div>
     </div>
   </section>
 
@@ -636,8 +700,8 @@
   </div>
 
   <!-- Scripts -->
-  <script src="/static/js/api.js?v=7.1"></script>
-  <script src="/static/js/player.js?v=7.1"></script>
-  <script src="/static/js/app.js?v=7.1"></script>
+  <script src="/static/js/api.js?v=7.2"></script>
+  <script src="/static/js/player.js?v=7.2"></script>
+  <script src="/static/js/app.js?v=7.2"></script>
 </body>
 </html>
