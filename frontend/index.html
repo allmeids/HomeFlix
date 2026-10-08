@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/style.css?v=7.9">
+  <link rel="stylesheet" href="/static/css/style.css?v=8.0">
   <!-- HLS.js para streaming HLS/m3u8 no navegador -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -43,10 +43,45 @@
         <input type="text" id="searchInput" class="search-input" placeholder="Buscar filmes, séries, atores..." />
       </div>
 
-      <div class="profile-btn" id="profileBtn" title="Trocar ou Gerenciar Perfis">
-        <span class="profile-avatar-mini" id="navProfileAvatar">P</span>
-        <span class="profile-name-mini" id="navProfileName">Principal</span>
-        <span style="font-size: 10px; color: #aaa;">▼</span>
+      <div class="profile-menu-container" id="profileMenuContainer">
+        <div class="profile-btn" id="profileBtn" title="Menu do Perfil">
+          <span class="profile-avatar-mini" id="navProfileAvatar">P</span>
+          <span class="profile-name-mini" id="navProfileName">Principal</span>
+          <span class="profile-caret" style="font-size: 10px; color: #aaa; transition: transform 0.2s;">▼</span>
+        </div>
+
+        <!-- Dropdown Flutuante do Perfil Estilo Netflix / Prime Video -->
+        <div class="profile-dropdown-menu" id="profileDropdownMenu" style="display: none;">
+          <div class="dropdown-profiles-list" id="dropdownProfilesList"></div>
+          
+          <div class="dropdown-divider"></div>
+
+          <div class="dropdown-item" id="dropdownHistoryBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span>Histórico de Assistidos</span>
+          </div>
+
+          <div class="dropdown-item" id="dropdownSwitchProfileBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            <span>Trocar de Perfil</span>
+          </div>
+
+          <div class="dropdown-item" id="dropdownManageProfilesBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 20h9"></path>
+              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+            </svg>
+            <span>Gerenciar Perfis</span>
+          </div>
+        </div>
       </div>
     </div>
   </header>
@@ -708,7 +743,6 @@
       </div>
 
       <div class="profile-modal-footer-btns" id="profileModalFooterBtns">
-        <button class="btn btn-outline-netflix" id="profileHistoryBtn">📋 Histórico de Assistidos</button>
         <button class="btn btn-outline-netflix" id="manageProfilesToggleBtn">Gerenciar perfis</button>
         <button class="btn btn-outline-netflix" id="createNewProfileBtn" style="display:none;">+ Adicionar perfil</button>
       </div>
@@ -754,8 +788,8 @@
   </div>
 
   <!-- Scripts -->
-  <script src="/static/js/api.js?v=7.9"></script>
-  <script src="/static/js/player.js?v=7.9"></script>
-  <script src="/static/js/app.js?v=7.9"></script>
+  <script src="/static/js/api.js?v=8.0"></script>
+  <script src="/static/js/player.js?v=8.0"></script>
+  <script src="/static/js/app.js?v=8.0"></script>
 </body>
 </html>

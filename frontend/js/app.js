@@ -112,17 +112,55 @@ class HomeFlixApp {
       });
     });
 
-    // Profile button
+    // Profile button & Dropdown Menu na Topbar (Estilo Netflix / Prime Video)
     const profileBtn = document.getElementById('profileBtn');
     if (profileBtn) {
       profileBtn.setAttribute('tabindex', '0');
-      profileBtn.addEventListener('click', () => {
-        this.openProfileModal();
+      profileBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.toggleProfileDropdown();
       });
       profileBtn.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
-          profileBtn.click();
+          e.stopPropagation();
+          this.toggleProfileDropdown();
         }
+      });
+    }
+
+    // Fecha o dropdown se clicar fora
+    document.addEventListener('click', (e) => {
+      const container = document.getElementById('profileMenuContainer');
+      if (container && !container.contains(e.target)) {
+        this.closeProfileDropdown();
+      }
+    });
+
+    // Itens do Dropdown do Perfil
+    const dropdownHistoryBtn = document.getElementById('dropdownHistoryBtn');
+    if (dropdownHistoryBtn) {
+      dropdownHistoryBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.closeProfileDropdown();
+        this.openWatchHistoryModal();
+      });
+    }
+
+    const dropdownSwitchBtn = document.getElementById('dropdownSwitchProfileBtn');
+    if (dropdownSwitchBtn) {
+      dropdownSwitchBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.closeProfileDropdown();
+        this.openProfileModal(false, false);
+      });
+    }
+
+    const dropdownManageBtn = document.getElementById('dropdownManageProfilesBtn');
+    if (dropdownManageBtn) {
+      dropdownManageBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.closeProfileDropdown();
+        this.openProfileModal(true, false);
       });
     }
 
@@ -809,6 +847,65 @@ class HomeFlixApp {
     }
   }
 
+  toggleProfileDropdown() {
+    const menu = document.getElementById('profileDropdownMenu');
+    const btn = document.getElementById('profileBtn');
+    if (!menu) return;
+
+    if (menu.style.display === 'block') {
+      this.closeProfileDropdown();
+    } else {
+      this.renderDropdownProfiles();
+      menu.style.display = 'block';
+      if (btn) btn.classList.add('menu-open');
+    }
+  }
+
+  closeProfileDropdown() {
+    const menu = document.getElementById('profileDropdownMenu');
+    const btn = document.getElementById('profileBtn');
+    if (menu) menu.style.display = 'none';
+    if (btn) btn.classList.remove('menu-open');
+  }
+
+  async renderDropdownProfiles() {
+    const list = document.getElementById('dropdownProfilesList');
+    if (!list) return;
+
+    if (!this.profiles || this.profiles.length === 0) {
+      this.profiles = (await API.getProfiles()) || [];
+    }
+
+    list.innerHTML = '';
+    this.profiles.forEach(p => {
+      const isCurrent = this.currentProfile && String(p.id) === String(this.currentProfile.id);
+      const visual = this.getAvatarVisual(p.avatar, p.name);
+
+      const item = document.createElement('div');
+      item.className = `dropdown-profile-item ${isCurrent ? 'active' : ''}`;
+      
+      const avatarHtml = visual.isImage 
+        ? `<div class="dropdown-profile-avatar" style="background: url('${visual.url}') center/cover no-repeat;"></div>`
+        : `<div class="dropdown-profile-avatar" style="background: ${visual.bg}; color: #fff;">${visual.initial}</div>`;
+
+      item.innerHTML = `
+        ${avatarHtml}
+        <span class="dropdown-profile-name">${p.name}</span>
+        ${isCurrent ? '<span class="dropdown-profile-check">✓</span>' : ''}
+      `;
+
+      item.onclick = (e) => {
+        e.stopPropagation();
+        this.closeProfileDropdown();
+        if (!isCurrent) {
+          this.selectProfile(p);
+        }
+      };
+
+      list.appendChild(item);
+    });
+  }
+
   openProfileGate() {
     this.openProfileModal(false, true);
   }
@@ -949,13 +1046,7 @@ class HomeFlixApp {
       createBtn.onclick = () => this.showProfileForm(null);
     }
 
-    const historyBtn = document.getElementById('profileHistoryBtn');
-    if (historyBtn) {
-      historyBtn.onclick = () => {
-        modal.classList.remove('open');
-        this.openWatchHistoryModal();
-      };
-    }
+
 
     modal.classList.add('open');
 
