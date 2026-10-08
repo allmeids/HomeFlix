@@ -1654,16 +1654,17 @@ class HomeFlixApp {
 
     // Botão Alternar Servidores
     const sourcesSec = document.getElementById('detailsSourcesSection');
-    const toggleSourcesBtn = document.getElementById('detailsToggleSourcesBtn');
-    toggleSourcesBtn.onclick = async () => {
-      if (sourcesSec.style.display === 'block') {
-        sourcesSec.style.display = 'none';
-      } else {
-        sourcesSec.style.display = 'block';
-        this.loadSourcesList(mediaType, tmdbId, currentSeason, currentEpisode, title, details);
-        sourcesSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    };
+    if (toggleSourcesBtn) {
+      toggleSourcesBtn.onclick = async () => {
+        if (sourcesSec && sourcesSec.style.display === 'block') {
+          sourcesSec.style.display = 'none';
+        } else {
+          if (sourcesSec) sourcesSec.style.display = 'block';
+          this.loadSourcesList(mediaType, tmdbId, currentSeason, currentEpisode, title, details);
+          if (sourcesSec) sourcesSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      };
+    }
 
     // Elenco Principal (Cast)
     const castGrid = document.getElementById('detailsCastGrid');
