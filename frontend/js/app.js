@@ -63,7 +63,16 @@ class HomeFlixApp {
     this.setupTvNavigation();
     await this.loadProfiles();
     this.loadHome();
-    this.openProfileGate();
+
+    // Se já havia um perfil selecionado anteriormente nesta máquina/navegador, retoma diretamente
+    const savedProfileId = localStorage.getItem('homeflix_active_profile');
+    const matchedProfile = savedProfileId ? this.profiles.find(p => String(p.id) === String(savedProfileId)) : null;
+
+    if (matchedProfile) {
+      this.selectProfile(matchedProfile);
+    } else {
+      this.openProfileGate();
+    }
   }
 
   setupPwa() {
