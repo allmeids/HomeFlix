@@ -684,11 +684,40 @@ class HomeFlixApp {
     this.updateProfileUI();
   }
 
+  getAvatarVisual(avatarKey, name = 'P') {
+    const palette = {
+      'avatar-1': 'linear-gradient(135deg, #e50914 0%, #8b0000 100%)',
+      'avatar-2': 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
+      'avatar-3': 'linear-gradient(135deg, #10b981 0%, #047857 100%)',
+      'avatar-4': 'linear-gradient(135deg, #f59e0b 0%, #b45309 100%)',
+      'avatar-5': 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)',
+      'avatar-6': 'linear-gradient(135deg, #ec4899 0%, #be185d 100%)',
+      'avatar-7': 'linear-gradient(135deg, #14b8a6 0%, #0f766e 100%)',
+      'avatar-8': 'linear-gradient(135deg, #475569 0%, #1e293b 100%)'
+    };
+    const initial = (name || 'P').trim().charAt(0).toUpperCase();
+    const bg = palette[avatarKey] || palette['avatar-1'];
+    return { initial, bg };
+  }
+
   updateProfileUI() {
     const avatarEl = document.getElementById('navProfileAvatar');
     const nameEl = document.getElementById('navProfileName');
     if (this.currentProfile) {
-      if (avatarEl) avatarEl.textContent = this.currentProfile.avatar || '🦊';
+      const visual = this.getAvatarVisual(this.currentProfile.avatar, this.currentProfile.name);
+      if (avatarEl) {
+        avatarEl.textContent = visual.initial;
+        avatarEl.style.background = visual.bg;
+        avatarEl.style.color = '#fff';
+        avatarEl.style.fontWeight = '800';
+        avatarEl.style.borderRadius = '4px';
+        avatarEl.style.display = 'inline-flex';
+        avatarEl.style.alignItems = 'center';
+        avatarEl.style.justifyContent = 'center';
+        avatarEl.style.width = '24px';
+        avatarEl.style.height = '24px';
+        avatarEl.style.fontSize = '12px';
+      }
       if (nameEl) nameEl.textContent = this.currentProfile.name || 'Perfil';
 
       const recTitle = document.getElementById('recommendationsTitle');
@@ -696,7 +725,12 @@ class HomeFlixApp {
         recTitle.textContent = `Recomendados para Você, ${this.currentProfile.name}`;
       }
     } else {
-      if (avatarEl) avatarEl.textContent = '👤';
+      if (avatarEl) {
+        avatarEl.textContent = 'P';
+        avatarEl.style.background = '#333';
+        avatarEl.style.color = '#fff';
+        avatarEl.style.fontWeight = '700';
+      }
       if (nameEl) nameEl.textContent = 'Entrar';
     }
   }
@@ -771,13 +805,14 @@ class HomeFlixApp {
 
     this.profiles.forEach(p => {
       const isCurrent = this.currentProfile && String(p.id) === String(this.currentProfile.id);
+      const visual = this.getAvatarVisual(p.avatar, p.name);
       const card = document.createElement('div');
       card.className = `profile-card ${isCurrent ? 'active' : ''}`;
       card.setAttribute('tabindex', '0');
       card.innerHTML = `
-        <div class="profile-avatar-large">
-          ${p.avatar}
-          ${isManageMode ? '<span class="profile-edit-badge">✏️</span>' : ''}
+        <div class="profile-avatar-large" style="background: ${visual.bg}; color: #ffffff; font-family: 'Inter', sans-serif; font-weight: 800;">
+          <span>${visual.initial}</span>
+          ${isManageMode ? '<span class="profile-edit-badge" style="font-size: 10px; font-weight: 700; background: rgba(0,0,0,0.85); color: #fff; border-radius: 4px; padding: 2px 4px;">EDIT</span>' : ''}
         </div>
         <div class="profile-name-large">${p.name}</div>
       `;
@@ -817,7 +852,7 @@ class HomeFlixApp {
 
     const manageBtn = document.getElementById('manageProfilesToggleBtn');
     if (manageBtn) {
-      manageBtn.textContent = isManageMode ? '✓ Concluir Edição' : '⚙️ Gerenciar Perfis';
+      manageBtn.textContent = isManageMode ? 'Concluído' : 'Gerenciar perfis';
       manageBtn.onclick = () => {
         this.openProfileModal(!isManageMode, isGateMode);
       };
@@ -850,8 +885,8 @@ class HomeFlixApp {
     footerBtns.style.display = 'none';
     formBox.style.display = 'block';
 
-    const avatars = ['🦊', '🍿', '🎬', '👑', '🚀', '🐱', '🦁', '🤖', '🎮', '⚡', '🥷', '💎', '🧙', '🌟', '🍕', '🐉'];
-    this.selectedAvatar = profileToEdit?.avatar || '🦊';
+    const avatarKeys = ['avatar-1', 'avatar-2', 'avatar-3', 'avatar-4', 'avatar-5', 'avatar-6', 'avatar-7', 'avatar-8'];
+    this.selectedAvatar = profileToEdit?.avatar || 'avatar-1';
     this.editingProfileId = profileToEdit ? profileToEdit.id : null;
 
     if (profileToEdit) {
@@ -865,16 +900,34 @@ class HomeFlixApp {
     }
 
     avatarGrid.innerHTML = '';
-    avatars.forEach(av => {
+    avatarKeys.forEach(avKey => {
+      const visual = this.getAvatarVisual(avKey, nameInput.value || 'P');
       const avBtn = document.createElement('div');
-      avBtn.className = `avatar-item ${av === this.selectedAvatar ? 'selected' : ''}`;
-      avBtn.textContent = av;
+      avBtn.className = `avatar-item ${avKey === this.selectedAvatar ? 'selected' : ''}`;
+      avBtn.style.background = visual.bg;
+      avBtn.style.color = '#fff';
+      avBtn.style.fontWeight = '800';
+      avBtn.style.borderRadius = '6px';
+      avBtn.style.cursor = 'pointer';
+      avBtn.style.width = '42px';
+      avBtn.style.height = '42px';
+      avBtn.style.display = 'inline-flex';
+      avBtn.style.alignItems = 'center';
+      avBtn.style.justifyContent = 'center';
+      avBtn.textContent = visual.initial;
+
       avBtn.onclick = () => {
-        this.selectedAvatar = av;
-        avatarGrid.querySelectorAll('.avatar-item').forEach(b => b.classList.toggle('selected', b.textContent === av));
+        this.selectedAvatar = avKey;
+        avatarGrid.querySelectorAll('.avatar-item').forEach(b => b.classList.remove('selected'));
+        avBtn.classList.add('selected');
       };
       avatarGrid.appendChild(avBtn);
     });
+
+    nameInput.oninput = () => {
+      const initial = (nameInput.value || 'P').trim().charAt(0).toUpperCase();
+      avatarGrid.querySelectorAll('.avatar-item').forEach(b => b.textContent = initial);
+    };
   }
 
   /* ================================================================
@@ -1653,6 +1706,18 @@ class HomeFlixApp {
       pillsContainer.appendChild(pill);
     });
 
+    const liveLeft = document.getElementById('liveNavLeft');
+    const liveRight = document.getElementById('liveNavRight');
+    if (liveLeft && liveRight && !this._liveNavBound) {
+      this._liveNavBound = true;
+      liveLeft.onclick = () => {
+        pillsContainer.scrollBy({ left: -280, behavior: 'smooth' });
+      };
+      liveRight.onclick = () => {
+        pillsContainer.scrollBy({ left: 280, behavior: 'smooth' });
+      };
+    }
+
     this.renderLiveChannels();
   }
 
@@ -1921,11 +1986,10 @@ class HomeFlixApp {
       card.innerHTML = `
         <div class="col-card-backdrop" style="${backdropUrl ? `background-image: url('${backdropUrl}')` : ''}"></div>
         <div class="col-card-gradient"></div>
-        <div class="col-card-badge">${c.badge}</div>
+        <div class="col-card-badge">${c.badge || 'COLEÇÃO'}</div>
         <div class="col-card-content">
-          <span class="col-card-icon">${c.icon}</span>
           <h3 class="col-card-title">${c.title}</h3>
-          <p class="col-card-subtitle">${c.subtitle}</p>
+          <p class="col-card-subtitle">${c.subtitle || 'ORDEM CRONOLÓGICA'}</p>
           <span class="col-card-count">${c.item_count} Títulos na Sequência</span>
         </div>
       `;
@@ -1948,12 +2012,11 @@ class HomeFlixApp {
       card.className = 'genre-hub-card';
       card.setAttribute('tabindex', '0');
       card.innerHTML = `
-        <div class="genre-card-icon">${cat.icon}</div>
         <div class="genre-card-info">
           <h3 class="genre-card-title">${cat.title}</h3>
           <p class="genre-card-desc">${cat.description || ''}</p>
         </div>
-        <div class="genre-card-arrow">›</div>
+        <div class="genre-card-arrow" style="font-size: 18px; color: #888;">›</div>
       `;
 
       card.onclick = () => this.openCategory(cat.key);
@@ -1994,7 +2057,7 @@ class HomeFlixApp {
     if (banner && data.backdrop) {
       banner.style.backgroundImage = `url('https://image.tmdb.org/t/p/w1280${data.backdrop}')`;
     }
-    if (titleEl) titleEl.innerHTML = `${data.icon || '🎬'} ${data.title}`;
+    if (titleEl) titleEl.textContent = data.title;
     if (subEl) subEl.textContent = data.subtitle || '';
     if (descEl) descEl.textContent = data.description || '';
     if (countEl) countEl.textContent = `${data.total_items} Títulos na Sequência Oficial`;

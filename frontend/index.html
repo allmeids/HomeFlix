@@ -11,7 +11,10 @@
   <meta name="apple-mobile-web-app-title" content="HomeFlix">
   <link rel="apple-touch-icon" href="/static/icons/icon-192.png">
   <link rel="icon" href="/static/icons/icon-192.png">
-  <link rel="stylesheet" href="/static/css/style.css?v=7.2">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css?v=7.3">
   <!-- HLS.js para streaming HLS/m3u8 no navegador -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -21,7 +24,6 @@
   <header class="navbar">
     <div class="nav-left">
       <div class="brand-logo" id="navLogo">
-        <span class="logo-icon">🎬</span>
         <span class="logo-text">HOME<span class="logo-accent">FLIX</span></span>
       </div>
       <ul class="nav-links">
@@ -37,13 +39,13 @@
 
     <div class="nav-right">
       <div class="search-box">
-        <span>🔍</span>
+        <svg class="search-icon-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
         <input type="text" id="searchInput" class="search-input" placeholder="Buscar filmes, séries, atores..." />
       </div>
 
       <div class="profile-btn" id="profileBtn" title="Trocar ou Gerenciar Perfis">
-        <span class="profile-avatar-mini" id="navProfileAvatar">🦊</span>
-        <span class="profile-name-mini" id="navProfileName">Almeida</span>
+        <span class="profile-avatar-mini" id="navProfileAvatar">P</span>
+        <span class="profile-name-mini" id="navProfileName">Principal</span>
         <span style="font-size: 10px; color: #aaa;">▼</span>
       </div>
     </div>
@@ -278,7 +280,7 @@
     <!-- Sagas Lendárias: Cavaleiros do Zodíaco, Dragon Ball & Naruto -->
     <section class="media-section" id="animeSagasSection">
       <div class="section-header">
-        <h2 class="section-title">⚔️ Sagas Lendárias: Cavaleiros do Zodíaco, DBZ & Naruto</h2>
+        <h2 class="section-title">Sagas Lendárias: Cavaleiros do Zodíaco, DBZ & Naruto</h2>
       </div>
       <div class="carousel-wrapper">
         <button class="carousel-nav-btn carousel-nav-left">‹</button>
@@ -290,7 +292,7 @@
     <!-- Fenômenos dos Animes: Kimetsu no Yaiba, Ragnarok & Jujutsu -->
     <section class="media-section" id="animeHitsSection">
       <div class="section-header">
-        <h2 class="section-title">⚡ Fenômenos dos Animes: Demon Slayer & Record of Ragnarok</h2>
+        <h2 class="section-title">Fenômenos dos Animes: Demon Slayer & Record of Ragnarok</h2>
       </div>
       <div class="carousel-wrapper">
         <button class="carousel-nav-btn carousel-nav-left">‹</button>
@@ -300,9 +302,9 @@
     </section>
 
     <!-- Animes & Animações -->
-    <section class="media-section">
+    <section class="media-section" id="animesSection">
       <div class="section-header">
-        <h2 class="section-title">🍙 Animes & Animações Japonesas</h2>
+        <h2 class="section-title">Animes & Animações Japonesas</h2>
       </div>
       <div class="carousel-wrapper">
         <button class="carousel-nav-btn carousel-nav-left">‹</button>
@@ -409,22 +411,26 @@
   <section class="live-tv-container" id="liveTvContainer" style="display: none;">
     <div class="live-tv-header-box">
       <div>
-        <h1 class="live-tv-main-title">📡 TV ao Vivo & Canais Contínuos</h1>
+        <h1 class="live-tv-main-title">TV ao Vivo & Canais Contínuos</h1>
         <p class="live-tv-main-sub">179 canais com transmissão em alta resolução, guia EPG em tempo real e zapping no controle remoto</p>
       </div>
       <button class="btn btn-primary" id="startLivePlayerBtn">▶ Abrir no Modo TV Fullscreen</button>
     </div>
-    <div class="category-pills" id="liveCategoryPills"></div>
+    <div class="categories-carousel-container live-categories-carousel">
+      <button class="cat-nav-btn cat-nav-left" id="liveNavLeft">‹</button>
+      <div class="category-pills" id="liveCategoryPills"></div>
+      <button class="cat-nav-btn cat-nav-right" id="liveNavRight">›</button>
+    </div>
     <div class="channels-grid" id="liveChannelsGrid"></div>
   </section>
 
-  <!-- TELA DEDICADA DE CATEGORIAS & COLEÇÕES (HUB VISUAL ESTILO NETFLIX) -->
+  <!-- TELA DEDICADA DE CATEGORIAS & COLEÇÕES (HUB VISUAL ESTILO NETFLIX / DISNEY+) -->
   <section class="live-tv-container categories-page-container" id="categoriesContainer" style="display: none;">
     <!-- 1. HUB PRINCIPAL (CARDS VISUAIS DE COLEÇÕES & CATEGORIAS) -->
     <div id="categoriesHubView">
       <div class="categories-page-header">
         <div class="cat-page-titles">
-          <h1 class="cat-page-main-title" id="catHubTitle">🎭 Coleções & Categorias</h1>
+          <h1 class="cat-page-main-title" id="catHubTitle">Coleções & Categorias</h1>
           <p class="cat-page-main-sub" id="catHubSub">Franquias completas organizadas na ordem cronológica de assistir e catálogos completos por gênero</p>
         </div>
       </div>
@@ -432,7 +438,7 @@
       <!-- Seção de Franquias & Grandes Coleções na Ordem Cronológica -->
       <div class="hub-block-section" id="collectionsSectionBlock">
         <div class="hub-section-header">
-          <h2 class="hub-section-title">⚡ Franquias & Coleções em Ordem de Assistir</h2>
+          <h2 class="hub-section-title">Franquias & Coleções em Ordem de Assistir</h2>
           <span class="hub-section-subtitle">Sagas completas organizadas cronologicamente para você maratonar na sequência certa</span>
         </div>
         <div class="collections-cards-grid" id="collectionsCardsGrid"></div>
@@ -441,7 +447,7 @@
       <!-- Seção de Cards Visuais de Gêneros / Categorias -->
       <div class="hub-block-section" id="genresSectionBlock">
         <div class="hub-section-header">
-          <h2 class="hub-section-title">🍿 Gêneros & Categorias de Filmes e Séries</h2>
+          <h2 class="hub-section-title">Gêneros & Categorias de Filmes e Séries</h2>
           <span class="hub-section-subtitle">Explore o acervo por estilos, temas e universos cinematográficos</span>
         </div>
         <div class="genre-cards-grid" id="genreCardsGrid"></div>
@@ -462,7 +468,7 @@
           <p class="collection-hero-desc" id="colHeroDesc">A jornada completa dos Vingadores...</p>
           <div class="collection-hero-meta">
             <span id="colHeroCount" class="meta-pill">27 Títulos na Ordem</span>
-            <span class="meta-pill meta-gold">⭐ Sequência Canônica</span>
+            <span class="meta-pill meta-gold">Sequência Canônica</span>
           </div>
         </div>
       </div>
@@ -470,7 +476,7 @@
       <!-- Lista / Grid dos Filmes na Ordem Cronológica -->
       <div class="collection-items-container">
         <div class="collection-items-header">
-          <h2 class="hub-section-title">🎬 Sequência de Filmes & Sagas</h2>
+          <h2 class="hub-section-title">Sequência de Filmes & Sagas</h2>
           <span class="hub-section-subtitle">Assista na sequência numerada abaixo para compreender toda a linha do tempo</span>
         </div>
         <div class="collection-items-grid" id="collectionItemsGrid"></div>
@@ -494,7 +500,7 @@
       <div class="channels-grid" id="categoryGrid" style="grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));"></div>
       <!-- Botão carregar mais -->
       <div class="category-load-more-box" id="categoryLoadMoreBox" style="text-align: center; padding: 35px 0 20px;">
-        <button class="btn btn-secondary btn-lg" id="categoryLoadMoreBtn">➕ Carregar Mais Títulos</button>
+        <button class="btn btn-secondary btn-lg" id="categoryLoadMoreBtn">Carregar Mais Títulos</button>
       </div>
     </div>
   </section>
@@ -515,7 +521,7 @@
     <!-- Seção de Títulos Semelhantes & Sugestões Estilo Netflix -->
     <div class="search-similar-section" id="searchSimilarSection" style="display: none; margin-top: 40px;">
       <div class="section-header" style="margin-bottom: 16px;">
-        <h2 class="section-title" id="searchSimilarTitle">✨ Títulos Semelhantes & Sugestões</h2>
+        <h2 class="section-title" id="searchSimilarTitle">Títulos Semelhantes & Sugestões</h2>
       </div>
       <div class="channels-grid" id="searchSimilarGrid" style="grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));"></div>
     </div>
@@ -668,7 +674,6 @@
   <div class="modal-backdrop" id="profileModal">
     <div class="modal-content profile-modal-wrapper">
       <div class="profile-gate-logo" id="profileGateLogo" style="display: none;">
-        <span class="logo-icon">🎬</span>
         <span class="logo-text">HOME<span class="logo-accent">FLIX</span></span>
       </div>
       <button class="modal-close-btn" id="profileCloseBtn">✕</button>
@@ -680,9 +685,9 @@
       <!-- Formulário de Criar / Editar Perfil (Toggle) -->
       <div class="profile-form-box" id="profileFormBox" style="display: none;">
         <h3 style="font-size: 18px; margin-bottom: 12px;" id="profileFormTitle">Criar Novo Perfil</h3>
-        <input type="text" id="profileFormNameInput" class="profile-name-input" placeholder="Nome do perfil (ex: Maria, Quarto, Filhos)" maxlength="20" />
+        <input type="text" id="profileFormNameInput" class="profile-name-input" placeholder="Nome do perfil (ex: Maria, Quarto, Sala)" maxlength="20" />
         
-        <div style="margin: 14px 0 8px; font-size: 13px; color: #aaa;">Escolha um avatar:</div>
+        <div style="margin: 14px 0 8px; font-size: 13px; color: #aaa;">Escolha a cor ou estilo do avatar:</div>
         <div class="avatar-picker-grid" id="avatarPickerGrid"></div>
 
         <div style="display: flex; gap: 12px; justify-content: center; margin-top: 20px;">
@@ -693,15 +698,15 @@
       </div>
 
       <div class="profile-modal-footer-btns" id="profileModalFooterBtns">
-        <button class="btn btn-secondary" id="createNewProfileBtn">+ Adicionar Perfil</button>
-        <button class="btn btn-dark" id="manageProfilesToggleBtn">⚙️ Gerenciar Perfis</button>
+        <button class="btn btn-outline-netflix" id="manageProfilesToggleBtn">Gerenciar perfis</button>
+        <button class="btn btn-outline-netflix" id="createNewProfileBtn" style="display:none;">+ Adicionar perfil</button>
       </div>
     </div>
   </div>
 
   <!-- Scripts -->
-  <script src="/static/js/api.js?v=7.2"></script>
-  <script src="/static/js/player.js?v=7.2"></script>
-  <script src="/static/js/app.js?v=7.2"></script>
+  <script src="/static/js/api.js?v=7.3"></script>
+  <script src="/static/js/player.js?v=7.3"></script>
+  <script src="/static/js/app.js?v=7.3"></script>
 </body>
 </html>

@@ -73,8 +73,8 @@ def init_db():
     # Cria perfil padrão se não existir nenhum
     cursor.execute("SELECT COUNT(*) as count FROM profiles")
     if cursor.fetchone()["count"] == 0:
-        cursor.execute("INSERT INTO profiles (name, avatar) VALUES (?, ?)", ("Almeida", "🦊"))
-        cursor.execute("INSERT INTO profiles (name, avatar) VALUES (?, ?)", ("Família", "🎬"))
+        cursor.execute("INSERT INTO profiles (name, avatar) VALUES (?, ?)", ("Principal", "avatar-1"))
+        cursor.execute("INSERT INTO profiles (name, avatar) VALUES (?, ?)", ("Família", "avatar-2"))
 
     conn.commit()
     conn.close()
@@ -85,14 +85,14 @@ def get_profiles() -> List[Dict[str, Any]]:
     rows = conn.execute("SELECT * FROM profiles ORDER BY id ASC").fetchall()
     if not rows:
         # Auto-cria perfil padrão caso banco esteja vazio
-        conn.execute("INSERT INTO profiles (name, avatar) VALUES (?, ?)", ("Almeida", "🦊"))
-        conn.execute("INSERT INTO profiles (name, avatar) VALUES (?, ?)", ("Família", "🎬"))
+        conn.execute("INSERT INTO profiles (name, avatar) VALUES (?, ?)", ("Principal", "avatar-1"))
+        conn.execute("INSERT INTO profiles (name, avatar) VALUES (?, ?)", ("Família", "avatar-2"))
         conn.commit()
         rows = conn.execute("SELECT * FROM profiles ORDER BY id ASC").fetchall()
     conn.close()
     return [dict(r) for r in rows]
 
-def create_profile(name: str, avatar: str = "🦊") -> Dict[str, Any]:
+def create_profile(name: str, avatar: str = "avatar-1") -> Dict[str, Any]:
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute("INSERT INTO profiles (name, avatar) VALUES (?, ?)", (name, avatar))

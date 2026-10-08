@@ -120,8 +120,9 @@ body {
 .nav-item.tv-focused,
 .nav-item:focus-visible {
   color: #fff !important;
-  background: rgba(255, 255, 255, 0.15) !important;
+  background: rgba(255, 255, 255, 0.18) !important;
   outline: 2px solid #ffffff !important;
+  outline-offset: 2px;
   border-radius: 6px;
   transform: scale(1.04);
 }
@@ -304,52 +305,44 @@ body {
   gap: 32px;
 }
 
-/* Logo Modernizado */
+/* Logo Modernizado Estilo Netflix (Bebas Neue) */
 .brand-logo {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0;
   cursor: pointer;
   user-select: none;
   text-decoration: none;
 }
 
-.logo-icon {
-  font-size: 26px;
-  filter: drop-shadow(0 2px 8px rgba(229, 9, 20, 0.6));
-}
-
 .logo-text {
-  font-size: 24px;
+  font-family: 'Bebas Neue', Impact, 'Arial Black', sans-serif;
+  font-size: 30px;
   font-weight: 900;
-  letter-spacing: 1.5px;
-  color: #fff;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+  letter-spacing: 2.2px;
+  line-height: 1;
+  color: #ffffff;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
 }
 
 .logo-accent {
-  color: var(--accent-red);
-  background: linear-gradient(135deg, #ff1a24 0%, #b30009 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  font-family: 'Bebas Neue', Impact, 'Arial Black', sans-serif;
+  color: #E50914;
+  letter-spacing: 2.2px;
+  text-shadow: 0 0 14px rgba(229, 9, 20, 0.5);
+  -webkit-text-fill-color: initial;
 }
 
 .logo-badge {
-  font-size: 9px;
-  font-weight: 800;
-  padding: 2px 6px;
-  border-radius: 4px;
-  background: rgba(229, 9, 20, 0.2);
-  border: 1px solid rgba(229, 9, 20, 0.6);
-  color: #ff6b72;
-  letter-spacing: 0.5px;
-  margin-left: 4px;
+  display: none;
 }
 
 .nav-links {
   display: flex;
   list-style: none;
-  gap: 22px;
+  gap: 12px;
 }
 
 .nav-item {
@@ -357,25 +350,33 @@ body {
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: color 0.2s ease, transform 0.2s ease;
+  transition: color 0.2s ease, background 0.2s ease, transform 0.2s ease;
   position: relative;
-  padding: 8px 0;
+  padding: 7px 14px;
+  border-radius: 6px;
 }
 
-.nav-item:hover, .nav-item.active {
+.nav-item:hover {
   color: var(--text-main);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.nav-item.active {
+  color: #ffffff;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .nav-item.active::after {
   content: '';
   position: absolute;
   bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 3px;
+  left: 14px;
+  right: 14px;
+  height: 2.5px;
   background: var(--accent-red);
-  border-radius: 3px;
-  box-shadow: 0 0 10px var(--accent-red);
+  border-radius: 2px;
+  box-shadow: 0 0 8px var(--accent-red);
 }
 
 .nav-right {
@@ -653,10 +654,10 @@ body {
 
 .categories-carousel {
   display: flex;
-  gap: 14px;
+  gap: 12px;
   overflow-x: auto;
   scroll-behavior: smooth;
-  padding: 8px 0;
+  padding: 10px 48px;
   scrollbar-width: none;
   width: 100%;
 }
@@ -669,14 +670,14 @@ body {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 38px;
-  height: 38px;
-  background: rgba(20, 20, 24, 0.85);
+  width: 36px;
+  height: 36px;
+  background: rgba(20, 20, 24, 0.92);
   backdrop-filter: blur(10px);
   border: 1px solid var(--border-glass);
   border-radius: 50%;
   color: #fff;
-  font-size: 22px;
+  font-size: 20px;
   cursor: pointer;
   z-index: 30;
   display: flex;
@@ -691,8 +692,32 @@ body {
   transform: translateY(-50%) scale(1.1);
 }
 
-.cat-nav-left { left: -14px; }
-.cat-nav-right { right: -14px; }
+.cat-nav-left { left: 4px; }
+.cat-nav-right { right: 4px; }
+
+/* Carrossel de Categorias da TV ao Vivo */
+.live-categories-carousel {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+  width: 100%;
+}
+
+.live-categories-carousel .category-pills {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 8px 48px;
+  scrollbar-width: none;
+  width: 100%;
+  margin-bottom: 0;
+}
+
+.live-categories-carousel .category-pills::-webkit-scrollbar {
+  display: none;
+}
 
 .cat-card {
   flex: 0 0 auto;
@@ -2491,57 +2516,78 @@ body.in-details-view .navbar {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  font-size: 32px;
-  font-weight: 900;
-  margin-bottom: 24px;
-  letter-spacing: -0.5px;
-}
-
-.profile-gate-logo .logo-icon {
-  font-size: 34px;
+  gap: 0;
+  margin-bottom: 28px;
 }
 
 .profile-gate-logo .logo-text {
-  font-size: 30px;
-  font-weight: 900;
+  font-family: 'Bebas Neue', Impact, 'Arial Black', sans-serif;
+  font-size: 46px;
+  letter-spacing: 2.5px;
+  line-height: 1;
 }
 
 .profile-gate-screen .profile-modal-heading {
-  font-size: 46px;
-  font-weight: 700;
+  font-size: 42px;
+  font-weight: 500;
   color: #ffffff;
-  margin-bottom: 12px;
-  letter-spacing: -0.5px;
+  margin-bottom: 10px;
+  letter-spacing: -0.3px;
+  font-family: 'Inter', sans-serif;
 }
 
 .profile-gate-screen .profile-modal-sub {
-  font-size: 16px;
+  font-size: 15px;
   color: #8c8c8c;
-  margin-bottom: 36px;
+  margin-bottom: 32px;
 }
 
 .profile-gate-screen .profile-modal-grid {
-  gap: 36px;
-  padding: 10px 0 40px;
+  gap: 32px;
+  padding: 10px 0 36px;
 }
 
 .profile-gate-screen .profile-avatar-large {
-  width: 130px;
-  height: 130px;
-  font-size: 64px;
-  border-radius: 18px;
+  width: 125px;
+  height: 125px;
+  font-size: 52px;
+  border-radius: 8px;
 }
 
 .profile-gate-screen .profile-name-large {
-  font-size: 18px;
-  margin-top: 6px;
+  font-size: 16px;
+  margin-top: 8px;
   color: #808080;
+  font-weight: 500;
+  transition: color 0.2s ease;
 }
 
 .profile-gate-screen .profile-card:hover .profile-name-large,
 .profile-gate-screen .profile-card.active .profile-name-large {
   color: #ffffff;
+}
+
+.btn-outline-netflix {
+  background: transparent;
+  color: #808080;
+  border: 1px solid #808080;
+  padding: 10px 28px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-outline-netflix:hover,
+.btn-outline-netflix.tv-focused,
+.btn-outline-netflix:focus-visible {
+  border-color: #ffffff;
+  color: #ffffff;
+  outline: none;
+  background: rgba(255, 255, 255, 0.08);
 }
 
 @media (max-width: 768px) {
@@ -2551,10 +2597,10 @@ body.in-details-view .navbar {
   .profile-gate-screen .profile-avatar-large {
     width: 95px;
     height: 95px;
-    font-size: 46px;
+    font-size: 42px;
   }
   .profile-gate-screen .profile-modal-grid {
-    gap: 20px;
+    gap: 18px;
   }
 }
 
@@ -2727,30 +2773,35 @@ body.in-details-view .navbar {
   margin-top: 4px;
 }
 
-/* Grid de Coleções / Franquias */
+/* Grid de Coleções / Franquias Estilo Disney+ */
 .collections-cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 22px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 18px;
 }
 
 .collection-hub-card {
   position: relative;
-  height: 195px;
-  border-radius: 14px;
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
   overflow: hidden;
   cursor: pointer;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: #141418;
-  transition: all 0.28s ease;
+  border: 2px solid rgba(255, 255, 255, 0.12);
+  background: linear-gradient(180deg, #1d1e26 0%, #0d0e12 100%);
+  transition: all 0.25s cubic-bezier(0.2, 0, 0.2, 1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
 }
 
 .collection-hub-card:hover,
 .collection-hub-card:focus-visible {
-  transform: translateY(-5px) scale(1.02);
-  border-color: var(--accent-red);
-  box-shadow: 0 14px 35px rgba(229, 9, 20, 0.35);
+  transform: scale(1.05);
+  border-color: #ffffff;
   outline: none;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.8), 0 0 24px rgba(255, 255, 255, 0.25);
+  z-index: 10;
 }
 
 .col-card-backdrop {
@@ -2758,110 +2809,110 @@ body.in-details-view .navbar {
   inset: 0;
   background-size: cover;
   background-position: center;
-  filter: brightness(0.6);
-  transition: transform 0.35s ease;
+  filter: brightness(0.45);
+  transition: transform 0.35s ease, filter 0.35s ease;
 }
 
 .collection-hub-card:hover .col-card-backdrop {
-  transform: scale(1.06);
-  filter: brightness(0.7);
+  transform: scale(1.08);
+  filter: brightness(0.6);
 }
 
 .col-card-gradient {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.82) 65%, #0b0b0e 100%);
+  background: linear-gradient(180deg, rgba(14, 14, 18, 0.2) 0%, rgba(14, 14, 18, 0.85) 100%);
 }
 
 .col-card-badge {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  background: rgba(229, 9, 20, 0.92);
+  top: 10px;
+  right: 10px;
+  background: rgba(229, 9, 20, 0.9);
   color: #fff;
-  font-size: 10px;
+  font-size: 9.5px;
   font-weight: 800;
-  padding: 4px 9px;
+  padding: 3px 8px;
   border-radius: 4px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
   z-index: 2;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
 }
 
 .col-card-content {
-  position: absolute;
-  bottom: 16px;
-  left: 18px;
-  right: 18px;
+  position: relative;
   z-index: 2;
+  padding: 14px 16px;
 }
 
 .col-card-icon {
-  font-size: 24px;
-  display: block;
-  margin-bottom: 4px;
+  display: none;
 }
 
 .col-card-title {
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 800;
   color: #fff;
-  margin-bottom: 3px;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
+  margin-bottom: 2px;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
+  letter-spacing: -0.2px;
 }
 
 .col-card-subtitle {
-  font-size: 12px;
-  color: #cbd5e1;
-  margin-bottom: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: #94a3b8;
+  margin-bottom: 6px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .col-card-count {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
-  color: #f59e0b;
-  background: rgba(0, 0, 0, 0.65);
-  border: 1px solid rgba(245, 158, 11, 0.3);
-  padding: 3px 9px;
+  color: #e2e8f0;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 2px 7px;
   border-radius: 4px;
   display: inline-block;
+  letter-spacing: 0.4px;
 }
 
 /* Grid de Cards Visuais de Gêneros */
 .genre-cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
 }
 
 .genre-hub-card {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 18px 20px;
-  border-radius: 12px;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: 10px;
   background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   cursor: pointer;
   transition: all 0.22s ease;
 }
 
 .genre-hub-card:hover,
 .genre-hub-card:focus-visible {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.3);
-  transform: translateY(-3px);
+  background: rgba(255, 255, 255, 0.14);
+  border-color: #ffffff;
+  transform: translateY(-2px);
   outline: none;
 }
 
 .genre-card-icon {
-  font-size: 32px;
-  min-width: 40px;
-  text-align: center;
+  display: none;
 }
 
 .genre-card-info {
@@ -2869,7 +2920,7 @@ body.in-details-view .navbar {
 }
 
 .genre-card-title {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
   color: #fff;
   margin-bottom: 2px;

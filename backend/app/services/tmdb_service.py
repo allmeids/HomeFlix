@@ -265,85 +265,85 @@ CATEGORY_CONFIG = {
     "anime_sagas": {
         "title": "Sagas Lendárias: Saint Seiya, DBZ & Naruto",
         "func": get_anime_sagas,
-        "icon": "⚔️",
+        "icon": "",
         "description": "Coleções completas de Cavaleiros do Zodíaco, Dragon Ball (todas as sagas), Naruto e clássicos shonen."
     },
     "anime_hits": {
         "title": "Fenômenos do Anime: Kimetsu no Yaiba & Ragnarok",
         "func": get_anime_hits,
-        "icon": "⚡",
+        "icon": "",
         "description": "Grandes sucessos da nova era: Demon Slayer, Record of Ragnarok, Jujutsu Kaisen e Attack on Titan."
     },
     "animes": {
         "title": "Animes & Animações Japonesas",
         "func": get_animes,
-        "icon": "🍙",
+        "icon": "",
         "description": "Catálogo completo de animes japoneses de todos os gêneros e épocas."
     },
     "action": {
-        "title": "Ação & Aventura Explosiva",
+        "title": "Ação & Aventura",
         "func": get_action_movies,
-        "icon": "💥",
-        "description": "Perseguições eletrizantes, tiroteios e aventuras épicas."
+        "icon": "",
+        "description": "Perseguições eletrizantes, grandes confrontos e aventuras épicas."
     },
     "scifi": {
         "title": "Ficção Científica & Fantasia",
         "func": get_scifi_movies,
-        "icon": "🚀",
-        "description": "Viagens espaciais, futuros distópicos, mundos mágicos e tecnologia avançada."
+        "icon": "",
+        "description": "Viagens espaciais, futuros distópicos, mundos fantásticos e tecnologia avançada."
     },
     "superheroes": {
         "title": "Universo de Heróis & Quadrinhos",
         "func": get_superheroes,
-        "icon": "🦸",
+        "icon": "",
         "description": "As maiores produções dos universos Marvel, DC e quadrinhos lendários."
     },
     "popular_movies": {
         "title": "Grandes Sucessos do Cinema",
         "func": get_popular_movies,
-        "icon": "🎬",
-        "description": "Os filmes mais assistidos e comentados do cinema mundial."
+        "icon": "",
+        "description": "Os filmes mais assistidos e aclamados do cinema mundial."
     },
     "popular_series": {
         "title": "Séries Mais Maratonadas",
         "func": get_popular_series,
-        "icon": "📺",
+        "icon": "",
         "description": "Séries aclamadas para maratonar do início ao fim."
     },
     "comedy": {
-        "title": "Comédias para Rir Muito",
+        "title": "Comédias",
         "func": get_comedy_movies,
-        "icon": "😂",
+        "icon": "",
         "description": "Diversão garantida com as melhores comédias nacionais e internacionais."
     },
     "horror": {
-        "title": "Terror & Arrepios",
+        "title": "Terror & Suspense",
         "func": get_horror_movies,
-        "icon": "👻",
+        "icon": "",
         "description": "Histórias sobrenaturais, sustos intensos e clima de tensão extrema."
     },
     "thriller": {
-        "title": "Suspense, Crime & Mistério",
+        "title": "Crime & Mistério",
         "func": get_thriller_movies,
-        "icon": "🕵️",
+        "icon": "",
         "description": "Investigações policiais, reviravoltas chocantes e mistérios instigantes."
     },
     "top_rated": {
         "title": "Aclamados pela Crítica",
         "func": get_top_rated_movies,
-        "icon": "🏆",
+        "icon": "",
         "description": "Filmes com as maiores notas e premiações da história do cinema."
     },
     "family": {
         "title": "Sessão em Família & Kids",
         "func": get_family_movies,
-        "icon": "👨‍👩‍👧‍👦",
+        "icon": "",
         "description": "Animações e filmes leves para todas as idades curtirem juntos."
     },
     "documentary": {
         "title": "Documentários & Fatos Reais",
         "func": get_documentaries,
-        "icon": "📜",
+        "icon": "",
         "description": "Histórias reais fascinantes, biografias e registros da humanidade e natureza."
     },
 }
@@ -354,7 +354,7 @@ def get_categories_list() -> List[Dict[str, Any]]:
         {
             "key": k,
             "title": v["title"],
-            "icon": v.get("icon", "🎬"),
+            "icon": v.get("icon", ""),
             "description": v.get("description", "")
         }
         for k, v in CATEGORY_CONFIG.items()
@@ -367,7 +367,7 @@ COLLECTIONS_CONFIG: Dict[str, Dict[str, Any]] = {
     "mcu": {
         "title": "Universo Marvel (MCU)",
         "subtitle": "Ordem Cronológica Oficial dos Acontecimentos",
-        "icon": "⚡",
+        "icon": "",
         "badge": "Ordem Cronológica",
         "backdrop": "/yF1EbAnkhupalQ5vvtOP3GKo8Bi.jpg",
         "description": "A jornada completa dos Vingadores e do multiverso organizada rigorosamente na linha do tempo histórica do MCU.",
@@ -404,7 +404,7 @@ COLLECTIONS_CONFIG: Dict[str, Dict[str, Any]] = {
     "harry_potter": {
         "title": "Coleção Harry Potter & Mundo Bruxo",
         "subtitle": "Saga Completa em Ordem Cronológica",
-        "icon": "🧙‍♂️",
+        "icon": "",
         "badge": "Ordem Cronológica",
         "backdrop": "/5rrGVmRUACiMw0DxCGCYUDObjeQ.jpg",
         "description": "Desde os eventos de Animais Fantásticos até a batalha final de Hogwarts contra Lord Voldemort.",
@@ -425,7 +425,7 @@ COLLECTIONS_CONFIG: Dict[str, Dict[str, Any]] = {
     "transformers": {
         "title": "Coleção Transformers",
         "subtitle": "Ordem Cronológica dos Acontecimentos",
-        "icon": "🤖",
+        "icon": "",
         "badge": "Ordem Cronológica",
         "backdrop": "/ww1eIoywghjoMzrlRIcbJLuKnCi.jpg",
         "description": "Desde a queda e origem de Cybertron até as batalhas titânicas entre Autobots e Decepticons na Terra.",
@@ -443,7 +443,7 @@ COLLECTIONS_CONFIG: Dict[str, Dict[str, Any]] = {
     "dragon_ball": {
         "title": "Coleção Dragon Ball",
         "subtitle": "Sagas e Filmes na Ordem Canônica de Assistir",
-        "icon": "🐉",
+        "icon": "",
         "badge": "Ordem Canônica",
         "backdrop": "/5E3pda9ugJgW3b5i8uO4Z2vT3uA.jpg",
         "description": "A trajetória completa de Goku e os Guerreiros Z: desde a infância no Monte Paozu até as batalhas multiversais de deuses.",
@@ -462,7 +462,7 @@ COLLECTIONS_CONFIG: Dict[str, Dict[str, Any]] = {
     "dc_comics": {
         "title": "Universo DC Comics",
         "subtitle": "Ordem Cronológica dos Maiores Heróis",
-        "icon": "🦇",
+        "icon": "",
         "badge": "Ordem Cronológica",
         "backdrop": "/7RyHsO4yDXtBv1zUU3mTpHeQ0d5.jpg",
         "description": "A saga dos ícones da DC Comics: Superman, Batman, Mulher-Maravilha e a Liga da Justiça na linha do tempo.",
@@ -486,7 +486,7 @@ COLLECTIONS_CONFIG: Dict[str, Dict[str, Any]] = {
     "star_wars": {
         "title": "Coleção Star Wars",
         "subtitle": "A Saga Skywalker Completa na Linha do Tempo",
-        "icon": "⭐",
+        "icon": "",
         "badge": "Ordem Cronológica",
         "backdrop": "/zqkmTXzjkAgPnWGZQeoAcH2epf7.jpg",
         "description": "A lendária saga galáctica em perfeita ordem cronológica: da ascensão de Anakin Skywalker à vitória final da Resistência.",
@@ -497,8 +497,7 @@ COLLECTIONS_CONFIG: Dict[str, Dict[str, Any]] = {
             {"tmdb_id": 348350, "media_type": "movie", "order": 4, "order_title": "4. Han Solo: Uma História Star Wars", "chronological_note": "A juventude de Han Solo, o encontro com Chewbacca e a conquista da Millennium Falcon."},
             {"tmdb_id": 330459, "media_type": "movie", "order": 5, "order_title": "5. Rogue One: Uma História Star Wars", "chronological_note": "A perigosa missão dos Rebeldes para roubar os planos da temida Estrela da Morte."},
             {"tmdb_id": 11, "media_type": "movie", "order": 6, "order_title": "6. Star Wars: Episódio IV - Uma Nova Esperança", "chronological_note": "Luke Skywalker inicia seu treinamento Jedi e lidera o ataque contra a Estrela da Morte."},
-            {"tmdb_id": 1891, "media_type": "movie", "order": 7, "order_title": "7. Star Wars: Episódio V - O Império Contra-Ataca", "chronological_note": "Treinamento com Mestre Yoda em Dagobah e a revelação histórica: 'Eu sou seu pai'."},
-            {"tmdb_id": 1892, "media_type": "movie", "order": 8, "order_title": "8. Star Wars: Episódio VI - O Retorno de Jedi", "chronological_note": "A redenção de Anakin Skywalker e a queda do Imperador Palpatine na 2ª Estrela da Morte."},
+            {"tmdb_id": 1891, "media_type": "movie", "order": 7, "order_title": "7. Star Wars: Episódio V - O Império Contra-Ataca", "chronological_note": "Treinamento com Mestre Yoda em Dagobah e a revelação histórica: 'Eu sou seu pai'."},{"tmdb_id": 1892, "media_type": "movie", "order": 8, "order_title": "8. Star Wars: Episódio VI - O Retorno de Jedi", "chronological_note": "A redenção de Anakin Skywalker e a queda do Imperador Palpatine na 2ª Estrela da Morte."},
             {"tmdb_id": 140607, "media_type": "movie", "order": 9, "order_title": "9. Star Wars: Episódio VII - O Despertar da Força", "chronological_note": "Trinta anos depois, Rey descobre sua afinidade com a Força contra Kylo Ren."},
             {"tmdb_id": 181808, "media_type": "movie", "order": 10, "order_title": "10. Star Wars: Episódio VIII - Os Últimos Jedi", "chronological_note": "Rey encontra Luke Skywalker exilado na ilha sagrada de Ahch-To."},
             {"tmdb_id": 181812, "media_type": "movie", "order": 11, "order_title": "11. Star Wars: Episódio IX - A Ascensão Skywalker", "chronological_note": "A batalha definitiva entre a Luz e as Trevas pelo destino final da Galáxia."}
@@ -507,7 +506,7 @@ COLLECTIONS_CONFIG: Dict[str, Dict[str, Any]] = {
     "fast_furious": {
         "title": "Coleção Velozes & Furiosos",
         "subtitle": "Ordem Cronológica das Corridas e Família",
-        "icon": "🚗",
+        "icon": "",
         "badge": "Ordem Cronológica",
         "backdrop": "/4XM8DUTQb3lhLemJC51Jx4a2EuA.jpg",
         "description": "Das corridas clandestinas de rua em Los Angeles até missões de espionagem globais em alta velocidade.",
@@ -528,7 +527,7 @@ COLLECTIONS_CONFIG: Dict[str, Dict[str, Any]] = {
     "lord_of_the_rings": {
         "title": "O Senhor dos Anéis & O Hobbit",
         "subtitle": "Saga Completa da Terra Média",
-        "icon": "💍",
+        "icon": "",
         "badge": "Ordem Cronológica",
         "backdrop": "/2u7zbn8EudG6kLlBzUYqP8RyFU4.jpg",
         "description": "A jornada mitológica de J.R.R. Tolkien na ordem cronológica: da jornada de Bilbo com os anões à destruição do Um Anel.",
@@ -544,7 +543,7 @@ COLLECTIONS_CONFIG: Dict[str, Dict[str, Any]] = {
     "saint_seiya": {
         "title": "Coleção Cavaleiros do Zodíaco",
         "subtitle": "Sagas Canônicas & Spin-offs de Saint Seiya",
-        "icon": "⚔️",
+        "icon": "",
         "badge": "Saga Completa",
         "backdrop": "/8gVwOQvWwR4Mv71W0s917i2V22e.jpg",
         "description": "Os defensores da deusa Atena na luta com suas armaduras de bronze e ouro pelas 12 Casas e Submundo.",
@@ -561,7 +560,7 @@ COLLECTIONS_CONFIG: Dict[str, Dict[str, Any]] = {
     "naruto": {
         "title": "Coleção Naruto",
         "subtitle": "Da Academia Ninja ao Hokage e Boruto",
-        "icon": "🌪️",
+        "icon": "",
         "badge": "Ordem Cronológica",
         "backdrop": "/vauC6sq8g5pHo2aI6VO58cK28i2.jpg",
         "description": "A história de superação de Naruto Uzumaki em sua jornada completa para ser respeitado e se tornar Hokage.",
@@ -583,7 +582,7 @@ def get_collections_list() -> List[Dict[str, Any]]:
             "key": k,
             "title": v["title"],
             "subtitle": v["subtitle"],
-            "icon": v.get("icon", "🎬"),
+            "icon": v.get("icon", ""),
             "badge": v.get("badge", "Ordem Cronológica"),
             "description": v["description"],
             "backdrop": v.get("backdrop"),

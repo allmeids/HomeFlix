@@ -2,17 +2,27 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.pytest_cache/
 
-# Database
+# SQLite Databases & Local Profiles (garante que nenhum banco local ou perfil vá para o Git)
 *.db
+*.db-shm
+*.db-wal
+*.sqlite
 *.sqlite3
+backend/homeflix.db*
+homeflix.db*
 
-# Environments
+# Environments & Virtual Envs
 .env
-.venv
+.env.*
+.venv/
 env/
 venv/
 ENV/
 
-# Logs
+# Logs & Runtime
 *.log
+homeflix_server.log
+.DS_Store
+Thumbs.db
