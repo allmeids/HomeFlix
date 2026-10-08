@@ -364,7 +364,7 @@ class HomeFlixPlayer {
       this.sources.forEach(s => {
         const opt = document.createElement('option');
         opt.value = s.url;
-        opt.textContent = `${s.quality || 'HD'} • ${s.audio || 'Áudio Principal'}`;
+        opt.textContent = s.label || `${s.quality || 'HD'} • ${s.audio || 'Áudio Principal'} [${s.provider || 'Servidor'}]`;
         if (s.url === options.currentStreamUrl) opt.selected = true;
         this.sourceSelector.appendChild(opt);
       });
@@ -605,6 +605,9 @@ class HomeFlixPlayer {
         if (!this.isLive && this.video.videoWidth === 0 && this.video.videoHeight === 0) {
           this.failedUrls.add(url);
           this.failedUrls.add(targetStreamUrl);
+          if (window.app && typeof window.app.showToast === 'function') {
+            window.app.showToast('ℹ️ O seu navegador não possui suporte nativo para 4K HEVC. Reproduzindo na melhor resolução 1080p Full HD.', 4000);
+          }
           this.tryNextSource(resumeTime, 'Stream 4K HEVC incompatível');
           return;
         }

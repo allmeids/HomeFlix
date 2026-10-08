@@ -70,11 +70,21 @@ def init_db():
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_favorites_profile ON favorites(profile_id, added_at DESC);")
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_progress_lookup ON progress(profile_id, media_id, season_number, episode_number);")
 
+    # Migrações seguras de colunas em profiles
+    try:
+        cursor.execute("ALTER TABLE profiles ADD COLUMN onboarded INTEGER DEFAULT 0;")
+    except Exception:
+        pass
+    try:
+        cursor.execute("ALTER TABLE profiles ADD COLUMN preferred_genres TEXT DEFAULT '';")
+    except Exception:
+        pass
+
     # Cria perfil padrão se não existir nenhum
     cursor.execute("SELECT COUNT(*) as count FROM profiles")
     if cursor.fetchone()["count"] == 0:
-        cursor.execute("INSERT INTO profiles (name, avatar) VALUES (?, ?)", ("Principal", "avatar-1"))
-        cursor.execute("INSERT INTO profiles (name, avatar) VALUES (?, ?)", ("Família", "avatar-2"))
+        cursor.execute("INSERT INTO profiles (name, avatar, onboarded) VALUES (?, ?, ?)", ("Principal", "spiderman", 0))
+        cursor.execute("INSERT INTO profiles (name, avatar, onboarded) VALUES (?, ?, ?)", ("Família", "mario", 0))
 
     conn.commit()
     conn.close()
@@ -85,17 +95,17 @@ def get_profiles() -> List[Dict[str, Any]]:
     rows = conn.execute("SELECT * FROM profiles ORDER BY id ASC").fetchall()
     if not rows:
         # Auto-cria perfil padrão caso banco esteja vazio
-        conn.execute("INSERT INTO profiles (name, avatar) VALUES (?, ?)", ("Principal", "avatar-1"))
-        conn.execute("INSERT INTO profiles (name, avatar) VALUES (?, ?)", ("Família", "avatar-2"))
+        conn.execute("INSERT INTO profiles (name, avatar, onboarded) VALUES (?, ?, ?)", ("Principal", "spiderman", 0))
+        conn.execute("INSERT INTO profiles (name, avatar, onboarded) VALUES (?, ?, ?)", ("Família", "mario", 0))
         conn.commit()
         rows = conn.execute("SELECT * FROM profiles ORDER BY id ASC").fetchall()
     conn.close()
     return [dict(r) for r in rows]
 
-def create_profile(name: str, avatar: str = "avatar-1") -> Dict[str, Any]:
+def create_profile(name: str, avatar: str = "spiderman") -> Dict[str, Any]:
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute("INSERT INTO profiles (name, avatar) VALUES (?, ?)", (name, avatar))
+    cur.execute("INSERT INTO profiles (name, avatar, onboarded, preferred_genres) VALUES (?, ?, 0, '')", (name, avatar))
     profile_id = cur.lastrowid
     conn.commit()
     row = conn.execute("SELECT * FROM profiles WHERE id = ?", (profile_id,)).fetchone()
@@ -108,9 +118,17 @@ def get_profile_by_id(profile_id: int) -> Optional[Dict[str, Any]]:
     conn.close()
     return dict(row) if row else None
 
-def update_profile(profile_id: int, name: str, avatar: str = "🦊") -> Optional[Dict[str, Any]]:
+def update_profile(profile_id: int, name: str, avatar: str = "spiderman") -> Optional[Dict[str, Any]]:
     conn = get_db_connection()
     conn.execute("UPDATE profiles SET name = ?, avatar = ? WHERE id = ?", (name, avatar, profile_id))
+    conn.commit()
+    row = conn.execute("SELECT * FROM profiles WHERE id = ?", (profile_id,)).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+def save_profile_onboarding(profile_id: int, preferred_genres: str) -> Optional[Dict[str, Any]]:
+    conn = get_db_connection()
+    conn.execute("UPDATE profiles SET onboarded = 1, preferred_genres = ? WHERE id = ?", (preferred_genres, profile_id))
     conn.commit()
     row = conn.execute("SELECT * FROM profiles WHERE id = ?", (profile_id,)).fetchone()
     conn.close()
@@ -122,7 +140,7 @@ def delete_profile(profile_id: int):
     conn.commit()
     count = conn.execute("SELECT COUNT(*) as count FROM profiles").fetchone()["count"]
     if count == 0:
-        conn.execute("INSERT INTO profiles (name, avatar) VALUES (?, ?)", ("Almeida", "🦊"))
+        conn.execute("INSERT INTO profiles (name, avatar, onboarded) VALUES (?, ?, ?)", ("Almeida", "spiderman", 0))
         conn.commit()
     conn.close()
 
@@ -140,6 +158,29 @@ def get_profile_recent_media_ids(profile_id: int, limit: int = 6) -> List[Dict[s
     """, (profile_id, profile_id, limit)).fetchall()
     conn.close()
     return [dict(r) for r in rows]
+
+def get_watch_history(profile_id: int, limit: int = 50) -> List[Dict[str, Any]]:
+    """Retorna o histórico completo de títulos assistidos pelo perfil em ordem cronológica reversa"""
+    conn = get_db_connection()
+    rows = conn.execute("""
+    SELECT id, profile_id, media_id, media_type, title, poster_path, backdrop_path,
+           season_number, episode_number, episode_title, position, duration, completed,
+           updated_at
+    FROM progress
+    WHERE profile_id = ? AND position > 5
+    ORDER BY updated_at DESC
+    LIMIT ?
+    """, (profile_id, limit)).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+def clear_watch_history(profile_id: int) -> bool:
+    """Limpa todo o histórico de progresso do perfil"""
+    conn = get_db_connection()
+    conn.execute("DELETE FROM progress WHERE profile_id = ?", (profile_id,))
+    conn.commit()
+    conn.close()
+    return True
 
 
 # Helper functions para progresso (Continuar Assistindo)

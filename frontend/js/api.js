@@ -186,5 +186,32 @@ const API = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(favData)
     });
+  },
+
+  // Histórico de Assistidos Completo
+  async getWatchHistory(profileId) {
+    const data = await this.request(`/api/progress/history?profile_id=${profileId}`);
+    return data?.results || [];
+  },
+
+  async clearWatchHistory(profileId) {
+    return await this.request(`/api/progress/history/clear?profile_id=${profileId}`, {
+      method: 'POST'
+    });
+  },
+
+  async deleteHistoryItem(profileId, mediaId) {
+    return await this.request(`/api/progress/history/${profileId}/${mediaId}`, {
+      method: 'DELETE'
+    });
+  },
+
+  // Onboarding de Perfil (Taste Picker)
+  async saveOnboarding(profileId, preferredGenres) {
+    return await this.request(`/api/profiles/${profileId}/onboarding`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ preferred_genres: preferredGenres })
+    });
   }
 };

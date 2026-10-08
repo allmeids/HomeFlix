@@ -1,3 +1,34 @@
+const CATALOG_AVATARS = [
+  { id: 'mario', name: 'Mario', img: 'https://image.tmdb.org/t/p/w200/qNBAXBIQlnOThrVvA6mA2B5ggV6.jpg' },
+  { id: 'spiderman', name: 'Homem-Aranha', img: 'https://image.tmdb.org/t/p/w200/gh4cZbhZxyTbgxQPxD0dOudNPTn.jpg' },
+  { id: 'batman', name: 'Batman', img: 'https://image.tmdb.org/t/p/w200/74xTEgt7R36Fpooo50r9T25onhq.jpg' },
+  { id: 'deadpool', name: 'Deadpool', img: 'https://image.tmdb.org/t/p/w200/cJFqqiDYprqExaXatu4AaoMzDG2.jpg' },
+  { id: 'wednesday', name: 'Wandinha', img: 'https://image.tmdb.org/t/p/w200/9PFonBhy4cQy7Jz20NpMygczOkv.jpg' },
+  { id: 'eleven', name: 'Eleven', img: 'https://image.tmdb.org/t/p/w200/49WJfeN0moxb9IPfGn8AIqMGskD.jpg' },
+  { id: 'goku', name: 'Goku (Dragon Ball)', img: 'https://image.tmdb.org/t/p/w200/kbkuYkaFsDwL6cyMgnBf77LczEo.jpg' },
+  { id: 'luffy', name: 'Luffy (One Piece)', img: 'https://image.tmdb.org/t/p/w200/aesLt9fsKSA6KCgGxA60VVxjtLk.jpg' },
+  { id: 'naruto', name: 'Naruto', img: 'https://image.tmdb.org/t/p/w200/nRJmByfK9XdtOY73VArcN8KpKVs.jpg' },
+  { id: 'tanjiro', name: 'Tanjiro', img: 'https://image.tmdb.org/t/p/w200/xUfRZu2mi8jH6SzQEJGP6tjBuYj.jpg' },
+  { id: 'seiya', name: 'Seiya (Cavaleiros)', img: 'https://image.tmdb.org/t/p/w200/e4cC6W5sSAKE8lQYRBTqU9jfdya.jpg' },
+  { id: 'geralt', name: 'Geralt de Rívia', img: 'https://image.tmdb.org/t/p/w200/uJ1kQWTY1nElMcrrbHtDitbV85K.jpg' },
+  { id: 'walter', name: 'Walter White', img: 'https://image.tmdb.org/t/p/w200/ztkUQFLlC19CCMYHW9o1zWhJRNq.jpg' },
+  { id: 'ironman', name: 'Homem de Ferro', img: 'https://image.tmdb.org/t/p/w200/78lPtwv72eTNqFW9COBYI0dWDJa.jpg' },
+  { id: 'toystory', name: 'Toy Story (Woody)', img: 'https://image.tmdb.org/t/p/w200/686F0CEPmI4ZXjFbWtIHQOBwnfI.jpg' },
+  { id: 'shrek', name: 'Shrek', img: 'https://image.tmdb.org/t/p/w200/wxeqfC221YMptRRdzxlijAh7q8l.jpg' }
+];
+
+const ONBOARDING_TITLES = [
+  { id: 'action', title: 'Ação & Aventura', genre: 'action', poster: 'https://image.tmdb.org/t/p/w300/gh4cZbhZxyTbgxQPxD0dOudNPTn.jpg' },
+  { id: 'animes', title: 'Animes & Sagas', genre: 'anime_sagas,animes', poster: 'https://image.tmdb.org/t/p/w300/kbkuYkaFsDwL6cyMgnBf77LczEo.jpg' },
+  { id: 'superheroes', title: 'Heróis Marvel & DC', genre: 'superheroes', poster: 'https://image.tmdb.org/t/p/w300/74xTEgt7R36Fpooo50r9T25onhq.jpg' },
+  { id: 'scifi', title: 'Ficção Científica', genre: 'scifi', poster: 'https://image.tmdb.org/t/p/w300/49WJfeN0moxb9IPfGn8AIqMGskD.jpg' },
+  { id: 'comedy', title: 'Comédia', genre: 'comedy', poster: 'https://image.tmdb.org/t/p/w300/wxeqfC221YMptRRdzxlijAh7q8l.jpg' },
+  { id: 'horror', title: 'Terror & Suspense', genre: 'horror,thriller', poster: 'https://image.tmdb.org/t/p/w300/9PFonBhy4cQy7Jz20NpMygczOkv.jpg' },
+  { id: 'family', title: 'Animação & Família', genre: 'family', poster: 'https://image.tmdb.org/t/p/w300/qNBAXBIQlnOThrVvA6mA2B5ggV6.jpg' },
+  { id: 'series', title: 'Séries Viciantes', genre: 'popular_series', poster: 'https://image.tmdb.org/t/p/w300/ztkUQFLlC19CCMYHW9o1zWhJRNq.jpg' },
+  { id: 'top_rated', title: 'Clássicos & Cults', genre: 'top_rated', poster: 'https://image.tmdb.org/t/p/w300/74xTEgt7R36Fpooo50r9T25onhq.jpg' }
+];
+
 class HomeFlixApp {
   constructor() {
     this.currentTab = 'home';
@@ -5,10 +36,13 @@ class HomeFlixApp {
     this.profiles = [];
     this.currentProfile = null;
     this.heroItem = null;
+    this.heroItems = [];
+    this.heroCurrentIndex = 0;
+    this.heroTimer = null;
     this.channels = [];
     this.categories = [];
     this.selectedLiveCategory = 'Todos';
-    this.selectedAvatar = 'avatar-1';
+    this.selectedAvatar = 'spiderman';
     this.editingProfileId = null;
 
     this.currentCategory = 'action';
@@ -627,43 +661,64 @@ class HomeFlixApp {
     if (collectionsContainer) collectionsContainer.style.display = 'none';
     if (categoriesContainer) categoriesContainer.style.display = 'none';
 
+    // Helper para aplicar transição suave nas telas
+    const showWithFade = (el) => {
+      if (!el) return;
+      el.classList.remove('tab-view-fade');
+      void el.offsetWidth; // trigger reflow
+      el.classList.add('tab-view-fade');
+    };
+
     if (tab === 'home') {
       heroSection.style.display = 'flex';
       if (categoriesBar) categoriesBar.style.display = 'block';
       sectionsContainer.style.display = 'flex';
       liveTvContainer.style.display = 'none';
+      showWithFade(heroSection);
+      showWithFade(sectionsContainer);
       this.loadHome();
     } else if (tab === 'movies') {
       heroSection.style.display = 'flex';
       if (categoriesBar) categoriesBar.style.display = 'block';
       sectionsContainer.style.display = 'flex';
       liveTvContainer.style.display = 'none';
+      showWithFade(heroSection);
+      showWithFade(sectionsContainer);
       this.loadMoviesTab();
     } else if (tab === 'series') {
       heroSection.style.display = 'flex';
       if (categoriesBar) categoriesBar.style.display = 'block';
       sectionsContainer.style.display = 'flex';
       liveTvContainer.style.display = 'none';
+      showWithFade(heroSection);
+      showWithFade(sectionsContainer);
       this.loadSeriesTab();
     } else if (tab === 'live') {
       heroSection.style.display = 'none';
       if (categoriesBar) categoriesBar.style.display = 'none';
       sectionsContainer.style.display = 'none';
       liveTvContainer.style.display = 'block';
+      showWithFade(liveTvContainer);
       this.loadLiveTv();
     } else if (tab === 'collections') {
       heroSection.style.display = 'none';
       if (categoriesBar) categoriesBar.style.display = 'none';
       sectionsContainer.style.display = 'none';
       liveTvContainer.style.display = 'none';
-      if (collectionsContainer) collectionsContainer.style.display = 'block';
+      if (collectionsContainer) {
+        collectionsContainer.style.display = 'block';
+        showWithFade(collectionsContainer);
+      }
       this.loadCollectionsPage();
     } else if (tab === 'categories') {
       heroSection.style.display = 'none';
       if (categoriesBar) categoriesBar.style.display = 'none';
       sectionsContainer.style.display = 'none';
       liveTvContainer.style.display = 'none';
-      if (categoriesContainer) categoriesContainer.style.display = 'block';
+      if (categoriesContainer) {
+        categoriesContainer.style.display = 'block';
+        showWithFade(categoriesContainer);
+      }
       this.loadCategoriesPage();
     } else if (tab === 'watchlist') {
       heroSection.style.display = 'none';
@@ -687,6 +742,14 @@ class HomeFlixApp {
   }
 
   getAvatarVisual(avatarKey, name = 'P') {
+    const found = CATALOG_AVATARS.find(a => a.id === avatarKey);
+    if (found) {
+      return { isImage: true, url: found.img, name: found.name };
+    }
+    if (avatarKey && (avatarKey.startsWith('http') || avatarKey.startsWith('/'))) {
+      return { isImage: true, url: avatarKey, name: name };
+    }
+    // Fallback legado de gradiente
     const palette = {
       'avatar-1': 'linear-gradient(135deg, #e50914 0%, #8b0000 100%)',
       'avatar-2': 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
@@ -699,7 +762,7 @@ class HomeFlixApp {
     };
     const initial = (name || 'P').trim().charAt(0).toUpperCase();
     const bg = palette[avatarKey] || palette['avatar-1'];
-    return { initial, bg };
+    return { isImage: false, initial, bg, name };
   }
 
   updateProfileUI() {
@@ -708,16 +771,24 @@ class HomeFlixApp {
     if (this.currentProfile) {
       const visual = this.getAvatarVisual(this.currentProfile.avatar, this.currentProfile.name);
       if (avatarEl) {
-        avatarEl.textContent = visual.initial;
-        avatarEl.style.background = visual.bg;
-        avatarEl.style.color = '#fff';
-        avatarEl.style.fontWeight = '800';
-        avatarEl.style.borderRadius = '4px';
+        if (visual.isImage) {
+          avatarEl.textContent = '';
+          avatarEl.style.background = `url('${visual.url}') center/cover no-repeat`;
+          avatarEl.style.borderRadius = '50%';
+          avatarEl.style.border = '2px solid rgba(255,255,255,0.4)';
+        } else {
+          avatarEl.textContent = visual.initial;
+          avatarEl.style.background = visual.bg;
+          avatarEl.style.color = '#fff';
+          avatarEl.style.fontWeight = '800';
+          avatarEl.style.borderRadius = '4px';
+          avatarEl.style.border = 'none';
+        }
         avatarEl.style.display = 'inline-flex';
         avatarEl.style.alignItems = 'center';
         avatarEl.style.justifyContent = 'center';
-        avatarEl.style.width = '24px';
-        avatarEl.style.height = '24px';
+        avatarEl.style.width = '26px';
+        avatarEl.style.height = '26px';
         avatarEl.style.fontSize = '12px';
       }
       if (nameEl) nameEl.textContent = this.currentProfile.name || 'Perfil';
@@ -732,6 +803,7 @@ class HomeFlixApp {
         avatarEl.style.background = '#333';
         avatarEl.style.color = '#fff';
         avatarEl.style.fontWeight = '700';
+        avatarEl.style.border = 'none';
       }
       if (nameEl) nameEl.textContent = 'Entrar';
     }
@@ -753,6 +825,11 @@ class HomeFlixApp {
       modal.classList.remove('profile-gate-screen');
     }
     this.isProfileGateMode = false;
+
+    // Se o perfil ainda não realizou o onboarding (gostos favoritos estilo Netflix), exibe o modal
+    if (!p.onboarded) {
+      this.openOnboardingModal(p);
+    }
 
     // Carrega o conteúdo personalizado do perfil escolhido
     this.loadContinueWatching();
@@ -811,11 +888,18 @@ class HomeFlixApp {
       const card = document.createElement('div');
       card.className = `profile-card ${isCurrent ? 'active' : ''}`;
       card.setAttribute('tabindex', '0');
+      
+      const avatarContent = visual.isImage 
+        ? `<div class="profile-avatar-large" style="background: url('${visual.url}') center/cover no-repeat; border-radius: 14px; border: 2px solid rgba(255,255,255,0.3); box-shadow: 0 4px 15px rgba(0,0,0,0.6);">
+             ${isManageMode ? '<span class="profile-edit-badge" style="font-size: 10px; font-weight: 700; background: rgba(0,0,0,0.85); color: #fff; border-radius: 4px; padding: 2px 4px;">EDIT</span>' : ''}
+           </div>`
+        : `<div class="profile-avatar-large" style="background: ${visual.bg}; color: #ffffff; font-family: 'Inter', sans-serif; font-weight: 800; border-radius: 14px;">
+             <span>${visual.initial}</span>
+             ${isManageMode ? '<span class="profile-edit-badge" style="font-size: 10px; font-weight: 700; background: rgba(0,0,0,0.85); color: #fff; border-radius: 4px; padding: 2px 4px;">EDIT</span>' : ''}
+           </div>`;
+
       card.innerHTML = `
-        <div class="profile-avatar-large" style="background: ${visual.bg}; color: #ffffff; font-family: 'Inter', sans-serif; font-weight: 800;">
-          <span>${visual.initial}</span>
-          ${isManageMode ? '<span class="profile-edit-badge" style="font-size: 10px; font-weight: 700; background: rgba(0,0,0,0.85); color: #fff; border-radius: 4px; padding: 2px 4px;">EDIT</span>' : ''}
-        </div>
+        ${avatarContent}
         <div class="profile-name-large">${p.name}</div>
       `;
 
@@ -865,6 +949,14 @@ class HomeFlixApp {
       createBtn.onclick = () => this.showProfileForm(null);
     }
 
+    const historyBtn = document.getElementById('profileHistoryBtn');
+    if (historyBtn) {
+      historyBtn.onclick = () => {
+        modal.classList.remove('open');
+        this.openWatchHistoryModal();
+      };
+    }
+
     modal.classList.add('open');
 
     // Auto-focus no primeiro perfil
@@ -882,13 +974,13 @@ class HomeFlixApp {
     const nameInput = document.getElementById('profileFormNameInput');
     const deleteBtn = document.getElementById('deleteProfileBtn');
     const avatarGrid = document.getElementById('avatarPickerGrid');
+    const previewEl = document.getElementById('profileAvatarPreview');
 
     grid.style.display = 'none';
     footerBtns.style.display = 'none';
     formBox.style.display = 'block';
 
-    const avatarKeys = ['avatar-1', 'avatar-2', 'avatar-3', 'avatar-4', 'avatar-5', 'avatar-6', 'avatar-7', 'avatar-8'];
-    this.selectedAvatar = profileToEdit?.avatar || 'avatar-1';
+    this.selectedAvatar = profileToEdit?.avatar || 'spiderman';
     this.editingProfileId = profileToEdit ? profileToEdit.id : null;
 
     if (profileToEdit) {
@@ -901,34 +993,38 @@ class HomeFlixApp {
       deleteBtn.style.display = 'none';
     }
 
+    const updatePreview = () => {
+      if (!previewEl) return;
+      const visual = this.getAvatarVisual(this.selectedAvatar, nameInput.value || 'P');
+      if (visual.isImage) {
+        previewEl.textContent = '';
+        previewEl.style.background = `url('${visual.url}') center/cover no-repeat`;
+        previewEl.style.border = '2px solid var(--accent-red)';
+      } else {
+        previewEl.textContent = visual.initial;
+        previewEl.style.background = visual.bg;
+      }
+    };
+    updatePreview();
+
     avatarGrid.innerHTML = '';
-    avatarKeys.forEach(avKey => {
-      const visual = this.getAvatarVisual(avKey, nameInput.value || 'P');
+    CATALOG_AVATARS.forEach(av => {
       const avBtn = document.createElement('div');
-      avBtn.className = `avatar-item ${avKey === this.selectedAvatar ? 'selected' : ''}`;
-      avBtn.style.background = visual.bg;
-      avBtn.style.color = '#fff';
-      avBtn.style.fontWeight = '800';
-      avBtn.style.borderRadius = '6px';
-      avBtn.style.cursor = 'pointer';
-      avBtn.style.width = '42px';
-      avBtn.style.height = '42px';
-      avBtn.style.display = 'inline-flex';
-      avBtn.style.alignItems = 'center';
-      avBtn.style.justifyContent = 'center';
-      avBtn.textContent = visual.initial;
+      avBtn.className = `avatar-catalog-item ${av.id === this.selectedAvatar ? 'selected' : ''}`;
+      avBtn.style.backgroundImage = `url('${av.img}')`;
+      avBtn.title = av.name;
 
       avBtn.onclick = () => {
-        this.selectedAvatar = avKey;
-        avatarGrid.querySelectorAll('.avatar-item').forEach(b => b.classList.remove('selected'));
+        this.selectedAvatar = av.id;
+        avatarGrid.querySelectorAll('.avatar-catalog-item').forEach(b => b.classList.remove('selected'));
         avBtn.classList.add('selected');
+        updatePreview();
       };
       avatarGrid.appendChild(avBtn);
     });
 
     nameInput.oninput = () => {
-      const initial = (nameInput.value || 'P').trim().charAt(0).toUpperCase();
-      avatarGrid.querySelectorAll('.avatar-item').forEach(b => b.textContent = initial);
+      updatePreview();
     };
   }
 
@@ -960,7 +1056,7 @@ class HomeFlixApp {
     }
 
     if (homeData.trending && homeData.trending.length > 0) {
-      this.renderHero(homeData.trending[0]);
+      this.setupHeroSlideshow(homeData.trending);
     }
     this.renderCarousel('trendingCarousel', homeData.trending || []);
     this.renderCarousel('superheroesCarousel', homeData.superheroes || []);
@@ -1035,7 +1131,7 @@ class HomeFlixApp {
 
   async loadMoviesTab() {
     const popular = await API.getPopularMovies(1);
-    if (popular.length > 0) this.renderHero(popular[0]);
+    if (popular.length > 0) this.setupHeroSlideshow(popular);
     this.renderCarousel('trendingCarousel', popular);
     const top = await API.getTopRatedMovies(1);
     this.renderCarousel('popularMoviesCarousel', top);
@@ -1045,7 +1141,7 @@ class HomeFlixApp {
 
   async loadSeriesTab() {
     const popular = await API.getPopularSeries(1);
-    if (popular.length > 0) this.renderHero(popular[0]);
+    if (popular.length > 0) this.setupHeroSlideshow(popular);
     this.renderCarousel('trendingCarousel', popular);
     const top = await API.getTopRatedSeries(1);
     this.renderCarousel('popularMoviesCarousel', top);
@@ -1118,7 +1214,57 @@ class HomeFlixApp {
     });
   }
 
-  renderHero(item) {
+  setupHeroSlideshow(items) {
+    if (this.heroTimer) {
+      clearInterval(this.heroTimer);
+      this.heroTimer = null;
+    }
+    this.heroItems = (items || []).filter(it => it && (it.backdrop_path || it.poster_path)).slice(0, 6);
+    if (!this.heroItems.length) return;
+    this.heroCurrentIndex = 0;
+    this.renderHero(this.heroItems[0], 0);
+
+    const heroSection = document.getElementById('heroSection');
+    if (heroSection && !heroSection._hasHoverListeners) {
+      heroSection._hasHoverListeners = true;
+      heroSection.addEventListener('mouseenter', () => this.pauseHeroSlideshow());
+      heroSection.addEventListener('mouseleave', () => this.resumeHeroSlideshow());
+    }
+
+    this.resumeHeroSlideshow();
+  }
+
+  pauseHeroSlideshow() {
+    if (this.heroTimer) {
+      clearInterval(this.heroTimer);
+      this.heroTimer = null;
+    }
+  }
+
+  resumeHeroSlideshow() {
+    this.pauseHeroSlideshow();
+    if (this.heroItems && this.heroItems.length > 1) {
+      this.heroTimer = setInterval(() => {
+        this.nextHeroSlide();
+      }, 7500);
+    }
+  }
+
+  nextHeroSlide() {
+    if (!this.heroItems || !this.heroItems.length) return;
+    this.heroCurrentIndex = (this.heroCurrentIndex + 1) % this.heroItems.length;
+    this.renderHero(this.heroItems[this.heroCurrentIndex], this.heroCurrentIndex);
+  }
+
+  goToHeroSlide(idx) {
+    if (!this.heroItems || idx < 0 || idx >= this.heroItems.length) return;
+    this.heroCurrentIndex = idx;
+    this.renderHero(this.heroItems[idx], idx);
+    this.resumeHeroSlideshow();
+  }
+
+  renderHero(item, activeIndex = 0) {
+    if (!item) return;
     this.heroItem = item;
     const hero = document.getElementById('heroSection');
     const title = item.title || item.name || 'Destaque';
@@ -1171,6 +1317,21 @@ class HomeFlixApp {
     document.getElementById('heroInfoBtn').onclick = () => {
       this.openMediaDetails(mediaType, item.id);
     };
+
+    // Renderiza os dots indicadores do slideshow
+    const indicators = document.getElementById('heroIndicators');
+    if (indicators && this.heroItems && this.heroItems.length > 1) {
+      indicators.innerHTML = '';
+      this.heroItems.forEach((_, idx) => {
+        const dot = document.createElement('button');
+        dot.className = `hero-dot ${idx === activeIndex ? 'active' : ''}`;
+        dot.setAttribute('aria-label', `Destaque ${idx + 1}`);
+        dot.onclick = () => this.goToHeroSlide(idx);
+        indicators.appendChild(dot);
+      });
+    } else if (indicators) {
+      indicators.innerHTML = '';
+    }
   }
 
   renderCarousel(containerId, items) {
@@ -2438,6 +2599,193 @@ class HomeFlixApp {
         }
       };
     }
+
+    // Fechar Histórico
+    const historyCloseBtn = document.getElementById('historyCloseBtn');
+    if (historyCloseBtn) {
+      historyCloseBtn.onclick = () => {
+        const modal = document.getElementById('historyModal');
+        if (modal) modal.style.display = 'none';
+      };
+    }
+
+    // Limpar Histórico
+    const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+    if (clearHistoryBtn) {
+      clearHistoryBtn.onclick = async () => {
+        if (!this.currentProfile) return;
+        if (confirm('Deseja realmente limpar todo o histórico de títulos assistidos deste perfil?')) {
+          await API.clearWatchHistory(this.currentProfile.id);
+          this.openWatchHistoryModal();
+          this.loadContinueWatching();
+          this.showToast('Histórico limpo com sucesso.');
+        }
+      };
+    }
+  }
+
+  /* ================================================================
+     MODAL DE HISTÓRICO DE ASSISTIDOS DO PERFIL
+     ================================================================ */
+
+  async openWatchHistoryModal() {
+    if (!this.currentProfile) return;
+    const modal = document.getElementById('historyModal');
+    const grid = document.getElementById('historyGrid');
+    const subEl = document.getElementById('historyModalSub');
+    if (!modal || !grid) return;
+
+    modal.style.display = 'flex';
+    grid.innerHTML = '<div style="color: #aaa; padding: 30px; text-align: center; grid-column: 1/-1;">Carregando histórico...</div>';
+    if (subEl) subEl.textContent = `Títulos assistidos recentemente por ${this.currentProfile.name}`;
+
+    const items = await API.getWatchHistory(this.currentProfile.id);
+    grid.innerHTML = '';
+
+    if (!items || items.length === 0) {
+      grid.innerHTML = `
+        <div style="color: #aaa; text-align: center; padding: 40px 20px; grid-column: 1/-1;">
+          <div style="font-size: 36px; margin-bottom: 12px; opacity: 0.6;">⏳</div>
+          <div style="font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 6px;">Nenhum título no histórico</div>
+          <p style="font-size: 13px; color: #888; max-width: 360px; margin: 0 auto 20px;">Você ainda não assistiu a nenhum filme ou episódio neste perfil. Explore nosso catálogo para começar!</p>
+          <button class="btn btn-primary" onclick="document.getElementById('historyModal').style.display='none'">Explorar Catálogo</button>
+        </div>
+      `;
+      return;
+    }
+
+    items.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'history-card';
+      const poster = item.poster_path 
+        ? (item.poster_path.startsWith('http') ? item.poster_path : `https://image.tmdb.org/t/p/w200${item.poster_path}`)
+        : 'https://images.placeholders.dev/?width=200&height=300&text=HomeFlix&theme=dark';
+
+      const progressPercent = (item.duration > 0 && item.position > 0)
+        ? Math.min(100, Math.round((item.position / item.duration) * 100))
+        : 0;
+
+      const isSeries = item.media_type === 'tv' || item.season_number > 1 || item.episode_number > 1;
+      const subtitle = isSeries 
+        ? `T${item.season_number || 1}:E${item.episode_number || 1}${item.episode_title ? ` • ${item.episode_title}` : ''}`
+        : 'Filme';
+
+      const timeFormatted = item.position > 0 
+        ? `${Math.floor(item.position / 60)} min assistidos (${progressPercent}%)`
+        : 'Iniciado';
+
+      card.innerHTML = `
+        <img class="history-card-poster" src="${poster}" alt="${item.title}" />
+        <div class="history-card-info">
+          <div class="history-card-title">${item.title}</div>
+          <div class="history-card-meta">${subtitle} • ${timeFormatted}</div>
+          <div class="history-progress-track">
+            <div class="history-progress-fill" style="width: ${progressPercent}%;"></div>
+          </div>
+          <div class="history-card-actions">
+            <button class="history-action-play">▶ Continuar</button>
+            <button class="history-action-remove" title="Remover do histórico">✕ Remover</button>
+          </div>
+        </div>
+      `;
+
+      const playBtn = card.querySelector('.history-action-play');
+      playBtn.onclick = () => {
+        modal.style.display = 'none';
+        this.openMediaDetails(item.media_type, item.media_id, {
+          resumeTime: item.position,
+          season: item.season_number,
+          episode: item.episode_number
+        });
+      };
+
+      const removeBtn = card.querySelector('.history-action-remove');
+      removeBtn.onclick = async () => {
+        await API.deleteHistoryItem(this.currentProfile.id, item.media_id);
+        card.remove();
+        if (grid.children.length === 0) {
+          this.openWatchHistoryModal();
+        }
+        this.loadContinueWatching();
+      };
+
+      grid.appendChild(card);
+    });
+  }
+
+  /* ================================================================
+     MODAL DE ONBOARDING (TASTE PICKER ESTILO NETFLIX)
+     ================================================================ */
+
+  openOnboardingModal(profile) {
+    const modal = document.getElementById('onboardingModal');
+    const grid = document.getElementById('onboardingGrid');
+    const badge = document.getElementById('onboardingCounterBadge');
+    const submitBtn = document.getElementById('onboardingSubmitBtn');
+    const skipBtn = document.getElementById('onboardingSkipBtn');
+    if (!modal || !grid) return;
+
+    modal.style.display = 'flex';
+    grid.innerHTML = '';
+
+    const selectedGenres = new Set();
+
+    const updateCounter = () => {
+      const count = selectedGenres.size;
+      if (count >= 3) {
+        badge.textContent = `Perfeito! ${count} categorias selecionadas`;
+        badge.classList.add('ready');
+        submitBtn.disabled = false;
+      } else {
+        badge.textContent = `Selecione pelo menos 3 (${count} selecionado${count === 1 ? '' : 's'})`;
+        badge.classList.remove('ready');
+        submitBtn.disabled = true;
+      }
+    };
+    updateCounter();
+
+    ONBOARDING_TITLES.forEach(t => {
+      const card = document.createElement('div');
+      card.className = 'onboarding-card';
+      card.style.backgroundImage = `url('${t.poster}')`;
+      card.innerHTML = `
+        <div class="check-icon">✓</div>
+        <div class="onboarding-card-title">${t.title}</div>
+      `;
+
+      card.onclick = () => {
+        if (selectedGenres.has(t.genre)) {
+          selectedGenres.delete(t.genre);
+          card.classList.remove('selected');
+        } else {
+          selectedGenres.add(t.genre);
+          card.classList.add('selected');
+        }
+        updateCounter();
+      };
+
+      grid.appendChild(card);
+    });
+
+    submitBtn.onclick = async () => {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Configurando seu catálogo...';
+      const genresStr = Array.from(selectedGenres).join(',');
+      await API.saveOnboarding(profile.id, genresStr);
+      profile.onboarded = 1;
+      profile.preferred_genres = genresStr;
+      modal.style.display = 'none';
+      this.showToast('✨ Catálogo personalizado com sucesso com base nas suas escolhas!', 4000);
+      this.loadRecommendations();
+      this.loadHome();
+    };
+
+    skipBtn.onclick = async () => {
+      await API.saveOnboarding(profile.id, 'action,anime_sagas,comedy,popular_series');
+      profile.onboarded = 1;
+      modal.style.display = 'none';
+      this.loadHome();
+    };
   }
 }
 

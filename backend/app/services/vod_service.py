@@ -206,13 +206,13 @@ def validate_stream_alive(item: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     # 2. Validação FrostStream
     if "froststream.cloutteam.com" in url:
         try:
-            r = _vod_session.get(url, headers={"User-Agent": "Stremio/4.4.168"}, allow_redirects=False, timeout=2.5)
-            if r.status_code == 404 or r.status_code >= 500:
+            r = _vod_session.get(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}, allow_redirects=False, timeout=2.5)
+            if r.status_code >= 400:
                 return None
-            if r.status_code == 302 and "Location" in r.headers:
+            if r.status_code in (301, 302, 307, 308) and "Location" in r.headers:
                 cdn_url = r.headers["Location"]
                 try:
-                    r_cdn = _vod_session.head(cdn_url, headers={"User-Agent": "Stremio/4.4.168"}, timeout=2.0)
+                    r_cdn = _vod_session.head(cdn_url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}, timeout=2.0)
                     if r_cdn.status_code >= 400:
                         return None
                 except Exception:
@@ -309,22 +309,38 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
         if is_recent_theatrical_release(release_date):
             theatrical_cam = True
 
-    # 4. Normalizar streams encontrados
+    # 4. Normalizar streams encontrados com desduplicação inteligente
     normalized = []
+    seen_media_signatures = set()
+    provider_counts = {}
+
     for idx, s in enumerate(raw_streams):
         url = s.get("url")
         if not url:
             continue
 
         raw_title = s.get("title", "") or ""
-        name = s.get("name", "") or s.get("_provider", "Servidor")
-        # Identifica se é CAM apenas se tiver termos de gravação de cinema reais
-        # Não rebaixa streams que já tenham resolução digital declarada
+        provider_name = s.get("_provider") or ("EmbedPlayer" if "embedplayer" in url or "plosia" in url else "Servidor")
+        name = s.get("name", "") or provider_name
         is_cam = is_cinema_cam(raw_title, name)
         quality = parse_quality(raw_title, name, is_cam=is_cam)
         audio = parse_audio(raw_title, name)
 
-        clean_name = f"{quality} • {audio}"
+        # Detecta se é HEVC/H.265
+        is_hevc = bool(re.search(r'\b(HEVC|H\.?265|X265|2160P|4K)\b', f"{raw_title} {name} {url}", re.IGNORECASE)) and ("4K" in quality or "HEVC" in raw_title)
+
+        # Limita redundância a no máximo 2 mirrors para não poluir a lista
+        mirror_key = f"{provider_name}_{quality}_{audio}"
+        provider_counts[mirror_key] = provider_counts.get(mirror_key, 0) + 1
+        mirror_num = provider_counts[mirror_key]
+        if mirror_num > 2:
+            continue
+
+        prov_display = f"{provider_name} #{mirror_num}" if mirror_num > 1 else provider_name
+        clean_name = f"{quality} • {audio} [{prov_display}]"
+        if is_hevc:
+            clean_name += " • HEVC"
+
         details_label = raw_title.replace("\n", " • ").strip()
 
         normalized.append({
@@ -333,10 +349,11 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
             "quality": quality,
             "audio": audio,
             "is_cinema": is_cam,
+            "is_hevc": is_hevc,
             "label": clean_name,
             "details": details_label,
             "url": url,
-            "provider": s.get("_provider"),
+            "provider": provider_name,
             "behaviorHints": s.get("behaviorHints", {})
         })
 
@@ -392,6 +409,8 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
         # Bônus de rapidez e CDN estável
         prov = item.get("provider", "")
         if prov == "EmbedPlayer":
+            score += 30
+        elif prov == "SuperStream":
             score += 25
         elif prov == "FrostStream":
             score += 20

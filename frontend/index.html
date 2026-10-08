@@ -64,8 +64,12 @@
       <p class="hero-overview" id="heroOverview">Buscando as melhores histórias do cinema mundial e lançamentos...</p>
       <div class="hero-actions">
         <button class="btn btn-primary" id="heroPlayBtn">▶ Assistir Agora</button>
-        <button class="btn btn-secondary" id="heroInfoBtn">ℹ Detalhes & Trailer</button>
+        <button class="btn btn-secondary" id="heroInfoBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+          Mais Informações
+        </button>
       </div>
+      <div class="hero-indicators" id="heroIndicators"></div>
     </div>
   </section>
 
@@ -466,7 +470,10 @@
         <p class="netflix-cat-hero-desc" id="netflixCatHeroDesc">Perseguições eletrizantes, grandes confrontos e aventuras épicas.</p>
         <div class="netflix-cat-hero-actions" id="netflixCatHeroActions" style="display: none;">
           <button class="btn btn-primary" id="netflixCatHeroPlayBtn">▶ Assistir Destaque</button>
-          <button class="btn btn-secondary" id="netflixCatHeroInfoBtn">ℹ Detalhes</button>
+          <button class="btn btn-secondary" id="netflixCatHeroInfoBtn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            Mais Informações
+          </button>
         </div>
       </div>
     </div>
@@ -670,31 +677,77 @@
       
       <div class="profile-modal-grid" id="profileModalGrid"></div>
 
-      <!-- Formulário de Criar / Editar Perfil (Toggle) -->
+      <!-- Formulário de Criar / Editar Perfil (Estilo Netflix com Avatares do Catálogo) -->
       <div class="profile-form-box" id="profileFormBox" style="display: none;">
-        <h3 style="font-size: 18px; margin-bottom: 12px;" id="profileFormTitle">Criar Novo Perfil</h3>
-        <input type="text" id="profileFormNameInput" class="profile-name-input" placeholder="Nome do perfil (ex: Maria, Quarto, Sala)" maxlength="20" />
+        <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 16px;" id="profileFormTitle">Editar Perfil</h3>
         
-        <div style="margin: 14px 0 8px; font-size: 13px; color: #aaa;">Escolha a cor ou estilo do avatar:</div>
-        <div class="avatar-picker-grid" id="avatarPickerGrid"></div>
+        <div class="profile-avatar-preview-container">
+          <div class="profile-avatar-preview" id="profileAvatarPreview"></div>
+          <div style="flex: 1;">
+            <label style="font-size: 13px; color: #aaa; display: block; margin-bottom: 6px;">Nome do Perfil:</label>
+            <input type="text" id="profileFormNameInput" class="profile-name-input" placeholder="Ex: Lucas, Quarto, Cinema" maxlength="20" />
+          </div>
+        </div>
+        
+        <div style="margin: 20px 0 10px; font-size: 14px; font-weight: 600; color: #ddd; text-align: left;">Escolha um personagem do catálogo para o seu avatar:</div>
+        <div class="avatar-catalog-grid" id="avatarPickerGrid"></div>
 
-        <div style="display: flex; gap: 12px; justify-content: center; margin-top: 20px;">
-          <button class="btn btn-primary" id="saveProfileBtn">Salvar Perfil</button>
+        <div style="display: flex; gap: 12px; justify-content: center; margin-top: 24px;">
+          <button class="btn btn-primary" id="saveProfileBtn">Salvar Alterações</button>
           <button class="btn btn-secondary" id="cancelProfileBtn">Cancelar</button>
           <button class="btn btn-dark" id="deleteProfileBtn" style="display:none; color:#e50914;">Excluir</button>
         </div>
       </div>
 
       <div class="profile-modal-footer-btns" id="profileModalFooterBtns">
+        <button class="btn btn-outline-netflix" id="profileHistoryBtn">📋 Histórico de Assistidos</button>
         <button class="btn btn-outline-netflix" id="manageProfilesToggleBtn">Gerenciar perfis</button>
         <button class="btn btn-outline-netflix" id="createNewProfileBtn" style="display:none;">+ Adicionar perfil</button>
       </div>
     </div>
   </div>
 
+  <!-- Modal de Histórico de Assistidos do Perfil -->
+  <div class="modal-backdrop" id="historyModal" style="display: none;">
+    <div class="modal-content history-modal-wrapper">
+      <div class="history-modal-header">
+        <div>
+          <h2 class="history-modal-title">Histórico de Assistidos</h2>
+          <p class="history-modal-sub" id="historyModalSub">Títulos assistidos recentemente neste perfil</p>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <button class="btn btn-dark" id="clearHistoryBtn" style="color: #ff5252; border: 1px solid rgba(255,82,82,0.3); font-size: 12px; padding: 6px 14px;">Limpar Histórico</button>
+          <button class="modal-close-btn" id="historyCloseBtn" style="position: static;">✕</button>
+        </div>
+      </div>
+      <div class="history-grid" id="historyGrid"></div>
+    </div>
+  </div>
+
+  <!-- Modal de Onboarding Estilo Netflix (Taste Picker / Escolha de Favoritos) -->
+  <div class="modal-backdrop" id="onboardingModal" style="display: none; z-index: 100000;">
+    <div class="modal-content onboarding-modal-wrapper">
+      <div class="onboarding-header">
+        <div class="brand-logo" style="margin-bottom: 8px;">
+          <span class="logo-text">HOME<span class="logo-accent">FLIX</span></span>
+        </div>
+        <h2 class="onboarding-title">O que você mais gosta de assistir?</h2>
+        <p class="onboarding-subtitle">Selecione pelo menos 3 títulos ou categorias para montarmos um catálogo sob medida para você.</p>
+        <div class="onboarding-counter-badge" id="onboardingCounterBadge">Selecione pelo menos 3 (0 selecionados)</div>
+      </div>
+
+      <div class="onboarding-grid" id="onboardingGrid"></div>
+
+      <div class="onboarding-footer">
+        <button class="btn btn-secondary" id="onboardingSkipBtn">Pular por enquanto</button>
+        <button class="btn btn-primary" id="onboardingSubmitBtn" disabled>Concluir e Montar Meu Catálogo</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Scripts -->
-  <script src="/static/js/api.js?v=7.7"></script>
-  <script src="/static/js/player.js?v=7.7"></script>
-  <script src="/static/js/app.js?v=7.7"></script>
+  <script src="/static/js/api.js?v=7.8"></script>
+  <script src="/static/js/player.js?v=7.8"></script>
+  <script src="/static/js/app.js?v=7.8"></script>
 </body>
 </html>

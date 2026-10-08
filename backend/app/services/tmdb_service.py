@@ -903,17 +903,20 @@ def get_category_items(category_key: str, page: int = 1) -> Dict[str, Any]:
     }
 
 def get_personalized_recommendations(profile_id: int) -> List[Dict[str, Any]]:
-    """Gera recomendações personalizadas com base nos itens assistidos e favoritados pelo perfil"""
+    """Gera recomendações personalizadas com base nos gostos do perfil e títulos assistidos"""
+    profile = None
+    recent = []
     try:
         from app import database
+        profile = database.get_profile_by_id(profile_id)
         recent = database.get_profile_recent_media_ids(profile_id, limit=5)
     except Exception as exc:
         print(f"[Recs Error] {exc}")
-        recent = []
 
     recs = []
     seen_ids = set()
 
+    # 1. Recomendações baseadas no histórico recente
     for item in recent:
         m_id = str(item.get("media_id"))
         m_type = item.get("media_type") or "movie"
@@ -921,7 +924,6 @@ def get_personalized_recommendations(profile_id: int) -> List[Dict[str, Any]]:
             continue
 
         seen_ids.add(m_id)
-        # Busca recomendações daquele título no TMDB
         endpoint = f"{m_type}/{m_id}/recommendations"
         data = tmdb_request(endpoint)
         results = data.get("results", [])
@@ -938,12 +940,42 @@ def get_personalized_recommendations(profile_id: int) -> List[Dict[str, Any]]:
         if len(recs) >= 20:
             break
 
-    # Fallback se perfil for novo: filmes em alta hoje
-    if not recs:
-        trending = get_trending("all", "day")
-        recs = [t for t in trending if t.get("poster_path") or t.get("backdrop_path")]
+    # 2. Se não houver histórico suficiente, usa os gêneros favoritos escolhidos no onboarding
+    if len(recs) < 12 and profile and profile.get("preferred_genres"):
+        pref_keys = [g.strip() for g in profile.get("preferred_genres", "").split(",") if g.strip()]
+        for pkey in pref_keys:
+            conf = CATEGORY_CONFIG.get(pkey)
+            if conf:
+                try:
+                    genre_items = conf["func"](1)
+                    for gi in genre_items:
+                        gid = str(gi.get("id"))
+                        if gid not in seen_ids and (gi.get("poster_path") or gi.get("backdrop_path")):
+                            seen_ids.add(gid)
+                            recs.append(gi)
+                            if len(recs) >= 24:
+                                break
+                except Exception:
+                    pass
+            if len(recs) >= 24:
+                break
 
-    return recs[:20]
+    # 3. Fallback inteligente sem duplicar com a linha 'Em Alta no HomeFlix':
+    # Usa obras mais bem avaliadas e aclamadas (Top Rated) filtrando títulos da semana
+    if len(recs) < 10:
+        trending_week = get_trending("all", "week")
+        trending_ids = {str(t.get("id")) for t in trending_week}
+
+        top_movies = get_top_rated_movies(1) + get_popular_series(1)
+        for tm in top_movies:
+            t_id = str(tm.get("id"))
+            if t_id not in seen_ids and t_id not in trending_ids and (tm.get("poster_path") or tm.get("backdrop_path")):
+                seen_ids.add(t_id)
+                recs.append(tm)
+                if len(recs) >= 20:
+                    break
+
+    return recs[:24]
 
 import re
 

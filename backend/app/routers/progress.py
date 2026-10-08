@@ -66,6 +66,22 @@ def get_media_progress(
     prog = database.get_media_progress(profile_id, media_id, season, episode)
     return {"progress": prog}
 
+@router.get("/progress/history")
+def get_watch_history(profile_id: int = Query(...), limit: int = Query(50)):
+    return {"results": database.get_watch_history(profile_id, limit)}
+
+@router.post("/progress/history/clear")
+def clear_watch_history(profile_id: int = Query(...)):
+    database.clear_watch_history(profile_id)
+    cloud_sync_service.schedule_cloud_upload(delay_seconds=1.0)
+    return {"status": "ok"}
+
+@router.delete("/progress/history/{profile_id}/{media_id}")
+def delete_history_item(profile_id: int, media_id: str):
+    database.delete_progress(profile_id, media_id)
+    cloud_sync_service.schedule_cloud_upload(delay_seconds=1.0)
+    return {"status": "ok"}
+
 @router.post("/favorites/toggle")
 def toggle_favorite(data: FavoriteToggle):
     res = database.toggle_favorite(
