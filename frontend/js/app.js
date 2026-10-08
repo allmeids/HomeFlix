@@ -8,7 +8,7 @@ class HomeFlixApp {
     this.channels = [];
     this.categories = [];
     this.selectedLiveCategory = 'Todos';
-    this.selectedAvatar = '🦊';
+    this.selectedAvatar = 'avatar-1';
     this.editingProfileId = null;
 
     this.currentCategory = 'anime_sagas';
@@ -616,13 +616,15 @@ class HomeFlixApp {
     const sectionsContainer = document.getElementById('sectionsContainer');
     const detailsView = document.getElementById('detailsView');
     const liveTvContainer = document.getElementById('liveTvContainer');
+    const collectionsContainer = document.getElementById('collectionsContainer');
     const categoriesContainer = document.getElementById('categoriesContainer');
     const searchContainer = document.getElementById('searchContainer');
 
-    // Esconde a tela de detalhes ao trocar de aba principal
+    // Esconde a tela de detalhes e views dedicadas ao trocar de aba principal
     document.body.classList.remove('in-details-view');
     if (detailsView) detailsView.style.display = 'none';
     if (searchContainer) searchContainer.style.display = 'none';
+    if (collectionsContainer) collectionsContainer.style.display = 'none';
     if (categoriesContainer) categoriesContainer.style.display = 'none';
 
     if (tab === 'home') {
@@ -654,15 +656,15 @@ class HomeFlixApp {
       if (categoriesBar) categoriesBar.style.display = 'none';
       sectionsContainer.style.display = 'none';
       liveTvContainer.style.display = 'none';
-      if (categoriesContainer) categoriesContainer.style.display = 'block';
-      this.loadCollectionsHub(true);
+      if (collectionsContainer) collectionsContainer.style.display = 'block';
+      this.loadCollectionsPage();
     } else if (tab === 'categories') {
       heroSection.style.display = 'none';
       if (categoriesBar) categoriesBar.style.display = 'none';
       sectionsContainer.style.display = 'none';
       liveTvContainer.style.display = 'none';
       if (categoriesContainer) categoriesContainer.style.display = 'block';
-      this.loadCollectionsHub(false);
+      this.loadCategoriesPage();
     } else if (tab === 'watchlist') {
       heroSection.style.display = 'none';
       if (categoriesBar) categoriesBar.style.display = 'none';
@@ -1308,8 +1310,8 @@ class HomeFlixApp {
     const favBtn = document.getElementById('detailsFavBtn');
     const favBtnTop = document.getElementById('detailsViewFavBtnTop');
     const updateFavUi = (isFav) => {
-      const text = isFav ? '✓ Na Minha Lista' : '➕ Minha Lista';
-      favBtn.innerHTML = `<span>${isFav ? '✓' : '➕'}</span> ${isFav ? 'Na Minha Lista' : 'Minha Lista'}`;
+      const text = isFav ? 'Na Minha Lista' : '+ Minha Lista';
+      favBtn.innerHTML = `<span>${isFav ? '✓' : '+'}</span> ${isFav ? 'Na Minha Lista' : 'Minha Lista'}`;
       if (favBtnTop) favBtnTop.textContent = text;
     };
 
@@ -1560,7 +1562,7 @@ class HomeFlixApp {
       card.className = 'source-card';
       let qLabel = s.quality || 'HD 1080p';
       if (!hevcSupported && qLabel.includes('4K')) {
-        qLabel += ' ⚠️ (Requer TV/HEVC)';
+        qLabel += ' (Requer TV/HEVC)';
       }
       card.innerHTML = `
         <div class="source-info-col">
@@ -1609,7 +1611,7 @@ class HomeFlixApp {
 
   async fetchAndPlay(mediaType, tmdbId, title, details, season = 1, episode = 1, epTitle = null, resumeTime = 0) {
     const playBtn = document.getElementById('detailsPlayBtn');
-    if (playBtn) playBtn.innerHTML = '<span>⏳</span> Conectando ao melhor servidor...';
+    if (playBtn) playBtn.innerHTML = 'Conectando ao melhor servidor...';
 
     const resolved = await API.resolveStreams(mediaType, tmdbId, season, episode);
     if (playBtn) {
@@ -1842,7 +1844,7 @@ class HomeFlixApp {
     if (!items || items.length === 0) {
       grid.innerHTML = `
         <div style="grid-column: 1/-1; text-align: center; padding: 70px 20px;">
-          <div style="font-size: 44px; margin-bottom: 14px; opacity: 0.7;">🔖</div>
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 14px; opacity: 0.6; display: block;"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
           <h3 style="font-size: 22px; margin-bottom: 8px; color: #fff; font-weight: 700;">Sua lista está vazia</h3>
           <p style="color: #888; max-width: 460px; margin: 0 auto 24px; font-size: 14px; line-height: 1.6;">
             Adicione filmes e séries clicando no botão "Minha Lista" nos detalhes de qualquer título.
@@ -1917,60 +1919,35 @@ class HomeFlixApp {
   }
 
   /* ================================================================
-     HUB DE CATEGORIAS & COLEÇÕES (ORDEM CRONOLÓGICA DE ASSISTIR)
+  /* ================================================================
+     TELA DEDICADA DE COLEÇÕES (FRANQUIAS EM ORDEM CRONOLÓGICA)
      ================================================================ */
 
-  async loadCollectionsHub(focusCollections = false) {
+  async loadCollectionsPage() {
+    const hubView = document.getElementById('collectionsHubView');
+    const colDetailView = document.getElementById('collectionDetailView');
     const backBtnCol = document.getElementById('backToHubBtnCol');
-    const backBtnCat = document.getElementById('backToHubBtnCat');
 
     if (backBtnCol) {
-      backBtnCol.onclick = () => this.showHubView();
-    }
-    if (backBtnCat) {
-      backBtnCat.onclick = () => this.showHubView();
+      backBtnCol.onclick = () => {
+        if (colDetailView) colDetailView.style.display = 'none';
+        if (hubView) hubView.style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      };
     }
 
-    this.showHubView();
+    if (hubView) hubView.style.display = 'block';
+    if (colDetailView) colDetailView.style.display = 'none';
+    window.scrollTo({ top: 0, behavior: 'instant' });
 
-    // 1. Carrega as Coleções
     const colGrid = document.getElementById('collectionsCardsGrid');
     if (colGrid && (!this.collectionsList || this.collectionsList.length === 0)) {
-      colGrid.innerHTML = '<div style="color:#aaa; grid-column:1/-1; text-align:center; padding:30px;">Carregando franquias & coleções...</div>';
+      colGrid.innerHTML = '<div style="color:#aaa; grid-column:1/-1; text-align:center; padding:40px;">Carregando franquias & coleções...</div>';
       this.collectionsList = (await API.getCollections()) || [];
       this.renderCollectionsGrid(this.collectionsList);
     } else if (colGrid && colGrid.children.length === 0 && this.collectionsList) {
       this.renderCollectionsGrid(this.collectionsList);
     }
-
-    // 2. Carrega as Categorias / Gêneros
-    const genreGrid = document.getElementById('genreCardsGrid');
-    if (genreGrid && (!this.allCategoriesList || this.allCategoriesList.length === 0)) {
-      genreGrid.innerHTML = '<div style="color:#aaa; grid-column:1/-1; text-align:center; padding:30px;">Carregando categorias...</div>';
-      this.allCategoriesList = (await API.getCategories()) || [];
-      this.renderGenreCardsGrid(this.allCategoriesList);
-    } else if (genreGrid && genreGrid.children.length === 0 && this.allCategoriesList) {
-      this.renderGenreCardsGrid(this.allCategoriesList);
-    }
-
-    if (focusCollections) {
-      setTimeout(() => {
-        const block = document.getElementById('collectionsSectionBlock');
-        if (block) block.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100);
-    } else {
-      window.scrollTo({ top: 0, behavior: 'instant' });
-    }
-  }
-
-  showHubView() {
-    const hubView = document.getElementById('categoriesHubView');
-    const colDetailView = document.getElementById('collectionDetailView');
-    const catDetailView = document.getElementById('categoryDetailView');
-    if (hubView) hubView.style.display = 'block';
-    if (colDetailView) colDetailView.style.display = 'none';
-    if (catDetailView) catDetailView.style.display = 'none';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   renderCollectionsGrid(collections) {
@@ -2002,35 +1979,9 @@ class HomeFlixApp {
     });
   }
 
-  renderGenreCardsGrid(categories) {
-    const genreGrid = document.getElementById('genreCardsGrid');
-    if (!genreGrid) return;
-    genreGrid.innerHTML = '';
-
-    categories.forEach(cat => {
-      const card = document.createElement('div');
-      card.className = 'genre-hub-card';
-      card.setAttribute('tabindex', '0');
-      card.innerHTML = `
-        <div class="genre-card-info">
-          <h3 class="genre-card-title">${cat.title}</h3>
-          <p class="genre-card-desc">${cat.description || ''}</p>
-        </div>
-        <div class="genre-card-arrow" style="font-size: 18px; color: #888;">›</div>
-      `;
-
-      card.onclick = () => this.openCategory(cat.key);
-      card.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') card.click();
-      });
-      genreGrid.appendChild(card);
-    });
-  }
-
   async openCollection(collectionKey) {
-    const hubView = document.getElementById('categoriesHubView');
+    const hubView = document.getElementById('collectionsHubView');
     const colDetailView = document.getElementById('collectionDetailView');
-    const catDetailView = document.getElementById('categoryDetailView');
     const banner = document.getElementById('collectionHeroBanner');
     const titleEl = document.getElementById('colHeroTitle');
     const subEl = document.getElementById('colHeroSub');
@@ -2040,7 +1991,6 @@ class HomeFlixApp {
     const itemsGrid = document.getElementById('collectionItemsGrid');
 
     if (hubView) hubView.style.display = 'none';
-    if (catDetailView) catDetailView.style.display = 'none';
     if (colDetailView) colDetailView.style.display = 'block';
     window.scrollTo({ top: 0, behavior: 'instant' });
 
@@ -2086,7 +2036,7 @@ class HomeFlixApp {
               ${rating ? `<span class="chrono-rating">★ ${rating}</span>` : ''}
               <span class="chrono-type">${item.media_type === 'tv' ? 'Série' : 'Filme'}</span>
             </div>
-            ${item.chronological_note ? `<div class="chrono-note">📌 ${item.chronological_note}</div>` : ''}
+            ${item.chronological_note ? `<div class="chrono-note">${item.chronological_note}</div>` : ''}
           </div>
         `;
 
@@ -2099,13 +2049,67 @@ class HomeFlixApp {
     }
   }
 
+  /* ================================================================
+     TELA DEDICADA DE GÊNEROS & CATEGORIAS (HUB & CATÁLOGO)
+     ================================================================ */
+
+  async loadCategoriesPage() {
+    const hubView = document.getElementById('genresHubView');
+    const catDetailView = document.getElementById('categoryDetailView');
+    const backBtnCat = document.getElementById('backToHubBtnCat');
+
+    if (backBtnCat) {
+      backBtnCat.onclick = () => {
+        if (catDetailView) catDetailView.style.display = 'none';
+        if (hubView) hubView.style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      };
+    }
+
+    if (hubView) hubView.style.display = 'block';
+    if (catDetailView) catDetailView.style.display = 'none';
+    window.scrollTo({ top: 0, behavior: 'instant' });
+
+    const genreGrid = document.getElementById('genreCardsGrid');
+    if (genreGrid && (!this.allCategoriesList || this.allCategoriesList.length === 0)) {
+      genreGrid.innerHTML = '<div style="color:#aaa; grid-column:1/-1; text-align:center; padding:40px;">Carregando categorias...</div>';
+      this.allCategoriesList = (await API.getCategories()) || [];
+      this.renderGenreCardsGrid(this.allCategoriesList);
+    } else if (genreGrid && genreGrid.children.length === 0 && this.allCategoriesList) {
+      this.renderGenreCardsGrid(this.allCategoriesList);
+    }
+  }
+
+  renderGenreCardsGrid(categories) {
+    const genreGrid = document.getElementById('genreCardsGrid');
+    if (!genreGrid) return;
+    genreGrid.innerHTML = '';
+
+    categories.forEach(cat => {
+      const card = document.createElement('div');
+      card.className = 'genre-hub-card';
+      card.setAttribute('tabindex', '0');
+      card.innerHTML = `
+        <div class="genre-card-info">
+          <h3 class="genre-card-title">${cat.title}</h3>
+          <p class="genre-card-desc">${cat.description || ''}</p>
+        </div>
+        <div class="genre-card-arrow" style="font-size: 18px; color: #888;">›</div>
+      `;
+
+      card.onclick = () => this.openCategory(cat.key);
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') card.click();
+      });
+      genreGrid.appendChild(card);
+    });
+  }
+
   openCategory(categoryKey) {
-    const hubView = document.getElementById('categoriesHubView');
-    const colDetailView = document.getElementById('collectionDetailView');
+    const hubView = document.getElementById('genresHubView');
     const catDetailView = document.getElementById('categoryDetailView');
 
     if (hubView) hubView.style.display = 'none';
-    if (colDetailView) colDetailView.style.display = 'none';
     if (catDetailView) catDetailView.style.display = 'block';
 
     this.loadCategoriesTab(categoryKey, 1, false);
@@ -2142,7 +2146,7 @@ class HomeFlixApp {
       this.allCategoriesList.forEach(cat => {
         const pill = document.createElement('div');
         pill.className = `category-pill ${cat.key === this.currentCategory ? 'active' : ''}`;
-        pill.innerHTML = `<span>${cat.icon}</span> <span>${cat.title}</span>`;
+        pill.innerHTML = `<span>${cat.title}</span>`;
         pill.setAttribute('tabindex', '0');
         pill.onclick = () => {
           this.loadCategoriesTab(cat.key, 1, false);
@@ -2164,7 +2168,7 @@ class HomeFlixApp {
     // 3. Atualiza títulos do header
     const currentCatInfo = this.allCategoriesList.find(c => c.key === this.currentCategory);
     if (currentCatInfo) {
-      if (titleEl) titleEl.innerHTML = `${currentCatInfo.icon} ${currentCatInfo.title}`;
+      if (titleEl) titleEl.textContent = currentCatInfo.title;
       if (descEl) descEl.textContent = currentCatInfo.description || '';
     }
 
@@ -2226,7 +2230,7 @@ class HomeFlixApp {
       loadMoreBox.style.display = items.length >= 10 ? 'block' : 'none';
     }
     if (loadMoreBtn) {
-      loadMoreBtn.textContent = '➕ Carregar Mais Títulos';
+      loadMoreBtn.textContent = 'Carregar Mais Títulos';
       loadMoreBtn.onclick = () => {
         if (!this.categoryLoading) {
           this.loadCategoriesTab(this.currentCategory, this.categoryPage + 1, true);
@@ -2292,7 +2296,7 @@ class HomeFlixApp {
       card.setAttribute('tabindex', '0');
       card.innerHTML = `
         <img class="media-card-poster" src="https://image.tmdb.org/t/p/w342${posterPath}" alt="${title}" loading="lazy" onerror="this.onerror=null; this.src='https://images.placeholders.dev/?width=342&height=513&text=HomeFlix&theme=dark';" />
-        ${isSuggestion ? '<span class="suggestion-badge">✨ Semelhante</span>' : ''}
+        ${isSuggestion ? '<span class="suggestion-badge">Semelhante</span>' : ''}
         <div class="media-card-info">
           <div class="media-card-title">${title}</div>
           <div class="media-card-sub">
@@ -2320,7 +2324,7 @@ class HomeFlixApp {
       // Se temos títulos semelhantes para complementar a busca (ex: poucos resultados exatos)
       if (similar.length > 0 && similarSec && similarGrid) {
         similarSec.style.display = 'block';
-        if (similarTitle) similarTitle.textContent = `✨ Você Também Pode Gostar (Títulos Semelhantes)`;
+        if (similarTitle) similarTitle.textContent = `Você Também Pode Gostar (Títulos Semelhantes)`;
         similarGrid.innerHTML = '';
         similar.forEach(item => {
           const card = renderCard(item, true);

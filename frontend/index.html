@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/style.css?v=7.3">
+  <link rel="stylesheet" href="/static/css/style.css?v=7.4">
   <!-- HLS.js para streaming HLS/m3u8 no navegador -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -124,7 +124,7 @@
     <!-- Seção Continuar Assistindo (Quick Resume) -->
     <section class="media-section" id="continueWatchingSection" style="display: none;">
       <div class="section-header">
-        <h2 class="section-title">⚡ Continuar Assistindo</h2>
+        <h2 class="section-title">Continuar Assistindo</h2>
       </div>
       <div class="carousel-wrapper">
         <button class="carousel-nav-btn carousel-nav-left">‹</button>
@@ -323,7 +323,7 @@
       </button>
       <div class="details-top-title" id="detailsViewTopTitle">HomeFlix Cinema</div>
       <div class="details-top-actions">
-        <button class="btn btn-secondary btn-sm" id="detailsViewFavBtnTop">➕ Minha Lista</button>
+        <button class="btn btn-secondary btn-sm" id="detailsViewFavBtnTop">+ Minha Lista</button>
       </div>
     </div>
 
@@ -334,7 +334,7 @@
       <div class="details-hero-body">
         <div class="details-poster-box">
           <img class="details-poster-img" id="detailsPosterImg" src="" alt="Poster" />
-          <div class="details-poster-badge" id="detailsCinemaBadge" style="display: none;">⚠️ Imagem Cinema (CAM)</div>
+          <div class="details-poster-badge" id="detailsCinemaBadge" style="display: none;">Imagem Cinema (CAM)</div>
         </div>
 
         <div class="details-content-info">
@@ -356,7 +356,7 @@
               Assistir Trailer
             </button>
             <button class="btn btn-secondary btn-lg" id="detailsFavBtn">
-              <span>➕</span> Minha Lista
+              <span>+</span> Minha Lista
             </button>
             <button class="btn btn-dark btn-lg" id="detailsToggleSourcesBtn">
               Servidores & Qualidade
@@ -424,50 +424,36 @@
     <div class="channels-grid" id="liveChannelsGrid"></div>
   </section>
 
-  <!-- TELA DEDICADA DE CATEGORIAS & COLEÇÕES (HUB VISUAL ESTILO NETFLIX / DISNEY+) -->
-  <section class="live-tv-container categories-page-container" id="categoriesContainer" style="display: none;">
-    <!-- 1. HUB PRINCIPAL (CARDS VISUAIS DE COLEÇÕES & CATEGORIAS) -->
-    <div id="categoriesHubView">
+  <!-- TELA DEDICADA DE COLEÇÕES (FRANQUIAS NA ORDEM CRONOLÓGICA ESTILO DISNEY+) -->
+  <section class="live-tv-container categories-page-container" id="collectionsContainer" style="display: none;">
+    <!-- 1. HUB PRINCIPAL DE COLEÇÕES -->
+    <div id="collectionsHubView">
       <div class="categories-page-header">
         <div class="cat-page-titles">
-          <h1 class="cat-page-main-title" id="catHubTitle">Coleções & Categorias</h1>
-          <p class="cat-page-main-sub" id="catHubSub">Franquias completas organizadas na ordem cronológica de assistir e catálogos completos por gênero</p>
+          <h1 class="cat-page-main-title">Franquias & Coleções</h1>
+          <p class="cat-page-main-sub">Sagas completas organizadas na ordem cronológica de assistir com filmes e séries canônicos</p>
         </div>
       </div>
 
-      <!-- Seção de Franquias & Grandes Coleções na Ordem Cronológica -->
       <div class="hub-block-section" id="collectionsSectionBlock">
-        <div class="hub-section-header">
-          <h2 class="hub-section-title">Franquias & Coleções em Ordem de Assistir</h2>
-          <span class="hub-section-subtitle">Sagas completas organizadas cronologicamente para você maratonar na sequência certa</span>
-        </div>
         <div class="collections-cards-grid" id="collectionsCardsGrid"></div>
-      </div>
-
-      <!-- Seção de Cards Visuais de Gêneros / Categorias -->
-      <div class="hub-block-section" id="genresSectionBlock">
-        <div class="hub-section-header">
-          <h2 class="hub-section-title">Gêneros & Categorias de Filmes e Séries</h2>
-          <span class="hub-section-subtitle">Explore o acervo por estilos, temas e universos cinematográficos</span>
-        </div>
-        <div class="genre-cards-grid" id="genreCardsGrid"></div>
       </div>
     </div>
 
-    <!-- 2. DETALHE DA COLEÇÃO SELECIONADA (ORDEM CRONOLÓGICA DE ASSISTIR) -->
+    <!-- 2. DETALHE DA COLEÇÃO SELECIONADA -->
     <div id="collectionDetailView" style="display: none;">
       <div class="view-back-bar">
-        <button class="btn btn-secondary" id="backToHubBtnCol">‹ Voltar para Coleções & Categorias</button>
+        <button class="btn btn-secondary" id="backToHubBtnCol">‹ Voltar para Coleções</button>
       </div>
       <div class="collection-hero-banner" id="collectionHeroBanner">
         <div class="collection-hero-overlay"></div>
         <div class="collection-hero-content">
           <div class="collection-badge-pill" id="colHeroBadge">ORDEM CRONOLÓGICA</div>
-          <h1 class="collection-hero-title" id="colHeroTitle">Universo Marvel (MCU)</h1>
+          <h1 class="collection-hero-title" id="colHeroTitle">Coleção</h1>
           <p class="collection-hero-subtitle" id="colHeroSub">Ordem Cronológica Oficial dos Acontecimentos</p>
-          <p class="collection-hero-desc" id="colHeroDesc">A jornada completa dos Vingadores...</p>
+          <p class="collection-hero-desc" id="colHeroDesc">A jornada completa...</p>
           <div class="collection-hero-meta">
-            <span id="colHeroCount" class="meta-pill">27 Títulos na Ordem</span>
+            <span id="colHeroCount" class="meta-pill">Títulos na Ordem</span>
             <span class="meta-pill meta-gold">Sequência Canônica</span>
           </div>
         </div>
@@ -476,14 +462,31 @@
       <!-- Lista / Grid dos Filmes na Ordem Cronológica -->
       <div class="collection-items-container">
         <div class="collection-items-header">
-          <h2 class="hub-section-title">Sequência de Filmes & Sagas</h2>
+          <h2 class="hub-section-title">Sequência de Filmes & Séries</h2>
           <span class="hub-section-subtitle">Assista na sequência numerada abaixo para compreender toda a linha do tempo</span>
         </div>
         <div class="collection-items-grid" id="collectionItemsGrid"></div>
       </div>
     </div>
+  </section>
 
-    <!-- 3. DETALHE DA CATEGORIA SELECIONADA (CATÁLOGO GERAL POR GÊNERO) -->
+  <!-- TELA DEDICADA DE CATEGORIAS & GÊNEROS -->
+  <section class="live-tv-container categories-page-container" id="categoriesContainer" style="display: none;">
+    <!-- 1. HUB PRINCIPAL DE GÊNEROS / CATEGORIAS -->
+    <div id="genresHubView">
+      <div class="categories-page-header">
+        <div class="cat-page-titles">
+          <h1 class="cat-page-main-title">Gêneros & Categorias</h1>
+          <p class="cat-page-main-sub">Explore todo o acervo de filmes e séries organizado por estilos e temas</p>
+        </div>
+      </div>
+
+      <div class="hub-block-section" id="genresSectionBlock">
+        <div class="genre-cards-grid" id="genreCardsGrid"></div>
+      </div>
+    </div>
+
+    <!-- 2. DETALHE DA CATEGORIA SELECIONADA (CATÁLOGO GERAL POR GÊNERO) -->
     <div id="categoryDetailView" style="display: none;">
       <div class="view-back-bar">
         <button class="btn btn-secondary" id="backToHubBtnCat">‹ Voltar para Categorias</button>
@@ -550,7 +553,7 @@
         <div class="player-sub-display" id="playerSubtitle"></div>
       </div>
       <div class="player-top-actions">
-        <button class="btn-icon" id="playerToggleSidebarBtnTop" title="Abrir Guia de Canais (Tecla C ou Seta Esquerda)">📋 Guia de Canais</button>
+        <button class="btn-icon" id="playerToggleSidebarBtnTop" title="Abrir Guia de Canais (Tecla C ou Seta Esquerda)">Guia de Canais</button>
       </div>
     </div>
 
@@ -562,7 +565,6 @@
 
     <!-- Aviso de Qualidade Cinema CAM -->
     <div class="cinema-warning-banner" id="playerCinemaWarning" style="display: none;">
-      <span>⚠️</span>
       <span><strong>Aviso de Qualidade:</strong> Título em exibição nos cinemas. Imagem e áudio gravados de sala.</span>
     </div>
 
@@ -570,7 +572,7 @@
     <div class="player-live-osd" id="playerLiveOsd">
       <div class="live-osd-channel-col">
         <div class="live-osd-logo-wrap" id="liveOsdLogoWrap">
-          <span id="liveOsdLogo">📡</span>
+          <span id="liveOsdLogo">TV</span>
         </div>
         <div class="live-osd-ch-meta">
           <div class="live-osd-ch-badge" id="liveOsdChannelBadge">CH 105 • AO VIVO</div>
@@ -596,11 +598,11 @@
     <div class="player-channels-sidebar" id="playerChannelsSidebar">
       <div class="sidebar-header">
         <div class="sidebar-title-row">
-          <div class="sidebar-title">📡 Guia de Canais Ao Vivo</div>
+          <div class="sidebar-title">Guia de Canais Ao Vivo</div>
           <button class="sidebar-close-btn" id="playerSidebarCloseBtn" title="Fechar Guia (ESC ou C)">✕</button>
         </div>
         <div class="sidebar-search-box">
-          <span>🔍</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
           <input type="text" id="sidebarChannelSearch" placeholder="Buscar canal ou número..." />
         </div>
         <div class="sidebar-categories" id="playerSidebarCategories"></div>
@@ -613,7 +615,6 @@
 
     <!-- Aba flutuante lateral para abrir os canais com facilidade -->
     <div class="sidebar-open-tab" id="playerSidebarOpenTab" title="Abrir Guia de Canais (C)">
-      <span>📡</span>
       <span class="tab-label">CANAIS</span>
     </div>
 
@@ -642,13 +643,13 @@
 
           <button class="ctrl-btn" id="playerRewindBtn" title="Voltar 10s (Seta Esquerda)">↺ 10</button>
           <button class="ctrl-btn" id="playerForwardBtn" title="Avançar 10s (Seta Direita)">↻ 10</button>
-          <button class="ctrl-btn" id="playerVolumeBtn" title="Mudo / Volume">🔊</button>
+          <button class="ctrl-btn" id="playerVolumeBtn" title="Mudo / Volume" style="font-size:11px; font-weight:700;">VOL</button>
           <span class="time-display" id="playerTimeDisplay">00:00 / 00:00</span>
         </div>
 
         <div class="controls-right">
-          <button class="ctrl-btn live-btn-guide" id="playerChannelGuideBtn" title="Guia de Canais (C)">📋 Canais (C)</button>
-          <button class="ctrl-btn" id="playerSubtitlesBtn" title="Legendas e Faixas de Áudio (CC / L)">💬 CC</button>
+          <button class="ctrl-btn live-btn-guide" id="playerChannelGuideBtn" title="Guia de Canais (C)">Canais (C)</button>
+          <button class="ctrl-btn" id="playerSubtitlesBtn" title="Legendas e Faixas de Áudio (CC / L)">CC</button>
           <select id="playerSourceSelect" style="background: rgba(0,0,0,0.7); color:#fff; border:1px solid rgba(255,255,255,0.3); border-radius:6px; padding:6px 12px; font-size:12px;"></select>
           <button class="ctrl-btn" id="playerFullscreenBtn" title="Tela Cheia (F)">⛶</button>
         </div>
@@ -658,7 +659,7 @@
     <!-- Menu Pop-up de Legendas Externas PT-BR -->
     <div class="player-subtitles-menu" id="playerSubtitlesMenu" style="display: none;">
       <div class="subtitles-menu-header">
-        <div class="subtitles-menu-title">💬 Legendas PT-BR & Áudio</div>
+        <div class="subtitles-menu-title">Legendas PT-BR & Áudio</div>
         <button class="subtitles-close-btn" id="playerSubtitlesCloseBtn" title="Fechar (ESC)">✕</button>
       </div>
       <div class="subtitles-track-list" id="playerSubtitlesTrackList">
@@ -705,8 +706,8 @@
   </div>
 
   <!-- Scripts -->
-  <script src="/static/js/api.js?v=7.3"></script>
-  <script src="/static/js/player.js?v=7.3"></script>
-  <script src="/static/js/app.js?v=7.3"></script>
+  <script src="/static/js/api.js?v=7.4"></script>
+  <script src="/static/js/player.js?v=7.4"></script>
+  <script src="/static/js/app.js?v=7.4"></script>
 </body>
 </html>

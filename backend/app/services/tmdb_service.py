@@ -370,7 +370,7 @@ COLLECTIONS_CONFIG: Dict[str, Dict[str, Any]] = {
         "icon": "",
         "badge": "Ordem Cronológica",
         "backdrop": "/yF1EbAnkhupalQ5vvtOP3GKo8Bi.jpg",
-        "description": "A jornada completa dos Vingadores e do multiverso organizada rigorosamente na linha do tempo histórica do MCU.",
+        "description": "A jornada completa dos Vingadores e do multiverso organizada rigorosamente na linha do tempo histórica do MCU com filmes e séries oficiais.",
         "items": [
             {"tmdb_id": 1771, "media_type": "movie", "order": 1, "order_title": "1. Capitão América: O Primeiro Vingador (1942-1945)", "chronological_note": "A origem do primeiro super-soldado durante a 2ª Guerra Mundial."},
             {"tmdb_id": 299537, "media_type": "movie", "order": 2, "order_title": "2. Capitã Marvel (1995)", "chronological_note": "Carol Danvers e Nick Fury nos anos 90, iniciando a iniciativa Vingadores."},
@@ -384,21 +384,36 @@ COLLECTIONS_CONFIG: Dict[str, Dict[str, Any]] = {
             {"tmdb_id": 100402, "media_type": "movie", "order": 10, "order_title": "10. Capitão América 2: O Soldado Invernal (2014)", "chronological_note": "A queda da S.H.I.E.L.D., infiltração da Hydra e o retorno de Bucky Barnes."},
             {"tmdb_id": 118340, "media_type": "movie", "order": 11, "order_title": "11. Guardiões da Galáxia (2014)", "chronological_note": "Peter Quill e os desajustados cósmicos protegem a Joia do Poder."},
             {"tmdb_id": 283995, "media_type": "movie", "order": 12, "order_title": "12. Guardiões da Galáxia Vol. 2 (2014)", "chronological_note": "Meses após o primeiro filme, Peter descobre a verdade sobre seu pai Ego."},
-            {"tmdb_id": 99861, "media_type": "movie", "order": 13, "order_title": "13. Vingadores: Era de Ultron (2015)", "chronological_note": "O surgimento de Ultron, Visão, Wanda e a destruição de Sokovia."},
-            {"tmdb_id": 102899, "media_type": "movie", "order": 14, "order_title": "14. Homem-Formiga (2015)", "chronological_note": "Scott Lang aprende a usar o traje encolhedor com Hank Pym."},
-            {"tmdb_id": 271110, "media_type": "movie", "order": 15, "order_title": "15. Capitão América: Guerra Civil (2016)", "chronological_note": "Tratado de Sokovia divide os Vingadores; estreia do Homem-Aranha e Pantera Negra."},
-            {"tmdb_id": 497698, "media_type": "movie", "order": 16, "order_title": "16. Viúva Negra (2016)", "chronological_note": "Imediatamente após Guerra Civil, Natasha enfrenta seu passado e a Sala Vermelha."},
-            {"tmdb_id": 315635, "media_type": "movie", "order": 17, "order_title": "17. Homem-Aranha: De Volta ao Lar (2016)", "chronological_note": "Peter Parker tenta conciliar a escola com o heroísmo no Queens."},
-            {"tmdb_id": 284052, "media_type": "movie", "order": 18, "order_title": "18. Doutor Estranho (2016-2017)", "chronological_note": "Stephen Strange treina as artes místicas em Kamar-Taj e guarda a Joia do Tempo."},
-            {"tmdb_id": 284054, "media_type": "movie", "order": 19, "order_title": "19. Pantera Negra (2017)", "chronological_note": "T'Challa assume o trono de Wakanda e confronta Killmonger."},
-            {"tmdb_id": 284053, "media_type": "movie", "order": 20, "order_title": "20. Thor: Ragnarok (2017)", "chronological_note": "Destruição de Asgard, encontro com Hulk em Sakaar e a vinda da nave de Thanos."},
-            {"tmdb_id": 363088, "media_type": "movie", "order": 21, "order_title": "21. Homem-Formiga e a Vespa (2018)", "chronological_note": "Resgate no Reino Quântico momentos antes do estalo de Thanos."},
-            {"tmdb_id": 299536, "media_type": "movie", "order": 22, "order_title": "22. Vingadores: Guerra Infinita (2018)", "chronological_note": "Thanos reúne as seis Joias do Infinito e executa o estalo universal."},
-            {"tmdb_id": 299534, "media_type": "movie", "order": 23, "order_title": "23. Vingadores: Ultimato (2018-2023)", "chronological_note": "O assalto temporal e a batalha culminante pela restauração do universo."},
-            {"tmdb_id": 429617, "media_type": "movie", "order": 24, "order_title": "24. Homem-Aranha: Longe de Casa (2024)", "chronological_note": "Viagem pela Europa e confronto com Mistério pós-Ultimato."},
-            {"tmdb_id": 634649, "media_type": "movie", "order": 25, "order_title": "25. Homem-Aranha: Sem Volta Para Casa (2024)", "chronological_note": "Abertura do Multiverso e encontro épico dos três Homens-Aranha."},
-            {"tmdb_id": 453395, "media_type": "movie", "order": 26, "order_title": "26. Doutor Estranho no Multiverso da Loucura (2024)", "chronological_note": "Viagem entre realidades e a busca de Wanda Maximoff por seus filhos."},
-            {"tmdb_id": 533535, "media_type": "movie", "order": 27, "order_title": "27. Deadpool & Wolverine (2024)", "chronological_note": "Wade Wilson é recrutado pela AVT para salvar sua linha do tempo ao lado de Logan."}
+            {"tmdb_id": 61889, "media_type": "tv", "order": 13, "order_title": "13. Demolidor (Série Marvel)", "chronological_note": "Matt Murdock defende Hell's Kitchen e enfrenta o Rei do Crime."},
+            {"tmdb_id": 99861, "media_type": "movie", "order": 14, "order_title": "14. Vingadores: Era de Ultron (2015)", "chronological_note": "O surgimento de Ultron, Visão, Wanda e a destruição de Sokovia."},
+            {"tmdb_id": 102899, "media_type": "movie", "order": 15, "order_title": "15. Homem-Formiga (2015)", "chronological_note": "Scott Lang aprende a usar o traje encolhedor com Hank Pym."},
+            {"tmdb_id": 271110, "media_type": "movie", "order": 16, "order_title": "16. Capitão América: Guerra Civil (2016)", "chronological_note": "Tratado de Sokovia divide os Vingadores; estreia do Homem-Aranha e Pantera Negra."},
+            {"tmdb_id": 497698, "media_type": "movie", "order": 17, "order_title": "17. Viúva Negra (2016)", "chronological_note": "Imediatamente após Guerra Civil, Natasha enfrenta seu passado e a Sala Vermelha."},
+            {"tmdb_id": 284054, "media_type": "movie", "order": 18, "order_title": "18. Pantera Negra (2016)", "chronological_note": "T'Challa assume o trono de Wakanda e confronta Killmonger."},
+            {"tmdb_id": 315635, "media_type": "movie", "order": 19, "order_title": "19. Homem-Aranha: De Volta ao Lar (2016)", "chronological_note": "Peter Parker tenta conciliar a escola com o heroísmo no Queens."},
+            {"tmdb_id": 284052, "media_type": "movie", "order": 20, "order_title": "20. Doutor Estranho (2016-2017)", "chronological_note": "Stephen Strange treina as artes místicas em Kamar-Taj e guarda a Joia do Tempo."},
+            {"tmdb_id": 284053, "media_type": "movie", "order": 21, "order_title": "21. Thor: Ragnarok (2017)", "chronological_note": "Destruição de Asgard, encontro com Hulk em Sakaar e a vinda da nave de Thanos."},
+            {"tmdb_id": 363088, "media_type": "movie", "order": 22, "order_title": "22. Homem-Formiga e a Vespa (2018)", "chronological_note": "Resgate no Reino Quântico momentos antes do estalo de Thanos."},
+            {"tmdb_id": 299536, "media_type": "movie", "order": 23, "order_title": "23. Vingadores: Guerra Infinita (2018)", "chronological_note": "Thanos reúne as seis Joias do Infinito e executa o estalo universal."},
+            {"tmdb_id": 299534, "media_type": "movie", "order": 24, "order_title": "24. Vingadores: Ultimato (2018-2023)", "chronological_note": "O assalto temporal e a batalha culminante pela restauração do universo."},
+            {"tmdb_id": 84958, "media_type": "tv", "order": 25, "order_title": "25. Loki (Série Marvel)", "chronological_note": "O Deus da Trapaça quebra a Linha do Tempo Sagrada e confronta a AVT e Aquele Que Permanece."},
+            {"tmdb_id": 85271, "media_type": "tv", "order": 26, "order_title": "26. WandaVision (Série Marvel)", "chronological_note": "Três semanas pós-Ultimato: Wanda cria a anomalia de Westview e desperta como Feiticeira Escarlate."},
+            {"tmdb_id": 88396, "media_type": "tv", "order": 27, "order_title": "27. Falcão e o Soldado Invernal (Série Marvel)", "chronological_note": "Sam Wilson e Bucky Barnes enfrentam os Apátridas e Sam assume o escudo de Capitão América."},
+            {"tmdb_id": 566525, "media_type": "movie", "order": 28, "order_title": "28. Shang-Chi e a Lenda dos Dez Anéis (2021)", "chronological_note": "Shang-Chi confronta seu pai Wenwu e o poder milenar dos Dez Anéis místicas."},
+            {"tmdb_id": 524434, "media_type": "movie", "order": 29, "order_title": "29. Eternos (2021)", "chronological_note": "Os seres cósmicos imortais emergem das sombras para impedir o Despertar do Celestial Tiamut."},
+            {"tmdb_id": 429617, "media_type": "movie", "order": 30, "order_title": "30. Homem-Aranha: Longe de Casa (2024)", "chronological_note": "Viagem escolar pela Europa e confronto com Mistério pós-Ultimato."},
+            {"tmdb_id": 634649, "media_type": "movie", "order": 31, "order_title": "31. Homem-Aranha: Sem Volta Para Casa (2024)", "chronological_note": "Abertura do Multiverso e encontro lendário dos três Homens-Aranha de diferentes realidades."},
+            {"tmdb_id": 88329, "media_type": "tv", "order": 32, "order_title": "32. Gavião Arqueiro (Hawkeye - Série)", "chronological_note": "Clint Barton e Kate Bishop enfrentam a gangue do agasalho e o Rei do Crime no Natal de Nova York."},
+            {"tmdb_id": 92749, "media_type": "tv", "order": 33, "order_title": "33. Cavaleiro da Lua (Moon Knight - Série)", "chronological_note": "Marc Spector e Steven Grant descobrem suas múltiplas personalidades como avatar do deus Khonshu."},
+            {"tmdb_id": 453395, "media_type": "movie", "order": 34, "order_title": "34. Doutor Estranho no Multiverso da Loucura (2024)", "chronological_note": "Stephen Strange e América Chavez viajam pelas realidades contra a corrompida Feiticeira Escarlate."},
+            {"tmdb_id": 92783, "media_type": "tv", "order": 35, "order_title": "35. Mulher-Hulk: Defensora de Heróis (Série)", "chronological_note": "Jennifer Walters ganha os poderes de Hulk e defende casos judiciais de super-heróis."},
+            {"tmdb_id": 616037, "media_type": "movie", "order": 36, "order_title": "36. Thor: Amor e Trovão (2022)", "chronological_note": "Thor e Jane Foster (Poderosa Thor) enfrentam Gorr, o Carniceiro dos Deuses."},
+            {"tmdb_id": 505642, "media_type": "movie", "order": 37, "order_title": "37. Pantera Negra: Wakanda Para Sempre (2022)", "chronological_note": "A rainha Ramonda e Shuri defendem Wakanda contra Namor e o reino subaquático de Talokan."},
+            {"tmdb_id": 640146, "media_type": "movie", "order": 38, "order_title": "38. Homem-Formiga e a Vespa: Quantumania (2023)", "chronological_note": "A família Pym-Lang é sugada para o Reino Quântico e trava confronto com Kang, o Conquistador."},
+            {"tmdb_id": 447365, "media_type": "movie", "order": 39, "order_title": "39. Guardiões da Galáxia Vol. 3 (2023)", "chronological_note": "A missão final dos Guardiões para salvar Rocket Raccoon das garras do Alto Evolucionário."},
+            {"tmdb_id": 114479, "media_type": "tv", "order": 40, "order_title": "40. Invasão Secreta (Série Marvel)", "chronological_note": "Nick Fury descobre uma infiltração clandestina de Skrulls metamorfos nos altos escalões globais."},
+            {"tmdb_id": 609681, "media_type": "movie", "order": 41, "order_title": "41. As Marvels (The Marvels - 2023)", "chronological_note": "Carol Danvers, Kamala Khan e Monica Rambeau têm seus poderes entrelaçados contra Dar-Benn."},
+            {"tmdb_id": 533535, "media_type": "movie", "order": 42, "order_title": "42. Deadpool & Wolverine (2024)", "chronological_note": "Wade Wilson é recrutado pela AVT para salvar sua linha do tempo ao lado de Logan."}
         ]
     },
     "harry_potter": {
@@ -572,6 +587,139 @@ COLLECTIONS_CONFIG: Dict[str, Dict[str, Any]] = {
             {"tmdb_id": 347201, "media_type": "movie", "order": 5, "order_title": "5. Boruto: Naruto o Filme", "chronological_note": "Naruto como 7º Hokage e seu filho Boruto enfrentando os invasores Otsutsuki."},
             {"tmdb_id": 70881, "media_type": "tv", "order": 6, "order_title": "6. Boruto: Naruto Next Generations", "chronological_note": "A nova era do mundo shinobi com Boruto, Sarada e Mitsuki enfrentando a Kara."}
         ]
+    },
+    "batman": {
+        "title": "Coleção Batman",
+        "subtitle": "O Cavaleiro das Trevas de Gotham",
+        "icon": "",
+        "badge": "Saga Completa",
+        "backdrop": "/9FE5eD92WfVCiivM9Pq9GVSrlWk.jpg",
+        "description": "Do clássico gótico de Tim Burton à aclamada trilogia de Christopher Nolan e o detetive noir de Gotham.",
+        "items": [
+            {"tmdb_id": 268, "media_type": "movie", "order": 1, "order_title": "1. Batman (1989)", "chronological_note": "Michael Keaton como o herói contra o Coringa de Jack Nicholson."},
+            {"tmdb_id": 364, "media_type": "movie", "order": 2, "order_title": "2. Batman: O Retorno (1992)", "chronological_note": "Gotham em conflito com o Pinguim e a Mulher-Gato."},
+            {"tmdb_id": 272, "media_type": "movie", "order": 3, "order_title": "3. Batman Begins (2005)", "chronological_note": "O treinamento de Bruce Wayne na Liga das Sombras com Ra's al Ghul."},
+            {"tmdb_id": 155, "media_type": "movie", "order": 4, "order_title": "4. Batman: O Cavaleiro das Trevas (2008)", "chronological_note": "O embate lendário contra a anarquia do Coringa de Heath Ledger."},
+            {"tmdb_id": 49026, "media_type": "movie", "order": 5, "order_title": "5. Batman: O Cavaleiro das Trevas Ressurge (2012)", "chronological_note": "Bane quebra Gotham e Bruce Wayne realiza a subida definitiva."},
+            {"tmdb_id": 414906, "media_type": "movie", "order": 6, "order_title": "6. The Batman (2022)", "chronological_note": "Robert Pattinson em investigação noir contra o Charada."}
+        ]
+    },
+    "spider_man": {
+        "title": "Coleção Homem-Aranha",
+        "subtitle": "Trilogia Maguire, Garfield, MCU e Aranhaverso",
+        "icon": "",
+        "badge": "Saga Completa",
+        "backdrop": "/iQFcwSGbZXMkeyKrxbPnwnRo5fl.jpg",
+        "description": "Todas as eras do teioso no cinema: Sam Raimi, Espetacular Homem-Aranha, MCU e a animação do Aranhaverso.",
+        "items": [
+            {"tmdb_id": 557, "media_type": "movie", "order": 1, "order_title": "1. Homem-Aranha (2002)", "chronological_note": "A picada da aranha, Duende Verde e 'Com grandes poderes vêm grandes responsabilidades'."},
+            {"tmdb_id": 558, "media_type": "movie", "order": 2, "order_title": "2. Homem-Aranha 2 (2004)", "chronological_note": "A crise de identidade de Peter Parker contra o Doutor Octopus."},
+            {"tmdb_id": 559, "media_type": "movie", "order": 3, "order_title": "3. Homem-Aranha 3 (2007)", "chronological_note": "O uniforme negro do Simbionte, Homem-Areia e Venom."},
+            {"tmdb_id": 1930, "media_type": "movie", "order": 4, "order_title": "4. O Espetacular Homem-Aranha (2012)", "chronological_note": "Andrew Garfield como Peter Parker investigando os segredos de seu pai contra o Lagarto."},
+            {"tmdb_id": 102382, "media_type": "movie", "order": 5, "order_title": "5. O Espetacular Homem-Aranha 2: A Ameaça de Electro (2014)", "chronological_note": "Confronto elétrico contra Electro e o trágico destino na torre do relógio."},
+            {"tmdb_id": 315635, "media_type": "movie", "order": 6, "order_title": "6. Homem-Aranha: De Volta ao Lar (2017)", "chronological_note": "Tom Holland mentorado por Tony Stark contra o Abutre."},
+            {"tmdb_id": 324857, "media_type": "movie", "order": 7, "order_title": "7. Homem-Aranha no Aranhaverso (2018)", "chronological_note": "Miles Morales assume o manto e descobre heróis de realidades paralelas."},
+            {"tmdb_id": 429617, "media_type": "movie", "order": 8, "order_title": "8. Homem-Aranha: Longe de Casa (2019)", "chronological_note": "Viagem pela Europa pós-Ultimato e as ilusões de Mistério."},
+            {"tmdb_id": 634649, "media_type": "movie", "order": 9, "order_title": "9. Homem-Aranha: Sem Volta Para Casa (2021)", "chronological_note": "O feitiço que rompe as barreiras dimensionais unindo os três Peters."},
+            {"tmdb_id": 569094, "media_type": "movie", "order": 10, "order_title": "10. Homem-Aranha: Através do Aranhaverso (2023)", "chronological_note": "Miles Morales viaja pelo multiverso e desafia a Sociedade Aranha de Miguel O'Hara."}
+        ]
+    },
+    "john_wick": {
+        "title": "Coleção John Wick",
+        "subtitle": "A Saga de Baba Yaga",
+        "icon": "",
+        "badge": "Ordem Cronológica",
+        "backdrop": "/7I6VUdPj6tQECNHdviJkUHD2u89.jpg",
+        "description": "O lendário assassino aposentado que desafia o submundo do crime e a Cúpula Alta em busca de liberdade.",
+        "items": [
+            {"tmdb_id": 245891, "media_type": "movie", "order": 1, "order_title": "1. De Volta ao Jogo (John Wick - 2014)", "chronological_note": "O despertar da lenda do Baba Yaga após a invasão de sua casa."},
+            {"tmdb_id": 324552, "media_type": "movie", "order": 2, "order_title": "2. John Wick: Um Novo Dia Para Matar (2017)", "chronological_note": "Uma promessa de sangue leva Wick a Roma e quebra as regras do Continental."},
+            {"tmdb_id": 458156, "media_type": "movie", "order": 3, "order_title": "3. John Wick 3: Parabellum (2019)", "chronological_note": "Excomungado e com uma recompensa mundial de 14 milhões de dólares pela sua cabeça."},
+            {"tmdb_id": 603692, "media_type": "movie", "order": 4, "order_title": "4. John Wick 4: Baba Yaga (2023)", "chronological_note": "A batalha definitiva contra o Marquês de Gramont pela libertação total da Cúpula."}
+        ]
+    },
+    "mission_impossible": {
+        "title": "Coleção Missão: Impossível",
+        "subtitle": "As Operações de Ethan Hunt e IMF",
+        "icon": "",
+        "badge": "Ordem Cronológica",
+        "backdrop": "/628Dep6AxEtDxjZoGP78TsOxYbK.jpg",
+        "description": "Ação extrema sem dublês com Ethan Hunt e a IMF desarmando sindicatos terroristas globais.",
+        "items": [
+            {"tmdb_id": 954, "media_type": "movie", "order": 1, "order_title": "1. Missão: Impossível (1996)", "chronological_note": "Ethan Hunt acusado de traição após massacre em Praga busca a lista NOC."},
+            {"tmdb_id": 955, "media_type": "movie", "order": 2, "order_title": "2. Missão: Impossível 2 (2000)", "chronological_note": "Missão em Sydney para impedir a disseminação do vírus Quimera."},
+            {"tmdb_id": 956, "media_type": "movie", "order": 3, "order_title": "3. Missão: Impossível 3 (2006)", "chronological_note": "O sádico traficante Owen Davian ameaça a noiva de Ethan pelo Pé de Coelho."},
+            {"tmdb_id": 56292, "media_type": "movie", "order": 4, "order_title": "4. Missão: Impossível - Protocolo Fantasma (2011)", "chronological_note": "IMF desavinda; escalada vertiginosa no Burj Khalifa em Dubai."},
+            {"tmdb_id": 177677, "media_type": "movie", "order": 5, "order_title": "5. Missão: Impossível - Nação Secreta (2015)", "chronological_note": "A caçada contra o Sindicato de Solomon Lane com Ilsa Faust."},
+            {"tmdb_id": 353081, "media_type": "movie", "order": 6, "order_title": "6. Missão: Impossível - Efeito Fallout (2018)", "chronological_note": "A corrida contra os Apóstolos para recuperar ogivas nucleares roubadas."},
+            {"tmdb_id": 575264, "media_type": "movie", "order": 7, "order_title": "7. Missão: Impossível - Acerto De Contas Parte 1 (2023)", "chronological_note": "A inteligência artificial autônoma A Entidade ameaça a soberania global."}
+        ]
+    },
+    "matrix": {
+        "title": "Coleção Matrix",
+        "subtitle": "A Realidade Simulada e a Libertação de Zion",
+        "icon": "",
+        "badge": "Ordem Cronológica",
+        "backdrop": "/tlm8UkiQsitc8rSuIAscQDCnP8d.jpg",
+        "description": "A jornada de Thomas Anderson (Neo), Trinity e Morpheus desvendando a ilusão da simulação.",
+        "items": [
+            {"tmdb_id": 603, "media_type": "movie", "order": 1, "order_title": "1. Matrix (1999)", "chronological_note": "A pílula vermelha: Neo descobre que a realidade é uma simulação controlada por máquinas."},
+            {"tmdb_id": 604, "media_type": "movie", "order": 2, "order_title": "2. Matrix Reloaded (2003)", "chronological_note": "O exército de clones do Agente Smith e a busca pela Fonte e o Arquiteto."},
+            {"tmdb_id": 605, "media_type": "movie", "order": 3, "order_title": "3. Matrix Revolutions (2003)", "chronological_note": "A guerra final das máquinas contra Zion e o sacrifício de Neo."},
+            {"tmdb_id": 624860, "media_type": "movie", "order": 4, "order_title": "4. Matrix Resurrections (2021)", "chronological_note": "Anos após o sacrifício, Neo e Trinity despertam em uma nova versão da Matrix."}
+        ]
+    },
+    "x_men": {
+        "title": "Coleção X-Men & Mutantes",
+        "subtitle": "A Saga dos Mutantes e Deadpool",
+        "icon": "",
+        "badge": "Ordem Cronológica",
+        "backdrop": "/3czpqXzFy5UcNuD1AubecRLWkwD.jpg",
+        "description": "Desde a fundação do Instituto Xavier nos anos 60 até o sacrifício de Logan e o multiverso de Deadpool.",
+        "items": [
+            {"tmdb_id": 49538, "media_type": "movie", "order": 1, "order_title": "1. X-Men: Primeira Classe (1962)", "chronological_note": "Charles Xavier e Erik Lehnsherr durante a Crise dos Mísseis de Cuba."},
+            {"tmdb_id": 127585, "media_type": "movie", "order": 2, "order_title": "2. X-Men: Dias de um Futuro Esquecido (1973/Futuro)", "chronological_note": "Wolverine viaja no tempo para impedir a criação dos Sentinelas."},
+            {"tmdb_id": 246655, "media_type": "movie", "order": 3, "order_title": "3. X-Men: Apocalipse (1983)", "chronological_note": "O primeiro mutante da história acorda no Egito com seus Quatro Cavaleiros."},
+            {"tmdb_id": 36657, "media_type": "movie", "order": 4, "order_title": "4. X-Men: O Filme (2000)", "chronological_note": "Wolverine e Vampira ingressam na Mansão X contra a Irmandade de Magneto."},
+            {"tmdb_id": 36658, "media_type": "movie", "order": 5, "order_title": "5. X-Men 2 (2003)", "chronological_note": "Aliança temporária entre Xavier e Magneto contra o coronel William Stryker."},
+            {"tmdb_id": 2108, "media_type": "movie", "order": 6, "order_title": "6. X-Men: O Confronto Final (2006)", "chronological_note": "A cura mutante e o surgimento descontrolado da Fênix Negra."},
+            {"tmdb_id": 293660, "media_type": "movie", "order": 7, "order_title": "7. Deadpool (2016)", "chronological_note": "Wade Wilson ganha fator de cura acelerado e senso de humor ácido."},
+            {"tmdb_id": 383498, "media_type": "movie", "order": 8, "order_title": "8. Deadpool 2 (2018)", "chronological_note": "Wade forma a X-Force para proteger o jovem Russell de Cable."},
+            {"tmdb_id": 263115, "media_type": "movie", "order": 9, "order_title": "9. Logan (2029)", "chronological_note": "O futuro desolador onde um envelhecido Wolverine protege a jovem Laura (X-23)."},
+            {"tmdb_id": 533535, "media_type": "movie", "order": 10, "order_title": "10. Deadpool & Wolverine (2024)", "chronological_note": "O salto multiversal para salvar a linha do tempo com a AVT."}
+        ]
+    },
+    "shrek": {
+        "title": "Coleção Shrek",
+        "subtitle": "Do Pântano a Tão Tão Distante e Gato de Botas",
+        "icon": "",
+        "badge": "Ordem Cronológica",
+        "backdrop": "/w0eKUOEog2ImtktCHAMUZws8qif.jpg",
+        "description": "As hilárias e emocionantes aventuras do ogro mais querido do cinema e seu companheiro Gato de Botas.",
+        "items": [
+            {"tmdb_id": 68718, "media_type": "movie", "order": 1, "order_title": "1. Gato de Botas (2011)", "chronological_note": "A origem do felino espadachim antes de conhecer Shrek e Burro."},
+            {"tmdb_id": 808, "media_type": "movie", "order": 2, "order_title": "2. Shrek (2001)", "chronological_note": "O ogro parte para resgatar a Princesa Fiona do castelo do Dragão para Lord Farquaad."},
+            {"tmdb_id": 809, "media_type": "movie", "order": 3, "order_title": "3. Shrek 2 (2004)", "chronological_note": "Visita aos sogros no Reino de Tão Tão Distante com a Fada Madrinha e Príncipe Encantado."},
+            {"tmdb_id": 810, "media_type": "movie", "order": 4, "order_title": "4. Shrek Terceiro (2007)", "chronological_note": "A busca pelo herdeiro Arthur Pendragon para assumir o trono de Tão Tão Distante."},
+            {"tmdb_id": 10192, "media_type": "movie", "order": 5, "order_title": "5. Shrek Para Sempre (2010)", "chronological_note": "Rumpelstiltskin cria uma realidade paralela onde Shrek nunca nasceu."},
+            {"tmdb_id": 597433, "media_type": "movie", "order": 6, "order_title": "6. Gato de Botas 2: O Último Pedido (2022)", "chronological_note": "Em sua nona e última vida, o Gato busca a Estrela dos Desejos fugindo da Morte."}
+        ]
+    },
+    "jurassic": {
+        "title": "Coleção Jurassic Park & World",
+        "subtitle": "65 Milhões de Anos de Evolução e Genética",
+        "icon": "",
+        "badge": "Ordem Cronológica",
+        "backdrop": "/dF6FjTZzRTENfB4R17HDN20jLT2.jpg",
+        "description": "A criação e fuga dos dinossauros clonados na Isla Nublar e sua coexistência perigosa pelo planeta.",
+        "items": [
+            {"tmdb_id": 329, "media_type": "movie", "order": 1, "order_title": "1. Jurassic Park: Parque dos Dinossauros (1993)", "chronological_note": "John Hammond inaugura a Isla Nublar com dinossauros clonados de âmbar fóssil."},
+            {"tmdb_id": 330, "media_type": "movie", "order": 2, "order_title": "2. O Mundo Perdido: Jurassic Park (1997)", "chronological_note": "Expedição de Ian Malcolm à Isla Sorna e a chegada de um T-Rex em San Diego."},
+            {"tmdb_id": 331, "media_type": "movie", "order": 3, "order_title": "3. Jurassic Park III (2001)", "chronological_note": "O paleontólogo Alan Grant é atraído à Isla Sorna pelo temível Espinossauro."},
+            {"tmdb_id": 135397, "media_type": "movie", "order": 4, "order_title": "4. Jurassic World: O Mundo dos Dinossauros (2015)", "chronological_note": "O parque totalmente operacional enfrenta a fuga do híbrido Indominus Rex."},
+            {"tmdb_id": 351286, "media_type": "movie", "order": 5, "order_title": "5. Jurassic World: Reino Ameaçado (2018)", "chronological_note": "Resgate dos dinossauros antes da erupção vulcânica e o leilão na Mansão Lockwood."},
+            {"tmdb_id": 507086, "media_type": "movie", "order": 6, "order_title": "6. Jurassic World: Domínio (2022)", "chronological_note": "Dinossauros espalhados pelo mundo e a união épica das duas gerações de protagonistas."}
+        ]
     }
 }
 
@@ -644,7 +792,7 @@ def get_collection_details(collection_key: str) -> Optional[Dict[str, Any]]:
         "key": collection_key,
         "title": config["title"],
         "subtitle": config["subtitle"],
-        "icon": config.get("icon", "🎬"),
+        "icon": config.get("icon", ""),
         "badge": config.get("badge", "Ordem Cronológica"),
         "description": config["description"],
         "backdrop": header_backdrop,
