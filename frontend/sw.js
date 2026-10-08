@@ -4,14 +4,14 @@
  * Dynamic /api/ and media streaming requests are always bypassed directly to network.
  */
 
-const CACHE_NAME = 'homeflix-static-v7.6';
+const CACHE_NAME = 'homeflix-static-v7.7';
 const CORE_ASSETS = [
   '/',
   '/manifest.json',
-  '/static/css/style.css?v=7.6',
-  '/static/js/api.js?v=7.6',
-  '/static/js/player.js?v=7.6',
-  '/static/js/app.js?v=7.6',
+  '/static/css/style.css?v=7.7',
+  '/static/js/api.js?v=7.7',
+  '/static/js/player.js?v=7.7',
+  '/static/js/app.js?v=7.7',
   '/static/icons/icon-192.png',
   '/static/icons/icon-512.png'
 ];

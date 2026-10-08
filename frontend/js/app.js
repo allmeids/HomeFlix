@@ -11,7 +11,7 @@ class HomeFlixApp {
     this.selectedAvatar = 'avatar-1';
     this.editingProfileId = null;
 
-    this.currentCategory = 'anime_sagas';
+    this.currentCategory = 'action';
     this.categoryPage = 1;
     this.allCategoriesList = [];
     this.categoryLoading = false;
@@ -2061,7 +2061,8 @@ class HomeFlixApp {
       this.allCategoriesList = (await API.getCategories()) || [];
     }
 
-    if (!this.currentCategory && this.allCategoriesList.length > 0) {
+    const validCat = this.allCategoriesList.some(c => c.key === this.currentCategory);
+    if (!validCat && this.allCategoriesList.length > 0) {
       this.currentCategory = this.allCategoriesList[0].key;
     }
 

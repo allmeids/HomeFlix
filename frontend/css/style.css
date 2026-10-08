@@ -2772,7 +2772,7 @@ body.in-details-view .navbar {
    TELA DEDICADA DE COLEÇÕES ESTILO DISNEY+ (EXPLORE / BRAND TILES)
    ================================================================ */
 .disney-collections-page {
-  padding-top: 10px;
+  padding-top: 95px;
 }
 
 .disney-page-header {
@@ -2876,7 +2876,7 @@ body.in-details-view .navbar {
    TELA DEDICADA DE CATEGORIAS ESTILO NETFLIX (SPOTLIGHT + TRACK + GRID)
    ================================================================ */
 .netflix-categories-page {
-  padding-top: 10px;
+  padding-top: 95px;
 }
 
 .netflix-cat-hero {

@@ -262,29 +262,23 @@ def get_anime_hits(page: int = 1) -> List[Dict[str, Any]]:
     return _fetch_curated_collection(ANIME_HITS_DEF, page)
 
 CATEGORY_CONFIG = {
-    "anime_sagas": {
-        "title": "Sagas Lendárias: Saint Seiya, DBZ & Naruto",
-        "func": get_anime_sagas,
+    "action": {
+        "title": "Ação & Aventura",
+        "func": get_action_movies,
         "icon": "",
-        "description": "Coleções completas de Cavaleiros do Zodíaco, Dragon Ball (todas as sagas), Naruto e clássicos shonen."
+        "description": "Perseguições eletrizantes, grandes confrontos e aventuras épicas no cinema."
     },
-    "anime_hits": {
-        "title": "Fenômenos do Anime: Kimetsu no Yaiba & Ragnarok",
-        "func": get_anime_hits,
+    "comedy": {
+        "title": "Comédia",
+        "func": get_comedy_movies,
         "icon": "",
-        "description": "Grandes sucessos da nova era: Demon Slayer, Record of Ragnarok, Jujutsu Kaisen e Attack on Titan."
+        "description": "Diversão garantida com as melhores comédias nacionais e internacionais para rir do início ao fim."
     },
     "animes": {
         "title": "Animes & Animações Japonesas",
         "func": get_animes,
         "icon": "",
-        "description": "Catálogo completo de animes japoneses de todos os gêneros e épocas."
-    },
-    "action": {
-        "title": "Ação & Aventura",
-        "func": get_action_movies,
-        "icon": "",
-        "description": "Perseguições eletrizantes, grandes confrontos e aventuras épicas."
+        "description": "Catálogo completo de animes japoneses de sucesso, clássicos e grandes lançamentos."
     },
     "scifi": {
         "title": "Ficção Científica & Fantasia",
@@ -292,35 +286,23 @@ CATEGORY_CONFIG = {
         "icon": "",
         "description": "Viagens espaciais, futuros distópicos, mundos fantásticos e tecnologia avançada."
     },
-    "superheroes": {
-        "title": "Universo de Heróis & Quadrinhos",
-        "func": get_superheroes,
-        "icon": "",
-        "description": "As maiores produções dos universos Marvel, DC e quadrinhos lendários."
-    },
-    "popular_movies": {
-        "title": "Grandes Sucessos do Cinema",
-        "func": get_popular_movies,
-        "icon": "",
-        "description": "Os filmes mais assistidos e aclamados do cinema mundial."
-    },
-    "popular_series": {
-        "title": "Séries Mais Maratonadas",
-        "func": get_popular_series,
-        "icon": "",
-        "description": "Séries aclamadas para maratonar do início ao fim."
-    },
-    "comedy": {
-        "title": "Comédias",
-        "func": get_comedy_movies,
-        "icon": "",
-        "description": "Diversão garantida com as melhores comédias nacionais e internacionais."
-    },
     "horror": {
         "title": "Terror & Suspense",
         "func": get_horror_movies,
         "icon": "",
-        "description": "Histórias sobrenaturais, sustos intensos e clima de tensão extrema."
+        "description": "Histórias sobrenaturais, sustos intensos e clima de tensão e mistério extremo."
+    },
+    "family": {
+        "title": "Família & Animação",
+        "func": get_family_movies,
+        "icon": "",
+        "description": "Animações aclamadas e filmes leves para todas as idades curtirem juntos em casa."
+    },
+    "superheroes": {
+        "title": "Super-Heróis",
+        "func": get_superheroes,
+        "icon": "",
+        "description": "As maiores produções dos universos Marvel, DC e lendas dos quadrinhos."
     },
     "thriller": {
         "title": "Crime & Mistério",
@@ -328,23 +310,29 @@ CATEGORY_CONFIG = {
         "icon": "",
         "description": "Investigações policiais, reviravoltas chocantes e mistérios instigantes."
     },
+    "popular_movies": {
+        "title": "Grandes Sucessos",
+        "func": get_popular_movies,
+        "icon": "",
+        "description": "Os filmes mais assistidos e aclamados do cinema mundial."
+    },
+    "popular_series": {
+        "title": "Séries Populares",
+        "func": get_popular_series,
+        "icon": "",
+        "description": "Séries consagradas e mais assistidas para maratonar do início ao fim."
+    },
     "top_rated": {
         "title": "Aclamados pela Crítica",
         "func": get_top_rated_movies,
         "icon": "",
-        "description": "Filmes com as maiores notas e premiações da história do cinema."
-    },
-    "family": {
-        "title": "Sessão em Família & Kids",
-        "func": get_family_movies,
-        "icon": "",
-        "description": "Animações e filmes leves para todas as idades curtirem juntos."
+        "description": "Obras-primas cinematográficas com as maiores notas e premiações da história."
     },
     "documentary": {
-        "title": "Documentários & Fatos Reais",
+        "title": "Documentários",
         "func": get_documentaries,
         "icon": "",
-        "description": "Histórias reais fascinantes, biografias e registros da humanidade e natureza."
+        "description": "Histórias reais fascinantes, biografias e grandes registros da humanidade e natureza."
     },
 }
 
@@ -369,7 +357,7 @@ COLLECTIONS_CONFIG: Dict[str, Dict[str, Any]] = {
         "subtitle": "Ordem Cronológica Oficial dos Acontecimentos",
         "icon": "",
         "badge": "Ordem Cronológica",
-        "backdrop": "/yF1EbAnkhupalQ5vvtOP3GKo8Bi.jpg",
+        "backdrop": "/mDfJG3LC3Dqb67AZ52x3Z0jU0uB.jpg",
         "description": "A jornada completa dos Vingadores e do multiverso organizada rigorosamente na linha do tempo histórica do MCU com filmes e séries oficiais.",
         "items": [
             {"tmdb_id": 1771, "media_type": "movie", "order": 1, "order_title": "1. Capitão América: O Primeiro Vingador (1942-1945)", "chronological_note": "A origem do primeiro super-soldado durante a 2ª Guerra Mundial."},
@@ -421,7 +409,7 @@ COLLECTIONS_CONFIG: Dict[str, Dict[str, Any]] = {
         "subtitle": "Saga Completa em Ordem Cronológica",
         "icon": "",
         "badge": "Ordem Cronológica",
-        "backdrop": "/5rrGVmRUACiMw0DxCGCYUDObjeQ.jpg",
+        "backdrop": "/eKUk4oN4ucwnLJml7wRnjuB9AQH.jpg",
         "description": "Desde os eventos de Animais Fantásticos até a batalha final de Hogwarts contra Lord Voldemort.",
         "items": [
             {"tmdb_id": 259316, "media_type": "movie", "order": 1, "order_title": "1. Animais Fantásticos e Onde Habitam (1926)", "chronological_note": "Newt Scamander chega a Nova York com sua maleta repleta de criaturas mágicas."},
@@ -442,7 +430,7 @@ COLLECTIONS_CONFIG: Dict[str, Dict[str, Any]] = {
         "subtitle": "Ordem Cronológica dos Acontecimentos",
         "icon": "",
         "badge": "Ordem Cronológica",
-        "backdrop": "/ww1eIoywghjoMzrlRIcbJLuKnCi.jpg",
+        "backdrop": "/cMfokHWle5lfCreoV08cbmkKv6G.jpg",
         "description": "Desde a queda e origem de Cybertron até as batalhas titânicas entre Autobots e Decepticons na Terra.",
         "items": [
             {"tmdb_id": 698687, "media_type": "movie", "order": 1, "order_title": "1. Transformers: O Início (Transformers One - 2024)", "chronological_note": "A história de origem no planeta Cybertron quando Optimus Prime e Megatron eram irmãos de armas."},
@@ -460,7 +448,7 @@ COLLECTIONS_CONFIG: Dict[str, Dict[str, Any]] = {
         "subtitle": "Sagas e Filmes na Ordem Canônica de Assistir",
         "icon": "",
         "badge": "Ordem Canônica",
-        "backdrop": "/5E3pda9ugJgW3b5i8uO4Z2vT3uA.jpg",
+        "backdrop": "/6OTRuxpwUUGbmCX3MKP25dOmo59.jpg",
         "description": "A trajetória completa de Goku e os Guerreiros Z: desde a infância no Monte Paozu até as batalhas multiversais de deuses.",
         "items": [
             {"tmdb_id": 12609, "media_type": "tv", "order": 1, "order_title": "1. Dragon Ball (Série Clássica)", "chronological_note": "A infância de Goku, o treinamento com Mestre Kame e os Torneios de Artes Marciais."},
@@ -503,7 +491,7 @@ COLLECTIONS_CONFIG: Dict[str, Dict[str, Any]] = {
         "subtitle": "A Saga Skywalker Completa na Linha do Tempo",
         "icon": "",
         "badge": "Ordem Cronológica",
-        "backdrop": "/zqkmTXzjkAgPnWGZQeoAcH2epf7.jpg",
+        "backdrop": "/8BTsTfln4jlQrLXUBquXJ0ASQy9.jpg",
         "description": "A lendária saga galáctica em perfeita ordem cronológica: da ascensão de Anakin Skywalker à vitória final da Resistência.",
         "items": [
             {"tmdb_id": 1893, "media_type": "movie", "order": 1, "order_title": "1. Star Wars: Episódio I - A Ameaça Fantasma", "chronological_note": "Descoberta de Anakin Skywalker em Tatooine e o retorno dos Sith com Darth Maul."},
@@ -560,7 +548,7 @@ COLLECTIONS_CONFIG: Dict[str, Dict[str, Any]] = {
         "subtitle": "Sagas Canônicas & Spin-offs de Saint Seiya",
         "icon": "",
         "badge": "Saga Completa",
-        "backdrop": "/8gVwOQvWwR4Mv71W0s917i2V22e.jpg",
+        "backdrop": "/xqi7xzgzed2TyVuoXBmm6neYGee.jpg",
         "description": "Os defensores da deusa Atena na luta com suas armaduras de bronze e ouro pelas 12 Casas e Submundo.",
         "items": [
             {"tmdb_id": 42444, "media_type": "tv", "order": 1, "order_title": "1. Cavaleiros do Zodíaco (Série Clássica 1986)", "chronological_note": "A Guerra Galáctica, as 12 Casas do Santuário, Asgard e o Templo de Poseidon."},
@@ -577,7 +565,7 @@ COLLECTIONS_CONFIG: Dict[str, Dict[str, Any]] = {
         "subtitle": "Da Academia Ninja ao Hokage e Boruto",
         "icon": "",
         "badge": "Ordem Cronológica",
-        "backdrop": "/vauC6sq8g5pHo2aI6VO58cK28i2.jpg",
+        "backdrop": "/z0YhJvomqedHF85bplUJEotkN5l.jpg",
         "description": "A história de superação de Naruto Uzumaki em sua jornada completa para ser respeitado e se tornar Hokage.",
         "items": [
             {"tmdb_id": 46260, "media_type": "tv", "order": 1, "order_title": "1. Naruto (Clássico)", "chronological_note": "Da infância na Academia aos Exames Chunin, Busca por Tsunade e o resgate de Sasuke."},
