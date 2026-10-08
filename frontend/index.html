@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-title" content="HomeFlix">
   <link rel="apple-touch-icon" href="/static/icons/icon-192.png">
   <link rel="icon" href="/static/icons/icon-192.png">
-  <link rel="stylesheet" href="/static/css/style.css?v=7.0">
+  <link rel="stylesheet" href="/static/css/style.css?v=7.1">
   <!-- HLS.js para streaming HLS/m3u8 no navegador -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -603,6 +603,10 @@
   <!-- Modal de Perfis / Contas ("Quem está assistindo?") -->
   <div class="modal-backdrop" id="profileModal">
     <div class="modal-content profile-modal-wrapper">
+      <div class="profile-gate-logo" id="profileGateLogo" style="display: none;">
+        <span class="logo-icon">🎬</span>
+        <span class="logo-text">HOME<span class="logo-accent">FLIX</span></span>
+      </div>
       <button class="modal-close-btn" id="profileCloseBtn">✕</button>
       <h2 class="profile-modal-heading">Quem está assistindo?</h2>
       <p class="profile-modal-sub">Escolha seu perfil para acessar suas recomendações personalizadas, favoritos e histórico</p>
@@ -632,8 +636,8 @@
   </div>
 
   <!-- Scripts -->
-  <script src="/static/js/api.js?v=7.0"></script>
-  <script src="/static/js/player.js?v=7.0"></script>
-  <script src="/static/js/app.js?v=7.0"></script>
+  <script src="/static/js/api.js?v=7.1"></script>
+  <script src="/static/js/player.js?v=7.1"></script>
+  <script src="/static/js/app.js?v=7.1"></script>
 </body>
 </html>

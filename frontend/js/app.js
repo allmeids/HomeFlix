@@ -28,7 +28,8 @@ class HomeFlixApp {
     this.setupCarouselArrows();
     this.setupTvNavigation();
     await this.loadProfiles();
-    await this.loadHome();
+    this.loadHome();
+    this.openProfileGate();
   }
 
   setupPwa() {
@@ -227,15 +228,15 @@ class HomeFlixApp {
 
       // 3. Modal de Perfis aberto ("Quem está assistindo?")
       const profileModal = document.getElementById('profileModal');
-      if (profileModal && profileModal.classList.contains('active')) {
+      if (profileModal && (profileModal.classList.contains('active') || profileModal.classList.contains('open'))) {
         if (key === 'Escape' || key === 'Backspace') {
           e.preventDefault();
-          const closeBtn = document.getElementById('profileCloseBtn');
-          const cancelBtn = document.getElementById('cancelProfileBtn');
           const formBox = document.getElementById('profileFormBox');
+          const cancelBtn = document.getElementById('cancelProfileBtn');
+          const closeBtn = document.getElementById('profileCloseBtn');
           if (formBox && formBox.style.display !== 'none' && cancelBtn) {
             cancelBtn.click();
-          } else if (closeBtn) {
+          } else if (!this.isProfileGateMode && closeBtn) {
             closeBtn.click();
           }
           return;
@@ -670,22 +671,16 @@ class HomeFlixApp {
 
   async loadProfiles() {
     this.profiles = (await API.getProfiles()) || [];
-    const savedId = localStorage.getItem('homeflix_active_profile');
-    if (savedId) {
-      this.currentProfile = this.profiles.find(p => String(p.id) === String(savedId));
-    }
-    if (!this.currentProfile && this.profiles.length > 0) {
-      this.currentProfile = this.profiles[0];
-      localStorage.setItem('homeflix_active_profile', this.currentProfile.id);
-    }
-    window.currentProfile = this.currentProfile;
+    // Não entra direto no perfil de ninguém ao entrar no sistema (estilo Netflix)
+    this.currentProfile = null;
+    window.currentProfile = null;
     this.updateProfileUI();
   }
 
   updateProfileUI() {
+    const avatarEl = document.getElementById('navProfileAvatar');
+    const nameEl = document.getElementById('navProfileName');
     if (this.currentProfile) {
-      const avatarEl = document.getElementById('navProfileAvatar');
-      const nameEl = document.getElementById('navProfileName');
       if (avatarEl) avatarEl.textContent = this.currentProfile.avatar || '🦊';
       if (nameEl) nameEl.textContent = this.currentProfile.name || 'Perfil';
 
@@ -693,14 +688,63 @@ class HomeFlixApp {
       if (recTitle) {
         recTitle.textContent = `Recomendados para Você, ${this.currentProfile.name}`;
       }
+    } else {
+      if (avatarEl) avatarEl.textContent = '👤';
+      if (nameEl) nameEl.textContent = 'Entrar';
     }
   }
 
-  async openProfileModal(isManageMode = false) {
+  openProfileGate() {
+    this.openProfileModal(false, true);
+  }
+
+  selectProfile(p) {
+    this.currentProfile = p;
+    window.currentProfile = p;
+    localStorage.setItem('homeflix_active_profile', p.id);
+    this.updateProfileUI();
+
+    const modal = document.getElementById('profileModal');
+    if (modal) {
+      modal.classList.remove('open');
+      modal.classList.remove('profile-gate-screen');
+    }
+    this.isProfileGateMode = false;
+
+    // Carrega o conteúdo personalizado do perfil escolhido
+    this.loadContinueWatching();
+    this.loadRecommendations();
+
+    const activeNav = document.querySelector('.nav-links .nav-item.active');
+    if (activeNav && activeNav.dataset.tab === 'watchlist') {
+      this.loadWatchlist();
+    }
+  }
+
+  async openProfileModal(isManageMode = false, isGateMode = false) {
+    this.isProfileGateMode = isGateMode;
     const modal = document.getElementById('profileModal');
     const grid = document.getElementById('profileModalGrid');
     const formBox = document.getElementById('profileFormBox');
     const footerBtns = document.getElementById('profileModalFooterBtns');
+    const closeBtn = document.getElementById('profileCloseBtn');
+    const gateLogo = document.getElementById('profileGateLogo');
+    const heading = modal.querySelector('.profile-modal-heading');
+    const sub = modal.querySelector('.profile-modal-sub');
+
+    if (isGateMode) {
+      modal.classList.add('profile-gate-screen');
+      if (closeBtn) closeBtn.style.display = 'none';
+      if (gateLogo) gateLogo.style.display = 'flex';
+      if (heading) heading.textContent = 'Quem está assistindo?';
+      if (sub) sub.textContent = 'Escolha seu perfil para começar a assistir suas séries e filmes';
+    } else {
+      modal.classList.remove('profile-gate-screen');
+      if (closeBtn) closeBtn.style.display = 'block';
+      if (gateLogo) gateLogo.style.display = 'none';
+      if (heading) heading.textContent = 'Quem está assistindo?';
+      if (sub) sub.textContent = 'Troque de perfil ou gerencie suas preferências';
+    }
 
     grid.style.display = 'flex';
     formBox.style.display = 'none';
@@ -708,18 +752,21 @@ class HomeFlixApp {
     
     if (!this.profiles || this.profiles.length === 0) {
       grid.innerHTML = '<div style="color:#aaa; padding:20px; text-align:center;">Carregando perfis...</div>';
-      await this.loadProfiles();
+      this.profiles = (await API.getProfiles()) || [];
     }
 
     grid.innerHTML = '';
     if (this.profiles.length === 0) {
-      grid.innerHTML = '<div style="color:#aaa; padding:20px; text-align:center;">Nenhum perfil encontrado. Clique em "+ Adicionar Perfil".</div>';
+      this.showProfileForm(null);
+      modal.classList.add('open');
+      return;
     }
 
     this.profiles.forEach(p => {
       const isCurrent = this.currentProfile && String(p.id) === String(this.currentProfile.id);
       const card = document.createElement('div');
       card.className = `profile-card ${isCurrent ? 'active' : ''}`;
+      card.setAttribute('tabindex', '0');
       card.innerHTML = `
         <div class="profile-avatar-large">
           ${p.avatar}
@@ -728,37 +775,59 @@ class HomeFlixApp {
         <div class="profile-name-large">${p.name}</div>
       `;
 
-      card.onclick = () => {
+      const onSelect = () => {
         if (isManageMode) {
           this.showProfileForm(p);
         } else {
-          this.currentProfile = p;
-          window.currentProfile = p;
-          localStorage.setItem('homeflix_active_profile', p.id);
-          this.updateProfileUI();
-          modal.classList.remove('open');
-          this.loadContinueWatching();
-          this.loadRecommendations();
-          
-          const activeNav = document.querySelector('.nav-links .nav-item.active');
-          if (activeNav && activeNav.dataset.tab === 'watchlist') {
-            this.loadWatchlist();
-          }
+          this.selectProfile(p);
         }
       };
 
+      card.onclick = onSelect;
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') onSelect();
+      });
+
       grid.appendChild(card);
     });
+
+    if (!isManageMode && this.profiles.length < 6) {
+      const addCard = document.createElement('div');
+      addCard.className = 'profile-card profile-card-add';
+      addCard.setAttribute('tabindex', '0');
+      addCard.innerHTML = `
+        <div class="profile-avatar-large">
+          <span>+</span>
+        </div>
+        <div class="profile-name-large">Adicionar</div>
+      `;
+      addCard.onclick = () => this.showProfileForm(null);
+      addCard.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') this.showProfileForm(null);
+      });
+      grid.appendChild(addCard);
+    }
 
     const manageBtn = document.getElementById('manageProfilesToggleBtn');
     if (manageBtn) {
       manageBtn.textContent = isManageMode ? '✓ Concluir Edição' : '⚙️ Gerenciar Perfis';
       manageBtn.onclick = () => {
-        this.openProfileModal(!isManageMode);
+        this.openProfileModal(!isManageMode, isGateMode);
       };
     }
 
+    const createBtn = document.getElementById('createNewProfileBtn');
+    if (createBtn) {
+      createBtn.onclick = () => this.showProfileForm(null);
+    }
+
     modal.classList.add('open');
+
+    // Auto-focus no primeiro perfil
+    setTimeout(() => {
+      const firstCard = grid.querySelector('.profile-card');
+      if (firstCard) firstCard.focus();
+    }, 80);
   }
 
   showProfileForm(profileToEdit = null) {
@@ -2040,7 +2109,7 @@ class HomeFlixApp {
     const cancelProfileBtn = document.getElementById('cancelProfileBtn');
     if (cancelProfileBtn) {
       cancelProfileBtn.onclick = () => {
-        this.openProfileModal();
+        this.openProfileModal(false, this.isProfileGateMode);
       };
     }
 
@@ -2067,21 +2136,17 @@ class HomeFlixApp {
               this.updateProfileUI();
             }
           }
+          this.openProfileModal(false, this.isProfileGateMode);
         } else {
           // Cria novo perfil
           const res = await API.createProfile(name, this.selectedAvatar);
           if (res?.profile) {
             this.profiles.push(res.profile);
-            this.currentProfile = res.profile;
-            window.currentProfile = res.profile;
-            localStorage.setItem('homeflix_active_profile', res.profile.id);
-            this.updateProfileUI();
+            this.selectProfile(res.profile);
+            return;
           }
+          this.openProfileModal(false, this.isProfileGateMode);
         }
-
-        this.openProfileModal();
-        this.loadContinueWatching();
-        this.loadRecommendations();
       };
     }
 
@@ -2094,12 +2159,11 @@ class HomeFlixApp {
           await API.deleteProfile(this.editingProfileId);
           this.profiles = this.profiles.filter(p => p.id !== this.editingProfileId);
           if (this.currentProfile?.id === this.editingProfileId) {
-            this.currentProfile = this.profiles[0] || null;
-            window.currentProfile = this.currentProfile;
-            if (this.currentProfile) localStorage.setItem('homeflix_active_profile', this.currentProfile.id);
+            this.currentProfile = null;
+            window.currentProfile = null;
             this.updateProfileUI();
           }
-          this.openProfileModal();
+          this.openProfileModal(false, this.isProfileGateMode);
         }
       };
     }
