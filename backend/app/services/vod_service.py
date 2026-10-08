@@ -206,14 +206,15 @@ def validate_stream_alive(item: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     # 2. Validação FrostStream
     if "froststream.cloutteam.com" in url:
         try:
-            r = _vod_session.get(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}, allow_redirects=False, timeout=2.5)
+            r = _vod_session.get(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}, allow_redirects=False, timeout=3.0)
             if r.status_code >= 400:
                 return None
             if r.status_code in (301, 302, 307, 308) and "Location" in r.headers:
                 cdn_url = r.headers["Location"]
                 try:
-                    r_cdn = _vod_session.head(cdn_url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}, timeout=2.0)
-                    if r_cdn.status_code >= 400:
+                    # Muitos CDNs de vídeo (ex: Nginx/Apache de VOD) rejeitam HEAD com 404 mas aceitam Range GET com 206
+                    r_cdn = _vod_session.get(cdn_url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)", "Range": "bytes=0-1024"}, timeout=3.0, stream=True)
+                    if r_cdn.status_code not in (200, 206):
                         return None
                 except Exception:
                     pass
@@ -245,6 +246,21 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
     imdb_id = external_ids.get("imdb_id")
 
     title = details.get("title") or details.get("name") or "Vídeo"
+
+    # Se o filme ainda não estreou nos cinemas / lançamento futuro, não perde tempo com scrapers
+    if details.get("is_unreleased"):
+        return {
+            "title": title,
+            "imdb_id": imdb_id,
+            "tmdb_id": tmdb_id,
+            "count": 0,
+            "streams": [],
+            "best_stream": None,
+            "is_cinema_version": False,
+            "is_unreleased": True,
+            "release_date": details.get("release_date"),
+            "has_dubbed": False
+        }
 
     # Fallback inteligente se TMDB não tiver IMDb ID gravado (ex: animes recentes)
     if not imdb_id and title:
@@ -431,7 +447,9 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
         "episode": episode,
         "count": len(normalized),
         "best_stream": best_stream,
-        "is_cinema_version": is_cinema_version,
+        "is_cinema_version": is_cinema_version or details.get("is_in_theaters", False),
+        "is_in_theaters": details.get("is_in_theaters", False),
+        "is_unreleased": details.get("is_unreleased", False),
         "has_dubbed": has_dubbed,
         "streams": normalized
     }

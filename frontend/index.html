@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/style.css?v=7.7">
+  <link rel="stylesheet" href="/static/css/style.css?v=7.9">
   <!-- HLS.js para streaming HLS/m3u8 no navegador -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -350,6 +350,14 @@
             <span class="meta-year" id="detailsYear"></span>
             <span class="meta-runtime" id="detailsRuntime"></span>
             <span class="meta-pill" id="detailsTypeBadge">FILME</span>
+          </div>
+
+          <div class="details-upcoming-banner" id="detailsUpcomingNotice" style="display: none;">
+            <span class="upcoming-icon">📅</span>
+            <div class="upcoming-text">
+              <strong id="detailsUpcomingHeading">Em Breve nos Cinemas</strong>
+              <span id="detailsUpcomingSub">Este título ainda não foi lançado. Assista ao trailer oficial abaixo!</span>
+            </div>
           </div>
 
           <div class="details-action-buttons">
@@ -746,8 +754,8 @@
   </div>
 
   <!-- Scripts -->
-  <script src="/static/js/api.js?v=7.8"></script>
-  <script src="/static/js/player.js?v=7.8"></script>
-  <script src="/static/js/app.js?v=7.8"></script>
+  <script src="/static/js/api.js?v=7.9"></script>
+  <script src="/static/js/player.js?v=7.9"></script>
+  <script src="/static/js/app.js?v=7.9"></script>
 </body>
 </html>

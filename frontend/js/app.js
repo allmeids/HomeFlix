@@ -1354,11 +1354,19 @@ class HomeFlixApp {
       const date = item.release_date || item.first_air_date || '';
       const year = date ? date.split('-')[0] : '';
 
+      const isUpcoming = (item.release_date && new Date(item.release_date) > new Date());
+      const isInTheaters = !isUpcoming && item.release_date && (() => {
+        const rd = new Date(item.release_date);
+        const diff = (new Date() - rd) / (1000 * 60 * 60 * 24);
+        return diff >= 0 && diff < 75;
+      })();
+
       const card = document.createElement('div');
       card.className = 'media-card';
       card.setAttribute('tabindex', '0'); // Acessibilidade para controle remoto
       card.innerHTML = `
         <img class="media-card-poster" src="https://image.tmdb.org/t/p/w342${posterPath}" alt="${title}" loading="lazy" onerror="this.onerror=null; this.src='https://images.placeholders.dev/?width=342&height=513&text=HomeFlix&theme=dark';" />
+        ${isUpcoming ? '<span class="card-badge-upcoming">EM BREVE</span>' : (isInTheaters ? '<span class="card-badge-cinema">NO CINEMA</span>' : '')}
         <div class="media-card-info">
           <div class="media-card-title">${title}</div>
           <div class="media-card-sub">
@@ -1442,10 +1450,42 @@ class HomeFlixApp {
     const directors = (details.directors || []).join(', ');
     document.getElementById('detailsDirectorsText').textContent = directors || 'Não informado';
 
-    // Badge de cinema CAM (oculto por padrão para manter estética limpa)
+    // Badge de cinema CAM / Em Exibição nos Cinemas
     const cinemaBadge = document.getElementById('detailsCinemaBadge');
+    const isInTheaters = details.is_in_theaters || (details.release_date && (() => {
+      const rd = new Date(details.release_date);
+      const diffDays = (new Date() - rd) / (1000 * 60 * 60 * 24);
+      return diffDays >= 0 && diffDays < 75;
+    })());
+
     if (cinemaBadge) {
-      cinemaBadge.style.display = 'none';
+      if (isInTheaters) {
+        cinemaBadge.style.display = 'flex';
+        cinemaBadge.innerHTML = '🎬 Em Exibição nos Cinemas';
+        cinemaBadge.title = 'Filme em cartaz. Transmissões online podem conter imagens gravadas de sala (CAM).';
+      } else {
+        cinemaBadge.style.display = 'none';
+      }
+    }
+
+    // Banner de Filme Ainda Não Lançado / Em Breve nos Cinemas
+    const isUpcoming = details.is_unreleased || (details.release_date && new Date(details.release_date) > new Date()) || ["In Production", "Post Production", "Planned"].includes(details.status);
+    const upcomingNotice = document.getElementById('detailsUpcomingNotice');
+    const toggleSourcesBtn = document.getElementById('detailsToggleSourcesBtn');
+
+    if (upcomingNotice) {
+      if (isUpcoming) {
+        upcomingNotice.style.display = 'flex';
+        let releaseStr = 'Em breve';
+        if (details.release_date) {
+          const parts = details.release_date.split('-');
+          if (parts.length === 3) releaseStr = `${parts[2]}/${parts[1]}/${parts[0]}`;
+        }
+        document.getElementById('detailsUpcomingHeading').textContent = `📅 Estreia nos Cinemas: ${releaseStr}`;
+        document.getElementById('detailsUpcomingSub').textContent = `Este filme ainda não estreou. Assista ao trailer oficial com exclusividade!`;
+      } else {
+        upcomingNotice.style.display = 'none';
+      }
     }
 
     // Botão Voltar
@@ -1460,11 +1500,23 @@ class HomeFlixApp {
     const trailerBtn = document.getElementById('detailsTrailerBtn');
     if (details.trailer_key) {
       trailerBtn.style.display = 'inline-flex';
+      // Se ainda não estreou, torna o Trailer o botão principal de destaque
+      if (isUpcoming) {
+        trailerBtn.className = 'btn btn-primary btn-lg';
+        trailerBtn.innerHTML = '<span>🎬</span> Assistir Trailer Oficial';
+      } else {
+        trailerBtn.className = 'btn btn-secondary btn-lg';
+        trailerBtn.innerHTML = 'Assistir Trailer';
+      }
       trailerBtn.onclick = () => {
         this.openTrailerModal(details.trailer_key, title);
       };
     } else {
       trailerBtn.style.display = 'none';
+    }
+
+    if (toggleSourcesBtn) {
+      toggleSourcesBtn.style.display = isUpcoming ? 'none' : 'inline-flex';
     }
 
     // Botão Favorito / Minha Lista
@@ -1674,6 +1726,14 @@ class HomeFlixApp {
           resumeTime = savedProgress.position;
         }
       }
+    }
+
+    const isUpcoming = details.is_unreleased || (details.release_date && new Date(details.release_date) > new Date()) || ["In Production", "Post Production", "Planned"].includes(details.status);
+    if (isUpcoming) {
+      playBtn.style.display = 'none';
+      return;
+    } else {
+      playBtn.style.display = 'inline-flex';
     }
 
     if (resumeTime > 15) {
@@ -2378,11 +2438,19 @@ class HomeFlixApp {
       const date = item.release_date || item.first_air_date || '';
       const year = date ? date.split('-')[0] : '';
 
+      const isUpcoming = (item.release_date && new Date(item.release_date) > new Date());
+      const isInTheaters = !isUpcoming && item.release_date && (() => {
+        const rd = new Date(item.release_date);
+        const diff = (new Date() - rd) / (1000 * 60 * 60 * 24);
+        return diff >= 0 && diff < 75;
+      })();
+
       const card = document.createElement('div');
       card.className = 'media-card';
       card.setAttribute('tabindex', '0');
       card.innerHTML = `
         <img class="media-card-poster" src="https://image.tmdb.org/t/p/w342${posterPath}" alt="${title}" loading="lazy" onerror="this.onerror=null; this.src='https://images.placeholders.dev/?width=342&height=513&text=HomeFlix&theme=dark';" />
+        ${isUpcoming ? '<span class="card-badge-upcoming">EM BREVE</span>' : (isInTheaters ? '<span class="card-badge-cinema">NO CINEMA</span>' : '')}
         <div class="media-card-info">
           <div class="media-card-title">${title}</div>
           <div class="media-card-sub">
@@ -2452,12 +2520,19 @@ class HomeFlixApp {
       const date = item.release_date || item.first_air_date || '';
       const year = date ? date.split('-')[0] : '';
 
+      const isUpcoming = (item.release_date && new Date(item.release_date) > new Date());
+      const isInTheaters = !isUpcoming && item.release_date && (() => {
+        const rd = new Date(item.release_date);
+        const diff = (new Date() - rd) / (1000 * 60 * 60 * 24);
+        return diff >= 0 && diff < 75;
+      })();
+
       const card = document.createElement('div');
       card.className = 'media-card';
       card.setAttribute('tabindex', '0');
       card.innerHTML = `
         <img class="media-card-poster" src="https://image.tmdb.org/t/p/w342${posterPath}" alt="${title}" loading="lazy" onerror="this.onerror=null; this.src='https://images.placeholders.dev/?width=342&height=513&text=HomeFlix&theme=dark';" />
-        ${isSuggestion ? '<span class="suggestion-badge">Semelhante</span>' : ''}
+        ${isUpcoming ? '<span class="card-badge-upcoming">EM BREVE</span>' : (isInTheaters ? '<span class="card-badge-cinema">NO CINEMA</span>' : (isSuggestion ? '<span class="suggestion-badge">Semelhante</span>' : ''))}
         <div class="media-card-info">
           <div class="media-card-title">${title}</div>
           <div class="media-card-sub">

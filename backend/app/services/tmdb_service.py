@@ -1121,6 +1121,32 @@ def get_media_details(media_type: str, tmdb_id: str) -> Dict[str, Any]:
         })
     data["main_cast"] = formatted_cast
 
+    # Detecta se é lançamento futuro (ainda não estreou) ou se está em cartaz nos cinemas
+    rel_date_str = data.get("release_date")
+    status = data.get("status", "")
+    is_unreleased = False
+    is_in_theaters = False
+
+    if media_type == "movie" and rel_date_str:
+        try:
+            rel_date = time.strptime(rel_date_str, "%Y-%m-%d")
+            now_struct = time.localtime()
+            # Se a data de lançamento for maior que hoje ou status explicitamente pré-lançamento
+            if rel_date > now_struct or status in ("In Production", "Post Production", "Planned"):
+                is_unreleased = True
+            else:
+                # Estreou há menos de 75 dias -> em janela de cinemas
+                rel_ts = time.mktime(rel_date)
+                now_ts = time.time()
+                days_since_release = (now_ts - rel_ts) / 86400
+                if 0 <= days_since_release < 75:
+                    is_in_theaters = True
+        except Exception:
+            pass
+
+    data["is_unreleased"] = is_unreleased
+    data["is_in_theaters"] = is_in_theaters
+
     return data
 
 def get_season_details(tv_id: str, season_number: int) -> Dict[str, Any]:

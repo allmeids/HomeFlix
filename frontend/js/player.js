@@ -352,9 +352,17 @@ class HomeFlixPlayer {
       this.fetchSubtitles(options.mediaType, options.mediaId, options.season, options.episode);
     }
 
-    // Aviso de imagem de cinema (CAM) desativado para interface limpa
+    // Aviso de imagem de cinema (CAM) quando aplicável
     if (this.cinemaWarning) {
-      this.cinemaWarning.style.display = 'none';
+      if (options.isCinema) {
+        this.cinemaWarning.style.display = 'block';
+        clearTimeout(this.cinemaWarningTimer);
+        this.cinemaWarningTimer = setTimeout(() => {
+          if (this.cinemaWarning) this.cinemaWarning.style.display = 'none';
+        }, 6500);
+      } else {
+        this.cinemaWarning.style.display = 'none';
+      }
     }
 
     // Popula seletor de fontes
