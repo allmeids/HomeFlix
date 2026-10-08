@@ -213,9 +213,25 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
     external_ids = details.get("external_ids", {})
     imdb_id = external_ids.get("imdb_id")
 
+    title = details.get("title") or details.get("name") or "Vídeo"
+
+    # Fallback inteligente se TMDB não tiver IMDb ID gravado (ex: animes recentes)
+    if not imdb_id and title:
+        try:
+            suggest_url = f"https://v3.sg.media-imdb.com/suggestion/x/{urllib.parse.quote(title.lower())}.json"
+            r_imdb = _vod_session.get(suggest_url, headers={"User-Agent": "Mozilla/5.0"}, timeout=3)
+            if r_imdb.status_code == 200:
+                for cand in r_imdb.json().get("d", []):
+                    c_id = cand.get("id")
+                    if c_id and c_id.startswith("tt"):
+                        imdb_id = c_id
+                        break
+        except Exception:
+            pass
+
     if not imdb_id:
         return {
-            "title": details.get("title") or details.get("name") or "Vídeo",
+            "title": title,
             "imdb_id": None,
             "tmdb_id": tmdb_id,
             "count": 0,
@@ -225,7 +241,6 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
             "has_dubbed": False
         }
 
-    title = details.get("title") or details.get("name") or "Vídeo"
     raw_streams = []
 
     # 2. Busca paralela de alta velocidade (FrostStream + SuperStream + EmbedPlayer simultaneamente)
@@ -235,7 +250,7 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
         f_embed = executor.submit(fetch_embedplayer, media_type, imdb_id, season, episode)
 
         try:
-            frost_streams = f_frost.result(timeout=14)
+            frost_streams = f_frost.result(timeout=8)
             for s in frost_streams:
                 s["_provider"] = "FrostStream"
                 raw_streams.append(s)
@@ -243,7 +258,7 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
             print(f"[Parallel FrostStream Error] {exc}")
 
         try:
-            super_streams = f_super.result(timeout=14)
+            super_streams = f_super.result(timeout=8)
             for s in super_streams:
                 s["_provider"] = "SuperStream"
                 raw_streams.append(s)
@@ -251,7 +266,7 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
             print(f"[Parallel SuperStream Error] {exc}")
 
         try:
-            embed_streams = f_embed.result(timeout=14)
+            embed_streams = f_embed.result(timeout=8)
             for s in embed_streams:
                 raw_streams.append(s)
         except Exception as exc:

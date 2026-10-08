@@ -11,6 +11,11 @@ class HomeFlixApp {
     this.selectedAvatar = '🦊';
     this.editingProfileId = null;
 
+    this.currentCategory = 'anime_sagas';
+    this.categoryPage = 1;
+    this.allCategoriesList = [];
+    this.categoryLoading = false;
+
     this.player = new HomeFlixPlayer();
     this.init();
   }
@@ -86,23 +91,23 @@ class HomeFlixApp {
       });
     }
 
-    // Search
+    // Search em Tempo Real (Live Search Estilo Netflix)
     const searchInput = document.getElementById('searchInput');
     let debounceTimer;
     searchInput.addEventListener('input', (e) => {
       clearTimeout(debounceTimer);
       const q = e.target.value.trim();
       if (q.length >= 2) {
-        debounceTimer = setTimeout(() => this.searchMedia(q), 400);
+        debounceTimer = setTimeout(() => this.searchMedia(q), 280);
       } else if (q.length === 0) {
-        this.switchTab('home');
+        this.closeSearch();
       }
     });
 
     // Botão Voltar da Busca
     const searchBackBtn = document.getElementById('searchBackBtn');
     if (searchBackBtn) {
-      searchBackBtn.onclick = () => this.switchTab('home');
+      searchBackBtn.onclick = () => this.closeSearch();
     }
   }
 
@@ -351,7 +356,8 @@ class HomeFlixApp {
   navigateMainView(key, e) {
     const active = document.activeElement;
     const isLiveTab = this.currentTab === 'live';
-    const isSearchTab = this.currentTab === 'search' || document.getElementById('searchContainer').style.display !== 'none';
+    const isCategoriesTab = this.currentTab === 'categories';
+    const isSearchTab = this.currentTab === 'search' || (document.getElementById('searchContainer') && document.getElementById('searchContainer').style.display !== 'none');
 
     // 1. Zona Navbar
     const navItems = Array.from(document.querySelectorAll('.navbar .nav-item, #searchInput, #profileBtn'));
@@ -379,9 +385,23 @@ class HomeFlixApp {
 
       const channels = Array.from(document.querySelectorAll('#liveChannelsGrid .channel-card'));
       if (channels.length) contentZones.push({ el: document.getElementById('liveChannelsGrid'), items: channels, type: 'grid' });
+    } else if (isCategoriesTab) {
+      const catPills = Array.from(document.querySelectorAll('#categoriesFilterPills .category-pill'));
+      if (catPills.length) contentZones.push({ el: document.getElementById('categoriesFilterPills'), items: catPills, type: 'carousel' });
+
+      const catCards = Array.from(document.querySelectorAll('#categoryGrid .media-card'));
+      if (catCards.length) contentZones.push({ el: document.getElementById('categoryGrid'), items: catCards, type: 'grid' });
+
+      const loadMoreBtn = document.getElementById('categoryLoadMoreBtn');
+      if (loadMoreBtn && loadMoreBtn.offsetParent !== null) {
+        contentZones.push({ el: document.getElementById('categoryLoadMoreBox'), items: [loadMoreBtn], type: 'row' });
+      }
     } else if (isSearchTab) {
       const searchItems = Array.from(document.querySelectorAll('#searchGrid .media-card'));
       if (searchItems.length) contentZones.push({ el: document.getElementById('searchGrid'), items: searchItems, type: 'grid' });
+
+      const similarItems = Array.from(document.querySelectorAll('#searchSimilarGrid .media-card'));
+      if (similarItems.length) contentZones.push({ el: document.getElementById('searchSimilarGrid'), items: similarItems, type: 'grid' });
     } else {
       // Continuar Assistindo (se presente)
       const continueSection = document.getElementById('continueWatchingSection');
@@ -595,12 +615,14 @@ class HomeFlixApp {
     const sectionsContainer = document.getElementById('sectionsContainer');
     const detailsView = document.getElementById('detailsView');
     const liveTvContainer = document.getElementById('liveTvContainer');
+    const categoriesContainer = document.getElementById('categoriesContainer');
     const searchContainer = document.getElementById('searchContainer');
 
     // Esconde a tela de detalhes ao trocar de aba principal
     document.body.classList.remove('in-details-view');
     if (detailsView) detailsView.style.display = 'none';
     if (searchContainer) searchContainer.style.display = 'none';
+    if (categoriesContainer) categoriesContainer.style.display = 'none';
 
     if (tab === 'home') {
       heroSection.style.display = 'flex';
@@ -627,14 +649,12 @@ class HomeFlixApp {
       liveTvContainer.style.display = 'block';
       this.loadLiveTv();
     } else if (tab === 'categories') {
-      heroSection.style.display = 'flex';
-      if (categoriesBar) categoriesBar.style.display = 'block';
-      sectionsContainer.style.display = 'flex';
+      heroSection.style.display = 'none';
+      if (categoriesBar) categoriesBar.style.display = 'none';
+      sectionsContainer.style.display = 'none';
       liveTvContainer.style.display = 'none';
-      // Rola até a barra de categorias
-      if (categoriesBar) {
-        categoriesBar.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+      if (categoriesContainer) categoriesContainer.style.display = 'block';
+      this.loadCategoriesTab();
     } else if (tab === 'watchlist') {
       heroSection.style.display = 'none';
       if (categoriesBar) categoriesBar.style.display = 'none';
@@ -822,6 +842,8 @@ class HomeFlixApp {
     this.renderCarousel('thrillerMoviesCarousel', homeData.thriller || []);
     this.renderCarousel('topMoviesCarousel', homeData.top_rated || []);
     this.renderCarousel('familyMoviesCarousel', homeData.family || []);
+    this.renderCarousel('animeSagasCarousel', homeData.anime_sagas || []);
+    this.renderCarousel('animeHitsCarousel', homeData.anime_hits || []);
     this.renderCarousel('animesCarousel', homeData.animes || []);
 
     // 2. Continuar Assistindo (Quick Resume)
@@ -1745,11 +1767,148 @@ class HomeFlixApp {
     });
   }
 
+  closeSearch() {
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) searchInput.value = '';
+    const searchContainer = document.getElementById('searchContainer');
+    if (searchContainer) searchContainer.style.display = 'none';
+    this.switchTab(this.previousTab || 'home');
+  }
+
+  /* ================================================================
+     TELA DEDICADA DE CATEGORIAS (ESTILO NETFLIX COM PAGINAÇÃO INFINITA)
+     ================================================================ */
+
+  async loadCategoriesTab(categoryKey = null, page = 1, append = false) {
+    const pillsBar = document.getElementById('categoriesFilterPills');
+    const grid = document.getElementById('categoryGrid');
+    const titleEl = document.getElementById('catPageMainTitle');
+    const descEl = document.getElementById('catPageMainSub');
+    const loadMoreBox = document.getElementById('categoryLoadMoreBox');
+    const loadMoreBtn = document.getElementById('categoryLoadMoreBtn');
+
+    if (categoryKey) {
+      this.currentCategory = categoryKey;
+    }
+    this.categoryPage = page;
+
+    // 1. Carrega lista de categorias se ainda não estiver carregada
+    if (!this.allCategoriesList || this.allCategoriesList.length === 0) {
+      this.allCategoriesList = (await API.getCategories()) || [];
+    }
+
+    if (!this.currentCategory && this.allCategoriesList.length > 0) {
+      this.currentCategory = this.allCategoriesList[0].key;
+    }
+
+    // 2. Renderiza os Pills horizontais de categorias
+    if (pillsBar && pillsBar.children.length === 0) {
+      this.allCategoriesList.forEach(cat => {
+        const pill = document.createElement('div');
+        pill.className = `category-pill ${cat.key === this.currentCategory ? 'active' : ''}`;
+        pill.innerHTML = `<span>${cat.icon}</span> <span>${cat.title}</span>`;
+        pill.setAttribute('tabindex', '0');
+        pill.onclick = () => {
+          this.loadCategoriesTab(cat.key, 1, false);
+        };
+        pill.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') pill.click();
+        });
+        pillsBar.appendChild(pill);
+      });
+    } else if (pillsBar) {
+      pillsBar.querySelectorAll('.category-pill').forEach((pill, idx) => {
+        const cat = this.allCategoriesList[idx];
+        if (cat) {
+          pill.classList.toggle('active', cat.key === this.currentCategory);
+        }
+      });
+    }
+
+    // 3. Atualiza títulos do header
+    const currentCatInfo = this.allCategoriesList.find(c => c.key === this.currentCategory);
+    if (currentCatInfo) {
+      if (titleEl) titleEl.innerHTML = `${currentCatInfo.icon} ${currentCatInfo.title}`;
+      if (descEl) descEl.textContent = currentCatInfo.description || '';
+    }
+
+    // 4. Carrega itens da categoria
+    if (!append) {
+      grid.innerHTML = '<div style="color:#aaa; grid-column:1/-1; text-align:center; padding:50px 20px;">Carregando catálogo da categoria...</div>';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      if (loadMoreBtn) loadMoreBtn.textContent = 'Carregando mais títulos...';
+    }
+
+    this.categoryLoading = true;
+    const catData = await API.getCategoryItems(this.currentCategory, page);
+    this.categoryLoading = false;
+
+    if (!append) {
+      grid.innerHTML = '';
+    }
+
+    const items = catData?.results || [];
+    if (items.length === 0 && !append) {
+      grid.innerHTML = '<div style="color:#aaa; grid-column:1/-1; text-align:center; padding:50px 20px;">Nenhum título encontrado nesta categoria no momento.</div>';
+      if (loadMoreBox) loadMoreBox.style.display = 'none';
+      return;
+    }
+
+    // Renderiza cards da categoria
+    items.forEach(item => {
+      const posterPath = item.poster_path || item.backdrop_path;
+      if (!posterPath) return;
+      const title = item.title || item.name || '';
+      const mediaType = item.media_type || (item.title ? 'movie' : 'tv');
+      const rating = item.vote_average ? Number(item.vote_average).toFixed(1) : '';
+      const date = item.release_date || item.first_air_date || '';
+      const year = date ? date.split('-')[0] : '';
+
+      const card = document.createElement('div');
+      card.className = 'media-card';
+      card.setAttribute('tabindex', '0');
+      card.innerHTML = `
+        <img class="media-card-poster" src="https://image.tmdb.org/t/p/w342${posterPath}" alt="${title}" loading="lazy" onerror="this.onerror=null; this.src='https://images.placeholders.dev/?width=342&height=513&text=HomeFlix&theme=dark';" />
+        <div class="media-card-info">
+          <div class="media-card-title">${title}</div>
+          <div class="media-card-sub">
+            <span>${mediaType === 'movie' ? 'Filme' : 'Série'} • ${year}</span>
+            <span class="card-rating">★ ${rating}</span>
+          </div>
+        </div>
+      `;
+
+      card.onclick = () => this.openMediaDetails(mediaType, item.id);
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') card.click();
+      });
+      grid.appendChild(card);
+    });
+
+    if (loadMoreBox) {
+      loadMoreBox.style.display = items.length >= 10 ? 'block' : 'none';
+    }
+    if (loadMoreBtn) {
+      loadMoreBtn.textContent = '➕ Carregar Mais Títulos';
+      loadMoreBtn.onclick = () => {
+        if (!this.categoryLoading) {
+          this.loadCategoriesTab(this.currentCategory, this.categoryPage + 1, true);
+        }
+      };
+    }
+  }
+
+  /* ================================================================
+     BUSCA INTELIGENTE EM TEMPO REAL COM SUGESTÕES & SEMELHANTES
+     ================================================================ */
+
   async searchMedia(query) {
     const heroSection = document.getElementById('heroSection');
     const categoriesBar = document.getElementById('categoriesBarWrapper');
     const sectionsContainer = document.getElementById('sectionsContainer');
     const liveTvContainer = document.getElementById('liveTvContainer');
+    const categoriesContainer = document.getElementById('categoriesContainer');
     const searchContainer = document.getElementById('searchContainer');
     const detailsView = document.getElementById('detailsView');
 
@@ -1757,39 +1916,51 @@ class HomeFlixApp {
     if (categoriesBar) categoriesBar.style.display = 'none';
     sectionsContainer.style.display = 'none';
     liveTvContainer.style.display = 'none';
+    if (categoriesContainer) categoriesContainer.style.display = 'none';
     if (detailsView) detailsView.style.display = 'none';
     searchContainer.style.display = 'block';
 
     const titleEl = document.getElementById('searchTitle');
+    const subEl = document.getElementById('searchStatusSubtitle');
     const grid = document.getElementById('searchGrid');
     const searchBackBtn = document.getElementById('searchBackBtn');
+    const similarSec = document.getElementById('searchSimilarSection');
+    const similarGrid = document.getElementById('searchSimilarGrid');
+    const similarTitle = document.getElementById('searchSimilarTitle');
+
     if (searchBackBtn) searchBackBtn.style.display = 'inline-block';
+    if (similarSec) similarSec.style.display = 'none';
 
     titleEl.textContent = `Resultados para "${query}"`;
-    grid.innerHTML = '<p style="color:#888; grid-column:1/-1; text-align:center; padding:30px;">Pesquisando no catálogo mundial...</p>';
+    if (subEl) subEl.textContent = 'Pesquisando em tempo real...';
+    grid.innerHTML = '<p style="color:#aaa; grid-column:1/-1; text-align:center; padding:35px 20px;">Buscando no catálogo mundial do HomeFlix...</p>';
 
-    const results = await API.search(query);
+    const data = await API.search(query);
+    const results = data?.results || [];
+    const similar = data?.similar || [];
+    const matchedVia = data?.matched_via;
+
     grid.innerHTML = '';
 
-    if (results.length === 0) {
-      grid.innerHTML = '<p style="color:#888; grid-column:1/-1; padding:40px 0; text-align:center;">Nenhum título encontrado com este termo.</p>';
-      return;
-    }
-
-    results.forEach(item => {
+    const renderCard = (item, isSuggestion = false) => {
+      const posterPath = item.poster_path || item.backdrop_path;
+      if (!posterPath) return null;
       const title = item.title || item.name || '';
       const mediaType = item.media_type || (item.title ? 'movie' : 'tv');
-      const rating = item.vote_average ? item.vote_average.toFixed(1) : '';
+      const rating = item.vote_average ? Number(item.vote_average).toFixed(1) : '';
+      const date = item.release_date || item.first_air_date || '';
+      const year = date ? date.split('-')[0] : '';
 
       const card = document.createElement('div');
       card.className = 'media-card';
       card.setAttribute('tabindex', '0');
       card.innerHTML = `
-        <img class="media-card-poster" src="https://image.tmdb.org/t/p/w342${item.poster_path}" alt="${title}" loading="lazy" />
+        <img class="media-card-poster" src="https://image.tmdb.org/t/p/w342${posterPath}" alt="${title}" loading="lazy" onerror="this.onerror=null; this.src='https://images.placeholders.dev/?width=342&height=513&text=HomeFlix&theme=dark';" />
+        ${isSuggestion ? '<span class="suggestion-badge">✨ Semelhante</span>' : ''}
         <div class="media-card-info">
           <div class="media-card-title">${title}</div>
           <div class="media-card-sub">
-            <span>${mediaType === 'movie' ? 'Filme' : 'Série'}</span>
+            <span>${mediaType === 'movie' ? 'Filme' : 'Série'} • ${year}</span>
             <span class="card-rating">★ ${rating}</span>
           </div>
         </div>
@@ -1798,8 +1969,43 @@ class HomeFlixApp {
       card.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') card.click();
       });
-      grid.appendChild(card);
-    });
+      return card;
+    };
+
+    if (results.length > 0) {
+      if (subEl) {
+        subEl.textContent = `${results.length} título(s) encontrado(s)${matchedVia && matchedVia !== 'direto' ? ` • ${matchedVia}` : ''}`;
+      }
+      results.forEach(item => {
+        const card = renderCard(item, false);
+        if (card) grid.appendChild(card);
+      });
+
+      // Se temos títulos semelhantes para complementar a busca (ex: poucos resultados exatos)
+      if (similar.length > 0 && similarSec && similarGrid) {
+        similarSec.style.display = 'block';
+        if (similarTitle) similarTitle.textContent = `✨ Você Também Pode Gostar (Títulos Semelhantes)`;
+        similarGrid.innerHTML = '';
+        similar.forEach(item => {
+          const card = renderCard(item, true);
+          if (card) similarGrid.appendChild(card);
+        });
+      }
+    } else {
+      // Nenhum resultado exato encontrado! Estilo Netflix: Mostra semelhantes e sugestões direto no grid!
+      if (subEl) {
+        subEl.innerHTML = `Não encontramos correspondência exata para <strong>"${query}"</strong>. Confira estas sugestões e títulos semelhantes:`;
+      }
+
+      if (similar.length > 0) {
+        similar.forEach(item => {
+          const card = renderCard(item, true);
+          if (card) grid.appendChild(card);
+        });
+      } else {
+        grid.innerHTML = '<p style="color:#888; grid-column:1/-1; padding:40px 0; text-align:center;">Nenhum título encontrado com este termo.</p>';
+      }
+    }
   }
 
   setupModals() {

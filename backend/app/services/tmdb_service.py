@@ -157,20 +157,207 @@ def get_documentaries(page: int = 1) -> List[Dict[str, Any]]:
     })
     return data.get("results", [])
 
+# =====================================================================
+# ACERVO EXPANDIDO DE ANIMES & SAGAS LENDÁRIAS (CURADORIA DE ALTA VELOCIDADE)
+# =====================================================================
+
+ANIME_SAGAS_DEF = [
+    # Os Cavaleiros do Zodíaco (Todas as Sagas)
+    ("tv", 42444, "Os Cavaleiros do Zodíaco (Clássico 1986)"),
+    ("tv", 67199, "Os Cavaleiros do Zodíaco: A Saga de Hades"),
+    ("tv", 61389, "Os Cavaleiros do Zodíaco: The Lost Canvas"),
+    ("tv", 62428, "Os Cavaleiros do Zodíaco: Alma de Ouro"),
+    ("tv", 44317, "Os Cavaleiros do Zodíaco: Ômega"),
+    ("tv", 90855, "Os Cavaleiros do Zodíaco: Saint Seiya"),
+    # Dragon Ball (Todas as Sagas)
+    ("tv", 12609, "Dragon Ball (1986)"),
+    ("tv", 12971, "Dragon Ball Z"),
+    ("tv", 12697, "Dragon Ball GT"),
+    ("tv", 61709, "Dragon Ball Z Kai"),
+    ("tv", 62715, "Dragon Ball Super"),
+    ("tv", 236994, "Dragon Ball Daima"),
+    # Naruto & Próxima Geração
+    ("tv", 46260, "Naruto (Clássico)"),
+    ("tv", 31910, "Naruto Shippuden"),
+    ("tv", 70881, "Boruto: Naruto Next Generations"),
+    # Clássicos Shonen Imortais
+    ("tv", 30669, "Yu Yu Hakusho"),
+    ("tv", 30984, "Bleach"),
+    ("tv", 37854, "One Piece"),
+    ("tv", 45952, "Hunter x Hunter (2011)"),
+    ("tv", 13916, "Death Note"),
+    ("tv", 31911, "Fullmetal Alchemist: Brotherhood"),
+    ("tv", 30699, "InuYasha"),
+]
+
+ANIME_HITS_DEF = [
+    ("tv", 85937, "Demon Slayer: Kimetsu no Yaiba"),
+    ("tv", 114868, "Record of Ragnarok (Shuumatsu no Valkyrie)"),
+    ("tv", 95479, "Jujutsu Kaisen"),
+    ("tv", 1429, "Attack on Titan (Shingeki no Kyojin)"),
+    ("tv", 127532, "Solo Leveling"),
+    ("tv", 114410, "Chainsaw Man"),
+    ("tv", 86369, "Vinland Saga"),
+    ("tv", 120089, "Spy x Family"),
+    ("tv", 61374, "Tokyo Ghoul"),
+    ("tv", 73223, "Black Clover"),
+    ("tv", 240411, "Dandadan"),
+    ("tv", 207049, "Kaiju No. 8"),
+    ("tv", 65930, "My Hero Academia"),
+    ("tv", 112160, "Mashle: Magia e Músculos"),
+    ("tv", 94605, "Dr. STONE"),
+    ("tv", 83095, "The Promised Neverland"),
+]
+
+def _fetch_curated_collection(curated_list: List[tuple], page: int = 1, page_size: int = 24) -> List[Dict[str, Any]]:
+    """Busca em lote títulos curados com cache em memória por item."""
+    from concurrent.futures import ThreadPoolExecutor
+
+    start_idx = (page - 1) * page_size
+    end_idx = start_idx + page_size
+    sliced = curated_list[start_idx:end_idx]
+    if not sliced and page > 1:
+        # Se ultrapassou os itens fixos da curadoria, complementa com discover popular
+        return get_animes(page)
+
+    def _fetch_single(entry):
+        mtype, m_id, *rest = entry
+        cache_key = f"curated_item_{mtype}_{m_id}"
+        cached = _get_cached(cache_key)
+        if cached:
+            return cached
+
+        d = tmdb_request(f"{mtype}/{m_id}")
+        if d and (d.get("poster_path") or d.get("backdrop_path")):
+            d["media_type"] = mtype
+            _set_cached(cache_key, d)
+            return d
+        return None
+
+    results = []
+    with ThreadPoolExecutor(max_workers=min(len(sliced), 10) or 1) as executor:
+        for item in executor.map(_fetch_single, sliced):
+            if item:
+                results.append(item)
+
+    # Se a página pediu mais ou para preencher até 24 itens, adiciona do discover
+    if len(results) < page_size:
+        discover = get_animes(page)
+        seen_ids = {str(r.get("id")) for r in results}
+        for d in discover:
+            if str(d.get("id")) not in seen_ids:
+                results.append(d)
+                if len(results) >= page_size:
+                    break
+
+    return results
+
+def get_anime_sagas(page: int = 1) -> List[Dict[str, Any]]:
+    """Retorna a coleção das maiores sagas: Cavaleiros do Zodíaco, Dragon Ball e Naruto."""
+    return _fetch_curated_collection(ANIME_SAGAS_DEF, page)
+
+def get_anime_hits(page: int = 1) -> List[Dict[str, Any]]:
+    """Retorna os animes mais aclamados e sucessos modernos: Kimetsu no Yaiba, Ragnarok, Jujutsu."""
+    return _fetch_curated_collection(ANIME_HITS_DEF, page)
+
 CATEGORY_CONFIG = {
-    "action": {"title": "Ação & Aventura Explosiva", "func": get_action_movies},
-    "scifi": {"title": "Ficção Científica & Fantasia", "func": get_scifi_movies},
-    "superheroes": {"title": "Universo de Heróis & Quadrinhos", "func": get_superheroes},
-    "popular_movies": {"title": "Grandes Sucessos do Cinema", "func": get_popular_movies},
-    "popular_series": {"title": "Séries Mais Maratonadas", "func": get_popular_series},
-    "comedy": {"title": "Comédias para Rir Muito", "func": get_comedy_movies},
-    "horror": {"title": "Terror & Arrepios", "func": get_horror_movies},
-    "thriller": {"title": "Suspense, Crime & Mistério", "func": get_thriller_movies},
-    "top_rated": {"title": "Aclamados pela Crítica", "func": get_top_rated_movies},
-    "animes": {"title": "Animes & Animações Japonesas", "func": get_animes},
-    "family": {"title": "Sessão em Família & Kids", "func": get_family_movies},
-    "documentary": {"title": "Documentários & Fatos Reais", "func": get_documentaries},
+    "anime_sagas": {
+        "title": "Sagas Lendárias: Saint Seiya, DBZ & Naruto",
+        "func": get_anime_sagas,
+        "icon": "⚔️",
+        "description": "Coleções completas de Cavaleiros do Zodíaco, Dragon Ball (todas as sagas), Naruto e clássicos shonen."
+    },
+    "anime_hits": {
+        "title": "Fenômenos do Anime: Kimetsu no Yaiba & Ragnarok",
+        "func": get_anime_hits,
+        "icon": "⚡",
+        "description": "Grandes sucessos da nova era: Demon Slayer, Record of Ragnarok, Jujutsu Kaisen e Attack on Titan."
+    },
+    "animes": {
+        "title": "Animes & Animações Japonesas",
+        "func": get_animes,
+        "icon": "🍙",
+        "description": "Catálogo completo de animes japoneses de todos os gêneros e épocas."
+    },
+    "action": {
+        "title": "Ação & Aventura Explosiva",
+        "func": get_action_movies,
+        "icon": "💥",
+        "description": "Perseguições eletrizantes, tiroteios e aventuras épicas."
+    },
+    "scifi": {
+        "title": "Ficção Científica & Fantasia",
+        "func": get_scifi_movies,
+        "icon": "🚀",
+        "description": "Viagens espaciais, futuros distópicos, mundos mágicos e tecnologia avançada."
+    },
+    "superheroes": {
+        "title": "Universo de Heróis & Quadrinhos",
+        "func": get_superheroes,
+        "icon": "🦸",
+        "description": "As maiores produções dos universos Marvel, DC e quadrinhos lendários."
+    },
+    "popular_movies": {
+        "title": "Grandes Sucessos do Cinema",
+        "func": get_popular_movies,
+        "icon": "🎬",
+        "description": "Os filmes mais assistidos e comentados do cinema mundial."
+    },
+    "popular_series": {
+        "title": "Séries Mais Maratonadas",
+        "func": get_popular_series,
+        "icon": "📺",
+        "description": "Séries aclamadas para maratonar do início ao fim."
+    },
+    "comedy": {
+        "title": "Comédias para Rir Muito",
+        "func": get_comedy_movies,
+        "icon": "😂",
+        "description": "Diversão garantida com as melhores comédias nacionais e internacionais."
+    },
+    "horror": {
+        "title": "Terror & Arrepios",
+        "func": get_horror_movies,
+        "icon": "👻",
+        "description": "Histórias sobrenaturais, sustos intensos e clima de tensão extrema."
+    },
+    "thriller": {
+        "title": "Suspense, Crime & Mistério",
+        "func": get_thriller_movies,
+        "icon": "🕵️",
+        "description": "Investigações policiais, reviravoltas chocantes e mistérios instigantes."
+    },
+    "top_rated": {
+        "title": "Aclamados pela Crítica",
+        "func": get_top_rated_movies,
+        "icon": "🏆",
+        "description": "Filmes com as maiores notas e premiações da história do cinema."
+    },
+    "family": {
+        "title": "Sessão em Família & Kids",
+        "func": get_family_movies,
+        "icon": "👨‍👩‍👧‍👦",
+        "description": "Animações e filmes leves para todas as idades curtirem juntos."
+    },
+    "documentary": {
+        "title": "Documentários & Fatos Reais",
+        "func": get_documentaries,
+        "icon": "📜",
+        "description": "Histórias reais fascinantes, biografias e registros da humanidade e natureza."
+    },
 }
+
+def get_categories_list() -> List[Dict[str, Any]]:
+    """Retorna os metadados de todas as categorias ativas para o frontend."""
+    return [
+        {
+            "key": k,
+            "title": v["title"],
+            "icon": v.get("icon", "🎬"),
+            "description": v.get("description", "")
+        }
+        for k, v in CATEGORY_CONFIG.items()
+    ]
 
 def _fetch_multi_page(fetch_func, max_pages: int = 2) -> List[Dict[str, Any]]:
     results = []
@@ -223,6 +410,8 @@ def get_home_catalog() -> Dict[str, Any]:
     from concurrent.futures import ThreadPoolExecutor
 
     fetch_tasks = [
+        ("anime_sagas", lambda: get_anime_sagas(1)),
+        ("anime_hits", lambda: get_anime_hits(1)),
         ("superheroes", lambda: _fetch_multi_page(get_superheroes, 2)),
         ("action", lambda: _fetch_multi_page(get_action_movies, 2)),
         ("popular_movies", lambda: _fetch_multi_page(get_popular_movies, 2)),
@@ -237,7 +426,7 @@ def get_home_catalog() -> Dict[str, Any]:
     ]
 
     raw_data = {}
-    with ThreadPoolExecutor(max_workers=11) as executor:
+    with ThreadPoolExecutor(max_workers=13) as executor:
         future_map = {executor.submit(fn): cat for cat, fn in fetch_tasks}
         for future in future_map:
             cat = future_map[future]
@@ -249,6 +438,8 @@ def get_home_catalog() -> Dict[str, Any]:
 
     catalog = {
         "trending": trending,
+        "anime_sagas": filter_unique(raw_data.get("anime_sagas", []), 24),
+        "anime_hits": filter_unique(raw_data.get("anime_hits", []), 24),
         "superheroes": filter_unique(raw_data.get("superheroes", []), 24),
         "action": filter_unique(raw_data.get("action", []), 24),
         "popular_movies": filter_unique(raw_data.get("popular_movies", []), 24),
@@ -322,6 +513,28 @@ def get_personalized_recommendations(profile_id: int) -> List[Dict[str, Any]]:
 
     return recs[:20]
 
+import re
+
+SEARCH_ALIASES = {
+    "cavalheiro": "cavaleiro",
+    "cavalheiros": "cavaleiros",
+    "zodiaco": "zodíaco",
+    "kimtsu": "kimetsu",
+    "iaba": "yaiba",
+    "shingek": "shingeki",
+    "ataque dos titas": "Attack on Titan",
+    "ataque dos titãs": "Attack on Titan",
+    "drago": "dragon",
+    "dragom": "dragon",
+    "naroto": "naruto",
+    "ragnarok anime": "Record of Ragnarok",
+    "ragnarok": "Record of Ragnarok",
+    "jujutsu": "Jujutsu Kaisen",
+    "sololeveling": "Solo Leveling",
+}
+
+STOP_WORDS = {"todas", "todos", "as", "os", "de", "do", "da", "e", "sagas", "saga", "temporadas", "anime", "filme", "serie", "completo", "completa"}
+
 def search_multi(query: str, page: int = 1) -> List[Dict[str, Any]]:
     if not query:
         return []
@@ -331,6 +544,77 @@ def search_multi(query: str, page: int = 1) -> List[Dict[str, Any]]:
         if item.get("media_type") in ("movie", "tv") and (item.get("poster_path") or item.get("backdrop_path"))
     ]
     return results
+
+def smart_search(query: str, page: int = 1) -> Dict[str, Any]:
+    """Busca inteligente com correção de typos, expansão de sinônimos e títulos semelhantes estilo Netflix."""
+    if not query or not query.strip():
+        return {"query": "", "results": [], "similar": [], "exact_match": True}
+
+    q_clean = query.strip()
+    results = search_multi(q_clean, page)
+    matched_via = "direto"
+
+    # 1. Se não encontrou, tenta corrigir aliases e erros fonéticos
+    if not results:
+        q_norm = q_clean.lower()
+        for typo, fix in SEARCH_ALIASES.items():
+            q_norm = re.sub(r"\b" + re.escape(typo) + r"\b", fix, q_norm)
+        
+        if q_norm != q_clean.lower():
+            results = search_multi(q_norm, page)
+            if results:
+                matched_via = f"alias ({q_norm})"
+
+    # 2. Se ainda não encontrou, remove stop words (ex: 'todas as sagas', 'filme', etc.)
+    if not results:
+        tokens = [w for w in re.findall(r"\w+", q_clean.lower()) if w not in STOP_WORDS]
+        if tokens:
+            token_q = " ".join(tokens)
+            if token_q != q_clean.lower():
+                results = search_multi(token_q, page)
+                if results:
+                    matched_via = f"palavras-chave ({token_q})"
+
+    # 3. Títulos Semelhantes / Recomendações
+    similar = []
+    seen_ids = {str(r.get("id")) for r in results}
+
+    if len(results) >= 1:
+        # Se tem poucos resultados (1 a 3), busca semelhantes daquele primeiro título para enriquecer a tela
+        if len(results) < 4:
+            top = results[0]
+            top_type = top.get("media_type") or "tv"
+            top_id = top.get("id")
+            rec_data = tmdb_request(f"{top_type}/{top_id}/recommendations")
+            rec_results = rec_data.get("results", [])
+            for rec in rec_results:
+                r_id = str(rec.get("id"))
+                if r_id not in seen_ids and (rec.get("poster_path") or rec.get("backdrop_path")):
+                    seen_ids.add(r_id)
+                    if "media_type" not in rec:
+                        rec["media_type"] = top_type
+                    similar.append(rec)
+                    if len(similar) >= 12:
+                        break
+    else:
+        # NENHUM resultado encontrado: busca títulos em alta na semana e animes populares para o usuário nunca ver tela vazia
+        trending = get_trending("all", "week")
+        for item in trending:
+            item_id = str(item.get("id"))
+            if item_id not in seen_ids and (item.get("poster_path") or item.get("backdrop_path")):
+                seen_ids.add(item_id)
+                similar.append(item)
+                if len(similar) >= 18:
+                    break
+
+    return {
+        "query": q_clean,
+        "matched_via": matched_via,
+        "exact_match": len(results) > 0,
+        "results": results,
+        "similar": similar,
+        "count": len(results)
+    }
 
 def get_media_details(media_type: str, tmdb_id: str) -> Dict[str, Any]:
     endpoint = f"{media_type}/{tmdb_id}"

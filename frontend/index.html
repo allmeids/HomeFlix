@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-title" content="HomeFlix">
   <link rel="apple-touch-icon" href="/static/icons/icon-192.png">
   <link rel="icon" href="/static/icons/icon-192.png">
-  <link rel="stylesheet" href="/static/css/style.css?v=6.0">
+  <link rel="stylesheet" href="/static/css/style.css?v=7.0">
   <!-- HLS.js para streaming HLS/m3u8 no navegador -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -274,10 +274,34 @@
       </div>
     </section>
 
+    <!-- Sagas Lendárias: Cavaleiros do Zodíaco, Dragon Ball & Naruto -->
+    <section class="media-section" id="animeSagasSection">
+      <div class="section-header">
+        <h2 class="section-title">⚔️ Sagas Lendárias: Cavaleiros do Zodíaco, DBZ & Naruto</h2>
+      </div>
+      <div class="carousel-wrapper">
+        <button class="carousel-nav-btn carousel-nav-left">‹</button>
+        <div class="media-carousel" id="animeSagasCarousel"></div>
+        <button class="carousel-nav-btn carousel-nav-right">›</button>
+      </div>
+    </section>
+
+    <!-- Fenômenos dos Animes: Kimetsu no Yaiba, Ragnarok & Jujutsu -->
+    <section class="media-section" id="animeHitsSection">
+      <div class="section-header">
+        <h2 class="section-title">⚡ Fenômenos dos Animes: Demon Slayer & Record of Ragnarok</h2>
+      </div>
+      <div class="carousel-wrapper">
+        <button class="carousel-nav-btn carousel-nav-left">‹</button>
+        <div class="media-carousel" id="animeHitsCarousel"></div>
+        <button class="carousel-nav-btn carousel-nav-right">›</button>
+      </div>
+    </section>
+
     <!-- Animes & Animações -->
     <section class="media-section">
       <div class="section-header">
-        <h2 class="section-title">Animes & Animações</h2>
+        <h2 class="section-title">🍙 Animes & Animações Japonesas</h2>
       </div>
       <div class="carousel-wrapper">
         <button class="carousel-nav-btn carousel-nav-left">‹</button>
@@ -393,13 +417,44 @@
     <div class="channels-grid" id="liveChannelsGrid"></div>
   </section>
 
-  <!-- Busca, Categorias & Minha Lista View -->
+  <!-- TELA DEDICADA DE CATEGORIAS ESTILO NETFLIX -->
+  <section class="live-tv-container categories-page-container" id="categoriesContainer" style="display: none;">
+    <div class="categories-page-header">
+      <div class="cat-page-titles">
+        <h1 class="cat-page-main-title" id="catPageMainTitle">⚔️ Sagas Lendárias: Saint Seiya, DBZ & Naruto</h1>
+        <p class="cat-page-main-sub" id="catPageMainSub">Coleções completas de Cavaleiros do Zodíaco, Dragon Ball (todas as sagas), Naruto e clássicos shonen.</p>
+      </div>
+    </div>
+    <!-- Pills horizontais interativos de categorias -->
+    <div class="category-pills categories-filter-pills" id="categoriesFilterPills"></div>
+    <!-- Grid cinematográfico da categoria -->
+    <div class="channels-grid" id="categoryGrid" style="grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));"></div>
+    <!-- Botão de carregar mais filmes/séries -->
+    <div class="category-load-more-box" id="categoryLoadMoreBox" style="text-align: center; padding: 35px 0 20px;">
+      <button class="btn btn-secondary btn-lg" id="categoryLoadMoreBtn">➕ Carregar Mais Títulos</button>
+    </div>
+  </section>
+
+  <!-- BUSCA & MINHA LISTA VIEW COM BUSCA INTELIGENTE E TÍTULOS SEMELHANTES -->
   <section class="live-tv-container" id="searchContainer" style="display: none;">
     <div class="search-page-header">
-      <h1 style="font-size: 30px; font-weight: 800;" id="searchTitle">Resultados</h1>
+      <div>
+        <h1 style="font-size: 30px; font-weight: 800;" id="searchTitle">Resultados</h1>
+        <p style="color: #aaa; font-size: 14px; margin-top: 4px;" id="searchStatusSubtitle"></p>
+      </div>
       <button class="btn btn-secondary btn-sm" id="searchBackBtn" style="display:none;">← Voltar ao Início</button>
     </div>
+
+    <!-- Grid de Resultados Exatos ou Principais -->
     <div class="channels-grid" id="searchGrid" style="grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));"></div>
+
+    <!-- Seção de Títulos Semelhantes & Sugestões Estilo Netflix -->
+    <div class="search-similar-section" id="searchSimilarSection" style="display: none; margin-top: 40px;">
+      <div class="section-header" style="margin-bottom: 16px;">
+        <h2 class="section-title" id="searchSimilarTitle">✨ Títulos Semelhantes & Sugestões</h2>
+      </div>
+      <div class="channels-grid" id="searchSimilarGrid" style="grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));"></div>
+    </div>
   </section>
 
   <!-- Modal do Trailer Oficial (YouTube Player) -->
@@ -577,8 +632,8 @@
   </div>
 
   <!-- Scripts -->
-  <script src="/static/js/api.js?v=6.0"></script>
-  <script src="/static/js/player.js?v=6.0"></script>
-  <script src="/static/js/app.js?v=6.0"></script>
+  <script src="/static/js/api.js?v=7.0"></script>
+  <script src="/static/js/player.js?v=7.0"></script>
+  <script src="/static/js/app.js?v=7.0"></script>
 </body>
 </html>

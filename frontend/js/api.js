@@ -76,10 +76,25 @@ const API = {
     return await this.request(`/api/media/season/${tvId}/${seasonNumber}`);
   },
 
-  async search(query) {
-    if (!query) return [];
-    const data = await this.request(`/api/media/search?q=${encodeURIComponent(query)}`);
+  async getCategories() {
+    const data = await this.request('/api/media/categories');
+    return data?.categories || [];
+  },
+
+  async getAnimeSagas(page = 1) {
+    const data = await this.request(`/api/media/animes/sagas?page=${page}`);
     return data?.results || [];
+  },
+
+  async getAnimeHits(page = 1) {
+    const data = await this.request(`/api/media/animes/hits?page=${page}`);
+    return data?.results || [];
+  },
+
+  async search(query, page = 1) {
+    if (!query) return { results: [], similar: [], exact_match: true };
+    const data = await this.request(`/api/media/search?q=${encodeURIComponent(query)}&page=${page}`);
+    return data || { results: [], similar: [], exact_match: true };
   },
 
   // VOD Streams

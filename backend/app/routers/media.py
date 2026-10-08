@@ -56,11 +56,23 @@ def get_season(tv_id: str, season_number: int):
 def get_recommendations(profile_id: int = Query(1, ge=1)):
     return {"results": tmdb_service.get_personalized_recommendations(profile_id)}
 
+@router.get("/categories")
+def get_categories():
+    return {"categories": tmdb_service.get_categories_list()}
+
+@router.get("/animes/sagas")
+def get_anime_sagas(page: int = Query(1, ge=1)):
+    return {"results": tmdb_service.get_anime_sagas(page)}
+
+@router.get("/animes/hits")
+def get_anime_hits(page: int = Query(1, ge=1)):
+    return {"results": tmdb_service.get_anime_hits(page)}
+
 @router.get("/category/{category_key}")
 def get_category(category_key: str, page: int = Query(1, ge=1)):
     return tmdb_service.get_category_items(category_key, page)
 
 @router.get("/search")
 def search(q: str = Query(..., min_length=1), page: int = Query(1, ge=1)):
-    return {"results": tmdb_service.search_multi(q, page)}
+    return tmdb_service.smart_search(q, page)
 
