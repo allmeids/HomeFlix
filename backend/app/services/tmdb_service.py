@@ -411,7 +411,7 @@ COLLECTIONS_CONFIG: Dict[str, Dict[str, Any]] = {
             {"tmdb_id": 505642, "media_type": "movie", "order": 37, "order_title": "37. Pantera Negra: Wakanda Para Sempre (2022)", "chronological_note": "A rainha Ramonda e Shuri defendem Wakanda contra Namor e o reino subaquático de Talokan."},
             {"tmdb_id": 640146, "media_type": "movie", "order": 38, "order_title": "38. Homem-Formiga e a Vespa: Quantumania (2023)", "chronological_note": "A família Pym-Lang é sugada para o Reino Quântico e trava confronto com Kang, o Conquistador."},
             {"tmdb_id": 447365, "media_type": "movie", "order": 39, "order_title": "39. Guardiões da Galáxia Vol. 3 (2023)", "chronological_note": "A missão final dos Guardiões para salvar Rocket Raccoon das garras do Alto Evolucionário."},
-            {"tmdb_id": 114479, "media_type": "tv", "order": 40, "order_title": "40. Invasão Secreta (Série Marvel)", "chronological_note": "Nick Fury descobre uma infiltração clandestina de Skrulls metamorfos nos altos escalões globais."},
+            {"tmdb_id": 114472, "media_type": "tv", "order": 40, "order_title": "40. Invasão Secreta (Série Marvel)", "chronological_note": "Nick Fury descobre uma infiltração clandestina de Skrulls metamorfos nos altos escalões globais."},
             {"tmdb_id": 609681, "media_type": "movie", "order": 41, "order_title": "41. As Marvels (The Marvels - 2023)", "chronological_note": "Carol Danvers, Kamala Khan e Monica Rambeau têm seus poderes entrelaçados contra Dar-Benn."},
             {"tmdb_id": 533535, "media_type": "movie", "order": 42, "order_title": "42. Deadpool & Wolverine (2024)", "chronological_note": "Wade Wilson é recrutado pela AVT para salvar sua linha do tempo ao lado de Logan."}
         ]
@@ -468,9 +468,9 @@ COLLECTIONS_CONFIG: Dict[str, Dict[str, Any]] = {
             {"tmdb_id": 126963, "media_type": "movie", "order": 3, "order_title": "3. Dragon Ball Z: A Batalha dos Deuses (2013)", "chronological_note": "O despertar de Bills, o Deus da Destruição, e a transformação no Deus Super Saiyajin."},
             {"tmdb_id": 303857, "media_type": "movie", "order": 4, "order_title": "4. Dragon Ball Z: O Renascimento de 'F' (2015)", "chronological_note": "O retorno de Freeza em sua forma dourada e a revelação do Super Saiyajin Blue."},
             {"tmdb_id": 62715, "media_type": "tv", "order": 5, "order_title": "5. Dragon Ball Super (Série Completa)", "chronological_note": "O Torneio dos Universos, a ameaça de Goku Black e o Instinto Superior no Torneio do Poder."},
-            {"tmdb_id": 547016, "media_type": "movie", "order": 6, "order_title": "6. Dragon Ball Super: Broly (2018)", "chronological_note": "A canonização definitiva do lendário Saiyajin Broly em uma batalha insana no Ártico."},
+            {"tmdb_id": 503314, "media_type": "movie", "order": 6, "order_title": "6. Dragon Ball Super: Broly (2018)", "chronological_note": "A canonização definitiva do lendário Saiyajin Broly em uma batalha insana no Ártico."},
             {"tmdb_id": 610150, "media_type": "movie", "order": 7, "order_title": "7. Dragon Ball Super: Super Hero (2022)", "chronological_note": "Gohan e Piccolo despertam novos poderes supremos contra os Androides Gamma e Cell Max."},
-            {"tmdb_id": 236474, "media_type": "tv", "order": 8, "order_title": "8. Dragon Ball Daima (2024)", "chronological_note": "Nova aventura épica canônica escrita por Akira Toriyama no Reino Demoníaco."},
+            {"tmdb_id": 236994, "media_type": "tv", "order": 8, "order_title": "8. Dragon Ball Daima (2024)", "chronological_note": "Nova aventura épica canônica escrita por Akira Toriyama no Reino Demoníaco."},
             {"tmdb_id": 12697, "media_type": "tv", "order": 9, "order_title": "9. Dragon Ball GT (História Alternativa Especial)", "chronological_note": "A jornada clássica pelas Esferas Negras e o icônico Super Saiyajin 4."}
         ]
     },
@@ -563,13 +563,13 @@ COLLECTIONS_CONFIG: Dict[str, Dict[str, Any]] = {
         "backdrop": "/8gVwOQvWwR4Mv71W0s917i2V22e.jpg",
         "description": "Os defensores da deusa Atena na luta com suas armaduras de bronze e ouro pelas 12 Casas e Submundo.",
         "items": [
-            {"tmdb_id": 14389, "media_type": "tv", "order": 1, "order_title": "1. Cavaleiros do Zodíaco (Série Clássica 1986)", "chronological_note": "A Guerra Galáctica, as 12 Casas do Santuário, Asgard e o Templo de Poseidon."},
-            {"tmdb_id": 42200, "media_type": "tv", "order": 2, "order_title": "2. Saint Seiya: A Saga de Hades (Santuário, Inferno & Elíseos)", "chronological_note": "A invasão dos Espectros, o Muro das Lamentações e a batalha com Armaduras Divinas nos Elíseos."},
-            {"tmdb_id": 31742, "media_type": "tv", "order": 3, "order_title": "3. Os Cavaleiros do Zodíaco: The Lost Canvas", "chronological_note": "A antiga Guerra Santa do século XVIII entre Tenma de Pégaso, Alone e Sasha."},
-            {"tmdb_id": 62452, "media_type": "tv", "order": 4, "order_title": "4. Saint Seiya: Alma de Ouro (Soul of Gold)", "chronological_note": "Os 12 Cavaleiros de Ouro ressuscitam em Asgard e despertam suas Armaduras Divinas."},
-            {"tmdb_id": 24383, "media_type": "movie", "order": 5, "order_title": "5. Cavaleiros do Zodíaco: Prólogo do Céu", "chronological_note": "O confronto pós-Hades contra os Anjos Celestiais e a deusa Ártemis."},
-            {"tmdb_id": 242095, "media_type": "movie", "order": 6, "order_title": "6. Os Cavaleiros do Zodíaco: A Lenda do Santuário (3D)", "chronological_note": "A releitura cinematográfica das Doze Casas com computação gráfica espetacular."},
-            {"tmdb_id": 45042, "media_type": "tv", "order": 7, "order_title": "7. Cavaleiros do Zodíaco: Saint Seiya Ômega", "chronological_note": "Kouga de Pégaso lidera a nova geração de cavaleiros contra Marte e Pallas."}
+            {"tmdb_id": 42444, "media_type": "tv", "order": 1, "order_title": "1. Cavaleiros do Zodíaco (Série Clássica 1986)", "chronological_note": "A Guerra Galáctica, as 12 Casas do Santuário, Asgard e o Templo de Poseidon."},
+            {"tmdb_id": 67199, "media_type": "tv", "order": 2, "order_title": "2. Saint Seiya: A Saga de Hades (Santuário, Inferno & Elíseos)", "chronological_note": "A invasão dos Espectros, o Muro das Lamentações e a batalha com Armaduras Divinas nos Elíseos."},
+            {"tmdb_id": 61389, "media_type": "tv", "order": 3, "order_title": "3. Os Cavaleiros do Zodíaco: The Lost Canvas", "chronological_note": "A antiga Guerra Santa do século XVIII entre Tenma de Pégaso, Alone e Sasha."},
+            {"tmdb_id": 62428, "media_type": "tv", "order": 4, "order_title": "4. Saint Seiya: Alma de Ouro (Soul of Gold)", "chronological_note": "Os 12 Cavaleiros de Ouro ressuscitam em Asgard e despertam suas Armaduras Divinas."},
+            {"tmdb_id": 50253, "media_type": "movie", "order": 5, "order_title": "5. Cavaleiros do Zodíaco: Prólogo do Céu", "chronological_note": "O confronto pós-Hades contra os Anjos Celestiais e a deusa Ártemis."},
+            {"tmdb_id": 287590, "media_type": "movie", "order": 6, "order_title": "6. Os Cavaleiros do Zodíaco: A Lenda do Santuário (3D)", "chronological_note": "A releitura cinematográfica das Doze Casas com computação gráfica espetacular."},
+            {"tmdb_id": 44317, "media_type": "tv", "order": 7, "order_title": "7. Cavaleiros do Zodíaco: Saint Seiya Ômega", "chronological_note": "Kouga de Pégaso lidera a nova geração de cavaleiros contra Marte e Pallas."}
         ]
     },
     "naruto": {
@@ -581,7 +581,7 @@ COLLECTIONS_CONFIG: Dict[str, Dict[str, Any]] = {
         "description": "A história de superação de Naruto Uzumaki em sua jornada completa para ser respeitado e se tornar Hokage.",
         "items": [
             {"tmdb_id": 46260, "media_type": "tv", "order": 1, "order_title": "1. Naruto (Clássico)", "chronological_note": "Da infância na Academia aos Exames Chunin, Busca por Tsunade e o resgate de Sasuke."},
-            {"tmdb_id": 14949, "media_type": "movie", "order": 2, "order_title": "2. Naruto: O Confronto Ninja no País da Neve", "chronological_note": "Missão de escolta de alta periculosidade do Time 7 no País da Neve."},
+            {"tmdb_id": 16907, "media_type": "movie", "order": 2, "order_title": "2. Naruto: O Confronto Ninja no País da Neve", "chronological_note": "Missão de escolta de alta periculosidade do Time 7 no País da Neve."},
             {"tmdb_id": 31910, "media_type": "tv", "order": 3, "order_title": "3. Naruto Shippuden (Série Completa)", "chronological_note": "O retorno de Naruto mais forte, a ameaça da Akatsuki, Pain e a 4ª Grande Guerra Ninja."},
             {"tmdb_id": 317442, "media_type": "movie", "order": 4, "order_title": "4. The Last: Naruto o Filme", "chronological_note": "O filme canônico que narra o romance de Naruto e Hinata e a ameaça de Toneri Otsutsuki na Lua."},
             {"tmdb_id": 347201, "media_type": "movie", "order": 5, "order_title": "5. Boruto: Naruto o Filme", "chronological_note": "Naruto como 7º Hokage e seu filho Boruto enfrentando os invasores Otsutsuki."},
@@ -682,7 +682,7 @@ COLLECTIONS_CONFIG: Dict[str, Dict[str, Any]] = {
             {"tmdb_id": 246655, "media_type": "movie", "order": 3, "order_title": "3. X-Men: Apocalipse (1983)", "chronological_note": "O primeiro mutante da história acorda no Egito com seus Quatro Cavaleiros."},
             {"tmdb_id": 36657, "media_type": "movie", "order": 4, "order_title": "4. X-Men: O Filme (2000)", "chronological_note": "Wolverine e Vampira ingressam na Mansão X contra a Irmandade de Magneto."},
             {"tmdb_id": 36658, "media_type": "movie", "order": 5, "order_title": "5. X-Men 2 (2003)", "chronological_note": "Aliança temporária entre Xavier e Magneto contra o coronel William Stryker."},
-            {"tmdb_id": 2108, "media_type": "movie", "order": 6, "order_title": "6. X-Men: O Confronto Final (2006)", "chronological_note": "A cura mutante e o surgimento descontrolado da Fênix Negra."},
+            {"tmdb_id": 36668, "media_type": "movie", "order": 6, "order_title": "6. X-Men: O Confronto Final (2006)", "chronological_note": "A cura mutante e o surgimento descontrolado da Fênix Negra."},
             {"tmdb_id": 293660, "media_type": "movie", "order": 7, "order_title": "7. Deadpool (2016)", "chronological_note": "Wade Wilson ganha fator de cura acelerado e senso de humor ácido."},
             {"tmdb_id": 383498, "media_type": "movie", "order": 8, "order_title": "8. Deadpool 2 (2018)", "chronological_note": "Wade forma a X-Force para proteger o jovem Russell de Cable."},
             {"tmdb_id": 263115, "media_type": "movie", "order": 9, "order_title": "9. Logan (2029)", "chronological_note": "O futuro desolador onde um envelhecido Wolverine protege a jovem Laura (X-23)."},
@@ -697,12 +697,12 @@ COLLECTIONS_CONFIG: Dict[str, Dict[str, Any]] = {
         "backdrop": "/w0eKUOEog2ImtktCHAMUZws8qif.jpg",
         "description": "As hilárias e emocionantes aventuras do ogro mais querido do cinema e seu companheiro Gato de Botas.",
         "items": [
-            {"tmdb_id": 68718, "media_type": "movie", "order": 1, "order_title": "1. Gato de Botas (2011)", "chronological_note": "A origem do felino espadachim antes de conhecer Shrek e Burro."},
+            {"tmdb_id": 417859, "media_type": "movie", "order": 1, "order_title": "1. Gato de Botas (2011)", "chronological_note": "A origem do felino espadachim antes de conhecer Shrek e Burro."},
             {"tmdb_id": 808, "media_type": "movie", "order": 2, "order_title": "2. Shrek (2001)", "chronological_note": "O ogro parte para resgatar a Princesa Fiona do castelo do Dragão para Lord Farquaad."},
             {"tmdb_id": 809, "media_type": "movie", "order": 3, "order_title": "3. Shrek 2 (2004)", "chronological_note": "Visita aos sogros no Reino de Tão Tão Distante com a Fada Madrinha e Príncipe Encantado."},
             {"tmdb_id": 810, "media_type": "movie", "order": 4, "order_title": "4. Shrek Terceiro (2007)", "chronological_note": "A busca pelo herdeiro Arthur Pendragon para assumir o trono de Tão Tão Distante."},
             {"tmdb_id": 10192, "media_type": "movie", "order": 5, "order_title": "5. Shrek Para Sempre (2010)", "chronological_note": "Rumpelstiltskin cria uma realidade paralela onde Shrek nunca nasceu."},
-            {"tmdb_id": 597433, "media_type": "movie", "order": 6, "order_title": "6. Gato de Botas 2: O Último Pedido (2022)", "chronological_note": "Em sua nona e última vida, o Gato busca a Estrela dos Desejos fugindo da Morte."}
+            {"tmdb_id": 315162, "media_type": "movie", "order": 6, "order_title": "6. Gato de Botas 2: O Último Pedido (2022)", "chronological_note": "Em sua nona e última vida, o Gato busca a Estrela dos Desejos fugindo da Morte."}
         ]
     },
     "jurassic": {

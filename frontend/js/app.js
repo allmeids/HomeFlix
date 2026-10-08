@@ -1549,7 +1549,6 @@ class HomeFlixApp {
 
     const res = await API.resolveStreams(mediaType, tmdbId, season, episode);
     const streams = res?.streams || [];
-    const hevcSupported = this.player ? this.player.isHevcSupported() : false;
 
     grid.innerHTML = '';
     if (streams.length === 0) {
@@ -1560,10 +1559,7 @@ class HomeFlixApp {
     streams.forEach(s => {
       const card = document.createElement('div');
       card.className = 'source-card';
-      let qLabel = s.quality || 'HD 1080p';
-      if (!hevcSupported && qLabel.includes('4K')) {
-        qLabel += ' (Requer TV/HEVC)';
-      }
+      const qLabel = s.quality || 'HD 1080p';
       card.innerHTML = `
         <div class="source-info-col">
           <div class="source-quality-badge">${qLabel}</div>
@@ -1627,16 +1623,6 @@ class HomeFlixApp {
       return;
     }
 
-    // Se o navegador não suporta HEVC (ex: Chrome sem codec ou Linux), evita auto-selecionar 4K que causa tela preta
-    const canPlayHevc = this.player ? this.player.isHevcSupported() : false;
-    if (!canPlayHevc && bestStream.quality && bestStream.quality.includes('4K')) {
-      const compatible1080 = streams.find(s => !s.quality.includes('4K') && s.audio === bestStream.audio)
-                          || streams.find(s => !s.quality.includes('4K'));
-      if (compatible1080) {
-        console.log('[HomeFlix] 4K HEVC não suportado nativamente neste navegador. Auto-selecionando 1080p compatível:', compatible1080.label);
-        bestStream = compatible1080;
-      }
-    }
 
     // Fecha o modal e inicia o player instantaneamente
     const detailsModal = document.getElementById('detailsModal');

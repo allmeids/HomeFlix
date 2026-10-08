@@ -359,17 +359,12 @@ class HomeFlixPlayer {
 
     // Popula seletor de fontes
     this.sourceSelector.innerHTML = '';
-    const hevcSupported = this.isHevcSupported();
     if (this.sources.length > 0) {
       this.sourceSelector.style.display = 'block';
       this.sources.forEach(s => {
         const opt = document.createElement('option');
         opt.value = s.url;
-        let suffix = '';
-        if (!hevcSupported && s.quality && s.quality.includes('4K')) {
-          suffix = ' ⚠️ (Requer TV/HEVC)';
-        }
-        opt.textContent = `${s.quality || 'HD'} • ${s.audio || 'Áudio Principal'}${suffix}`;
+        opt.textContent = `${s.quality || 'HD'} • ${s.audio || 'Áudio Principal'}`;
         if (s.url === options.currentStreamUrl) opt.selected = true;
         this.sourceSelector.appendChild(opt);
       });
@@ -485,11 +480,7 @@ class HomeFlixPlayer {
   }
 
   tryNextSource(resumeTime = 0, reason = '') {
-    const hevcSupported = this.isHevcSupported();
-    const nextSource = this.sources.find(s => 
-      !this.failedUrls.has(s.url) && 
-      (!s.quality.includes('4K') || hevcSupported)
-    );
+    const nextSource = this.sources.find(s => !this.failedUrls.has(s.url));
 
     if (nextSource) {
       this.showSpinner('Conectando ao stream...');

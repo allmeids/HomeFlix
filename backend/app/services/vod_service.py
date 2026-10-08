@@ -69,7 +69,7 @@ def parse_audio(title: str, name: str) -> str:
 import concurrent.futures
 
 _STREAM_CACHE: Dict[str, Any] = {}
-_STREAM_CACHE_TTL = 900  # 15 minutos
+_STREAM_CACHE_TTL = 180  # 3 minutos (mantém tokens e links CDN sempre válidos e frescos)
 
 def fetch_froststream(media_type: str, imdb_id: str, season: Optional[int] = None, episode: Optional[int] = None) -> List[Dict[str, Any]]:
     if media_type in ("movie", "filme"):
@@ -366,7 +366,7 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
         # Resolução e fidelidade visual
         q = item.get("quality", "")
         if "4K" in q:
-            score += 160
+            score += 180
         elif "1080p" in q:
             score += 110
         elif "720p" in q:
