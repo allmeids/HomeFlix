@@ -159,10 +159,25 @@ def fetch_embedplayer(media_type: str, imdb_id: str, season: Optional[int] = Non
                 gv_json = r_gv.json()
                 m3u8 = gv_json.get("securedLink")
                 if m3u8:
+                    # Inspeciona a resolução real do master.m3u8 para não rotular streams de 720p/360p falsamente como 1080p
+                    real_quality = "720p HD"
+                    try:
+                        r_m3u8_check = _vod_session.get(m3u8, headers={"Referer": "https://embedplayer2.xyz/", "User-Agent": "Mozilla/5.0"}, timeout=3.5)
+                        if r_m3u8_check.status_code == 200:
+                            m3u8_txt = r_m3u8_check.text
+                            if "1920x1080" in m3u8_txt or 'NAME="1080p"' in m3u8_txt:
+                                real_quality = "1080p Full HD"
+                            elif "1280x720" in m3u8_txt or 'NAME="720p"' in m3u8_txt:
+                                real_quality = "720p HD"
+                            elif "854x480" in m3u8_txt or "640x360" in m3u8_txt:
+                                real_quality = "SD / 480p"
+                    except Exception:
+                        pass
+
                     proxy_m3u8 = f"/api/proxy/stream?url={urllib.parse.quote(m3u8, safe='')}"
                     streams.append({
-                        "name": f"EmbedPlayer VIP #{idx+1} (1080p DUAL)",
-                        "title": "🎬 1080p WEB-DL Full HD • Português (Dublado)",
+                        "name": f"EmbedPlayer VIP #{idx+1} ({real_quality} DUAL)",
+                        "title": f"🎬 {real_quality} • Português (Dublado)",
                         "url": proxy_m3u8,
                         "_provider": "EmbedPlayer",
                         "behaviorHints": {"notWebReady": False}
@@ -422,14 +437,14 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
         else:
             score += 80   # Bônus para versão digital de alta fidelidade
 
-        # Bônus de rapidez e CDN estável
+        # Bônus de fidelidade e estabilidade (FrostStream tem bitrate e fidelidade visual muito superior a embeds re-comprimidos)
         prov = item.get("provider", "")
-        if prov == "EmbedPlayer":
-            score += 30
+        if prov == "FrostStream":
+            score += 35
         elif prov == "SuperStream":
-            score += 25
-        elif prov == "FrostStream":
-            score += 20
+            score += 30
+        elif prov == "EmbedPlayer":
+            score += 15
 
         return score
 

@@ -639,6 +639,24 @@ class HomeFlixPlayer {
           });
         }
       };
+
+      this.video.onerror = (err) => {
+        const mediaError = this.video.error;
+        console.warn('[Video Error]', mediaError, targetStreamUrl);
+        this.clearStallWatchdog();
+
+        // Código 4 = MEDIA_ERR_SRC_NOT_SUPPORTED (geralmente codec HEVC/4K não suportado no Linux/Chrome)
+        const isCodecUnsupported = mediaError && (mediaError.code === 4 || mediaError.code === 3);
+        if (isCodecUnsupported && (url.includes('4K') || targetStreamUrl.includes('4K') || targetStreamUrl.includes('141207'))) {
+          if (window.app && typeof window.app.showToast === 'function') {
+            window.app.showToast('ℹ️ Navegador sem suporte ao codec HEVC do vídeo 4K. Alternando para a melhor fonte disponível.', 4500);
+          }
+        }
+
+        this.failedUrls.add(url);
+        this.failedUrls.add(targetStreamUrl);
+        this.tryNextSource(resumeTime, 'Erro ao carregar codec/mídia');
+      };
     }
   }
 
