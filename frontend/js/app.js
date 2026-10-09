@@ -1132,6 +1132,9 @@ class HomeFlixApp {
     const previewEl = document.getElementById('profileAvatarPreview');
     const sectionsContainer = document.getElementById('avatarPickerSectionsContainer');
     const categoriesTrack = document.getElementById('avatarCategoriesTrack');
+    const franchiseSelect = document.getElementById('avatarFranchiseSelect');
+    const chipsNavLeft = document.getElementById('avatarChipsNavLeft');
+    const chipsNavRight = document.getElementById('avatarChipsNavRight');
     const searchInput = document.getElementById('avatarSearchInput');
     const clearSearchBtn = document.getElementById('avatarClearSearchBtn');
     const countEl = document.getElementById('avatarPickerCount');
@@ -1142,7 +1145,7 @@ class HomeFlixApp {
     footerBtns.style.display = 'none';
     formBox.style.display = 'block';
 
-    this.selectedAvatar = profileToEdit?.avatar || 'stranger_things_eleven';
+    this.selectedAvatar = profileToEdit?.avatar || 'stranger_things_s1_eleven';
     this.editingProfileId = profileToEdit ? profileToEdit.id : null;
 
     if (profileToEdit) {
@@ -1173,166 +1176,198 @@ class HomeFlixApp {
       updatePreview();
     };
 
-    // Carrega o catálogo completo de 291 avatares da Netflix
+    // 1. Carrega catálogo de 291 avatares oficiais
     const catalog = await this.getAvatarCatalog();
     const categories = catalog.categories || [];
     const allAvatars = catalog.avatars || [];
 
-    let activeCategory = 'all';
+    if (countEl) countEl.textContent = `${allAvatars.length} personagens`;
 
-    const renderGridItems = (items, targetEl) => {
-      items.forEach(av => {
-        const avBtn = document.createElement('div');
-        const isSelected = av.id === this.selectedAvatar || av.img === this.selectedAvatar;
-        avBtn.className = `avatar-catalog-item ${isSelected ? 'selected' : ''}`;
-        avBtn.style.backgroundImage = `url('${av.img}')`;
-        avBtn.title = `${av.name} (${av.category_name || ''})`;
-        avBtn.setAttribute('tabindex', '0');
-        avBtn.setAttribute('role', 'button');
-
-        const selectThis = () => {
-          this.selectedAvatar = av.id;
-          if (sectionsContainer) {
-            sectionsContainer.querySelectorAll('.avatar-catalog-item').forEach(b => b.classList.remove('selected'));
-          }
-          avBtn.classList.add('selected');
-          updatePreview();
-        };
-
-        avBtn.onclick = selectThis;
-        avBtn.onkeydown = (e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            selectThis();
-          }
-        };
-
-        targetEl.appendChild(avBtn);
-      });
+    // 2. Helper de renderização rápida de card com <img> nativo (zero lag de CPU)
+    const renderCardHtml = (av) => {
+      const isSelected = av.id === this.selectedAvatar || av.img === this.selectedAvatar;
+      return `
+        <button type="button" class="avatar-card ${isSelected ? 'selected' : ''}" data-id="${av.id}" title="${av.name} (${av.category_name || ''})" aria-label="${av.name}">
+          <img src="${av.img}" loading="lazy" decoding="async" class="avatar-card-img" alt="${av.name}" />
+        </button>
+      `;
     };
 
-    const renderSections = (selectedCatId = 'all', filterText = '') => {
+    // 3. Renderiza todos os Trilhos Horizontais de Franquias (Estilo Netflix & Disney+) em lote
+    const renderAllRails = () => {
       if (!sectionsContainer) return;
-      sectionsContainer.innerHTML = '';
-
-      const query = filterText.trim().toLowerCase();
-
-      // MODO BUSCA: pesquisa instantânea em todos os 291 avatares
-      if (query) {
-        const matched = allAvatars.filter(av => 
-          av.name.toLowerCase().includes(query) || 
-          (av.category_name && av.category_name.toLowerCase().includes(query)) ||
-          av.id.toLowerCase().includes(query)
-        );
-
-        if (countEl) countEl.textContent = `${matched.length} encontrados`;
-
-        if (matched.length === 0) {
-          sectionsContainer.innerHTML = `
-            <div style="text-align: center; color: #888; padding: 36px 12px;">
-              <div style="font-size: 32px; margin-bottom: 8px;">🔍</div>
-              <div>Nenhum personagem encontrado para "<strong>${filterText}</strong>"</div>
-              <div style="font-size: 12px; color: #666; margin-top: 6px;">Dica: tente pesquisar por Eleven, Wandinha, Luffy, Round 6, Dalí...</div>
+      let html = '';
+      categories.forEach(cat => {
+        if (!cat.items || cat.items.length === 0) return;
+        html += `
+          <div class="avatar-rail" id="avatarRail_${cat.id}" data-cat="${cat.id}">
+            <div class="avatar-rail-header">
+              <div class="avatar-rail-title-group">
+                <span class="avatar-rail-title">${cat.name}</span>
+                <span class="avatar-rail-badge">${cat.items.length} ÍCONES</span>
+              </div>
+              <div class="avatar-rail-nav">
+                <button type="button" class="avatar-rail-nav-btn avatar-rail-prev" data-rail-id="avatarTrack_${cat.id}" title="Voltar">‹</button>
+                <button type="button" class="avatar-rail-nav-btn avatar-rail-next" data-rail-id="avatarTrack_${cat.id}" title="Avançar">›</button>
+              </div>
             </div>
-          `;
-          return;
-        }
+            <div class="avatar-rail-track" id="avatarTrack_${cat.id}">
+              ${cat.items.map(av => renderCardHtml(av)).join('')}
+            </div>
+          </div>
+        `;
+      });
+      sectionsContainer.innerHTML = html;
+    };
 
-        const gridEl = document.createElement('div');
-        gridEl.className = 'avatar-section-grid';
-        renderGridItems(matched, gridEl);
-        sectionsContainer.appendChild(gridEl);
+    // 4. Renderiza resultados de busca instantânea em grade compacta
+    const renderSearchGrid = (query) => {
+      if (!sectionsContainer) return;
+      const q = query.trim().toLowerCase();
+      const matched = allAvatars.filter(av => 
+        av.name.toLowerCase().includes(q) || 
+        (av.category_name && av.category_name.toLowerCase().includes(q)) ||
+        av.id.toLowerCase().includes(q)
+      );
+
+      if (countEl) countEl.textContent = `${matched.length} encontrados`;
+
+      if (matched.length === 0) {
+        sectionsContainer.innerHTML = `
+          <div style="text-align: center; color: #888; padding: 36px 12px;">
+            <div style="font-size: 32px; margin-bottom: 8px;">🔍</div>
+            <div>Nenhum personagem encontrado para "<strong>${query}</strong>"</div>
+            <div style="font-size: 12px; color: #666; margin-top: 6px;">Tente pesquisar por Eleven, Wandinha, Luffy, Round 6, Dalí...</div>
+          </div>
+        `;
         return;
       }
 
-      // MODO CATEGORIA ÚNICA ESPECÍFICA
-      if (selectedCatId !== 'all') {
-        const cat = categories.find(c => c.id === selectedCatId);
-        if (cat) {
-          if (countEl) countEl.textContent = `${cat.items.length} personagens`;
-          const secEl = document.createElement('div');
-          secEl.className = 'avatar-category-section';
-
-          const title = document.createElement('div');
-          title.className = 'avatar-section-title';
-          title.textContent = `${cat.name} (${cat.items.length})`;
-          secEl.appendChild(title);
-
-          const gridEl = document.createElement('div');
-          gridEl.className = 'avatar-section-grid';
-          renderGridItems(cat.items, gridEl);
-          secEl.appendChild(gridEl);
-
-          sectionsContainer.appendChild(secEl);
-          return;
-        }
-      }
-
-      // MODO TODOS: agrupado ordenadamente por cada série com cabeçalho
-      if (countEl) countEl.textContent = `${allAvatars.length} personagens`;
-      categories.forEach(cat => {
-        if (!cat.items || cat.items.length === 0) return;
-
-        const secEl = document.createElement('div');
-        secEl.className = 'avatar-category-section';
-
-        const title = document.createElement('div');
-        title.className = 'avatar-section-title';
-        title.textContent = `${cat.name} (${cat.items.length})`;
-        secEl.appendChild(title);
-
-        const gridEl = document.createElement('div');
-        gridEl.className = 'avatar-section-grid';
-        renderGridItems(cat.items, gridEl);
-        secEl.appendChild(gridEl);
-
-        sectionsContainer.appendChild(secEl);
-      });
+      sectionsContainer.innerHTML = `
+        <div class="avatar-search-grid">
+          ${matched.map(av => renderCardHtml(av)).join('')}
+        </div>
+      `;
     };
 
-    // Renderizar Abas de Categorias / Séries Netflix
-    if (categoriesTrack) {
-      categoriesTrack.innerHTML = '';
+    // 5. Configurar Dropdown de Franquia (Estilo Disney+)
+    if (franchiseSelect) {
+      franchiseSelect.innerHTML = `<option value="all">🍿 Todas as Franquias & Séries (${allAvatars.length})</option>` +
+        categories.map(c => `<option value="${c.id}">${c.name} (${c.items?.length || 0})</option>`).join('');
 
-      const makePill = (id, label, count) => {
-        const pill = document.createElement('button');
-        pill.type = 'button';
-        pill.className = `avatar-category-pill ${id === activeCategory ? 'active' : ''}`;
-        pill.textContent = count !== undefined ? `${label} (${count})` : label;
-        pill.onclick = () => {
-          activeCategory = id;
-          categoriesTrack.querySelectorAll('.avatar-category-pill').forEach(p => p.classList.remove('active'));
-          pill.classList.add('active');
-          if (searchInput) {
-            searchInput.value = '';
-            if (clearSearchBtn) clearSearchBtn.style.display = 'none';
+      franchiseSelect.onchange = () => {
+        const selectedCat = franchiseSelect.value;
+        // Sincroniza chips
+        if (categoriesTrack) {
+          categoriesTrack.querySelectorAll('.avatar-category-pill').forEach(p => {
+            p.classList.toggle('active', p.dataset.cat === selectedCat);
+          });
+        }
+        if (searchInput && searchInput.value.trim()) {
+          searchInput.value = '';
+          if (clearSearchBtn) clearSearchBtn.style.display = 'none';
+          renderAllRails();
+        }
+        if (selectedCat === 'all') {
+          const scrollBox = document.getElementById('avatarCatalogScrollBox');
+          if (scrollBox) scrollBox.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+          const rail = document.getElementById(`avatarRail_${selectedCat}`);
+          if (rail) {
+            rail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
           }
-          renderSections(activeCategory, '');
-        };
-        return pill;
+        }
       };
-
-      // Pill "Todos"
-      categoriesTrack.appendChild(makePill('all', 'Todos', allAvatars.length));
-
-      // Pills para cada show / categoria
-      categories.forEach(cat => {
-        categoriesTrack.appendChild(makePill(cat.id, cat.name, cat.items?.length));
-      });
     }
 
-    // Campo de Busca Instantânea com Debounce
+    // 6. Configurar Chips de Franquias (Estilo Disney+)
+    if (categoriesTrack) {
+      let chipsHtml = `<button type="button" class="avatar-category-pill active" data-cat="all">Todas (${allAvatars.length})</button>`;
+      categories.forEach(cat => {
+        chipsHtml += `<button type="button" class="avatar-category-pill" data-cat="${cat.id}">${cat.name} (${cat.items?.length || 0})</button>`;
+      });
+      categoriesTrack.innerHTML = chipsHtml;
+
+      categoriesTrack.onclick = (e) => {
+        const pill = e.target.closest('.avatar-category-pill');
+        if (!pill) return;
+        const catId = pill.dataset.cat;
+        categoriesTrack.querySelectorAll('.avatar-category-pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+
+        if (franchiseSelect) franchiseSelect.value = catId;
+
+        if (searchInput && searchInput.value.trim()) {
+          searchInput.value = '';
+          if (clearSearchBtn) clearSearchBtn.style.display = 'none';
+          renderAllRails();
+        }
+
+        if (catId === 'all') {
+          const scrollBox = document.getElementById('avatarCatalogScrollBox');
+          if (scrollBox) scrollBox.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+          const rail = document.getElementById(`avatarRail_${catId}`);
+          if (rail) {
+            rail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+        }
+      };
+
+      if (chipsNavLeft) {
+        chipsNavLeft.onclick = () => categoriesTrack.scrollBy({ left: -200, behavior: 'smooth' });
+      }
+      if (chipsNavRight) {
+        chipsNavRight.onclick = () => categoriesTrack.scrollBy({ left: 200, behavior: 'smooth' });
+      }
+    }
+
+    // 7. Event Delegation no container de avatares (Zero overhead de memória)
+    if (sectionsContainer) {
+      sectionsContainer.onclick = (e) => {
+        // Seleção de card
+        const card = e.target.closest('.avatar-card');
+        if (card) {
+          const avatarId = card.dataset.id;
+          if (avatarId) {
+            this.selectedAvatar = avatarId;
+            sectionsContainer.querySelectorAll('.avatar-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            updatePreview();
+          }
+          return;
+        }
+
+        // Navegação de setas do trilho
+        const navBtn = e.target.closest('.avatar-rail-nav-btn');
+        if (navBtn) {
+          const trackId = navBtn.dataset.railId;
+          const track = document.getElementById(trackId);
+          if (track) {
+            const isPrev = navBtn.classList.contains('avatar-rail-prev');
+            track.scrollBy({ left: isPrev ? -280 : 280, behavior: 'smooth' });
+          }
+        }
+      };
+    }
+
+    // 8. Busca Instantânea com debounce suave
     if (searchInput) {
       searchInput.value = '';
       if (clearSearchBtn) clearSearchBtn.style.display = 'none';
 
-      let debounceTimer = null;
+      let searchDebounce = null;
       searchInput.oninput = () => {
         const q = searchInput.value.trim();
         if (clearSearchBtn) clearSearchBtn.style.display = q ? 'flex' : 'none';
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => {
-          renderSections(activeCategory, q);
+        clearTimeout(searchDebounce);
+        searchDebounce = setTimeout(() => {
+          if (q) {
+            renderSearchGrid(q);
+          } else {
+            if (countEl) countEl.textContent = `${allAvatars.length} personagens`;
+            renderAllRails();
+          }
         }, 40);
       };
 
@@ -1340,14 +1375,15 @@ class HomeFlixApp {
         clearSearchBtn.onclick = () => {
           searchInput.value = '';
           clearSearchBtn.style.display = 'none';
-          renderSections(activeCategory, '');
+          if (countEl) countEl.textContent = `${allAvatars.length} personagens`;
+          renderAllRails();
           searchInput.focus();
         };
       }
     }
 
-    // Render inicial
-    renderSections('all', '');
+    // Render inicial dos trilhos
+    renderAllRails();
   }
 
   /* ================================================================

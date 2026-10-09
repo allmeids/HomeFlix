@@ -19,7 +19,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/style.css?v=8.9">
+  <link rel="stylesheet" href="/static/css/style.css?v=9.0">
   <!-- HLS.js para streaming HLS/m3u8 no navegador -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -758,23 +758,50 @@
           </div>
         </div>
         
-        <!-- Seletor Avançado de Avatares com Categorias Netflix & Busca -->
+        <!-- Seletor de Avatares Estilo Netflix & Disney+ (Trilhos de Séries e Zero Lag) -->
         <div class="avatar-picker-wrapper">
           <div class="avatar-picker-header">
             <div class="avatar-picker-title-row">
-              <span class="avatar-picker-title">Escolha seu Avatar</span>
+              <span class="avatar-picker-title">Escolha um Ícone de Perfil</span>
               <span class="avatar-picker-count" id="avatarPickerCount">291 personagens</span>
             </div>
-            <div class="avatar-picker-search-bar">
-              <span class="avatar-search-icon">🔍</span>
-              <input type="text" id="avatarSearchInput" class="avatar-search-input" placeholder="Buscar personagem ou série (ex: Eleven, Wandinha, Luffy, Dalí, Geralt)..." />
-              <button type="button" id="avatarClearSearchBtn" class="avatar-clear-search-btn" style="display: none;">✕</button>
+            
+            <!-- Controles de Filtro & Busca Estilo Netflix / Disney+ -->
+            <div class="avatar-picker-controls-row">
+              <div class="avatar-picker-search-bar">
+                <span class="avatar-search-icon">🔍</span>
+                <input type="text" id="avatarSearchInput" class="avatar-search-input" placeholder="Buscar personagem ou série (ex: Eleven, Wandinha, Luffy, Dalí, Geralt)..." autocomplete="off" />
+                <button type="button" id="avatarClearSearchBtn" class="avatar-clear-search-btn" style="display: none;">✕</button>
+              </div>
+
+              <!-- Menu Seletor Rápido de Franquia Estilo Disney+ -->
+              <div class="avatar-franchise-select-wrapper">
+                <select id="avatarFranchiseSelect" class="avatar-franchise-select" aria-label="Filtrar por franquia">
+                  <option value="all">🍿 Todas as Franquias & Séries (291)</option>
+                  <option value="stranger_things">Stranger Things (35)</option>
+                  <option value="wednesday">Wandinha / Wednesday (25)</option>
+                  <option value="squid_game">Round 6 / Squid Game (27)</option>
+                  <option value="money_heist">La Casa de Papel (10)</option>
+                  <option value="the_witcher">The Witcher (18)</option>
+                  <option value="one_piece">One Piece (14)</option>
+                  <option value="arcane_games">Arcane, Animes & Games (40)</option>
+                  <option value="cobra_kai">Cobra Kai (24)</option>
+                  <option value="bridgerton">Bridgerton & Drama (30)</option>
+                  <option value="popular_series">Séries Populares & Sci-Fi (45)</option>
+                  <option value="netflix_classics">Clássicos Netflix (23)</option>
+                </select>
+              </div>
             </div>
-            <!-- Abas de Categorias / Franquias Estilo Netflix -->
-            <div class="avatar-categories-track" id="avatarCategoriesTrack"></div>
+
+            <!-- Trilho de Chips de Marcas / Séries Estilo Disney+ -->
+            <div class="avatar-chips-carousel-wrapper">
+              <button type="button" class="avatar-chips-nav-btn avatar-chips-nav-left" id="avatarChipsNavLeft" aria-label="Rolar para esquerda">‹</button>
+              <div class="avatar-categories-track" id="avatarCategoriesTrack"></div>
+              <button type="button" class="avatar-chips-nav-btn avatar-chips-nav-right" id="avatarChipsNavRight" aria-label="Rolar para direita">›</button>
+            </div>
           </div>
 
-          <!-- Área de rolagem dos avatares agrupados por categoria -->
+          <!-- Trilhos Horizontais de Avatares (Carrosséis por Franquia) -->
           <div class="avatar-catalog-scroll-box" id="avatarCatalogScrollBox">
             <div class="avatar-catalog-sections-container" id="avatarPickerSectionsContainer"></div>
           </div>
@@ -833,8 +860,8 @@
   </div>
 
   <!-- Scripts -->
-  <script src="/static/js/api.js?v=8.9"></script>
-  <script src="/static/js/player.js?v=8.9"></script>
-  <script src="/static/js/app.js?v=8.9"></script>
+  <script src="/static/js/api.js?v=9.0"></script>
+  <script src="/static/js/player.js?v=9.0"></script>
+  <script src="/static/js/app.js?v=9.0"></script>
 </body>
 </html>
