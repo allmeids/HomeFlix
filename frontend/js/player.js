@@ -71,6 +71,21 @@ class HomeFlixPlayer {
     this.spinner = document.getElementById('playerSpinner');
     this.spinnerText = document.getElementById('playerSpinnerText');
 
+    // Elementos de Pular Abertura & Próximo Episódio (Séries)
+    this.skipIntroBtn = document.getElementById('playerSkipIntroBtn');
+    this.nextEpCard = document.getElementById('playerNextEpisodeCard');
+    this.nextEpCountdownEl = document.getElementById('nextEpCountdown');
+    this.nextEpTitleEl = document.getElementById('nextEpTitle');
+    this.nextEpPlayNowBtn = document.getElementById('nextEpPlayNowBtn');
+    this.nextEpCancelBtn = document.getElementById('nextEpCancelBtn');
+    this.nextEpDismissed = false;
+    this._autoPlayTriggered = false;
+
+    // Elementos de Auto-Failover de Fontes
+    this.failoverBadge = document.getElementById('playerFailoverBadge');
+    this.failoverText = document.getElementById('playerFailoverText');
+    this.failoverTimer = null;
+
     this.initListeners();
   }
 
@@ -121,6 +136,33 @@ class HomeFlixPlayer {
     this.forwardBtn.addEventListener('click', () => {
       if (!this.isLive) {
         this.video.currentTime = Math.min(this.video.duration || 0, this.video.currentTime + 10);
+      }
+    });
+
+    // Pular Abertura (+85s)
+    if (this.skipIntroBtn) {
+      this.skipIntroBtn.addEventListener('click', () => {
+        if (!this.isLive && this.video) {
+          this.video.currentTime = Math.min(this.video.duration || 0, this.video.currentTime + 85);
+          if (window.app && typeof window.app.showToast === 'function') {
+            window.app.showToast('⏭️ Abertura pulada (+85s)', 2500);
+          }
+        }
+      });
+    }
+
+    // Card de Próximo Episódio
+    if (this.nextEpPlayNowBtn) {
+      this.nextEpPlayNowBtn.addEventListener('click', () => this.triggerNextEpisode());
+    }
+    if (this.nextEpCancelBtn) {
+      this.nextEpCancelBtn.addEventListener('click', () => this.dismissNextEpisode());
+    }
+
+    // Fim da Mídia (Auto-play do próximo episódio)
+    this.video.addEventListener('ended', () => {
+      if (this.currentMedia && this.currentMedia.mediaType === 'tv' && this.currentMedia.onNextEpisode) {
+        this.triggerNextEpisode();
       }
     });
 
@@ -309,6 +351,12 @@ class HomeFlixPlayer {
       this.subtitleDisplay.style.display = 'none';
     }
 
+    this.nextEpDismissed = false;
+    this._autoPlayTriggered = false;
+    this.hideNextEpisodeCard();
+    if (this.skipIntroBtn) this.skipIntroBtn.style.display = 'none';
+    if (this.failoverBadge) this.failoverBadge.style.display = 'none';
+
     this.overlay.classList.add('open');
 
     // Configura elementos exclusivos de TV ao Vivo vs VOD
@@ -491,11 +539,61 @@ class HomeFlixPlayer {
     const nextSource = this.sources.find(s => !this.failedUrls.has(s.url));
 
     if (nextSource) {
-      this.showSpinner('Conectando ao stream...');
+      const serverLabel = nextSource.label || nextSource.provider || 'Servidor Reserva';
+      this.showFailoverNotice(serverLabel);
+      this.showSpinner(`Conectando à fonte alternativa (${nextSource.quality || 'HD'})...`);
       this.sourceSelector.value = nextSource.url;
       this.loadStream(nextSource.url, resumeTime);
     } else {
       this.showErrorScreen('Transmissão temporariamente indisponível neste servidor.');
+    }
+  }
+
+  showFailoverNotice(serverName) {
+    if (!this.failoverBadge) return;
+    if (this.failoverText) {
+      this.failoverText.textContent = `⚡ Alternando automaticamente para: ${serverName}...`;
+    }
+    this.failoverBadge.style.display = 'flex';
+    clearTimeout(this.failoverTimer);
+    this.failoverTimer = setTimeout(() => {
+      if (this.failoverBadge) this.failoverBadge.style.display = 'none';
+    }, 4500);
+  }
+
+  showNextEpisodeCard(remainingSec) {
+    if (!this.nextEpCard || this.nextEpDismissed) return;
+    if (this.nextEpCard.style.display === 'none' || !this.nextEpCard.style.display) {
+      this.nextEpCard.style.display = 'flex';
+      if (this.nextEpTitleEl && this.currentMedia) {
+        const nextNum = (this.currentMedia.episode || 1) + 1;
+        this.nextEpTitleEl.textContent = `Episódio ${nextNum} • ${this.currentMedia.title || ''}`;
+      }
+    }
+    const countdown = Math.min(10, remainingSec);
+    if (this.nextEpCountdownEl) {
+      this.nextEpCountdownEl.textContent = countdown;
+    }
+    if (countdown <= 1 && !this._autoPlayTriggered) {
+      this._autoPlayTriggered = true;
+      setTimeout(() => this.triggerNextEpisode(), 1000);
+    }
+  }
+
+  hideNextEpisodeCard() {
+    if (this.nextEpCard) this.nextEpCard.style.display = 'none';
+  }
+
+  dismissNextEpisode() {
+    this.nextEpDismissed = true;
+    this.hideNextEpisodeCard();
+  }
+
+  triggerNextEpisode() {
+    if (this.currentMedia && typeof this.currentMedia.onNextEpisode === 'function') {
+      const nextFn = this.currentMedia.onNextEpisode;
+      this.close();
+      nextFn();
     }
   }
 
@@ -863,6 +961,25 @@ class HomeFlixPlayer {
     if (duration > 0) {
       const pct = (current / duration) * 100;
       this.progressFill.style.width = `${pct}%`;
+
+      // Controle de visibilidade do Botão Pular Abertura (+85s)
+      if (this.skipIntroBtn) {
+        if (this.currentMedia && this.currentMedia.mediaType === 'tv' && current >= 15 && current <= 360) {
+          this.skipIntroBtn.style.display = 'inline-flex';
+        } else {
+          this.skipIntroBtn.style.display = 'none';
+        }
+      }
+
+      // Controle do Card de Próximo Episódio (Binge-Watching estilo Netflix)
+      if (this.currentMedia && this.currentMedia.mediaType === 'tv' && this.currentMedia.onNextEpisode && !this.nextEpDismissed) {
+        const remaining = duration - current;
+        if (remaining <= 35 && duration > 90) {
+          this.showNextEpisodeCard(Math.max(1, Math.round(remaining)));
+        } else if (remaining > 35) {
+          this.hideNextEpisodeCard();
+        }
+      }
     }
 
     this.timeDisplay.textContent = `${this.formatTime(current)} / ${this.formatTime(duration)}`;
@@ -950,11 +1067,16 @@ class HomeFlixPlayer {
     this.syncProgress();
     this.stopHeartbeat();
     this.clearStallWatchdog();
+    this.hideNextEpisodeCard();
+    this.nextEpDismissed = false;
+    this._autoPlayTriggered = false;
     clearTimeout(this.hideControlsTimer);
     clearTimeout(this.cinemaWarningTimer);
     clearTimeout(this.osdTimer);
     clearTimeout(this.numberInputTimer);
     clearTimeout(this.noticeTimer);
+    clearTimeout(this.failoverTimer);
+    if (this.failoverBadge) this.failoverBadge.style.display = 'none';
 
     if (this.video) {
       this.video.pause();

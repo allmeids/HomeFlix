@@ -8,7 +8,7 @@ from fastapi.responses import FileResponse
 
 from app.database import init_db
 from app.routers import media, streams, live_tv, profiles, progress, proxy, subtitles
-from app.services import cloud_sync_service
+from app.services import cloud_sync_service, backup_service
 
 app = FastAPI(
     title="HomeFlix API",
@@ -31,6 +31,8 @@ app.add_middleware(
 @app.on_event("startup")
 def on_startup():
     init_db()
+    # Inicia rotina de backups periódicos do banco SQLite
+    backup_service.start_backup_scheduler()
     # Executa sincronização com Supabase em thread em background para não atrasar o bind do servidor
     threading.Thread(target=cloud_sync_service.sync_bidirectional, daemon=True).start()
 

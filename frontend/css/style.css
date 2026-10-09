@@ -3912,3 +3912,180 @@ body.in-details-view .navbar {
   }
 }
 
+/* ================================================================
+   SMART TV: FOCO REFORÇADO (GLOW NEON & ESCALA SUAVE NO D-PAD)
+   ================================================================ */
+.media-card:focus,
+.media-card:focus-visible,
+.media-card.tv-focused {
+  transform: scale(1.06) !important;
+  outline: 3px solid #00d2ff !important;
+  outline-offset: 3px !important;
+  box-shadow: 0 12px 32px rgba(0, 210, 255, 0.4), 0 4px 16px rgba(0, 0, 0, 0.9) !important;
+  z-index: 40 !important;
+}
+
+.episode-card:focus,
+.episode-card:focus-visible {
+  outline: 2.5px solid #00d2ff !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 24px rgba(0, 210, 255, 0.25) !important;
+}
+
+/* ================================================================
+   PLAYER: CARD FLUTUANTE DE PRÓXIMO EPISÓDIO & FAILOVER BADGE
+   ================================================================ */
+.player-next-ep-card {
+  position: absolute;
+  right: 36px;
+  bottom: 110px;
+  z-index: 60;
+  background: rgba(15, 18, 24, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-left: 4px solid #e50914;
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.85);
+  animation: nextEpSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes nextEpSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.next-ep-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.next-ep-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.next-ep-badge {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  color: #e50914;
+  text-transform: uppercase;
+}
+
+.next-ep-timer {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.next-ep-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+  max-width: 240px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.next-ep-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#nextEpPlayNowBtn {
+  background: #e50914;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#nextEpPlayNowBtn:hover,
+#nextEpPlayNowBtn:focus {
+  background: #f40612;
+  outline: 2px solid #fff;
+}
+
+#nextEpCancelBtn {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#nextEpCancelBtn:hover,
+#nextEpCancelBtn:focus {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Badge de Failover de Servidor / Fonte */
+.player-failover-badge {
+  position: absolute;
+  top: 75px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 55;
+  background: rgba(15, 23, 42, 0.90);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(245, 158, 11, 0.5);
+  border-radius: 30px;
+  padding: 8px 22px;
+  color: #fbbf24;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: failoverPulse 2s infinite ease-in-out;
+}
+
+@keyframes failoverPulse {
+  0%, 100% { opacity: 0.92; transform: translateX(-50%) scale(1); }
+  50% { opacity: 1; transform: translateX(-50%) scale(1.02); }
+}
+
+/* Botão Pular Abertura */
+.ctrl-skip-intro {
+  background: rgba(255, 255, 255, 0.16) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  border-radius: 6px !important;
+  padding: 6px 14px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  cursor: pointer;
+  transition: all 0.2s !important;
+}
+
+.ctrl-skip-intro:hover,
+.ctrl-skip-intro:focus {
+  background: rgba(255, 255, 255, 0.3) !important;
+  border-color: #ffffff !important;
+  outline: 2px solid #00d2ff !important;
+}
+

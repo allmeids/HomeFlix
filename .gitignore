@@ -12,6 +12,7 @@ __pycache__/
 *.sqlite3
 backend/homeflix.db*
 homeflix.db*
+backend/backups/
 
 # Environments & Virtual Envs
 .env

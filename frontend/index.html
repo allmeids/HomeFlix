@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/style.css?v=8.3">
+  <link rel="stylesheet" href="/static/css/style.css?v=8.4">
   <!-- HLS.js para streaming HLS/m3u8 no navegador -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -664,6 +664,26 @@
       <div class="spinner-text" id="playerSpinnerText">Carregando transmissão...</div>
     </div>
 
+    <!-- Badge Discreto de Failover de Servidor / Fonte -->
+    <div class="player-failover-badge" id="playerFailoverBadge" style="display: none;">
+      <span id="playerFailoverText">⚡ Conectando à fonte alternativa...</span>
+    </div>
+
+    <!-- Card Flutuante de Próximo Episódio (Estilo Netflix Binge-Watching) -->
+    <div class="player-next-ep-card" id="playerNextEpisodeCard" style="display: none;">
+      <div class="next-ep-content">
+        <div class="next-ep-header">
+          <span class="next-ep-badge">PRÓXIMO EPISÓDIO</span>
+          <span class="next-ep-timer">em <b id="nextEpCountdown">10</b>s</span>
+        </div>
+        <div class="next-ep-title" id="nextEpTitle">Próximo Episódio</div>
+      </div>
+      <div class="next-ep-buttons">
+        <button class="btn btn-primary btn-sm" id="nextEpPlayNowBtn">Assistir Agora ▶</button>
+        <button class="btn btn-secondary btn-sm" id="nextEpCancelBtn" title="Cancelar reprodução automática">✕</button>
+      </div>
+    </div>
+
     <!-- Controles Inferiores do Player -->
     <div class="player-controls-bottom">
       <div class="player-progress-bar" id="playerProgressBar">
@@ -680,6 +700,7 @@
 
           <button class="ctrl-btn" id="playerRewindBtn" title="Voltar 10s (Seta Esquerda)">↺ 10</button>
           <button class="ctrl-btn" id="playerForwardBtn" title="Avançar 10s (Seta Direita)">↻ 10</button>
+          <button class="ctrl-btn ctrl-skip-intro" id="playerSkipIntroBtn" title="Pular Abertura (+85s)" style="display: none;">⏭ Pular Abertura (+85s)</button>
           <button class="ctrl-btn" id="playerVolumeBtn" title="Mudo / Volume" style="font-size:11px; font-weight:700;">VOL</button>
           <span class="time-display" id="playerTimeDisplay">00:00 / 00:00</span>
         </div>
@@ -788,8 +809,8 @@
   </div>
 
   <!-- Scripts -->
-  <script src="/static/js/api.js?v=8.3"></script>
-  <script src="/static/js/player.js?v=8.3"></script>
-  <script src="/static/js/app.js?v=8.3"></script>
+  <script src="/static/js/api.js?v=8.4"></script>
+  <script src="/static/js/player.js?v=8.4"></script>
+  <script src="/static/js/app.js?v=8.4"></script>
 </body>
 </html>

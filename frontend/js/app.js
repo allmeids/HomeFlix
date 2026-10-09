@@ -1962,7 +1962,14 @@ class HomeFlixApp {
       initialTime: resumeTime,
       streams: streams,
       currentStreamUrl: bestStream.url,
-      isCinema: isCinema
+      isCinema: isCinema,
+      onNextEpisode: mediaType === 'tv' ? () => {
+        const nextEpNum = Number(season ? episode : 1) + 1;
+        if (window.app && typeof window.app.showToast === 'function') {
+          window.app.showToast(`🍿 Iniciando Próximo Episódio (EP ${nextEpNum})...`, 3000);
+        }
+        this.fetchAndPlay(mediaType, tmdbId, title, details, season, nextEpNum, null, 0);
+      } : null
     });
   }
 
