@@ -9,22 +9,28 @@ try {
 } catch (e) {}
 
 const CATALOG_AVATARS = [
-  { id: 'mario', name: 'Mario', img: 'https://image.tmdb.org/t/p/w200/qNBAXBIQlnOThrVvA6mA2B5ggV6.jpg' },
-  { id: 'spiderman', name: 'Homem-Aranha', img: 'https://image.tmdb.org/t/p/w200/gh4cZbhZxyTbgxQPxD0dOudNPTn.jpg' },
-  { id: 'batman', name: 'Batman', img: 'https://image.tmdb.org/t/p/w200/74xTEgt7R36Fpooo50r9T25onhq.jpg' },
-  { id: 'deadpool', name: 'Deadpool', img: 'https://image.tmdb.org/t/p/w200/cJFqqiDYprqExaXatu4AaoMzDG2.jpg' },
-  { id: 'wednesday', name: 'Wandinha', img: 'https://image.tmdb.org/t/p/w200/9PFonBhy4cQy7Jz20NpMygczOkv.jpg' },
-  { id: 'eleven', name: 'Eleven', img: 'https://image.tmdb.org/t/p/w200/49WJfeN0moxb9IPfGn8AIqMGskD.jpg' },
-  { id: 'goku', name: 'Goku (Dragon Ball)', img: 'https://image.tmdb.org/t/p/w200/kbkuYkaFsDwL6cyMgnBf77LczEo.jpg' },
-  { id: 'luffy', name: 'Luffy (One Piece)', img: 'https://image.tmdb.org/t/p/w200/aesLt9fsKSA6KCgGxA60VVxjtLk.jpg' },
-  { id: 'naruto', name: 'Naruto', img: 'https://image.tmdb.org/t/p/w200/nRJmByfK9XdtOY73VArcN8KpKVs.jpg' },
-  { id: 'tanjiro', name: 'Tanjiro', img: 'https://image.tmdb.org/t/p/w200/xUfRZu2mi8jH6SzQEJGP6tjBuYj.jpg' },
-  { id: 'seiya', name: 'Seiya (Cavaleiros)', img: 'https://image.tmdb.org/t/p/w200/e4cC6W5sSAKE8lQYRBTqU9jfdya.jpg' },
-  { id: 'geralt', name: 'Geralt de Rívia', img: 'https://image.tmdb.org/t/p/w200/uJ1kQWTY1nElMcrrbHtDitbV85K.jpg' },
-  { id: 'walter', name: 'Walter White', img: 'https://image.tmdb.org/t/p/w200/ztkUQFLlC19CCMYHW9o1zWhJRNq.jpg' },
-  { id: 'ironman', name: 'Homem de Ferro', img: 'https://image.tmdb.org/t/p/w200/78lPtwv72eTNqFW9COBYI0dWDJa.jpg' },
-  { id: 'toystory', name: 'Toy Story (Woody)', img: 'https://image.tmdb.org/t/p/w200/686F0CEPmI4ZXjFbWtIHQOBwnfI.jpg' },
-  { id: 'shrek', name: 'Shrek', img: 'https://image.tmdb.org/t/p/w200/wxeqfC221YMptRRdzxlijAh7q8l.jpg' }
+  { id: 'wednesday', name: 'Wandinha Addams', img: '/static/avatars/wednesday.png' },
+  { id: 'enid', name: 'Enid Sinclair', img: '/static/avatars/enid.png' },
+  { id: 'thing', name: 'Mãozinha (Thing)', img: '/static/avatars/thing.png' },
+  { id: 'eleven', name: 'Eleven (Stranger Things)', img: '/static/avatars/eleven.png' },
+  { id: 'dustin', name: 'Dustin Henderson', img: '/static/avatars/dustin.png' },
+  { id: 'eddie', name: 'Eddie Munson', img: '/static/avatars/eddie.png' },
+  { id: 'steve', name: 'Steve Harrington', img: '/static/avatars/steve.png' },
+  { id: 'hopper', name: 'Jim Hopper', img: '/static/avatars/hopper.png' },
+  { id: 'gihun', name: 'Seong Gi-hun (Round 6)', img: '/static/avatars/gihun.png' },
+  { id: 'frontman', name: 'Líder Mascarado (Round 6)', img: '/static/avatars/frontman.png' },
+  { id: 'masked_soldier', name: 'Soldado Mascarado (Round 6)', img: '/static/avatars/masked_soldier.png' },
+  { id: 'younghee', name: 'Boneca Batatinha 123', img: '/static/avatars/younghee.png' },
+  { id: 'dali_mask', name: 'Máscara de Dalí', img: '/static/avatars/dali_mask.png' },
+  { id: 'professor', name: 'Professor (La Casa de Papel)', img: '/static/avatars/professor.png' },
+  { id: 'berlin', name: 'Berlim (La Casa de Papel)', img: '/static/avatars/berlin.png' },
+  { id: 'geralt', name: 'Geralt de Rívia (The Witcher)', img: '/static/avatars/geralt.png' },
+  { id: 'ciri', name: 'Ciri (The Witcher)', img: '/static/avatars/ciri.png' },
+  { id: 'yennefer', name: 'Yennefer de Vengerberg', img: '/static/avatars/yennefer.png' },
+  { id: 'jinx', name: 'Jinx (Arcane)', img: '/static/avatars/jinx.png' },
+  { id: 'vi', name: 'Vi (Arcane)', img: '/static/avatars/vi.png' },
+  { id: 'luffy', name: 'Luffy (One Piece)', img: '/static/avatars/luffy.png' },
+  { id: 'zoro', name: 'Zoro (One Piece)', img: '/static/avatars/zoro.png' }
 ];
 
 const ONBOARDING_TITLES = [
