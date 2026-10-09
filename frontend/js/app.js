@@ -2798,17 +2798,31 @@ class HomeFlixApp {
     if (historyCloseBtn) {
       historyCloseBtn.onclick = () => {
         const modal = document.getElementById('historyModal');
-        if (modal) modal.style.display = 'none';
+        if (modal) {
+          modal.classList.remove('open');
+          modal.style.display = 'none';
+        }
       };
+    }
+
+    const historyModalBackdrop = document.getElementById('historyModal');
+    if (historyModalBackdrop) {
+      historyModalBackdrop.addEventListener('click', (e) => {
+        if (e.target === historyModalBackdrop) {
+          historyModalBackdrop.classList.remove('open');
+          historyModalBackdrop.style.display = 'none';
+        }
+      });
     }
 
     // Limpar Histórico
     const clearHistoryBtn = document.getElementById('clearHistoryBtn');
     if (clearHistoryBtn) {
       clearHistoryBtn.onclick = async () => {
-        if (!this.currentProfile) return;
+        const prof = this.currentProfile || (this.profiles && this.profiles[0]);
+        if (!prof) return;
         if (confirm('Deseja realmente limpar todo o histórico de títulos assistidos deste perfil?')) {
-          await API.clearWatchHistory(this.currentProfile.id);
+          await API.clearWatchHistory(prof.id);
           this.openWatchHistoryModal();
           this.loadContinueWatching();
           this.showToast('Histórico limpo com sucesso.');
@@ -2822,17 +2836,19 @@ class HomeFlixApp {
      ================================================================ */
 
   async openWatchHistoryModal() {
-    if (!this.currentProfile) return;
+    const prof = this.currentProfile || (this.profiles && this.profiles[0]);
+    if (!prof) return;
     const modal = document.getElementById('historyModal');
     const grid = document.getElementById('historyGrid');
     const subEl = document.getElementById('historyModalSub');
     if (!modal || !grid) return;
 
     modal.style.display = 'flex';
+    modal.classList.add('open');
     grid.innerHTML = '<div style="color: #aaa; padding: 30px; text-align: center; grid-column: 1/-1;">Carregando histórico...</div>';
-    if (subEl) subEl.textContent = `Títulos assistidos recentemente por ${this.currentProfile.name}`;
+    if (subEl) subEl.textContent = `Títulos assistidos recentemente por ${prof.name}`;
 
-    const items = await API.getWatchHistory(this.currentProfile.id);
+    const items = await API.getWatchHistory(prof.id);
     grid.innerHTML = '';
 
     if (!items || items.length === 0) {
@@ -2841,7 +2857,7 @@ class HomeFlixApp {
           <div style="font-size: 36px; margin-bottom: 12px; opacity: 0.6;">⏳</div>
           <div style="font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 6px;">Nenhum título no histórico</div>
           <p style="font-size: 13px; color: #888; max-width: 360px; margin: 0 auto 20px;">Você ainda não assistiu a nenhum filme ou episódio neste perfil. Explore nosso catálogo para começar!</p>
-          <button class="btn btn-primary" onclick="document.getElementById('historyModal').style.display='none'">Explorar Catálogo</button>
+          <button class="btn btn-primary" onclick="const m = document.getElementById('historyModal'); if(m){ m.classList.remove('open'); m.style.display='none'; }">Explorar Catálogo</button>
         </div>
       `;
       return;
@@ -2884,6 +2900,7 @@ class HomeFlixApp {
 
       const playBtn = card.querySelector('.history-action-play');
       playBtn.onclick = () => {
+        modal.classList.remove('open');
         modal.style.display = 'none';
         this.openMediaDetails(item.media_type, item.media_id, {
           resumeTime: item.position,

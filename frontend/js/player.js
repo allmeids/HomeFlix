@@ -97,7 +97,11 @@ class HomeFlixPlayer {
       if (this.sidebar.classList.contains('open')) {
         this.toggleSidebar(false);
       } else {
-        this.togglePlay();
+        if (this.overlay.classList.contains('hud-hidden')) {
+          this.wakeHud();
+        } else {
+          this.togglePlay();
+        }
       }
     });
 
@@ -106,12 +110,14 @@ class HomeFlixPlayer {
     this.video.addEventListener('play', () => {
       this.playBtn.innerHTML = '⏸';
       this.startHeartbeat();
+      this.resetControlsTimeout();
     });
     this.video.addEventListener('pause', () => {
       this.playBtn.innerHTML = '▶';
       this.stopHeartbeat();
       this.syncProgress();
       this.hideSpinner();
+      this.wakeHud();
     });
 
     // Eventos de buffer e fluidez visual
@@ -121,6 +127,7 @@ class HomeFlixPlayer {
     this.video.addEventListener('playing', () => {
       this.hideSpinner();
       this.clearStallWatchdog();
+      this.resetControlsTimeout();
     });
     this.video.addEventListener('error', (e) => this.handleMediaError(e));
 
@@ -234,9 +241,31 @@ class HomeFlixPlayer {
         return;
       }
 
-      // 1. Play / Pause
+      // Qualquer interação no controle remoto acorda o HUD ou reinicia o timer
+      const wasHudHidden = this.overlay.classList.contains('hud-hidden');
+      this.wakeHud();
+
+      // 1. Play / Pause ou Despertar HUD com Enter / OK / Espaço
       if (key === ' ' || code === 'Space') {
         e.preventDefault();
+        this.togglePlay();
+      }
+      else if (key === 'Enter') {
+        // Se a sidebar de canais estiver aberta, o Enter seleciona o canal focado
+        if (this.sidebar && this.sidebar.classList.contains('open')) {
+          const focused = document.activeElement;
+          if (focused && focused.classList.contains('sidebar-channel-item')) {
+            focused.click();
+            return;
+          }
+        }
+        // Se o HUD estava oculto, a tecla Enter no controle apenas desperta o HUD e exibe as informações
+        if (wasHudHidden) {
+          if (this.isLive) {
+            this.triggerLiveOsd(true);
+          }
+          return;
+        }
         this.togglePlay();
       }
       // 2. Fullscreen
@@ -249,6 +278,9 @@ class HomeFlixPlayer {
           this.toggleSubtitlesMenu(false);
         } else if (this.sidebar.classList.contains('open')) {
           this.toggleSidebar(false);
+        } else if (!this.overlay.classList.contains('hud-hidden')) {
+          // Se o HUD estiver visível, a tecla Voltar primeiro oculta o HUD
+          this.hideHud();
         } else if (document.fullscreenElement) {
           document.exitFullscreen().catch(() => {});
         } else {
@@ -270,34 +302,44 @@ class HomeFlixPlayer {
         e.preventDefault();
         this.triggerLiveOsd(true);
       }
-      // 6. Zapping no Teclado / Controle Remoto (Seta Cima e Baixo, PageUp/PageDown, ChannelUp/ChannelDown)
+      // 6. Zapping no Teclado / Controle Remoto (Seta Cima e Baixo)
       else if (this.isLive && (key === 'ArrowUp' || key === 'PageUp' || key === 'ChannelUp')) {
         e.preventDefault();
-        this.prevLiveChannel();
+        if (this.sidebar && this.sidebar.classList.contains('open')) {
+          this.navigateSidebarChannels(-1);
+        } else {
+          this.prevLiveChannel();
+        }
       }
       else if (this.isLive && (key === 'ArrowDown' || key === 'PageDown' || key === 'ChannelDown')) {
         e.preventDefault();
-        this.nextLiveChannel();
+        if (this.sidebar && this.sidebar.classList.contains('open')) {
+          this.navigateSidebarChannels(1);
+        } else {
+          this.nextLiveChannel();
+        }
       }
-      // 7. Navegação VOD ou atalhos laterais
+      // 7. Navegação Lateral (Seta Esquerda e Direita)
       else if (key === 'ArrowLeft') {
         e.preventDefault();
         if (this.isLive) {
-          // Na TV ao vivo, Seta Esquerda abre o Guia de Canais!
+          // Na TV ao vivo, Seta Esquerda abre a gaveta lateral de canais!
           this.toggleSidebar(true);
         } else {
           this.video.currentTime = Math.max(0, this.video.currentTime - 10);
-          this.showControlsTemporarily();
         }
       }
       else if (key === 'ArrowRight') {
         e.preventDefault();
         if (this.isLive) {
-          // Na TV ao vivo, Seta Direita mostra a sinopse/OSD
-          this.triggerLiveOsd(true);
+          if (this.sidebar && this.sidebar.classList.contains('open')) {
+            this.toggleSidebar(false);
+          } else {
+            // Seta Direita na TV ao vivo mostra o guia OSD da atração
+            this.triggerLiveOsd(true);
+          }
         } else {
           this.video.currentTime = Math.min(this.video.duration || 0, this.video.currentTime + 10);
-          this.showControlsTemporarily();
         }
       }
       // 8. Entrada Numérica Direta (ex: digitou 105 para canal 105)
@@ -308,12 +350,10 @@ class HomeFlixPlayer {
       else if (!this.isLive && key === 'ArrowUp') {
         e.preventDefault();
         this.video.volume = Math.min(1, this.video.volume + 0.1);
-        this.showControlsTemporarily();
       }
       else if (!this.isLive && key === 'ArrowDown') {
         e.preventDefault();
         this.video.volume = Math.max(0, this.video.volume - 0.1);
-        this.showControlsTemporarily();
       }
       // 10. Mudo (M)
       else if (key === 'm' || key === 'M') {
@@ -322,10 +362,11 @@ class HomeFlixPlayer {
       }
     });
 
-    // Auto-hide controls ao mexer o mouse
-    this.overlay.addEventListener('mousemove', () => {
-      this.resetControlsTimeout();
-    });
+    // Auto-hide controls ao mexer o mouse, clicar ou tocar na tela
+    this.overlay.addEventListener('mousemove', () => this.wakeHud());
+    this.overlay.addEventListener('mousedown', () => this.wakeHud());
+    this.overlay.addEventListener('touchstart', () => this.wakeHud(), { passive: true });
+    this.overlay.addEventListener('wheel', () => this.wakeHud(), { passive: true });
   }
 
   play(options) {
@@ -822,17 +863,28 @@ class HomeFlixPlayer {
         ${isActive ? '<span class="sb-ch-playing-dot"></span>' : ''}
       `;
 
+      row.setAttribute('tabindex', '0');
+      row.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          this.switchLiveChannel(ch);
+        }
+      });
+
       row.onclick = () => {
         this.switchLiveChannel(ch);
       };
 
       this.sidebarChannelsList.appendChild(row);
 
-      // Auto-scroll para manter o canal ativo visível
+      // Auto-scroll para manter o canal ativo visível e focado
       if (isActive) {
         setTimeout(() => {
           row.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-        }, 100);
+          if (this.sidebar.classList.contains('open')) {
+            row.focus();
+          }
+        }, 120);
       }
     });
   }
@@ -841,11 +893,29 @@ class HomeFlixPlayer {
     if (!this.isLive) return;
     const shouldOpen = forceState !== null ? forceState : !this.sidebar.classList.contains('open');
     if (shouldOpen) {
+      this.wakeHud();
       this.sidebar.classList.add('open');
       this.renderSidebarChannels(this.activeSidebarCategory);
     } else {
       this.sidebar.classList.remove('open');
+      this.resetControlsTimeout();
     }
+  }
+
+  navigateSidebarChannels(delta) {
+    if (!this.sidebarChannelsList) return;
+    const items = Array.from(this.sidebarChannelsList.querySelectorAll('.sidebar-channel-item'));
+    if (items.length === 0) return;
+    let currentIndex = items.findIndex(el => el === document.activeElement || el.classList.contains('focused'));
+    if (currentIndex === -1) {
+      currentIndex = items.findIndex(el => el.classList.contains('active'));
+      if (currentIndex === -1) currentIndex = 0;
+    }
+    const nextIndex = Math.max(0, Math.min(items.length - 1, currentIndex + delta));
+    items.forEach(el => el.classList.remove('focused'));
+    items[nextIndex].classList.add('focused');
+    items[nextIndex].focus();
+    items[nextIndex].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   }
 
   switchLiveChannel(channelObj) {
@@ -1040,27 +1110,78 @@ class HomeFlixPlayer {
   }
 
   showControlsTemporarily() {
+    this.wakeHud();
+  }
+
+  wakeHud() {
+    if (!this.overlay) return;
+    this.overlay.classList.remove('hud-hidden');
     const top = document.querySelector('.player-topbar');
     const bottom = document.querySelector('.player-controls-bottom');
-    if (top) top.style.opacity = '1';
-    if (bottom) bottom.style.opacity = '1';
+    if (top) {
+      top.style.opacity = '1';
+      top.style.pointerEvents = 'auto';
+    }
+    if (bottom) {
+      bottom.style.opacity = '1';
+      bottom.style.pointerEvents = 'auto';
+    }
+    const openTab = document.getElementById('playerSidebarOpenTab');
+    if (openTab && this.isLive) {
+      openTab.style.opacity = '1';
+      openTab.style.pointerEvents = 'auto';
+    }
     this.resetControlsTimeout();
   }
 
-  resetControlsTimeout() {
+  hideHud() {
+    if (!this.overlay) return;
+    // Não esconde se pausado ou com sidebar de canais aberta ou menu de legendas aberto
+    if (this.video && this.video.paused) return;
+    if (this.sidebar && this.sidebar.classList.contains('open')) return;
+    if (this.subtitlesMenu && this.subtitlesMenu.style.display !== 'none') return;
+
+    this.overlay.classList.add('hud-hidden');
     const top = document.querySelector('.player-topbar');
     const bottom = document.querySelector('.player-controls-bottom');
-    if (top) top.style.opacity = '1';
-    if (bottom) bottom.style.opacity = '1';
+    if (top) {
+      top.style.opacity = '0';
+      top.style.pointerEvents = 'none';
+    }
+    if (bottom) {
+      bottom.style.opacity = '0';
+      bottom.style.pointerEvents = 'none';
+    }
+    const openTab = document.getElementById('playerSidebarOpenTab');
+    if (openTab) {
+      openTab.style.opacity = '0';
+      openTab.style.pointerEvents = 'none';
+    }
+  }
+
+  resetControlsTimeout() {
+    if (!this.overlay) return;
+    this.overlay.classList.remove('hud-hidden');
+    const top = document.querySelector('.player-topbar');
+    const bottom = document.querySelector('.player-controls-bottom');
+    if (top) {
+      top.style.opacity = '1';
+      top.style.pointerEvents = 'auto';
+    }
+    if (bottom) {
+      bottom.style.opacity = '1';
+      bottom.style.pointerEvents = 'auto';
+    }
+    const openTab = document.getElementById('playerSidebarOpenTab');
+    if (openTab && this.isLive) {
+      openTab.style.opacity = '1';
+      openTab.style.pointerEvents = 'auto';
+    }
 
     clearTimeout(this.hideControlsTimer);
     this.hideControlsTimer = setTimeout(() => {
-      // Não esconde se o vídeo estiver pausado ou se a sidebar estiver aberta
-      if (!this.video.paused && !this.sidebar.classList.contains('open')) {
-        if (top) top.style.opacity = '0';
-        if (bottom) bottom.style.opacity = '0';
-      }
-    }, 3800);
+      this.hideHud();
+    }, 3500);
   }
 
   close() {
@@ -1093,6 +1214,7 @@ class HomeFlixPlayer {
     this.sources = [];
     this.failedUrls.clear();
     this.overlay.classList.remove('open');
+    this.overlay.classList.remove('hud-hidden');
     this.sidebar.classList.remove('open');
     if (this.liveOsd) this.liveOsd.classList.remove('show');
     if (this.subtitlesMenu) this.subtitlesMenu.style.display = 'none';

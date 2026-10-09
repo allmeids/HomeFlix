@@ -2399,7 +2399,34 @@ body.in-details-view .navbar {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Auto-Hide de HUD na Reprodução e TV ao Vivo */
+.player-overlay.hud-hidden {
+  cursor: none !important;
+}
+
+.player-overlay.hud-hidden .player-topbar {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: translateY(-12px) !important;
+  transition: opacity 0.4s ease, transform 0.4s ease !important;
+}
+
+.player-overlay.hud-hidden .player-controls-bottom {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: translateY(12px) !important;
+  transition: opacity 0.4s ease, transform 0.4s ease !important;
+}
+
+.player-overlay.hud-hidden .sidebar-open-tab,
+.player-overlay.hud-hidden #playerSidebarOpenTab {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: translateY(-50%) translateX(-20px) !important;
+  transition: opacity 0.4s ease, transform 0.4s ease !important;
 }
 
 .player-progress-bar {
