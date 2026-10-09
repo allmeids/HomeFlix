@@ -1,0 +1,4157 @@
+{
+  "categories": [
+    {
+      "id": "stranger_things",
+      "name": "Stranger Things",
+      "count": 35,
+      "items": [
+        {
+          "id": "stranger_things_s1_demogorgon",
+          "name": "S1 Demogorgon",
+          "category": "stranger_things",
+          "category_name": "Stranger Things",
+          "img": "/static/avatars/stranger_things_s1_demogorgon.png"
+        },
+        {
+          "id": "stranger_things_s1_dustin",
+          "name": "S1 Dustin",
+          "category": "stranger_things",
+          "category_name": "Stranger Things",
+          "img": "/static/avatars/stranger_things_s1_dustin.png"
+        },
+        {
+          "id": "stranger_things_s1_eleven",
+          "name": "S1 Eleven",
+          "category": "stranger_things",
+          "category_name": "Stranger Things",
+          "img": "/static/avatars/stranger_things_s1_eleven.png"
+        },
+        {
+          "id": "stranger_things_s1_hopper",
+          "name": "S1 Hopper",
+          "category": "stranger_things",
+          "category_name": "Stranger Things",
+          "img": "/static/avatars/stranger_things_s1_hopper.png"
+        },
+        {
+          "id": "stranger_things_s1_jonathan",
+          "name": "S1 Jonathan",
+          "category": "stranger_things",
+          "category_name": "Stranger Things",
+          "img": "/static/avatars/stranger_things_s1_jonathan.png"
+        },
+        {
+          "id": "stranger_things_s1_joyce",
+          "name": "S1 Joyce",
+          "category": "stranger_things",
+          "category_name": "Stranger Things",
+          "img": "/static/avatars/stranger_things_s1_joyce.png"
+        },
+        {
+          "id": "stranger_things_s1_lucas",
+          "name": "S1 Lucas",
+          "category": "stranger_things",
+          "category_name": "Stranger Things",
+          "img": "/static/avatars/stranger_things_s1_lucas.png"
+        },
+        {
+          "id": "stranger_things_s1_mike",
+          "name": "S1 Mike",
+          "category": "stranger_things",
+          "category_name": "Stranger Things",
+          "img": "/static/avatars/stranger_things_s1_mike.png"
+        },
+        {
+          "id": "stranger_things_s1_nancy",
+          "name": "S1 Nancy",
+          "category": "stranger_things",
+          "category_name": "Stranger Things",
+          "img": "/static/avatars/stranger_things_s1_nancy.png"
+        },
+        {
+          "id": "stranger_things_s1_will",
+          "name": "S1 Will",
+          "category": "stranger_things",
+          "category_name": "Stranger Things",
+          "img": "/static/avatars/stranger_things_s1_will.png"
+        },
+        {
+          "id": "stranger_things_s1_steve",
+          "name": "S1 Steve",
+          "category": "stranger_things",
+          "category_name": "Stranger Things",
+          "img": "/static/avatars/stranger_things_s1_steve.png"
+        },
+        {
+          "id": "stranger_things_s2_billy",
+          "name": "S2 Billy",
+          "category": "stranger_things",
+          "category_name": "Stranger Things",
+          "img": "/static/avatars/stranger_things_s2_billy.png"
+        },
+        {
+          "id": "stranger_things_s2_demogorgon",
+          "name": "S2 Demogorgon",
+          "category": "stranger_things",
+          "category_name": "Stranger Things",
+          "img": "/static/avatars/stranger_things_s2_demogorgon.png"
+        },
+        {
+          "id": "stranger_things_s2_dustin",
+          "name": "S2 Dustin",
+          "category": "stranger_things",
+          "category_name": "Stranger Things",
+          "img": "/static/avatars/stranger_things_s2_dustin.png"
+        },
+        {
+          "id": "stranger_things_s2_dustins_hat",
+          "name": "S2 Dustin's Hat",
+          "category": "stranger_things",
+          "category_name": "Stranger Things",
+          "img": "/static/avatars/stranger_things_s2_dustins_hat.png"
+        },
+        {
+          "id": "stranger_things_s2_hopper_rare",
+          "name": "S2 Hopper (RARE)",
+          "category": "stranger_things",
+          "category_name": "Stranger Things",
+          "img": "/static/avatars/stranger_things_s2_hopper_rare.png"
+        },
+        {
+          "id": "stranger_things_s2_jonathan",
+          "name": "S2 Jonathan",
+          "category": "stranger_things",
+          "category_name": "Stranger Things",
+          "img": "/static/avatars/stranger_things_s2_jonathan.png"
+        },
+        {
+          "id": "stranger_things_s2_joyce_rare",
+          "name": "S2 Joyce (RARE)",
+          "category": "stranger_things",
+          "category_name": "Stranger Things",
+          "img": "/static/avatars/stranger_things_s2_joyce_rare.png"
+        },
+        {
+          "id": "stranger_things_s2_lucas",
+          "name": "S2 Lucas",
+          "category": "stranger_things",
+          "category_name": "Stranger Things",
+          "img": "/static/avatars/stranger_things_s2_lucas.png"
+        },
+        {
+          "id": "stranger_things_s2_max",
+          "name": "S2 Max",
+          "category": "stranger_things",
+          "category_name": "Stranger Things",
+          "img": "/static/avatars/stranger_things_s2_max.png"
+        },
+        {
+          "id": "stranger_things_s2_mike",
+          "name": "S2 Mike",
+          "category": "stranger_things",
+          "category_name": "Stranger Things",
+          "img": "/static/avatars/stranger_things_s2_mike.png"
+        },
+        {
+          "id": "stranger_things_s2_nancy",
+          "name": "S2 Nancy",
+          "category": "stranger_things",
+          "category_name": "Stranger Things",
+          "img": "/static/avatars/stranger_things_s2_nancy.png"
+        },
+        {
+          "id": "stranger_things_s2_steve",
+          "name": "S2 Steve",
+          "category": "stranger_things",
+          "category_name": "Stranger Things",
+          "img": "/static/avatars/stranger_things_s2_steve.png"
+        },
+        {
+          "id": "stranger_things_s2_will",
+          "name": "S2 Will",
+          "category": "stranger_things",
+          "category_name": "Stranger Things",
+          "img": "/static/avatars/stranger_things_s2_will.png"
+        },
+        {
+          "id": "stranger_things_s3_billy",
+          "name": "S3 Billy",
+          "category": "stranger_things",
+          "category_name": "Stranger Things",
+          "img": "/static/avatars/stranger_things_s3_billy.png"
+        },
+        {
+          "id": "stranger_things_s3_dustin",
+          "name": "S3 Dustin",
+          "category": "stranger_things",
+          "category_name": "Stranger Things",
+          "img": "/static/avatars/stranger_things_s3_dustin.png"
+        },
+        {
+          "id": "stranger_things_s3_eleven",
+          "name": "S3 Eleven",
+          "category": "stranger_things",
+          "category_name": "Stranger Things",
+          "img": "/static/avatars/stranger_things_s3_eleven.png"
+        },
+        {
+          "id": "stranger_things_s3_erica",
+          "name": "S3 Erica",
+          "category": "stranger_things",
+          "category_name": "Stranger Things",
+          "img": "/static/avatars/stranger_things_s3_erica.png"
+        },
+        {
+          "id": "stranger_things_s3_hopper",
+          "name": "S3 Hopper",
+          "category": "stranger_things",
+          "category_name": "Stranger Things",
+          "img": "/static/avatars/stranger_things_s3_hopper.png"
+        },
+        {
+          "id": "stranger_things_s3_jonathan",
+          "name": "S3 Jonathan",
+          "category": "stranger_things",
+          "category_name": "Stranger Things",
+          "img": "/static/avatars/stranger_things_s3_jonathan.png"
+        },
+        {
+          "id": "stranger_things_s3_joyce",
+          "name": "S3 Joyce",
+          "category": "stranger_things",
+          "category_name": "Stranger Things",
+          "img": "/static/avatars/stranger_things_s3_joyce.png"
+        },
+        {
+          "id": "stranger_things_s3_lucas",
+          "name": "S3 Lucas",
+          "category": "stranger_things",
+          "category_name": "Stranger Things",
+          "img": "/static/avatars/stranger_things_s3_lucas.png"
+        },
+        {
+          "id": "stranger_things_s3_max",
+          "name": "S3 Max",
+          "category": "stranger_things",
+          "category_name": "Stranger Things",
+          "img": "/static/avatars/stranger_things_s3_max.png"
+        },
+        {
+          "id": "stranger_things_s3_mike",
+          "name": "S3 Mike",
+          "category": "stranger_things",
+          "category_name": "Stranger Things",
+          "img": "/static/avatars/stranger_things_s3_mike.png"
+        },
+        {
+          "id": "stranger_things_s3_nancy",
+          "name": "S3 Nancy",
+          "category": "stranger_things",
+          "category_name": "Stranger Things",
+          "img": "/static/avatars/stranger_things_s3_nancy.png"
+        }
+      ]
+    },
+    {
+      "id": "wednesday",
+      "name": "Wandinha (Wednesday)",
+      "count": 25,
+      "items": [
+        {
+          "id": "wednesday_wednesday",
+          "name": "Wednesday",
+          "category": "wednesday",
+          "category_name": "Wandinha (Wednesday)",
+          "img": "/static/avatars/wednesday_wednesday.png"
+        },
+        {
+          "id": "wednesday_enid",
+          "name": "Enid",
+          "category": "wednesday",
+          "category_name": "Wandinha (Wednesday)",
+          "img": "/static/avatars/wednesday_enid.png"
+        },
+        {
+          "id": "wednesday_bianca",
+          "name": "Bianca",
+          "category": "wednesday",
+          "category_name": "Wandinha (Wednesday)",
+          "img": "/static/avatars/wednesday_bianca.png"
+        },
+        {
+          "id": "wednesday_tyler",
+          "name": "Tyler",
+          "category": "wednesday",
+          "category_name": "Wandinha (Wednesday)",
+          "img": "/static/avatars/wednesday_tyler.png"
+        },
+        {
+          "id": "wednesday_thing",
+          "name": "Thing",
+          "category": "wednesday",
+          "category_name": "Wandinha (Wednesday)",
+          "img": "/static/avatars/wednesday_thing.png"
+        },
+        {
+          "id": "wednesday_morticia",
+          "name": "Morticia",
+          "category": "wednesday",
+          "category_name": "Wandinha (Wednesday)",
+          "img": "/static/avatars/wednesday_morticia.png"
+        },
+        {
+          "id": "wednesday_gomez",
+          "name": "Gomez",
+          "category": "wednesday",
+          "category_name": "Wandinha (Wednesday)",
+          "img": "/static/avatars/wednesday_gomez.png"
+        },
+        {
+          "id": "wednesday_pugsley",
+          "name": "Pugsley",
+          "category": "wednesday",
+          "category_name": "Wandinha (Wednesday)",
+          "img": "/static/avatars/wednesday_pugsley.png"
+        },
+        {
+          "id": "wednesday_xavier",
+          "name": "Xavier",
+          "category": "wednesday",
+          "category_name": "Wandinha (Wednesday)",
+          "img": "/static/avatars/wednesday_xavier.png"
+        },
+        {
+          "id": "wednesday_eugene",
+          "name": "Eugene",
+          "category": "wednesday",
+          "category_name": "Wandinha (Wednesday)",
+          "img": "/static/avatars/wednesday_eugene.png"
+        },
+        {
+          "id": "wednesday_ajax",
+          "name": "Ajax",
+          "category": "wednesday",
+          "category_name": "Wandinha (Wednesday)",
+          "img": "/static/avatars/wednesday_ajax.png"
+        },
+        {
+          "id": "wednesday_yoko",
+          "name": "Yoko",
+          "category": "wednesday",
+          "category_name": "Wandinha (Wednesday)",
+          "img": "/static/avatars/wednesday_yoko.png"
+        },
+        {
+          "id": "wednesday_wednesday",
+          "name": "Wednesday",
+          "category": "wednesday",
+          "category_name": "Wandinha (Wednesday)",
+          "img": "/static/avatars/wednesday_wednesday.png"
+        },
+        {
+          "id": "wednesday_thing",
+          "name": "Thing",
+          "category": "wednesday",
+          "category_name": "Wandinha (Wednesday)",
+          "img": "/static/avatars/wednesday_thing.png"
+        },
+        {
+          "id": "wednesday_enid",
+          "name": "Enid",
+          "category": "wednesday",
+          "category_name": "Wandinha (Wednesday)",
+          "img": "/static/avatars/wednesday_enid.png"
+        },
+        {
+          "id": "wednesday_morticia",
+          "name": "Morticia",
+          "category": "wednesday",
+          "category_name": "Wandinha (Wednesday)",
+          "img": "/static/avatars/wednesday_morticia.png"
+        },
+        {
+          "id": "wednesday_gomez",
+          "name": "Gomez",
+          "category": "wednesday",
+          "category_name": "Wandinha (Wednesday)",
+          "img": "/static/avatars/wednesday_gomez.png"
+        },
+        {
+          "id": "wednesday_grandmama_hester_frump",
+          "name": "Grandmama Hester Frump",
+          "category": "wednesday",
+          "category_name": "Wandinha (Wednesday)",
+          "img": "/static/avatars/wednesday_grandmama_hester_frump.png"
+        },
+        {
+          "id": "wednesday_pugsley",
+          "name": "Pugsley",
+          "category": "wednesday",
+          "category_name": "Wandinha (Wednesday)",
+          "img": "/static/avatars/wednesday_pugsley.png"
+        },
+        {
+          "id": "wednesday_uncle_fester",
+          "name": "Uncle Fester",
+          "category": "wednesday",
+          "category_name": "Wandinha (Wednesday)",
+          "img": "/static/avatars/wednesday_uncle_fester.png"
+        },
+        {
+          "id": "wednesday_bianca",
+          "name": "Bianca",
+          "category": "wednesday",
+          "category_name": "Wandinha (Wednesday)",
+          "img": "/static/avatars/wednesday_bianca.png"
+        },
+        {
+          "id": "wednesday_agnes",
+          "name": "Agnes",
+          "category": "wednesday",
+          "category_name": "Wandinha (Wednesday)",
+          "img": "/static/avatars/wednesday_agnes.png"
+        },
+        {
+          "id": "wednesday_tyler",
+          "name": "Tyler",
+          "category": "wednesday",
+          "category_name": "Wandinha (Wednesday)",
+          "img": "/static/avatars/wednesday_tyler.png"
+        },
+        {
+          "id": "wednesday_principal_dort",
+          "name": "Principal Dort",
+          "category": "wednesday",
+          "category_name": "Wandinha (Wednesday)",
+          "img": "/static/avatars/wednesday_principal_dort.png"
+        },
+        {
+          "id": "wednesday_slurp",
+          "name": "Slurp",
+          "category": "wednesday",
+          "category_name": "Wandinha (Wednesday)",
+          "img": "/static/avatars/wednesday_slurp.png"
+        }
+      ]
+    },
+    {
+      "id": "squid_game",
+      "name": "Round 6 (Squid Game)",
+      "count": 27,
+      "items": [
+        {
+          "id": "squid_game_young_hee_doll",
+          "name": "Young-hee Doll",
+          "category": "squid_game",
+          "category_name": "Round 6 (Squid Game)",
+          "img": "/static/avatars/squid_game_young_hee_doll.png"
+        },
+        {
+          "id": "squid_game_front_man",
+          "name": "Front Man",
+          "category": "squid_game",
+          "category_name": "Round 6 (Squid Game)",
+          "img": "/static/avatars/squid_game_front_man.png"
+        },
+        {
+          "id": "squid_game_masked_manager",
+          "name": "Masked Manager",
+          "category": "squid_game",
+          "category_name": "Round 6 (Squid Game)",
+          "img": "/static/avatars/squid_game_masked_manager.png"
+        },
+        {
+          "id": "squid_game_masked_soldier",
+          "name": "Masked Soldier",
+          "category": "squid_game",
+          "category_name": "Round 6 (Squid Game)",
+          "img": "/static/avatars/squid_game_masked_soldier.png"
+        },
+        {
+          "id": "squid_game_masked_worker",
+          "name": "Masked Worker",
+          "category": "squid_game",
+          "category_name": "Round 6 (Squid Game)",
+          "img": "/static/avatars/squid_game_masked_worker.png"
+        },
+        {
+          "id": "squid_game_masked_officer",
+          "name": "Masked Officer",
+          "category": "squid_game",
+          "category_name": "Round 6 (Squid Game)",
+          "img": "/static/avatars/squid_game_masked_officer.png"
+        },
+        {
+          "id": "squid_game_young_hee",
+          "name": "Young-hee",
+          "category": "squid_game",
+          "category_name": "Round 6 (Squid Game)",
+          "img": "/static/avatars/squid_game_young_hee.png"
+        },
+        {
+          "id": "squid_game_gi_hun",
+          "name": "Gi-hun",
+          "category": "squid_game",
+          "category_name": "Round 6 (Squid Game)",
+          "img": "/static/avatars/squid_game_gi_hun.png"
+        },
+        {
+          "id": "squid_game_gi_hun_season_2",
+          "name": "Gi-hun Season 2",
+          "category": "squid_game",
+          "category_name": "Round 6 (Squid Game)",
+          "img": "/static/avatars/squid_game_gi_hun_season_2.png"
+        },
+        {
+          "id": "squid_game_in_ho",
+          "name": "In-ho",
+          "category": "squid_game",
+          "category_name": "Round 6 (Squid Game)",
+          "img": "/static/avatars/squid_game_in_ho.png"
+        },
+        {
+          "id": "squid_game_myung_gi",
+          "name": "Myung-gi",
+          "category": "squid_game",
+          "category_name": "Round 6 (Squid Game)",
+          "img": "/static/avatars/squid_game_myung_gi.png"
+        },
+        {
+          "id": "squid_game_hyun_ju",
+          "name": "Hyun-ju",
+          "category": "squid_game",
+          "category_name": "Round 6 (Squid Game)",
+          "img": "/static/avatars/squid_game_hyun_ju.png"
+        },
+        {
+          "id": "squid_game_thanos",
+          "name": "Thanos",
+          "category": "squid_game",
+          "category_name": "Round 6 (Squid Game)",
+          "img": "/static/avatars/squid_game_thanos.png"
+        },
+        {
+          "id": "squid_game_jun_hee",
+          "name": "Jun-hee",
+          "category": "squid_game",
+          "category_name": "Round 6 (Squid Game)",
+          "img": "/static/avatars/squid_game_jun_hee.png"
+        },
+        {
+          "id": "squid_game_jun_ho",
+          "name": "Jun-ho",
+          "category": "squid_game",
+          "category_name": "Round 6 (Squid Game)",
+          "img": "/static/avatars/squid_game_jun_ho.png"
+        },
+        {
+          "id": "squid_game_recruiter",
+          "name": "Recruiter",
+          "category": "squid_game",
+          "category_name": "Round 6 (Squid Game)",
+          "img": "/static/avatars/squid_game_recruiter.png"
+        },
+        {
+          "id": "squid_game_no_eul",
+          "name": "No-eul",
+          "category": "squid_game",
+          "category_name": "Round 6 (Squid Game)",
+          "img": "/static/avatars/squid_game_no_eul.png"
+        },
+        {
+          "id": "squid_game_piggy_bank",
+          "name": "Piggy Bank",
+          "category": "squid_game",
+          "category_name": "Round 6 (Squid Game)",
+          "img": "/static/avatars/squid_game_piggy_bank.png"
+        },
+        {
+          "id": "squid_game_dalgona",
+          "name": "Dalgona",
+          "category": "squid_game",
+          "category_name": "Round 6 (Squid Game)",
+          "img": "/static/avatars/squid_game_dalgona.png"
+        },
+        {
+          "id": "squid_game_vip_mask",
+          "name": "VIP Mask",
+          "category": "squid_game",
+          "category_name": "Round 6 (Squid Game)",
+          "img": "/static/avatars/squid_game_vip_mask.png"
+        },
+        {
+          "id": "squid_game_deok_su",
+          "name": "Deok-su",
+          "category": "squid_game",
+          "category_name": "Round 6 (Squid Game)",
+          "img": "/static/avatars/squid_game_deok_su.png"
+        },
+        {
+          "id": "squid_game_mi_nyeo",
+          "name": "Mi-nyeo",
+          "category": "squid_game",
+          "category_name": "Round 6 (Squid Game)",
+          "img": "/static/avatars/squid_game_mi_nyeo.png"
+        },
+        {
+          "id": "squid_game_sae_byeok",
+          "name": "Sae-Byeok",
+          "category": "squid_game",
+          "category_name": "Round 6 (Squid Game)",
+          "img": "/static/avatars/squid_game_sae_byeok.png"
+        },
+        {
+          "id": "squid_game_o_button",
+          "name": "O Button",
+          "category": "squid_game",
+          "category_name": "Round 6 (Squid Game)",
+          "img": "/static/avatars/squid_game_o_button.png"
+        },
+        {
+          "id": "squid_game_x_button",
+          "name": "X Button",
+          "category": "squid_game",
+          "category_name": "Round 6 (Squid Game)",
+          "img": "/static/avatars/squid_game_x_button.png"
+        },
+        {
+          "id": "squid_game_carousel_horse",
+          "name": "Carousel Horse",
+          "category": "squid_game",
+          "category_name": "Round 6 (Squid Game)",
+          "img": "/static/avatars/squid_game_carousel_horse.png"
+        },
+        {
+          "id": "squid_game_gong_gi",
+          "name": "Gong-gi",
+          "category": "squid_game",
+          "category_name": "Round 6 (Squid Game)",
+          "img": "/static/avatars/squid_game_gong_gi.png"
+        }
+      ]
+    },
+    {
+      "id": "money_heist",
+      "name": "La Casa de Papel",
+      "count": 10,
+      "items": [
+        {
+          "id": "money_heist_tokio",
+          "name": "Tokio",
+          "category": "money_heist",
+          "category_name": "La Casa de Papel",
+          "img": "/static/avatars/money_heist_tokio.png"
+        },
+        {
+          "id": "money_heist_mask",
+          "name": "Mask",
+          "category": "money_heist",
+          "category_name": "La Casa de Papel",
+          "img": "/static/avatars/money_heist_mask.png"
+        },
+        {
+          "id": "money_heist_nairobi",
+          "name": "Nairobi",
+          "category": "money_heist",
+          "category_name": "La Casa de Papel",
+          "img": "/static/avatars/money_heist_nairobi.png"
+        },
+        {
+          "id": "money_heist_professor",
+          "name": "Professor",
+          "category": "money_heist",
+          "category_name": "La Casa de Papel",
+          "img": "/static/avatars/money_heist_professor.png"
+        },
+        {
+          "id": "money_heist_sierra",
+          "name": "Sierra",
+          "category": "money_heist",
+          "category_name": "La Casa de Papel",
+          "img": "/static/avatars/money_heist_sierra.png"
+        },
+        {
+          "id": "money_heist_rio",
+          "name": "Rio",
+          "category": "money_heist",
+          "category_name": "La Casa de Papel",
+          "img": "/static/avatars/money_heist_rio.png"
+        },
+        {
+          "id": "money_heist_denver",
+          "name": "Denver",
+          "category": "money_heist",
+          "category_name": "La Casa de Papel",
+          "img": "/static/avatars/money_heist_denver.png"
+        },
+        {
+          "id": "money_heist_lisboa",
+          "name": "Lisboa",
+          "category": "money_heist",
+          "category_name": "La Casa de Papel",
+          "img": "/static/avatars/money_heist_lisboa.png"
+        },
+        {
+          "id": "money_heist_berlin",
+          "name": "Berlin",
+          "category": "money_heist",
+          "category_name": "La Casa de Papel",
+          "img": "/static/avatars/money_heist_berlin.png"
+        },
+        {
+          "id": "money_heist_palermo",
+          "name": "Palermo",
+          "category": "money_heist",
+          "category_name": "La Casa de Papel",
+          "img": "/static/avatars/money_heist_palermo.png"
+        }
+      ]
+    },
+    {
+      "id": "the_witcher",
+      "name": "The Witcher",
+      "count": 18,
+      "items": [
+        {
+          "id": "the_witcher_grondo",
+          "name": "Grondo",
+          "category": "the_witcher",
+          "category_name": "The Witcher",
+          "img": "/static/avatars/the_witcher_grondo.png"
+        },
+        {
+          "id": "the_witcher_wraith",
+          "name": "Wraith",
+          "category": "the_witcher",
+          "category_name": "The Witcher",
+          "img": "/static/avatars/the_witcher_wraith.png"
+        },
+        {
+          "id": "the_witcher_wolf_medallion",
+          "name": "Wolf Medallion",
+          "category": "the_witcher",
+          "category_name": "The Witcher",
+          "img": "/static/avatars/the_witcher_wolf_medallion.png"
+        },
+        {
+          "id": "the_witcher_geralt",
+          "name": "Geralt",
+          "category": "the_witcher",
+          "category_name": "The Witcher",
+          "img": "/static/avatars/the_witcher_geralt.png"
+        },
+        {
+          "id": "the_witcher_ciri",
+          "name": "Ciri",
+          "category": "the_witcher",
+          "category_name": "The Witcher",
+          "img": "/static/avatars/the_witcher_ciri.png"
+        },
+        {
+          "id": "the_witcher_yennefer",
+          "name": "Yennefer",
+          "category": "the_witcher",
+          "category_name": "The Witcher",
+          "img": "/static/avatars/the_witcher_yennefer.png"
+        },
+        {
+          "id": "the_witcher_jaskier",
+          "name": "Jaskier",
+          "category": "the_witcher",
+          "category_name": "The Witcher",
+          "img": "/static/avatars/the_witcher_jaskier.png"
+        },
+        {
+          "id": "the_witcher_roach_horse",
+          "name": "Roach (Horse)",
+          "category": "the_witcher",
+          "category_name": "The Witcher",
+          "img": "/static/avatars/the_witcher_roach_horse.png"
+        },
+        {
+          "id": "the_witcher_harpy_sword",
+          "name": "Harpy Sword",
+          "category": "the_witcher",
+          "category_name": "The Witcher",
+          "img": "/static/avatars/the_witcher_harpy_sword.png"
+        },
+        {
+          "id": "the_witcher_kikimora",
+          "name": "Kikimora",
+          "category": "the_witcher",
+          "category_name": "The Witcher",
+          "img": "/static/avatars/the_witcher_kikimora.png"
+        },
+        {
+          "id": "the_witcher_leshy",
+          "name": "Leshy",
+          "category": "the_witcher",
+          "category_name": "The Witcher",
+          "img": "/static/avatars/the_witcher_leshy.png"
+        },
+        {
+          "id": "the_witcher_nivellen",
+          "name": "Nivellen",
+          "category": "the_witcher",
+          "category_name": "The Witcher",
+          "img": "/static/avatars/the_witcher_nivellen.png"
+        },
+        {
+          "id": "the_witcher_witcher_logo",
+          "name": "Witcher Logo",
+          "category": "the_witcher",
+          "category_name": "The Witcher",
+          "img": "/static/avatars/the_witcher_witcher_logo.png"
+        },
+        {
+          "id": "the_witcher_two_swords",
+          "name": "Two Swords",
+          "category": "the_witcher",
+          "category_name": "The Witcher",
+          "img": "/static/avatars/the_witcher_two_swords.png"
+        },
+        {
+          "id": "the_witcher_ciri_s4",
+          "name": "Ciri (S4)",
+          "category": "the_witcher",
+          "category_name": "The Witcher",
+          "img": "/static/avatars/the_witcher_ciri_s4.png"
+        },
+        {
+          "id": "the_witcher_yennefer_s4",
+          "name": "Yennefer (S4)",
+          "category": "the_witcher",
+          "category_name": "The Witcher",
+          "img": "/static/avatars/the_witcher_yennefer_s4.png"
+        },
+        {
+          "id": "the_witcher_jaskier_s4",
+          "name": "Jaskier (S4)",
+          "category": "the_witcher",
+          "category_name": "The Witcher",
+          "img": "/static/avatars/the_witcher_jaskier_s4.png"
+        },
+        {
+          "id": "the_witcher_roach_s4",
+          "name": "Roach (S4)",
+          "category": "the_witcher",
+          "category_name": "The Witcher",
+          "img": "/static/avatars/the_witcher_roach_s4.png"
+        }
+      ]
+    },
+    {
+      "id": "one_piece",
+      "name": "One Piece",
+      "count": 14,
+      "items": [
+        {
+          "id": "one_piece_luffy",
+          "name": "Luffy",
+          "category": "one_piece",
+          "category_name": "One Piece",
+          "img": "/static/avatars/one_piece_luffy.png"
+        },
+        {
+          "id": "one_piece_nami",
+          "name": "Nami",
+          "category": "one_piece",
+          "category_name": "One Piece",
+          "img": "/static/avatars/one_piece_nami.png"
+        },
+        {
+          "id": "one_piece_zoro",
+          "name": "Zoro",
+          "category": "one_piece",
+          "category_name": "One Piece",
+          "img": "/static/avatars/one_piece_zoro.png"
+        },
+        {
+          "id": "one_piece_usopp",
+          "name": "Usopp",
+          "category": "one_piece",
+          "category_name": "One Piece",
+          "img": "/static/avatars/one_piece_usopp.png"
+        },
+        {
+          "id": "one_piece_sanji",
+          "name": "Sanji",
+          "category": "one_piece",
+          "category_name": "One Piece",
+          "img": "/static/avatars/one_piece_sanji.png"
+        },
+        {
+          "id": "one_piece_jolly_roger",
+          "name": "Jolly Roger",
+          "category": "one_piece",
+          "category_name": "One Piece",
+          "img": "/static/avatars/one_piece_jolly_roger.png"
+        },
+        {
+          "id": "one_piece_shanks",
+          "name": "Shanks",
+          "category": "one_piece",
+          "category_name": "One Piece",
+          "img": "/static/avatars/one_piece_shanks.png"
+        },
+        {
+          "id": "one_piece_mihawk",
+          "name": "Mihawk",
+          "category": "one_piece",
+          "category_name": "One Piece",
+          "img": "/static/avatars/one_piece_mihawk.png"
+        },
+        {
+          "id": "one_piece_garp",
+          "name": "Garp",
+          "category": "one_piece",
+          "category_name": "One Piece",
+          "img": "/static/avatars/one_piece_garp.png"
+        },
+        {
+          "id": "one_piece_arlong",
+          "name": "Arlong",
+          "category": "one_piece",
+          "category_name": "One Piece",
+          "img": "/static/avatars/one_piece_arlong.png"
+        },
+        {
+          "id": "one_piece_buggy",
+          "name": "Buggy",
+          "category": "one_piece",
+          "category_name": "One Piece",
+          "img": "/static/avatars/one_piece_buggy.png"
+        },
+        {
+          "id": "one_piece_den_den_mushi",
+          "name": "Den Den Mushi",
+          "category": "one_piece",
+          "category_name": "One Piece",
+          "img": "/static/avatars/one_piece_den_den_mushi.png"
+        },
+        {
+          "id": "one_piece_koby",
+          "name": "Koby",
+          "category": "one_piece",
+          "category_name": "One Piece",
+          "img": "/static/avatars/one_piece_koby.png"
+        },
+        {
+          "id": "one_piece_going_merry",
+          "name": "Going Merry",
+          "category": "one_piece",
+          "category_name": "One Piece",
+          "img": "/static/avatars/one_piece_going_merry.png"
+        }
+      ]
+    },
+    {
+      "id": "arcane_games",
+      "name": "Arcane, Animes & Games",
+      "count": 40,
+      "items": [
+        {
+          "id": "arcane_games_jinx",
+          "name": "Jinx",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_jinx.png"
+        },
+        {
+          "id": "arcane_games_vi",
+          "name": "Vi",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_vi.png"
+        },
+        {
+          "id": "arcane_games_caitlyn",
+          "name": "Caitlyn",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_caitlyn.png"
+        },
+        {
+          "id": "arcane_games_ekko",
+          "name": "Ekko",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_ekko.png"
+        },
+        {
+          "id": "arcane_games_viktor",
+          "name": "Viktor",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_viktor.png"
+        },
+        {
+          "id": "arcane_games_mel",
+          "name": "Mel",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_mel.png"
+        },
+        {
+          "id": "arcane_games_poro",
+          "name": "Poro",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_poro.png"
+        },
+        {
+          "id": "arcane_games_jayce",
+          "name": "Jayce",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_jayce.png"
+        },
+        {
+          "id": "arcane_games_heimerdinger",
+          "name": "Heimerdinger",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_heimerdinger.png"
+        },
+        {
+          "id": "arcane_games_sevika",
+          "name": "Sevika",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_sevika.png"
+        },
+        {
+          "id": "arcane_games_silco",
+          "name": "Silco",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_silco.png"
+        },
+        {
+          "id": "arcane_games_vander",
+          "name": "Vander",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_vander.png"
+        },
+        {
+          "id": "arcane_games_sonic",
+          "name": "Sonic",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_sonic.png"
+        },
+        {
+          "id": "arcane_games_tails",
+          "name": "Tails",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_tails.png"
+        },
+        {
+          "id": "arcane_games_amy_rose",
+          "name": "Amy Rose",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_amy_rose.png"
+        },
+        {
+          "id": "arcane_games_dr_eggman",
+          "name": "Dr. Eggman",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_dr_eggman.png"
+        },
+        {
+          "id": "arcane_games_knuckles",
+          "name": "Knuckles",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_knuckles.png"
+        },
+        {
+          "id": "arcane_games_shadow",
+          "name": "Shadow",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_shadow.png"
+        },
+        {
+          "id": "arcane_games_rouge",
+          "name": "Rouge",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_rouge.png"
+        },
+        {
+          "id": "arcane_games_big_the_cat_froggy",
+          "name": "Big the Cat & Froggy",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_big_the_cat_froggy.png"
+        },
+        {
+          "id": "arcane_games_tails_nine",
+          "name": "Tails Nine",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_tails_nine.png"
+        },
+        {
+          "id": "arcane_games_rusty_rose",
+          "name": "Rusty Rose",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_rusty_rose.png"
+        },
+        {
+          "id": "arcane_games_renegade_knuckles",
+          "name": "Renegade Knuckles",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_renegade_knuckles.png"
+        },
+        {
+          "id": "arcane_games_mr_dr_eggman",
+          "name": "Mr. Dr. Eggman",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_mr_dr_eggman.png"
+        },
+        {
+          "id": "arcane_games_rebel_rouge",
+          "name": "Rebel Rouge",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_rebel_rouge.png"
+        },
+        {
+          "id": "arcane_games_knuckles_the_dread",
+          "name": "Knuckles the Dread",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_knuckles_the_dread.png"
+        },
+        {
+          "id": "arcane_games_mangey_tails",
+          "name": "Mangey Tails",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_mangey_tails.png"
+        },
+        {
+          "id": "arcane_games_thorn_rose",
+          "name": "Thorn Rose",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_thorn_rose.png"
+        },
+        {
+          "id": "arcane_games_black_rose",
+          "name": "Black Rose",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_black_rose.png"
+        },
+        {
+          "id": "arcane_games_dr_babble",
+          "name": "Dr. Babble",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_dr_babble.png"
+        },
+        {
+          "id": "arcane_games_dr_dont",
+          "name": "Dr. Don't",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_dr_dont.png"
+        },
+        {
+          "id": "arcane_games_dr_deep",
+          "name": "Dr. Deep",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_dr_deep.png"
+        },
+        {
+          "id": "arcane_games_dr_done_it",
+          "name": "Dr. Done It",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_dr_done_it.png"
+        },
+        {
+          "id": "arcane_games_dracula",
+          "name": "Dracula",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_dracula.png"
+        },
+        {
+          "id": "arcane_games_trevor",
+          "name": "Trevor",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_trevor.png"
+        },
+        {
+          "id": "arcane_games_alucard",
+          "name": "Alucard",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_alucard.png"
+        },
+        {
+          "id": "arcane_games_haru",
+          "name": "Haru",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_haru.png"
+        },
+        {
+          "id": "arcane_games_psyduck",
+          "name": "Psyduck",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_psyduck.png"
+        },
+        {
+          "id": "arcane_games_alisa",
+          "name": "Alisa",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_alisa.png"
+        },
+        {
+          "id": "arcane_games_mudkip",
+          "name": "Mudkip",
+          "category": "arcane_games",
+          "category_name": "Arcane, Animes & Games",
+          "img": "/static/avatars/arcane_games_mudkip.png"
+        }
+      ]
+    },
+    {
+      "id": "cobra_kai",
+      "name": "Cobra Kai",
+      "count": 24,
+      "items": [
+        {
+          "id": "cobra_kai_s5_johnny",
+          "name": "S5 Johnny",
+          "category": "cobra_kai",
+          "category_name": "Cobra Kai",
+          "img": "/static/avatars/cobra_kai_s5_johnny.png"
+        },
+        {
+          "id": "cobra_kai_s5_daniel",
+          "name": "S5 Daniel",
+          "category": "cobra_kai",
+          "category_name": "Cobra Kai",
+          "img": "/static/avatars/cobra_kai_s5_daniel.png"
+        },
+        {
+          "id": "cobra_kai_s5_kreese",
+          "name": "S5 Kreese",
+          "category": "cobra_kai",
+          "category_name": "Cobra Kai",
+          "img": "/static/avatars/cobra_kai_s5_kreese.png"
+        },
+        {
+          "id": "cobra_kai_s5_miguel",
+          "name": "S5 Miguel",
+          "category": "cobra_kai",
+          "category_name": "Cobra Kai",
+          "img": "/static/avatars/cobra_kai_s5_miguel.png"
+        },
+        {
+          "id": "cobra_kai_s5_robbie",
+          "name": "S5 Robbie",
+          "category": "cobra_kai",
+          "category_name": "Cobra Kai",
+          "img": "/static/avatars/cobra_kai_s5_robbie.png"
+        },
+        {
+          "id": "cobra_kai_s5_sam",
+          "name": "S5 Sam",
+          "category": "cobra_kai",
+          "category_name": "Cobra Kai",
+          "img": "/static/avatars/cobra_kai_s5_sam.png"
+        },
+        {
+          "id": "cobra_kai_s5_tory",
+          "name": "S5 Tory",
+          "category": "cobra_kai",
+          "category_name": "Cobra Kai",
+          "img": "/static/avatars/cobra_kai_s5_tory.png"
+        },
+        {
+          "id": "cobra_kai_s5_hawk",
+          "name": "S5 Hawk",
+          "category": "cobra_kai",
+          "category_name": "Cobra Kai",
+          "img": "/static/avatars/cobra_kai_s5_hawk.png"
+        },
+        {
+          "id": "cobra_kai_s5_demetri",
+          "name": "S5 Demetri",
+          "category": "cobra_kai",
+          "category_name": "Cobra Kai",
+          "img": "/static/avatars/cobra_kai_s5_demetri.png"
+        },
+        {
+          "id": "cobra_kai_s5_silver",
+          "name": "S5 Silver",
+          "category": "cobra_kai",
+          "category_name": "Cobra Kai",
+          "img": "/static/avatars/cobra_kai_s5_silver.png"
+        },
+        {
+          "id": "cobra_kai_s5_amanda",
+          "name": "S5 Amanda",
+          "category": "cobra_kai",
+          "category_name": "Cobra Kai",
+          "img": "/static/avatars/cobra_kai_s5_amanda.png"
+        },
+        {
+          "id": "cobra_kai_s5_carmen",
+          "name": "S5 Carmen",
+          "category": "cobra_kai",
+          "category_name": "Cobra Kai",
+          "img": "/static/avatars/cobra_kai_s5_carmen.png"
+        },
+        {
+          "id": "cobra_kai_s5_mr_miyagi",
+          "name": "S5 Mr. Miyagi",
+          "category": "cobra_kai",
+          "category_name": "Cobra Kai",
+          "img": "/static/avatars/cobra_kai_s5_mr_miyagi.png"
+        },
+        {
+          "id": "cobra_kai_s5_cobra_kai_logo",
+          "name": "S5 Cobra Kai Logo",
+          "category": "cobra_kai",
+          "category_name": "Cobra Kai",
+          "img": "/static/avatars/cobra_kai_s5_cobra_kai_logo.png"
+        },
+        {
+          "id": "cobra_kai_s5_miyagi_do",
+          "name": "S5 Miyagi-Do",
+          "category": "cobra_kai",
+          "category_name": "Cobra Kai",
+          "img": "/static/avatars/cobra_kai_s5_miyagi_do.png"
+        },
+        {
+          "id": "cobra_kai_kenny",
+          "name": "Kenny",
+          "category": "cobra_kai",
+          "category_name": "Cobra Kai",
+          "img": "/static/avatars/cobra_kai_kenny.png"
+        },
+        {
+          "id": "cobra_kai_chozen",
+          "name": "Chozen",
+          "category": "cobra_kai",
+          "category_name": "Cobra Kai",
+          "img": "/static/avatars/cobra_kai_chozen.png"
+        },
+        {
+          "id": "cobra_kai_sensei_kim",
+          "name": "Sensei Kim",
+          "category": "cobra_kai",
+          "category_name": "Cobra Kai",
+          "img": "/static/avatars/cobra_kai_sensei_kim.png"
+        },
+        {
+          "id": "cobra_kai_sensei_wolf",
+          "name": "Sensei Wolf",
+          "category": "cobra_kai",
+          "category_name": "Cobra Kai",
+          "img": "/static/avatars/cobra_kai_sensei_wolf.png"
+        },
+        {
+          "id": "cobra_kai_kwon",
+          "name": "Kwon",
+          "category": "cobra_kai",
+          "category_name": "Cobra Kai",
+          "img": "/static/avatars/cobra_kai_kwon.png"
+        },
+        {
+          "id": "cobra_kai_zara",
+          "name": "Zara",
+          "category": "cobra_kai",
+          "category_name": "Cobra Kai",
+          "img": "/static/avatars/cobra_kai_zara.png"
+        },
+        {
+          "id": "cobra_kai_anthony",
+          "name": "Anthony",
+          "category": "cobra_kai",
+          "category_name": "Cobra Kai",
+          "img": "/static/avatars/cobra_kai_anthony.png"
+        },
+        {
+          "id": "cobra_kai_devon",
+          "name": "Devon",
+          "category": "cobra_kai",
+          "category_name": "Cobra Kai",
+          "img": "/static/avatars/cobra_kai_devon.png"
+        },
+        {
+          "id": "cobra_kai_axel",
+          "name": "Axel",
+          "category": "cobra_kai",
+          "category_name": "Cobra Kai",
+          "img": "/static/avatars/cobra_kai_axel.png"
+        }
+      ]
+    },
+    {
+      "id": "bridgerton",
+      "name": "Bridgerton & Drama",
+      "count": 30,
+      "items": [
+        {
+          "id": "bridgerton_penelope_featherington",
+          "name": "Penelope Featherington",
+          "category": "bridgerton",
+          "category_name": "Bridgerton & Drama",
+          "img": "/static/avatars/bridgerton_penelope_featherington.png"
+        },
+        {
+          "id": "bridgerton_colin_bridgerton",
+          "name": "Colin Bridgerton",
+          "category": "bridgerton",
+          "category_name": "Bridgerton & Drama",
+          "img": "/static/avatars/bridgerton_colin_bridgerton.png"
+        },
+        {
+          "id": "bridgerton_anthony_bridgerton",
+          "name": "Anthony Bridgerton",
+          "category": "bridgerton",
+          "category_name": "Bridgerton & Drama",
+          "img": "/static/avatars/bridgerton_anthony_bridgerton.png"
+        },
+        {
+          "id": "bridgerton_kate_sharma",
+          "name": "Kate Sharma",
+          "category": "bridgerton",
+          "category_name": "Bridgerton & Drama",
+          "img": "/static/avatars/bridgerton_kate_sharma.png"
+        },
+        {
+          "id": "bridgerton_daphne_bridgerton",
+          "name": "Daphne Bridgerton",
+          "category": "bridgerton",
+          "category_name": "Bridgerton & Drama",
+          "img": "/static/avatars/bridgerton_daphne_bridgerton.png"
+        },
+        {
+          "id": "bridgerton_simon_basset",
+          "name": "Simon Basset",
+          "category": "bridgerton",
+          "category_name": "Bridgerton & Drama",
+          "img": "/static/avatars/bridgerton_simon_basset.png"
+        },
+        {
+          "id": "bridgerton_eloise_bridgerton",
+          "name": "Eloise Bridgerton",
+          "category": "bridgerton",
+          "category_name": "Bridgerton & Drama",
+          "img": "/static/avatars/bridgerton_eloise_bridgerton.png"
+        },
+        {
+          "id": "bridgerton_francesca_bridgerton",
+          "name": "Francesca Bridgerton",
+          "category": "bridgerton",
+          "category_name": "Bridgerton & Drama",
+          "img": "/static/avatars/bridgerton_francesca_bridgerton.png"
+        },
+        {
+          "id": "bridgerton_benedict_bridgerton",
+          "name": "Benedict Bridgerton",
+          "category": "bridgerton",
+          "category_name": "Bridgerton & Drama",
+          "img": "/static/avatars/bridgerton_benedict_bridgerton.png"
+        },
+        {
+          "id": "bridgerton_queen_charlotte",
+          "name": "Queen Charlotte",
+          "category": "bridgerton",
+          "category_name": "Bridgerton & Drama",
+          "img": "/static/avatars/bridgerton_queen_charlotte.png"
+        },
+        {
+          "id": "bridgerton_lady_danbury",
+          "name": "Lady Danbury",
+          "category": "bridgerton",
+          "category_name": "Bridgerton & Drama",
+          "img": "/static/avatars/bridgerton_lady_danbury.png"
+        },
+        {
+          "id": "bridgerton_lady_bridgerton",
+          "name": "Lady Bridgerton",
+          "category": "bridgerton",
+          "category_name": "Bridgerton & Drama",
+          "img": "/static/avatars/bridgerton_lady_bridgerton.png"
+        },
+        {
+          "id": "bridgerton_lady_featherington",
+          "name": "Lady Featherington",
+          "category": "bridgerton",
+          "category_name": "Bridgerton & Drama",
+          "img": "/static/avatars/bridgerton_lady_featherington.png"
+        },
+        {
+          "id": "bridgerton_marina_thompson",
+          "name": "Marina Thompson",
+          "category": "bridgerton",
+          "category_name": "Bridgerton & Drama",
+          "img": "/static/avatars/bridgerton_marina_thompson.png"
+        },
+        {
+          "id": "bridgerton_edwina_sharma",
+          "name": "Edwina Sharma",
+          "category": "bridgerton",
+          "category_name": "Bridgerton & Drama",
+          "img": "/static/avatars/bridgerton_edwina_sharma.png"
+        },
+        {
+          "id": "bridgerton_lady_whistledown",
+          "name": "Lady Whistledown",
+          "category": "bridgerton",
+          "category_name": "Bridgerton & Drama",
+          "img": "/static/avatars/bridgerton_lady_whistledown.png"
+        },
+        {
+          "id": "bridgerton_sophie_baek",
+          "name": "Sophie Baek",
+          "category": "bridgerton",
+          "category_name": "Bridgerton & Drama",
+          "img": "/static/avatars/bridgerton_sophie_baek.png"
+        },
+        {
+          "id": "bridgerton_corgi",
+          "name": "Corgi",
+          "category": "bridgerton",
+          "category_name": "Bridgerton & Drama",
+          "img": "/static/avatars/bridgerton_corgi.png"
+        },
+        {
+          "id": "bridgerton_princess_diana",
+          "name": "Princess Diana",
+          "category": "bridgerton",
+          "category_name": "Bridgerton & Drama",
+          "img": "/static/avatars/bridgerton_princess_diana.png"
+        },
+        {
+          "id": "bridgerton_queen_elizabeth_claire_foy",
+          "name": "Queen Elizabeth - Claire Foy",
+          "category": "bridgerton",
+          "category_name": "Bridgerton & Drama",
+          "img": "/static/avatars/bridgerton_queen_elizabeth_claire_foy.png"
+        },
+        {
+          "id": "bridgerton_queen_elizabeth_olivia_coleman",
+          "name": "Queen Elizabeth - Olivia Coleman",
+          "category": "bridgerton",
+          "category_name": "Bridgerton & Drama",
+          "img": "/static/avatars/bridgerton_queen_elizabeth_olivia_coleman.png"
+        },
+        {
+          "id": "bridgerton_queen_elizabeth_imelda_staunto",
+          "name": "Queen Elizabeth - Imelda Staunton",
+          "category": "bridgerton",
+          "category_name": "Bridgerton & Drama",
+          "img": "/static/avatars/bridgerton_queen_elizabeth_imelda_staunto.png"
+        },
+        {
+          "id": "bridgerton_prince_charles_josh_oconnor",
+          "name": "Prince Charles - Josh O'Connor",
+          "category": "bridgerton",
+          "category_name": "Bridgerton & Drama",
+          "img": "/static/avatars/bridgerton_prince_charles_josh_oconnor.png"
+        },
+        {
+          "id": "bridgerton_prince_charles_dominic_west",
+          "name": "Prince Charles - Dominic West",
+          "category": "bridgerton",
+          "category_name": "Bridgerton & Drama",
+          "img": "/static/avatars/bridgerton_prince_charles_dominic_west.png"
+        },
+        {
+          "id": "bridgerton_lady_diana",
+          "name": "Lady Diana",
+          "category": "bridgerton",
+          "category_name": "Bridgerton & Drama",
+          "img": "/static/avatars/bridgerton_lady_diana.png"
+        },
+        {
+          "id": "bridgerton_prince_phillip_matt_smith",
+          "name": "Prince Phillip - Matt Smith",
+          "category": "bridgerton",
+          "category_name": "Bridgerton & Drama",
+          "img": "/static/avatars/bridgerton_prince_phillip_matt_smith.png"
+        },
+        {
+          "id": "bridgerton_prince_phillip_tobias_menzies",
+          "name": "Prince Phillip - Tobias Menzies",
+          "category": "bridgerton",
+          "category_name": "Bridgerton & Drama",
+          "img": "/static/avatars/bridgerton_prince_phillip_tobias_menzies.png"
+        },
+        {
+          "id": "bridgerton_prince_philip_jonathan_pryce",
+          "name": "Prince Philip - Jonathan Pryce",
+          "category": "bridgerton",
+          "category_name": "Bridgerton & Drama",
+          "img": "/static/avatars/bridgerton_prince_philip_jonathan_pryce.png"
+        },
+        {
+          "id": "bridgerton_princess_margaret_vanessa_kirb",
+          "name": "Princess Margaret - Vanessa Kirby",
+          "category": "bridgerton",
+          "category_name": "Bridgerton & Drama",
+          "img": "/static/avatars/bridgerton_princess_margaret_vanessa_kirb.png"
+        },
+        {
+          "id": "bridgerton_princess_margaret_helena_bonha",
+          "name": "Princess Margaret - Helena Bonham Carter",
+          "category": "bridgerton",
+          "category_name": "Bridgerton & Drama",
+          "img": "/static/avatars/bridgerton_princess_margaret_helena_bonha.png"
+        }
+      ]
+    },
+    {
+      "id": "popular_series",
+      "name": "Séries Populares & Sci-Fi",
+      "count": 45,
+      "items": [
+        {
+          "id": "popular_series_young_jonas",
+          "name": "Young Jonas",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_young_jonas.png"
+        },
+        {
+          "id": "popular_series_young_marta",
+          "name": "Young Marta",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_young_marta.png"
+        },
+        {
+          "id": "popular_series_old_jonasadam",
+          "name": "Old Jonas/Adam",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_old_jonasadam.png"
+        },
+        {
+          "id": "popular_series_old_martaeve",
+          "name": "Old Marta/Eve",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_old_martaeve.png"
+        },
+        {
+          "id": "popular_series_noah",
+          "name": "Noah",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_noah.png"
+        },
+        {
+          "id": "popular_series_claudia",
+          "name": "Claudia",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_claudia.png"
+        },
+        {
+          "id": "popular_series_mikkel",
+          "name": "Mikkel",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_mikkel.png"
+        },
+        {
+          "id": "popular_series_tannhaus",
+          "name": "Tannhaus",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_tannhaus.png"
+        },
+        {
+          "id": "popular_series_trinity_knot",
+          "name": "Trinity Knot",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_trinity_knot.png"
+        },
+        {
+          "id": "popular_series_time_machine",
+          "name": "Time Machine",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_time_machine.png"
+        },
+        {
+          "id": "popular_series_dark_matter",
+          "name": "Dark Matter",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_dark_matter.png"
+        },
+        {
+          "id": "popular_series_loading_circle",
+          "name": "Loading Circle",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_loading_circle.png"
+        },
+        {
+          "id": "popular_series_pixel_bandersnatch",
+          "name": "Pixel Bandersnatch",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_pixel_bandersnatch.png"
+        },
+        {
+          "id": "popular_series_broken_smiley_face",
+          "name": "Broken Smiley Face",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_broken_smiley_face.png"
+        },
+        {
+          "id": "popular_series_glyph",
+          "name": "Glyph",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_glyph.png"
+        },
+        {
+          "id": "popular_series_doll",
+          "name": "Doll",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_doll.png"
+        },
+        {
+          "id": "popular_series_stuffed_animal_monkey",
+          "name": "Stuffed Animal Monkey",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_stuffed_animal_monkey.png"
+        },
+        {
+          "id": "popular_series_waldo",
+          "name": "Waldo",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_waldo.png"
+        },
+        {
+          "id": "popular_series_thronglet",
+          "name": "Thronglet",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_thronglet.png"
+        },
+        {
+          "id": "popular_series_lucifer",
+          "name": "Lucifer",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_lucifer.png"
+        },
+        {
+          "id": "popular_series_chloe",
+          "name": "Chloe",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_chloe.png"
+        },
+        {
+          "id": "popular_series_maze",
+          "name": "Maze",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_maze.png"
+        },
+        {
+          "id": "popular_series_amenadiel",
+          "name": "Amenadiel",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_amenadiel.png"
+        },
+        {
+          "id": "popular_series_linda",
+          "name": "Linda",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_linda.png"
+        },
+        {
+          "id": "popular_series_dan",
+          "name": "Dan",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_dan.png"
+        },
+        {
+          "id": "popular_series_ella",
+          "name": "Ella",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_ella.png"
+        },
+        {
+          "id": "popular_series_morningstar",
+          "name": "Morningstar",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_morningstar.png"
+        },
+        {
+          "id": "popular_series_arisu",
+          "name": "Arisu",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_arisu.png"
+        },
+        {
+          "id": "popular_series_usagi",
+          "name": "Usagi",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_usagi.png"
+        },
+        {
+          "id": "popular_series_banda",
+          "name": "Banda",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_banda.png"
+        },
+        {
+          "id": "popular_series_ann",
+          "name": "Ann",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_ann.png"
+        },
+        {
+          "id": "popular_series_yaba",
+          "name": "Yaba",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_yaba.png"
+        },
+        {
+          "id": "popular_series_tetsu",
+          "name": "Tetsu",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_tetsu.png"
+        },
+        {
+          "id": "popular_series_kazuya",
+          "name": "Kazuya",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_kazuya.png"
+        },
+        {
+          "id": "popular_series_sachiko",
+          "name": "Sachiko",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_sachiko.png"
+        },
+        {
+          "id": "popular_series_rei",
+          "name": "Rei",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_rei.png"
+        },
+        {
+          "id": "popular_series_chishiya",
+          "name": "Chishiya",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_chishiya.png"
+        },
+        {
+          "id": "popular_series_the_watchman",
+          "name": "The Watchman",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_the_watchman.png"
+        },
+        {
+          "id": "popular_series_joker",
+          "name": "Joker",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_joker.png"
+        },
+        {
+          "id": "popular_series_assane_gentleman_thief",
+          "name": "Assane (Gentleman Thief)",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_assane_gentleman_thief.png"
+        },
+        {
+          "id": "popular_series_assane_sapeur",
+          "name": "Assane (Sapeur)",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_assane_sapeur.png"
+        },
+        {
+          "id": "popular_series_assane_trash_collector",
+          "name": "Assane (Trash Collector)",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_assane_trash_collector.png"
+        },
+        {
+          "id": "popular_series_assane_suave_man",
+          "name": "Assane (Suave Man)",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_assane_suave_man.png"
+        },
+        {
+          "id": "popular_series_assane_security_guard",
+          "name": "Assane (Security Guard)",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_assane_security_guard.png"
+        },
+        {
+          "id": "popular_series_assane_trilby_shades",
+          "name": "Assane (Trilby & Shades)",
+          "category": "popular_series",
+          "category_name": "Séries Populares & Sci-Fi",
+          "img": "/static/avatars/popular_series_assane_trilby_shades.png"
+        }
+      ]
+    },
+    {
+      "id": "netflix_classics",
+      "name": "Clássicos Netflix",
+      "count": 23,
+      "items": [
+        {
+          "id": "netflix_classics_chicken",
+          "name": "Chicken",
+          "category": "netflix_classics",
+          "category_name": "Clássicos Netflix",
+          "img": "/static/avatars/netflix_classics_chicken.png"
+        },
+        {
+          "id": "netflix_classics_moustache",
+          "name": "Moustache",
+          "category": "netflix_classics",
+          "category_name": "Clássicos Netflix",
+          "img": "/static/avatars/netflix_classics_moustache.png"
+        },
+        {
+          "id": "netflix_classics_pink_giggle",
+          "name": "Pink Giggle",
+          "category": "netflix_classics",
+          "category_name": "Clássicos Netflix",
+          "img": "/static/avatars/netflix_classics_pink_giggle.png"
+        },
+        {
+          "id": "netflix_classics_scarlet_chilleez",
+          "name": "Scarlet Chilleez",
+          "category": "netflix_classics",
+          "category_name": "Clássicos Netflix",
+          "img": "/static/avatars/netflix_classics_scarlet_chilleez.png"
+        },
+        {
+          "id": "netflix_classics_sunny_chilleez",
+          "name": "Sunny Chilleez",
+          "category": "netflix_classics",
+          "category_name": "Clássicos Netflix",
+          "img": "/static/avatars/netflix_classics_sunny_chilleez.png"
+        },
+        {
+          "id": "netflix_classics_robin_chilleez",
+          "name": "Robin Chilleez",
+          "category": "netflix_classics",
+          "category_name": "Clássicos Netflix",
+          "img": "/static/avatars/netflix_classics_robin_chilleez.png"
+        },
+        {
+          "id": "netflix_classics_dusty_chilleez",
+          "name": "Dusty Chilleez",
+          "category": "netflix_classics",
+          "category_name": "Clássicos Netflix",
+          "img": "/static/avatars/netflix_classics_dusty_chilleez.png"
+        },
+        {
+          "id": "netflix_classics_purple_superhero",
+          "name": "Purple Superhero",
+          "category": "netflix_classics",
+          "category_name": "Clássicos Netflix",
+          "img": "/static/avatars/netflix_classics_purple_superhero.png"
+        },
+        {
+          "id": "netflix_classics_dog",
+          "name": "Dog",
+          "category": "netflix_classics",
+          "category_name": "Clássicos Netflix",
+          "img": "/static/avatars/netflix_classics_dog.png"
+        },
+        {
+          "id": "netflix_classics_red_superhero",
+          "name": "Red Superhero",
+          "category": "netflix_classics",
+          "category_name": "Clássicos Netflix",
+          "img": "/static/avatars/netflix_classics_red_superhero.png"
+        },
+        {
+          "id": "netflix_classics_purple_penguin",
+          "name": "Purple Penguin",
+          "category": "netflix_classics",
+          "category_name": "Clássicos Netflix",
+          "img": "/static/avatars/netflix_classics_purple_penguin.png"
+        },
+        {
+          "id": "netflix_classics_eyepatch",
+          "name": "Eyepatch",
+          "category": "netflix_classics",
+          "category_name": "Clássicos Netflix",
+          "img": "/static/avatars/netflix_classics_eyepatch.png"
+        },
+        {
+          "id": "netflix_classics_alien",
+          "name": "Alien",
+          "category": "netflix_classics",
+          "category_name": "Clássicos Netflix",
+          "img": "/static/avatars/netflix_classics_alien.png"
+        },
+        {
+          "id": "netflix_classics_robot",
+          "name": "Robot",
+          "category": "netflix_classics",
+          "category_name": "Clássicos Netflix",
+          "img": "/static/avatars/netflix_classics_robot.png"
+        },
+        {
+          "id": "netflix_classics_mummy",
+          "name": "Mummy",
+          "category": "netflix_classics",
+          "category_name": "Clássicos Netflix",
+          "img": "/static/avatars/netflix_classics_mummy.png"
+        },
+        {
+          "id": "netflix_classics_helmet",
+          "name": "Helmet",
+          "category": "netflix_classics",
+          "category_name": "Clássicos Netflix",
+          "img": "/static/avatars/netflix_classics_helmet.png"
+        },
+        {
+          "id": "netflix_classics_red_smile",
+          "name": "Red Smile",
+          "category": "netflix_classics",
+          "category_name": "Clássicos Netflix",
+          "img": "/static/avatars/netflix_classics_red_smile.png"
+        },
+        {
+          "id": "netflix_classics_dark_grey_smile",
+          "name": "Dark Grey Smile",
+          "category": "netflix_classics",
+          "category_name": "Clássicos Netflix",
+          "img": "/static/avatars/netflix_classics_dark_grey_smile.png"
+        },
+        {
+          "id": "netflix_classics_yellow_smile",
+          "name": "Yellow Smile",
+          "category": "netflix_classics",
+          "category_name": "Clássicos Netflix",
+          "img": "/static/avatars/netflix_classics_yellow_smile.png"
+        },
+        {
+          "id": "netflix_classics_green_smile",
+          "name": "Green Smile",
+          "category": "netflix_classics",
+          "category_name": "Clássicos Netflix",
+          "img": "/static/avatars/netflix_classics_green_smile.png"
+        },
+        {
+          "id": "netflix_classics_purple_smile",
+          "name": "Purple Smile",
+          "category": "netflix_classics",
+          "category_name": "Clássicos Netflix",
+          "img": "/static/avatars/netflix_classics_purple_smile.png"
+        },
+        {
+          "id": "netflix_classics_pink_smile",
+          "name": "Pink Smile",
+          "category": "netflix_classics",
+          "category_name": "Clássicos Netflix",
+          "img": "/static/avatars/netflix_classics_pink_smile.png"
+        },
+        {
+          "id": "netflix_classics_blue_classic_icon",
+          "name": "Blue Classic Icon",
+          "category": "netflix_classics",
+          "category_name": "Clássicos Netflix",
+          "img": "/static/avatars/netflix_classics_blue_classic_icon.png"
+        }
+      ]
+    }
+  ],
+  "avatars": [
+    {
+      "id": "stranger_things_s1_demogorgon",
+      "name": "S1 Demogorgon",
+      "category": "stranger_things",
+      "category_name": "Stranger Things",
+      "img": "/static/avatars/stranger_things_s1_demogorgon.png"
+    },
+    {
+      "id": "stranger_things_s1_dustin",
+      "name": "S1 Dustin",
+      "category": "stranger_things",
+      "category_name": "Stranger Things",
+      "img": "/static/avatars/stranger_things_s1_dustin.png"
+    },
+    {
+      "id": "stranger_things_s1_eleven",
+      "name": "S1 Eleven",
+      "category": "stranger_things",
+      "category_name": "Stranger Things",
+      "img": "/static/avatars/stranger_things_s1_eleven.png"
+    },
+    {
+      "id": "stranger_things_s1_hopper",
+      "name": "S1 Hopper",
+      "category": "stranger_things",
+      "category_name": "Stranger Things",
+      "img": "/static/avatars/stranger_things_s1_hopper.png"
+    },
+    {
+      "id": "stranger_things_s1_jonathan",
+      "name": "S1 Jonathan",
+      "category": "stranger_things",
+      "category_name": "Stranger Things",
+      "img": "/static/avatars/stranger_things_s1_jonathan.png"
+    },
+    {
+      "id": "stranger_things_s1_joyce",
+      "name": "S1 Joyce",
+      "category": "stranger_things",
+      "category_name": "Stranger Things",
+      "img": "/static/avatars/stranger_things_s1_joyce.png"
+    },
+    {
+      "id": "stranger_things_s1_lucas",
+      "name": "S1 Lucas",
+      "category": "stranger_things",
+      "category_name": "Stranger Things",
+      "img": "/static/avatars/stranger_things_s1_lucas.png"
+    },
+    {
+      "id": "stranger_things_s1_mike",
+      "name": "S1 Mike",
+      "category": "stranger_things",
+      "category_name": "Stranger Things",
+      "img": "/static/avatars/stranger_things_s1_mike.png"
+    },
+    {
+      "id": "stranger_things_s1_nancy",
+      "name": "S1 Nancy",
+      "category": "stranger_things",
+      "category_name": "Stranger Things",
+      "img": "/static/avatars/stranger_things_s1_nancy.png"
+    },
+    {
+      "id": "stranger_things_s1_will",
+      "name": "S1 Will",
+      "category": "stranger_things",
+      "category_name": "Stranger Things",
+      "img": "/static/avatars/stranger_things_s1_will.png"
+    },
+    {
+      "id": "stranger_things_s1_steve",
+      "name": "S1 Steve",
+      "category": "stranger_things",
+      "category_name": "Stranger Things",
+      "img": "/static/avatars/stranger_things_s1_steve.png"
+    },
+    {
+      "id": "stranger_things_s2_billy",
+      "name": "S2 Billy",
+      "category": "stranger_things",
+      "category_name": "Stranger Things",
+      "img": "/static/avatars/stranger_things_s2_billy.png"
+    },
+    {
+      "id": "stranger_things_s2_demogorgon",
+      "name": "S2 Demogorgon",
+      "category": "stranger_things",
+      "category_name": "Stranger Things",
+      "img": "/static/avatars/stranger_things_s2_demogorgon.png"
+    },
+    {
+      "id": "stranger_things_s2_dustin",
+      "name": "S2 Dustin",
+      "category": "stranger_things",
+      "category_name": "Stranger Things",
+      "img": "/static/avatars/stranger_things_s2_dustin.png"
+    },
+    {
+      "id": "stranger_things_s2_dustins_hat",
+      "name": "S2 Dustin's Hat",
+      "category": "stranger_things",
+      "category_name": "Stranger Things",
+      "img": "/static/avatars/stranger_things_s2_dustins_hat.png"
+    },
+    {
+      "id": "stranger_things_s2_hopper_rare",
+      "name": "S2 Hopper (RARE)",
+      "category": "stranger_things",
+      "category_name": "Stranger Things",
+      "img": "/static/avatars/stranger_things_s2_hopper_rare.png"
+    },
+    {
+      "id": "stranger_things_s2_jonathan",
+      "name": "S2 Jonathan",
+      "category": "stranger_things",
+      "category_name": "Stranger Things",
+      "img": "/static/avatars/stranger_things_s2_jonathan.png"
+    },
+    {
+      "id": "stranger_things_s2_joyce_rare",
+      "name": "S2 Joyce (RARE)",
+      "category": "stranger_things",
+      "category_name": "Stranger Things",
+      "img": "/static/avatars/stranger_things_s2_joyce_rare.png"
+    },
+    {
+      "id": "stranger_things_s2_lucas",
+      "name": "S2 Lucas",
+      "category": "stranger_things",
+      "category_name": "Stranger Things",
+      "img": "/static/avatars/stranger_things_s2_lucas.png"
+    },
+    {
+      "id": "stranger_things_s2_max",
+      "name": "S2 Max",
+      "category": "stranger_things",
+      "category_name": "Stranger Things",
+      "img": "/static/avatars/stranger_things_s2_max.png"
+    },
+    {
+      "id": "stranger_things_s2_mike",
+      "name": "S2 Mike",
+      "category": "stranger_things",
+      "category_name": "Stranger Things",
+      "img": "/static/avatars/stranger_things_s2_mike.png"
+    },
+    {
+      "id": "stranger_things_s2_nancy",
+      "name": "S2 Nancy",
+      "category": "stranger_things",
+      "category_name": "Stranger Things",
+      "img": "/static/avatars/stranger_things_s2_nancy.png"
+    },
+    {
+      "id": "stranger_things_s2_steve",
+      "name": "S2 Steve",
+      "category": "stranger_things",
+      "category_name": "Stranger Things",
+      "img": "/static/avatars/stranger_things_s2_steve.png"
+    },
+    {
+      "id": "stranger_things_s2_will",
+      "name": "S2 Will",
+      "category": "stranger_things",
+      "category_name": "Stranger Things",
+      "img": "/static/avatars/stranger_things_s2_will.png"
+    },
+    {
+      "id": "stranger_things_s3_billy",
+      "name": "S3 Billy",
+      "category": "stranger_things",
+      "category_name": "Stranger Things",
+      "img": "/static/avatars/stranger_things_s3_billy.png"
+    },
+    {
+      "id": "stranger_things_s3_dustin",
+      "name": "S3 Dustin",
+      "category": "stranger_things",
+      "category_name": "Stranger Things",
+      "img": "/static/avatars/stranger_things_s3_dustin.png"
+    },
+    {
+      "id": "stranger_things_s3_eleven",
+      "name": "S3 Eleven",
+      "category": "stranger_things",
+      "category_name": "Stranger Things",
+      "img": "/static/avatars/stranger_things_s3_eleven.png"
+    },
+    {
+      "id": "stranger_things_s3_erica",
+      "name": "S3 Erica",
+      "category": "stranger_things",
+      "category_name": "Stranger Things",
+      "img": "/static/avatars/stranger_things_s3_erica.png"
+    },
+    {
+      "id": "stranger_things_s3_hopper",
+      "name": "S3 Hopper",
+      "category": "stranger_things",
+      "category_name": "Stranger Things",
+      "img": "/static/avatars/stranger_things_s3_hopper.png"
+    },
+    {
+      "id": "stranger_things_s3_jonathan",
+      "name": "S3 Jonathan",
+      "category": "stranger_things",
+      "category_name": "Stranger Things",
+      "img": "/static/avatars/stranger_things_s3_jonathan.png"
+    },
+    {
+      "id": "stranger_things_s3_joyce",
+      "name": "S3 Joyce",
+      "category": "stranger_things",
+      "category_name": "Stranger Things",
+      "img": "/static/avatars/stranger_things_s3_joyce.png"
+    },
+    {
+      "id": "stranger_things_s3_lucas",
+      "name": "S3 Lucas",
+      "category": "stranger_things",
+      "category_name": "Stranger Things",
+      "img": "/static/avatars/stranger_things_s3_lucas.png"
+    },
+    {
+      "id": "stranger_things_s3_max",
+      "name": "S3 Max",
+      "category": "stranger_things",
+      "category_name": "Stranger Things",
+      "img": "/static/avatars/stranger_things_s3_max.png"
+    },
+    {
+      "id": "stranger_things_s3_mike",
+      "name": "S3 Mike",
+      "category": "stranger_things",
+      "category_name": "Stranger Things",
+      "img": "/static/avatars/stranger_things_s3_mike.png"
+    },
+    {
+      "id": "stranger_things_s3_nancy",
+      "name": "S3 Nancy",
+      "category": "stranger_things",
+      "category_name": "Stranger Things",
+      "img": "/static/avatars/stranger_things_s3_nancy.png"
+    },
+    {
+      "id": "wednesday_wednesday",
+      "name": "Wednesday",
+      "category": "wednesday",
+      "category_name": "Wandinha (Wednesday)",
+      "img": "/static/avatars/wednesday_wednesday.png"
+    },
+    {
+      "id": "wednesday_enid",
+      "name": "Enid",
+      "category": "wednesday",
+      "category_name": "Wandinha (Wednesday)",
+      "img": "/static/avatars/wednesday_enid.png"
+    },
+    {
+      "id": "wednesday_bianca",
+      "name": "Bianca",
+      "category": "wednesday",
+      "category_name": "Wandinha (Wednesday)",
+      "img": "/static/avatars/wednesday_bianca.png"
+    },
+    {
+      "id": "wednesday_tyler",
+      "name": "Tyler",
+      "category": "wednesday",
+      "category_name": "Wandinha (Wednesday)",
+      "img": "/static/avatars/wednesday_tyler.png"
+    },
+    {
+      "id": "wednesday_thing",
+      "name": "Thing",
+      "category": "wednesday",
+      "category_name": "Wandinha (Wednesday)",
+      "img": "/static/avatars/wednesday_thing.png"
+    },
+    {
+      "id": "wednesday_morticia",
+      "name": "Morticia",
+      "category": "wednesday",
+      "category_name": "Wandinha (Wednesday)",
+      "img": "/static/avatars/wednesday_morticia.png"
+    },
+    {
+      "id": "wednesday_gomez",
+      "name": "Gomez",
+      "category": "wednesday",
+      "category_name": "Wandinha (Wednesday)",
+      "img": "/static/avatars/wednesday_gomez.png"
+    },
+    {
+      "id": "wednesday_pugsley",
+      "name": "Pugsley",
+      "category": "wednesday",
+      "category_name": "Wandinha (Wednesday)",
+      "img": "/static/avatars/wednesday_pugsley.png"
+    },
+    {
+      "id": "wednesday_xavier",
+      "name": "Xavier",
+      "category": "wednesday",
+      "category_name": "Wandinha (Wednesday)",
+      "img": "/static/avatars/wednesday_xavier.png"
+    },
+    {
+      "id": "wednesday_eugene",
+      "name": "Eugene",
+      "category": "wednesday",
+      "category_name": "Wandinha (Wednesday)",
+      "img": "/static/avatars/wednesday_eugene.png"
+    },
+    {
+      "id": "wednesday_ajax",
+      "name": "Ajax",
+      "category": "wednesday",
+      "category_name": "Wandinha (Wednesday)",
+      "img": "/static/avatars/wednesday_ajax.png"
+    },
+    {
+      "id": "wednesday_yoko",
+      "name": "Yoko",
+      "category": "wednesday",
+      "category_name": "Wandinha (Wednesday)",
+      "img": "/static/avatars/wednesday_yoko.png"
+    },
+    {
+      "id": "wednesday_wednesday",
+      "name": "Wednesday",
+      "category": "wednesday",
+      "category_name": "Wandinha (Wednesday)",
+      "img": "/static/avatars/wednesday_wednesday.png"
+    },
+    {
+      "id": "wednesday_thing",
+      "name": "Thing",
+      "category": "wednesday",
+      "category_name": "Wandinha (Wednesday)",
+      "img": "/static/avatars/wednesday_thing.png"
+    },
+    {
+      "id": "wednesday_enid",
+      "name": "Enid",
+      "category": "wednesday",
+      "category_name": "Wandinha (Wednesday)",
+      "img": "/static/avatars/wednesday_enid.png"
+    },
+    {
+      "id": "wednesday_morticia",
+      "name": "Morticia",
+      "category": "wednesday",
+      "category_name": "Wandinha (Wednesday)",
+      "img": "/static/avatars/wednesday_morticia.png"
+    },
+    {
+      "id": "wednesday_gomez",
+      "name": "Gomez",
+      "category": "wednesday",
+      "category_name": "Wandinha (Wednesday)",
+      "img": "/static/avatars/wednesday_gomez.png"
+    },
+    {
+      "id": "wednesday_grandmama_hester_frump",
+      "name": "Grandmama Hester Frump",
+      "category": "wednesday",
+      "category_name": "Wandinha (Wednesday)",
+      "img": "/static/avatars/wednesday_grandmama_hester_frump.png"
+    },
+    {
+      "id": "wednesday_pugsley",
+      "name": "Pugsley",
+      "category": "wednesday",
+      "category_name": "Wandinha (Wednesday)",
+      "img": "/static/avatars/wednesday_pugsley.png"
+    },
+    {
+      "id": "wednesday_uncle_fester",
+      "name": "Uncle Fester",
+      "category": "wednesday",
+      "category_name": "Wandinha (Wednesday)",
+      "img": "/static/avatars/wednesday_uncle_fester.png"
+    },
+    {
+      "id": "wednesday_bianca",
+      "name": "Bianca",
+      "category": "wednesday",
+      "category_name": "Wandinha (Wednesday)",
+      "img": "/static/avatars/wednesday_bianca.png"
+    },
+    {
+      "id": "wednesday_agnes",
+      "name": "Agnes",
+      "category": "wednesday",
+      "category_name": "Wandinha (Wednesday)",
+      "img": "/static/avatars/wednesday_agnes.png"
+    },
+    {
+      "id": "wednesday_tyler",
+      "name": "Tyler",
+      "category": "wednesday",
+      "category_name": "Wandinha (Wednesday)",
+      "img": "/static/avatars/wednesday_tyler.png"
+    },
+    {
+      "id": "wednesday_principal_dort",
+      "name": "Principal Dort",
+      "category": "wednesday",
+      "category_name": "Wandinha (Wednesday)",
+      "img": "/static/avatars/wednesday_principal_dort.png"
+    },
+    {
+      "id": "wednesday_slurp",
+      "name": "Slurp",
+      "category": "wednesday",
+      "category_name": "Wandinha (Wednesday)",
+      "img": "/static/avatars/wednesday_slurp.png"
+    },
+    {
+      "id": "squid_game_young_hee_doll",
+      "name": "Young-hee Doll",
+      "category": "squid_game",
+      "category_name": "Round 6 (Squid Game)",
+      "img": "/static/avatars/squid_game_young_hee_doll.png"
+    },
+    {
+      "id": "squid_game_front_man",
+      "name": "Front Man",
+      "category": "squid_game",
+      "category_name": "Round 6 (Squid Game)",
+      "img": "/static/avatars/squid_game_front_man.png"
+    },
+    {
+      "id": "squid_game_masked_manager",
+      "name": "Masked Manager",
+      "category": "squid_game",
+      "category_name": "Round 6 (Squid Game)",
+      "img": "/static/avatars/squid_game_masked_manager.png"
+    },
+    {
+      "id": "squid_game_masked_soldier",
+      "name": "Masked Soldier",
+      "category": "squid_game",
+      "category_name": "Round 6 (Squid Game)",
+      "img": "/static/avatars/squid_game_masked_soldier.png"
+    },
+    {
+      "id": "squid_game_masked_worker",
+      "name": "Masked Worker",
+      "category": "squid_game",
+      "category_name": "Round 6 (Squid Game)",
+      "img": "/static/avatars/squid_game_masked_worker.png"
+    },
+    {
+      "id": "squid_game_masked_officer",
+      "name": "Masked Officer",
+      "category": "squid_game",
+      "category_name": "Round 6 (Squid Game)",
+      "img": "/static/avatars/squid_game_masked_officer.png"
+    },
+    {
+      "id": "squid_game_young_hee",
+      "name": "Young-hee",
+      "category": "squid_game",
+      "category_name": "Round 6 (Squid Game)",
+      "img": "/static/avatars/squid_game_young_hee.png"
+    },
+    {
+      "id": "squid_game_gi_hun",
+      "name": "Gi-hun",
+      "category": "squid_game",
+      "category_name": "Round 6 (Squid Game)",
+      "img": "/static/avatars/squid_game_gi_hun.png"
+    },
+    {
+      "id": "squid_game_gi_hun_season_2",
+      "name": "Gi-hun Season 2",
+      "category": "squid_game",
+      "category_name": "Round 6 (Squid Game)",
+      "img": "/static/avatars/squid_game_gi_hun_season_2.png"
+    },
+    {
+      "id": "squid_game_in_ho",
+      "name": "In-ho",
+      "category": "squid_game",
+      "category_name": "Round 6 (Squid Game)",
+      "img": "/static/avatars/squid_game_in_ho.png"
+    },
+    {
+      "id": "squid_game_myung_gi",
+      "name": "Myung-gi",
+      "category": "squid_game",
+      "category_name": "Round 6 (Squid Game)",
+      "img": "/static/avatars/squid_game_myung_gi.png"
+    },
+    {
+      "id": "squid_game_hyun_ju",
+      "name": "Hyun-ju",
+      "category": "squid_game",
+      "category_name": "Round 6 (Squid Game)",
+      "img": "/static/avatars/squid_game_hyun_ju.png"
+    },
+    {
+      "id": "squid_game_thanos",
+      "name": "Thanos",
+      "category": "squid_game",
+      "category_name": "Round 6 (Squid Game)",
+      "img": "/static/avatars/squid_game_thanos.png"
+    },
+    {
+      "id": "squid_game_jun_hee",
+      "name": "Jun-hee",
+      "category": "squid_game",
+      "category_name": "Round 6 (Squid Game)",
+      "img": "/static/avatars/squid_game_jun_hee.png"
+    },
+    {
+      "id": "squid_game_jun_ho",
+      "name": "Jun-ho",
+      "category": "squid_game",
+      "category_name": "Round 6 (Squid Game)",
+      "img": "/static/avatars/squid_game_jun_ho.png"
+    },
+    {
+      "id": "squid_game_recruiter",
+      "name": "Recruiter",
+      "category": "squid_game",
+      "category_name": "Round 6 (Squid Game)",
+      "img": "/static/avatars/squid_game_recruiter.png"
+    },
+    {
+      "id": "squid_game_no_eul",
+      "name": "No-eul",
+      "category": "squid_game",
+      "category_name": "Round 6 (Squid Game)",
+      "img": "/static/avatars/squid_game_no_eul.png"
+    },
+    {
+      "id": "squid_game_piggy_bank",
+      "name": "Piggy Bank",
+      "category": "squid_game",
+      "category_name": "Round 6 (Squid Game)",
+      "img": "/static/avatars/squid_game_piggy_bank.png"
+    },
+    {
+      "id": "squid_game_dalgona",
+      "name": "Dalgona",
+      "category": "squid_game",
+      "category_name": "Round 6 (Squid Game)",
+      "img": "/static/avatars/squid_game_dalgona.png"
+    },
+    {
+      "id": "squid_game_vip_mask",
+      "name": "VIP Mask",
+      "category": "squid_game",
+      "category_name": "Round 6 (Squid Game)",
+      "img": "/static/avatars/squid_game_vip_mask.png"
+    },
+    {
+      "id": "squid_game_deok_su",
+      "name": "Deok-su",
+      "category": "squid_game",
+      "category_name": "Round 6 (Squid Game)",
+      "img": "/static/avatars/squid_game_deok_su.png"
+    },
+    {
+      "id": "squid_game_mi_nyeo",
+      "name": "Mi-nyeo",
+      "category": "squid_game",
+      "category_name": "Round 6 (Squid Game)",
+      "img": "/static/avatars/squid_game_mi_nyeo.png"
+    },
+    {
+      "id": "squid_game_sae_byeok",
+      "name": "Sae-Byeok",
+      "category": "squid_game",
+      "category_name": "Round 6 (Squid Game)",
+      "img": "/static/avatars/squid_game_sae_byeok.png"
+    },
+    {
+      "id": "squid_game_o_button",
+      "name": "O Button",
+      "category": "squid_game",
+      "category_name": "Round 6 (Squid Game)",
+      "img": "/static/avatars/squid_game_o_button.png"
+    },
+    {
+      "id": "squid_game_x_button",
+      "name": "X Button",
+      "category": "squid_game",
+      "category_name": "Round 6 (Squid Game)",
+      "img": "/static/avatars/squid_game_x_button.png"
+    },
+    {
+      "id": "squid_game_carousel_horse",
+      "name": "Carousel Horse",
+      "category": "squid_game",
+      "category_name": "Round 6 (Squid Game)",
+      "img": "/static/avatars/squid_game_carousel_horse.png"
+    },
+    {
+      "id": "squid_game_gong_gi",
+      "name": "Gong-gi",
+      "category": "squid_game",
+      "category_name": "Round 6 (Squid Game)",
+      "img": "/static/avatars/squid_game_gong_gi.png"
+    },
+    {
+      "id": "money_heist_tokio",
+      "name": "Tokio",
+      "category": "money_heist",
+      "category_name": "La Casa de Papel",
+      "img": "/static/avatars/money_heist_tokio.png"
+    },
+    {
+      "id": "money_heist_mask",
+      "name": "Mask",
+      "category": "money_heist",
+      "category_name": "La Casa de Papel",
+      "img": "/static/avatars/money_heist_mask.png"
+    },
+    {
+      "id": "money_heist_nairobi",
+      "name": "Nairobi",
+      "category": "money_heist",
+      "category_name": "La Casa de Papel",
+      "img": "/static/avatars/money_heist_nairobi.png"
+    },
+    {
+      "id": "money_heist_professor",
+      "name": "Professor",
+      "category": "money_heist",
+      "category_name": "La Casa de Papel",
+      "img": "/static/avatars/money_heist_professor.png"
+    },
+    {
+      "id": "money_heist_sierra",
+      "name": "Sierra",
+      "category": "money_heist",
+      "category_name": "La Casa de Papel",
+      "img": "/static/avatars/money_heist_sierra.png"
+    },
+    {
+      "id": "money_heist_rio",
+      "name": "Rio",
+      "category": "money_heist",
+      "category_name": "La Casa de Papel",
+      "img": "/static/avatars/money_heist_rio.png"
+    },
+    {
+      "id": "money_heist_denver",
+      "name": "Denver",
+      "category": "money_heist",
+      "category_name": "La Casa de Papel",
+      "img": "/static/avatars/money_heist_denver.png"
+    },
+    {
+      "id": "money_heist_lisboa",
+      "name": "Lisboa",
+      "category": "money_heist",
+      "category_name": "La Casa de Papel",
+      "img": "/static/avatars/money_heist_lisboa.png"
+    },
+    {
+      "id": "money_heist_berlin",
+      "name": "Berlin",
+      "category": "money_heist",
+      "category_name": "La Casa de Papel",
+      "img": "/static/avatars/money_heist_berlin.png"
+    },
+    {
+      "id": "money_heist_palermo",
+      "name": "Palermo",
+      "category": "money_heist",
+      "category_name": "La Casa de Papel",
+      "img": "/static/avatars/money_heist_palermo.png"
+    },
+    {
+      "id": "the_witcher_grondo",
+      "name": "Grondo",
+      "category": "the_witcher",
+      "category_name": "The Witcher",
+      "img": "/static/avatars/the_witcher_grondo.png"
+    },
+    {
+      "id": "the_witcher_wraith",
+      "name": "Wraith",
+      "category": "the_witcher",
+      "category_name": "The Witcher",
+      "img": "/static/avatars/the_witcher_wraith.png"
+    },
+    {
+      "id": "the_witcher_wolf_medallion",
+      "name": "Wolf Medallion",
+      "category": "the_witcher",
+      "category_name": "The Witcher",
+      "img": "/static/avatars/the_witcher_wolf_medallion.png"
+    },
+    {
+      "id": "the_witcher_geralt",
+      "name": "Geralt",
+      "category": "the_witcher",
+      "category_name": "The Witcher",
+      "img": "/static/avatars/the_witcher_geralt.png"
+    },
+    {
+      "id": "the_witcher_ciri",
+      "name": "Ciri",
+      "category": "the_witcher",
+      "category_name": "The Witcher",
+      "img": "/static/avatars/the_witcher_ciri.png"
+    },
+    {
+      "id": "the_witcher_yennefer",
+      "name": "Yennefer",
+      "category": "the_witcher",
+      "category_name": "The Witcher",
+      "img": "/static/avatars/the_witcher_yennefer.png"
+    },
+    {
+      "id": "the_witcher_jaskier",
+      "name": "Jaskier",
+      "category": "the_witcher",
+      "category_name": "The Witcher",
+      "img": "/static/avatars/the_witcher_jaskier.png"
+    },
+    {
+      "id": "the_witcher_roach_horse",
+      "name": "Roach (Horse)",
+      "category": "the_witcher",
+      "category_name": "The Witcher",
+      "img": "/static/avatars/the_witcher_roach_horse.png"
+    },
+    {
+      "id": "the_witcher_harpy_sword",
+      "name": "Harpy Sword",
+      "category": "the_witcher",
+      "category_name": "The Witcher",
+      "img": "/static/avatars/the_witcher_harpy_sword.png"
+    },
+    {
+      "id": "the_witcher_kikimora",
+      "name": "Kikimora",
+      "category": "the_witcher",
+      "category_name": "The Witcher",
+      "img": "/static/avatars/the_witcher_kikimora.png"
+    },
+    {
+      "id": "the_witcher_leshy",
+      "name": "Leshy",
+      "category": "the_witcher",
+      "category_name": "The Witcher",
+      "img": "/static/avatars/the_witcher_leshy.png"
+    },
+    {
+      "id": "the_witcher_nivellen",
+      "name": "Nivellen",
+      "category": "the_witcher",
+      "category_name": "The Witcher",
+      "img": "/static/avatars/the_witcher_nivellen.png"
+    },
+    {
+      "id": "the_witcher_witcher_logo",
+      "name": "Witcher Logo",
+      "category": "the_witcher",
+      "category_name": "The Witcher",
+      "img": "/static/avatars/the_witcher_witcher_logo.png"
+    },
+    {
+      "id": "the_witcher_two_swords",
+      "name": "Two Swords",
+      "category": "the_witcher",
+      "category_name": "The Witcher",
+      "img": "/static/avatars/the_witcher_two_swords.png"
+    },
+    {
+      "id": "the_witcher_ciri_s4",
+      "name": "Ciri (S4)",
+      "category": "the_witcher",
+      "category_name": "The Witcher",
+      "img": "/static/avatars/the_witcher_ciri_s4.png"
+    },
+    {
+      "id": "the_witcher_yennefer_s4",
+      "name": "Yennefer (S4)",
+      "category": "the_witcher",
+      "category_name": "The Witcher",
+      "img": "/static/avatars/the_witcher_yennefer_s4.png"
+    },
+    {
+      "id": "the_witcher_jaskier_s4",
+      "name": "Jaskier (S4)",
+      "category": "the_witcher",
+      "category_name": "The Witcher",
+      "img": "/static/avatars/the_witcher_jaskier_s4.png"
+    },
+    {
+      "id": "the_witcher_roach_s4",
+      "name": "Roach (S4)",
+      "category": "the_witcher",
+      "category_name": "The Witcher",
+      "img": "/static/avatars/the_witcher_roach_s4.png"
+    },
+    {
+      "id": "one_piece_luffy",
+      "name": "Luffy",
+      "category": "one_piece",
+      "category_name": "One Piece",
+      "img": "/static/avatars/one_piece_luffy.png"
+    },
+    {
+      "id": "one_piece_nami",
+      "name": "Nami",
+      "category": "one_piece",
+      "category_name": "One Piece",
+      "img": "/static/avatars/one_piece_nami.png"
+    },
+    {
+      "id": "one_piece_zoro",
+      "name": "Zoro",
+      "category": "one_piece",
+      "category_name": "One Piece",
+      "img": "/static/avatars/one_piece_zoro.png"
+    },
+    {
+      "id": "one_piece_usopp",
+      "name": "Usopp",
+      "category": "one_piece",
+      "category_name": "One Piece",
+      "img": "/static/avatars/one_piece_usopp.png"
+    },
+    {
+      "id": "one_piece_sanji",
+      "name": "Sanji",
+      "category": "one_piece",
+      "category_name": "One Piece",
+      "img": "/static/avatars/one_piece_sanji.png"
+    },
+    {
+      "id": "one_piece_jolly_roger",
+      "name": "Jolly Roger",
+      "category": "one_piece",
+      "category_name": "One Piece",
+      "img": "/static/avatars/one_piece_jolly_roger.png"
+    },
+    {
+      "id": "one_piece_shanks",
+      "name": "Shanks",
+      "category": "one_piece",
+      "category_name": "One Piece",
+      "img": "/static/avatars/one_piece_shanks.png"
+    },
+    {
+      "id": "one_piece_mihawk",
+      "name": "Mihawk",
+      "category": "one_piece",
+      "category_name": "One Piece",
+      "img": "/static/avatars/one_piece_mihawk.png"
+    },
+    {
+      "id": "one_piece_garp",
+      "name": "Garp",
+      "category": "one_piece",
+      "category_name": "One Piece",
+      "img": "/static/avatars/one_piece_garp.png"
+    },
+    {
+      "id": "one_piece_arlong",
+      "name": "Arlong",
+      "category": "one_piece",
+      "category_name": "One Piece",
+      "img": "/static/avatars/one_piece_arlong.png"
+    },
+    {
+      "id": "one_piece_buggy",
+      "name": "Buggy",
+      "category": "one_piece",
+      "category_name": "One Piece",
+      "img": "/static/avatars/one_piece_buggy.png"
+    },
+    {
+      "id": "one_piece_den_den_mushi",
+      "name": "Den Den Mushi",
+      "category": "one_piece",
+      "category_name": "One Piece",
+      "img": "/static/avatars/one_piece_den_den_mushi.png"
+    },
+    {
+      "id": "one_piece_koby",
+      "name": "Koby",
+      "category": "one_piece",
+      "category_name": "One Piece",
+      "img": "/static/avatars/one_piece_koby.png"
+    },
+    {
+      "id": "one_piece_going_merry",
+      "name": "Going Merry",
+      "category": "one_piece",
+      "category_name": "One Piece",
+      "img": "/static/avatars/one_piece_going_merry.png"
+    },
+    {
+      "id": "arcane_games_jinx",
+      "name": "Jinx",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_jinx.png"
+    },
+    {
+      "id": "arcane_games_vi",
+      "name": "Vi",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_vi.png"
+    },
+    {
+      "id": "arcane_games_caitlyn",
+      "name": "Caitlyn",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_caitlyn.png"
+    },
+    {
+      "id": "arcane_games_ekko",
+      "name": "Ekko",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_ekko.png"
+    },
+    {
+      "id": "arcane_games_viktor",
+      "name": "Viktor",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_viktor.png"
+    },
+    {
+      "id": "arcane_games_mel",
+      "name": "Mel",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_mel.png"
+    },
+    {
+      "id": "arcane_games_poro",
+      "name": "Poro",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_poro.png"
+    },
+    {
+      "id": "arcane_games_jayce",
+      "name": "Jayce",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_jayce.png"
+    },
+    {
+      "id": "arcane_games_heimerdinger",
+      "name": "Heimerdinger",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_heimerdinger.png"
+    },
+    {
+      "id": "arcane_games_sevika",
+      "name": "Sevika",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_sevika.png"
+    },
+    {
+      "id": "arcane_games_silco",
+      "name": "Silco",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_silco.png"
+    },
+    {
+      "id": "arcane_games_vander",
+      "name": "Vander",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_vander.png"
+    },
+    {
+      "id": "arcane_games_sonic",
+      "name": "Sonic",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_sonic.png"
+    },
+    {
+      "id": "arcane_games_tails",
+      "name": "Tails",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_tails.png"
+    },
+    {
+      "id": "arcane_games_amy_rose",
+      "name": "Amy Rose",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_amy_rose.png"
+    },
+    {
+      "id": "arcane_games_dr_eggman",
+      "name": "Dr. Eggman",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_dr_eggman.png"
+    },
+    {
+      "id": "arcane_games_knuckles",
+      "name": "Knuckles",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_knuckles.png"
+    },
+    {
+      "id": "arcane_games_shadow",
+      "name": "Shadow",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_shadow.png"
+    },
+    {
+      "id": "arcane_games_rouge",
+      "name": "Rouge",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_rouge.png"
+    },
+    {
+      "id": "arcane_games_big_the_cat_froggy",
+      "name": "Big the Cat & Froggy",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_big_the_cat_froggy.png"
+    },
+    {
+      "id": "arcane_games_tails_nine",
+      "name": "Tails Nine",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_tails_nine.png"
+    },
+    {
+      "id": "arcane_games_rusty_rose",
+      "name": "Rusty Rose",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_rusty_rose.png"
+    },
+    {
+      "id": "arcane_games_renegade_knuckles",
+      "name": "Renegade Knuckles",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_renegade_knuckles.png"
+    },
+    {
+      "id": "arcane_games_mr_dr_eggman",
+      "name": "Mr. Dr. Eggman",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_mr_dr_eggman.png"
+    },
+    {
+      "id": "arcane_games_rebel_rouge",
+      "name": "Rebel Rouge",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_rebel_rouge.png"
+    },
+    {
+      "id": "arcane_games_knuckles_the_dread",
+      "name": "Knuckles the Dread",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_knuckles_the_dread.png"
+    },
+    {
+      "id": "arcane_games_mangey_tails",
+      "name": "Mangey Tails",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_mangey_tails.png"
+    },
+    {
+      "id": "arcane_games_thorn_rose",
+      "name": "Thorn Rose",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_thorn_rose.png"
+    },
+    {
+      "id": "arcane_games_black_rose",
+      "name": "Black Rose",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_black_rose.png"
+    },
+    {
+      "id": "arcane_games_dr_babble",
+      "name": "Dr. Babble",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_dr_babble.png"
+    },
+    {
+      "id": "arcane_games_dr_dont",
+      "name": "Dr. Don't",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_dr_dont.png"
+    },
+    {
+      "id": "arcane_games_dr_deep",
+      "name": "Dr. Deep",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_dr_deep.png"
+    },
+    {
+      "id": "arcane_games_dr_done_it",
+      "name": "Dr. Done It",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_dr_done_it.png"
+    },
+    {
+      "id": "arcane_games_dracula",
+      "name": "Dracula",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_dracula.png"
+    },
+    {
+      "id": "arcane_games_trevor",
+      "name": "Trevor",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_trevor.png"
+    },
+    {
+      "id": "arcane_games_alucard",
+      "name": "Alucard",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_alucard.png"
+    },
+    {
+      "id": "arcane_games_haru",
+      "name": "Haru",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_haru.png"
+    },
+    {
+      "id": "arcane_games_psyduck",
+      "name": "Psyduck",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_psyduck.png"
+    },
+    {
+      "id": "arcane_games_alisa",
+      "name": "Alisa",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_alisa.png"
+    },
+    {
+      "id": "arcane_games_mudkip",
+      "name": "Mudkip",
+      "category": "arcane_games",
+      "category_name": "Arcane, Animes & Games",
+      "img": "/static/avatars/arcane_games_mudkip.png"
+    },
+    {
+      "id": "cobra_kai_s5_johnny",
+      "name": "S5 Johnny",
+      "category": "cobra_kai",
+      "category_name": "Cobra Kai",
+      "img": "/static/avatars/cobra_kai_s5_johnny.png"
+    },
+    {
+      "id": "cobra_kai_s5_daniel",
+      "name": "S5 Daniel",
+      "category": "cobra_kai",
+      "category_name": "Cobra Kai",
+      "img": "/static/avatars/cobra_kai_s5_daniel.png"
+    },
+    {
+      "id": "cobra_kai_s5_kreese",
+      "name": "S5 Kreese",
+      "category": "cobra_kai",
+      "category_name": "Cobra Kai",
+      "img": "/static/avatars/cobra_kai_s5_kreese.png"
+    },
+    {
+      "id": "cobra_kai_s5_miguel",
+      "name": "S5 Miguel",
+      "category": "cobra_kai",
+      "category_name": "Cobra Kai",
+      "img": "/static/avatars/cobra_kai_s5_miguel.png"
+    },
+    {
+      "id": "cobra_kai_s5_robbie",
+      "name": "S5 Robbie",
+      "category": "cobra_kai",
+      "category_name": "Cobra Kai",
+      "img": "/static/avatars/cobra_kai_s5_robbie.png"
+    },
+    {
+      "id": "cobra_kai_s5_sam",
+      "name": "S5 Sam",
+      "category": "cobra_kai",
+      "category_name": "Cobra Kai",
+      "img": "/static/avatars/cobra_kai_s5_sam.png"
+    },
+    {
+      "id": "cobra_kai_s5_tory",
+      "name": "S5 Tory",
+      "category": "cobra_kai",
+      "category_name": "Cobra Kai",
+      "img": "/static/avatars/cobra_kai_s5_tory.png"
+    },
+    {
+      "id": "cobra_kai_s5_hawk",
+      "name": "S5 Hawk",
+      "category": "cobra_kai",
+      "category_name": "Cobra Kai",
+      "img": "/static/avatars/cobra_kai_s5_hawk.png"
+    },
+    {
+      "id": "cobra_kai_s5_demetri",
+      "name": "S5 Demetri",
+      "category": "cobra_kai",
+      "category_name": "Cobra Kai",
+      "img": "/static/avatars/cobra_kai_s5_demetri.png"
+    },
+    {
+      "id": "cobra_kai_s5_silver",
+      "name": "S5 Silver",
+      "category": "cobra_kai",
+      "category_name": "Cobra Kai",
+      "img": "/static/avatars/cobra_kai_s5_silver.png"
+    },
+    {
+      "id": "cobra_kai_s5_amanda",
+      "name": "S5 Amanda",
+      "category": "cobra_kai",
+      "category_name": "Cobra Kai",
+      "img": "/static/avatars/cobra_kai_s5_amanda.png"
+    },
+    {
+      "id": "cobra_kai_s5_carmen",
+      "name": "S5 Carmen",
+      "category": "cobra_kai",
+      "category_name": "Cobra Kai",
+      "img": "/static/avatars/cobra_kai_s5_carmen.png"
+    },
+    {
+      "id": "cobra_kai_s5_mr_miyagi",
+      "name": "S5 Mr. Miyagi",
+      "category": "cobra_kai",
+      "category_name": "Cobra Kai",
+      "img": "/static/avatars/cobra_kai_s5_mr_miyagi.png"
+    },
+    {
+      "id": "cobra_kai_s5_cobra_kai_logo",
+      "name": "S5 Cobra Kai Logo",
+      "category": "cobra_kai",
+      "category_name": "Cobra Kai",
+      "img": "/static/avatars/cobra_kai_s5_cobra_kai_logo.png"
+    },
+    {
+      "id": "cobra_kai_s5_miyagi_do",
+      "name": "S5 Miyagi-Do",
+      "category": "cobra_kai",
+      "category_name": "Cobra Kai",
+      "img": "/static/avatars/cobra_kai_s5_miyagi_do.png"
+    },
+    {
+      "id": "cobra_kai_kenny",
+      "name": "Kenny",
+      "category": "cobra_kai",
+      "category_name": "Cobra Kai",
+      "img": "/static/avatars/cobra_kai_kenny.png"
+    },
+    {
+      "id": "cobra_kai_chozen",
+      "name": "Chozen",
+      "category": "cobra_kai",
+      "category_name": "Cobra Kai",
+      "img": "/static/avatars/cobra_kai_chozen.png"
+    },
+    {
+      "id": "cobra_kai_sensei_kim",
+      "name": "Sensei Kim",
+      "category": "cobra_kai",
+      "category_name": "Cobra Kai",
+      "img": "/static/avatars/cobra_kai_sensei_kim.png"
+    },
+    {
+      "id": "cobra_kai_sensei_wolf",
+      "name": "Sensei Wolf",
+      "category": "cobra_kai",
+      "category_name": "Cobra Kai",
+      "img": "/static/avatars/cobra_kai_sensei_wolf.png"
+    },
+    {
+      "id": "cobra_kai_kwon",
+      "name": "Kwon",
+      "category": "cobra_kai",
+      "category_name": "Cobra Kai",
+      "img": "/static/avatars/cobra_kai_kwon.png"
+    },
+    {
+      "id": "cobra_kai_zara",
+      "name": "Zara",
+      "category": "cobra_kai",
+      "category_name": "Cobra Kai",
+      "img": "/static/avatars/cobra_kai_zara.png"
+    },
+    {
+      "id": "cobra_kai_anthony",
+      "name": "Anthony",
+      "category": "cobra_kai",
+      "category_name": "Cobra Kai",
+      "img": "/static/avatars/cobra_kai_anthony.png"
+    },
+    {
+      "id": "cobra_kai_devon",
+      "name": "Devon",
+      "category": "cobra_kai",
+      "category_name": "Cobra Kai",
+      "img": "/static/avatars/cobra_kai_devon.png"
+    },
+    {
+      "id": "cobra_kai_axel",
+      "name": "Axel",
+      "category": "cobra_kai",
+      "category_name": "Cobra Kai",
+      "img": "/static/avatars/cobra_kai_axel.png"
+    },
+    {
+      "id": "bridgerton_penelope_featherington",
+      "name": "Penelope Featherington",
+      "category": "bridgerton",
+      "category_name": "Bridgerton & Drama",
+      "img": "/static/avatars/bridgerton_penelope_featherington.png"
+    },
+    {
+      "id": "bridgerton_colin_bridgerton",
+      "name": "Colin Bridgerton",
+      "category": "bridgerton",
+      "category_name": "Bridgerton & Drama",
+      "img": "/static/avatars/bridgerton_colin_bridgerton.png"
+    },
+    {
+      "id": "bridgerton_anthony_bridgerton",
+      "name": "Anthony Bridgerton",
+      "category": "bridgerton",
+      "category_name": "Bridgerton & Drama",
+      "img": "/static/avatars/bridgerton_anthony_bridgerton.png"
+    },
+    {
+      "id": "bridgerton_kate_sharma",
+      "name": "Kate Sharma",
+      "category": "bridgerton",
+      "category_name": "Bridgerton & Drama",
+      "img": "/static/avatars/bridgerton_kate_sharma.png"
+    },
+    {
+      "id": "bridgerton_daphne_bridgerton",
+      "name": "Daphne Bridgerton",
+      "category": "bridgerton",
+      "category_name": "Bridgerton & Drama",
+      "img": "/static/avatars/bridgerton_daphne_bridgerton.png"
+    },
+    {
+      "id": "bridgerton_simon_basset",
+      "name": "Simon Basset",
+      "category": "bridgerton",
+      "category_name": "Bridgerton & Drama",
+      "img": "/static/avatars/bridgerton_simon_basset.png"
+    },
+    {
+      "id": "bridgerton_eloise_bridgerton",
+      "name": "Eloise Bridgerton",
+      "category": "bridgerton",
+      "category_name": "Bridgerton & Drama",
+      "img": "/static/avatars/bridgerton_eloise_bridgerton.png"
+    },
+    {
+      "id": "bridgerton_francesca_bridgerton",
+      "name": "Francesca Bridgerton",
+      "category": "bridgerton",
+      "category_name": "Bridgerton & Drama",
+      "img": "/static/avatars/bridgerton_francesca_bridgerton.png"
+    },
+    {
+      "id": "bridgerton_benedict_bridgerton",
+      "name": "Benedict Bridgerton",
+      "category": "bridgerton",
+      "category_name": "Bridgerton & Drama",
+      "img": "/static/avatars/bridgerton_benedict_bridgerton.png"
+    },
+    {
+      "id": "bridgerton_queen_charlotte",
+      "name": "Queen Charlotte",
+      "category": "bridgerton",
+      "category_name": "Bridgerton & Drama",
+      "img": "/static/avatars/bridgerton_queen_charlotte.png"
+    },
+    {
+      "id": "bridgerton_lady_danbury",
+      "name": "Lady Danbury",
+      "category": "bridgerton",
+      "category_name": "Bridgerton & Drama",
+      "img": "/static/avatars/bridgerton_lady_danbury.png"
+    },
+    {
+      "id": "bridgerton_lady_bridgerton",
+      "name": "Lady Bridgerton",
+      "category": "bridgerton",
+      "category_name": "Bridgerton & Drama",
+      "img": "/static/avatars/bridgerton_lady_bridgerton.png"
+    },
+    {
+      "id": "bridgerton_lady_featherington",
+      "name": "Lady Featherington",
+      "category": "bridgerton",
+      "category_name": "Bridgerton & Drama",
+      "img": "/static/avatars/bridgerton_lady_featherington.png"
+    },
+    {
+      "id": "bridgerton_marina_thompson",
+      "name": "Marina Thompson",
+      "category": "bridgerton",
+      "category_name": "Bridgerton & Drama",
+      "img": "/static/avatars/bridgerton_marina_thompson.png"
+    },
+    {
+      "id": "bridgerton_edwina_sharma",
+      "name": "Edwina Sharma",
+      "category": "bridgerton",
+      "category_name": "Bridgerton & Drama",
+      "img": "/static/avatars/bridgerton_edwina_sharma.png"
+    },
+    {
+      "id": "bridgerton_lady_whistledown",
+      "name": "Lady Whistledown",
+      "category": "bridgerton",
+      "category_name": "Bridgerton & Drama",
+      "img": "/static/avatars/bridgerton_lady_whistledown.png"
+    },
+    {
+      "id": "bridgerton_sophie_baek",
+      "name": "Sophie Baek",
+      "category": "bridgerton",
+      "category_name": "Bridgerton & Drama",
+      "img": "/static/avatars/bridgerton_sophie_baek.png"
+    },
+    {
+      "id": "bridgerton_corgi",
+      "name": "Corgi",
+      "category": "bridgerton",
+      "category_name": "Bridgerton & Drama",
+      "img": "/static/avatars/bridgerton_corgi.png"
+    },
+    {
+      "id": "bridgerton_princess_diana",
+      "name": "Princess Diana",
+      "category": "bridgerton",
+      "category_name": "Bridgerton & Drama",
+      "img": "/static/avatars/bridgerton_princess_diana.png"
+    },
+    {
+      "id": "bridgerton_queen_elizabeth_claire_foy",
+      "name": "Queen Elizabeth - Claire Foy",
+      "category": "bridgerton",
+      "category_name": "Bridgerton & Drama",
+      "img": "/static/avatars/bridgerton_queen_elizabeth_claire_foy.png"
+    },
+    {
+      "id": "bridgerton_queen_elizabeth_olivia_coleman",
+      "name": "Queen Elizabeth - Olivia Coleman",
+      "category": "bridgerton",
+      "category_name": "Bridgerton & Drama",
+      "img": "/static/avatars/bridgerton_queen_elizabeth_olivia_coleman.png"
+    },
+    {
+      "id": "bridgerton_queen_elizabeth_imelda_staunto",
+      "name": "Queen Elizabeth - Imelda Staunton",
+      "category": "bridgerton",
+      "category_name": "Bridgerton & Drama",
+      "img": "/static/avatars/bridgerton_queen_elizabeth_imelda_staunto.png"
+    },
+    {
+      "id": "bridgerton_prince_charles_josh_oconnor",
+      "name": "Prince Charles - Josh O'Connor",
+      "category": "bridgerton",
+      "category_name": "Bridgerton & Drama",
+      "img": "/static/avatars/bridgerton_prince_charles_josh_oconnor.png"
+    },
+    {
+      "id": "bridgerton_prince_charles_dominic_west",
+      "name": "Prince Charles - Dominic West",
+      "category": "bridgerton",
+      "category_name": "Bridgerton & Drama",
+      "img": "/static/avatars/bridgerton_prince_charles_dominic_west.png"
+    },
+    {
+      "id": "bridgerton_lady_diana",
+      "name": "Lady Diana",
+      "category": "bridgerton",
+      "category_name": "Bridgerton & Drama",
+      "img": "/static/avatars/bridgerton_lady_diana.png"
+    },
+    {
+      "id": "bridgerton_prince_phillip_matt_smith",
+      "name": "Prince Phillip - Matt Smith",
+      "category": "bridgerton",
+      "category_name": "Bridgerton & Drama",
+      "img": "/static/avatars/bridgerton_prince_phillip_matt_smith.png"
+    },
+    {
+      "id": "bridgerton_prince_phillip_tobias_menzies",
+      "name": "Prince Phillip - Tobias Menzies",
+      "category": "bridgerton",
+      "category_name": "Bridgerton & Drama",
+      "img": "/static/avatars/bridgerton_prince_phillip_tobias_menzies.png"
+    },
+    {
+      "id": "bridgerton_prince_philip_jonathan_pryce",
+      "name": "Prince Philip - Jonathan Pryce",
+      "category": "bridgerton",
+      "category_name": "Bridgerton & Drama",
+      "img": "/static/avatars/bridgerton_prince_philip_jonathan_pryce.png"
+    },
+    {
+      "id": "bridgerton_princess_margaret_vanessa_kirb",
+      "name": "Princess Margaret - Vanessa Kirby",
+      "category": "bridgerton",
+      "category_name": "Bridgerton & Drama",
+      "img": "/static/avatars/bridgerton_princess_margaret_vanessa_kirb.png"
+    },
+    {
+      "id": "bridgerton_princess_margaret_helena_bonha",
+      "name": "Princess Margaret - Helena Bonham Carter",
+      "category": "bridgerton",
+      "category_name": "Bridgerton & Drama",
+      "img": "/static/avatars/bridgerton_princess_margaret_helena_bonha.png"
+    },
+    {
+      "id": "popular_series_young_jonas",
+      "name": "Young Jonas",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_young_jonas.png"
+    },
+    {
+      "id": "popular_series_young_marta",
+      "name": "Young Marta",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_young_marta.png"
+    },
+    {
+      "id": "popular_series_old_jonasadam",
+      "name": "Old Jonas/Adam",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_old_jonasadam.png"
+    },
+    {
+      "id": "popular_series_old_martaeve",
+      "name": "Old Marta/Eve",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_old_martaeve.png"
+    },
+    {
+      "id": "popular_series_noah",
+      "name": "Noah",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_noah.png"
+    },
+    {
+      "id": "popular_series_claudia",
+      "name": "Claudia",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_claudia.png"
+    },
+    {
+      "id": "popular_series_mikkel",
+      "name": "Mikkel",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_mikkel.png"
+    },
+    {
+      "id": "popular_series_tannhaus",
+      "name": "Tannhaus",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_tannhaus.png"
+    },
+    {
+      "id": "popular_series_trinity_knot",
+      "name": "Trinity Knot",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_trinity_knot.png"
+    },
+    {
+      "id": "popular_series_time_machine",
+      "name": "Time Machine",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_time_machine.png"
+    },
+    {
+      "id": "popular_series_dark_matter",
+      "name": "Dark Matter",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_dark_matter.png"
+    },
+    {
+      "id": "popular_series_loading_circle",
+      "name": "Loading Circle",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_loading_circle.png"
+    },
+    {
+      "id": "popular_series_pixel_bandersnatch",
+      "name": "Pixel Bandersnatch",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_pixel_bandersnatch.png"
+    },
+    {
+      "id": "popular_series_broken_smiley_face",
+      "name": "Broken Smiley Face",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_broken_smiley_face.png"
+    },
+    {
+      "id": "popular_series_glyph",
+      "name": "Glyph",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_glyph.png"
+    },
+    {
+      "id": "popular_series_doll",
+      "name": "Doll",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_doll.png"
+    },
+    {
+      "id": "popular_series_stuffed_animal_monkey",
+      "name": "Stuffed Animal Monkey",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_stuffed_animal_monkey.png"
+    },
+    {
+      "id": "popular_series_waldo",
+      "name": "Waldo",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_waldo.png"
+    },
+    {
+      "id": "popular_series_thronglet",
+      "name": "Thronglet",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_thronglet.png"
+    },
+    {
+      "id": "popular_series_lucifer",
+      "name": "Lucifer",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_lucifer.png"
+    },
+    {
+      "id": "popular_series_chloe",
+      "name": "Chloe",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_chloe.png"
+    },
+    {
+      "id": "popular_series_maze",
+      "name": "Maze",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_maze.png"
+    },
+    {
+      "id": "popular_series_amenadiel",
+      "name": "Amenadiel",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_amenadiel.png"
+    },
+    {
+      "id": "popular_series_linda",
+      "name": "Linda",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_linda.png"
+    },
+    {
+      "id": "popular_series_dan",
+      "name": "Dan",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_dan.png"
+    },
+    {
+      "id": "popular_series_ella",
+      "name": "Ella",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_ella.png"
+    },
+    {
+      "id": "popular_series_morningstar",
+      "name": "Morningstar",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_morningstar.png"
+    },
+    {
+      "id": "popular_series_arisu",
+      "name": "Arisu",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_arisu.png"
+    },
+    {
+      "id": "popular_series_usagi",
+      "name": "Usagi",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_usagi.png"
+    },
+    {
+      "id": "popular_series_banda",
+      "name": "Banda",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_banda.png"
+    },
+    {
+      "id": "popular_series_ann",
+      "name": "Ann",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_ann.png"
+    },
+    {
+      "id": "popular_series_yaba",
+      "name": "Yaba",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_yaba.png"
+    },
+    {
+      "id": "popular_series_tetsu",
+      "name": "Tetsu",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_tetsu.png"
+    },
+    {
+      "id": "popular_series_kazuya",
+      "name": "Kazuya",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_kazuya.png"
+    },
+    {
+      "id": "popular_series_sachiko",
+      "name": "Sachiko",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_sachiko.png"
+    },
+    {
+      "id": "popular_series_rei",
+      "name": "Rei",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_rei.png"
+    },
+    {
+      "id": "popular_series_chishiya",
+      "name": "Chishiya",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_chishiya.png"
+    },
+    {
+      "id": "popular_series_the_watchman",
+      "name": "The Watchman",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_the_watchman.png"
+    },
+    {
+      "id": "popular_series_joker",
+      "name": "Joker",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_joker.png"
+    },
+    {
+      "id": "popular_series_assane_gentleman_thief",
+      "name": "Assane (Gentleman Thief)",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_assane_gentleman_thief.png"
+    },
+    {
+      "id": "popular_series_assane_sapeur",
+      "name": "Assane (Sapeur)",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_assane_sapeur.png"
+    },
+    {
+      "id": "popular_series_assane_trash_collector",
+      "name": "Assane (Trash Collector)",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_assane_trash_collector.png"
+    },
+    {
+      "id": "popular_series_assane_suave_man",
+      "name": "Assane (Suave Man)",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_assane_suave_man.png"
+    },
+    {
+      "id": "popular_series_assane_security_guard",
+      "name": "Assane (Security Guard)",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_assane_security_guard.png"
+    },
+    {
+      "id": "popular_series_assane_trilby_shades",
+      "name": "Assane (Trilby & Shades)",
+      "category": "popular_series",
+      "category_name": "Séries Populares & Sci-Fi",
+      "img": "/static/avatars/popular_series_assane_trilby_shades.png"
+    },
+    {
+      "id": "netflix_classics_chicken",
+      "name": "Chicken",
+      "category": "netflix_classics",
+      "category_name": "Clássicos Netflix",
+      "img": "/static/avatars/netflix_classics_chicken.png"
+    },
+    {
+      "id": "netflix_classics_moustache",
+      "name": "Moustache",
+      "category": "netflix_classics",
+      "category_name": "Clássicos Netflix",
+      "img": "/static/avatars/netflix_classics_moustache.png"
+    },
+    {
+      "id": "netflix_classics_pink_giggle",
+      "name": "Pink Giggle",
+      "category": "netflix_classics",
+      "category_name": "Clássicos Netflix",
+      "img": "/static/avatars/netflix_classics_pink_giggle.png"
+    },
+    {
+      "id": "netflix_classics_scarlet_chilleez",
+      "name": "Scarlet Chilleez",
+      "category": "netflix_classics",
+      "category_name": "Clássicos Netflix",
+      "img": "/static/avatars/netflix_classics_scarlet_chilleez.png"
+    },
+    {
+      "id": "netflix_classics_sunny_chilleez",
+      "name": "Sunny Chilleez",
+      "category": "netflix_classics",
+      "category_name": "Clássicos Netflix",
+      "img": "/static/avatars/netflix_classics_sunny_chilleez.png"
+    },
+    {
+      "id": "netflix_classics_robin_chilleez",
+      "name": "Robin Chilleez",
+      "category": "netflix_classics",
+      "category_name": "Clássicos Netflix",
+      "img": "/static/avatars/netflix_classics_robin_chilleez.png"
+    },
+    {
+      "id": "netflix_classics_dusty_chilleez",
+      "name": "Dusty Chilleez",
+      "category": "netflix_classics",
+      "category_name": "Clássicos Netflix",
+      "img": "/static/avatars/netflix_classics_dusty_chilleez.png"
+    },
+    {
+      "id": "netflix_classics_purple_superhero",
+      "name": "Purple Superhero",
+      "category": "netflix_classics",
+      "category_name": "Clássicos Netflix",
+      "img": "/static/avatars/netflix_classics_purple_superhero.png"
+    },
+    {
+      "id": "netflix_classics_dog",
+      "name": "Dog",
+      "category": "netflix_classics",
+      "category_name": "Clássicos Netflix",
+      "img": "/static/avatars/netflix_classics_dog.png"
+    },
+    {
+      "id": "netflix_classics_red_superhero",
+      "name": "Red Superhero",
+      "category": "netflix_classics",
+      "category_name": "Clássicos Netflix",
+      "img": "/static/avatars/netflix_classics_red_superhero.png"
+    },
+    {
+      "id": "netflix_classics_purple_penguin",
+      "name": "Purple Penguin",
+      "category": "netflix_classics",
+      "category_name": "Clássicos Netflix",
+      "img": "/static/avatars/netflix_classics_purple_penguin.png"
+    },
+    {
+      "id": "netflix_classics_eyepatch",
+      "name": "Eyepatch",
+      "category": "netflix_classics",
+      "category_name": "Clássicos Netflix",
+      "img": "/static/avatars/netflix_classics_eyepatch.png"
+    },
+    {
+      "id": "netflix_classics_alien",
+      "name": "Alien",
+      "category": "netflix_classics",
+      "category_name": "Clássicos Netflix",
+      "img": "/static/avatars/netflix_classics_alien.png"
+    },
+    {
+      "id": "netflix_classics_robot",
+      "name": "Robot",
+      "category": "netflix_classics",
+      "category_name": "Clássicos Netflix",
+      "img": "/static/avatars/netflix_classics_robot.png"
+    },
+    {
+      "id": "netflix_classics_mummy",
+      "name": "Mummy",
+      "category": "netflix_classics",
+      "category_name": "Clássicos Netflix",
+      "img": "/static/avatars/netflix_classics_mummy.png"
+    },
+    {
+      "id": "netflix_classics_helmet",
+      "name": "Helmet",
+      "category": "netflix_classics",
+      "category_name": "Clássicos Netflix",
+      "img": "/static/avatars/netflix_classics_helmet.png"
+    },
+    {
+      "id": "netflix_classics_red_smile",
+      "name": "Red Smile",
+      "category": "netflix_classics",
+      "category_name": "Clássicos Netflix",
+      "img": "/static/avatars/netflix_classics_red_smile.png"
+    },
+    {
+      "id": "netflix_classics_dark_grey_smile",
+      "name": "Dark Grey Smile",
+      "category": "netflix_classics",
+      "category_name": "Clássicos Netflix",
+      "img": "/static/avatars/netflix_classics_dark_grey_smile.png"
+    },
+    {
+      "id": "netflix_classics_yellow_smile",
+      "name": "Yellow Smile",
+      "category": "netflix_classics",
+      "category_name": "Clássicos Netflix",
+      "img": "/static/avatars/netflix_classics_yellow_smile.png"
+    },
+    {
+      "id": "netflix_classics_green_smile",
+      "name": "Green Smile",
+      "category": "netflix_classics",
+      "category_name": "Clássicos Netflix",
+      "img": "/static/avatars/netflix_classics_green_smile.png"
+    },
+    {
+      "id": "netflix_classics_purple_smile",
+      "name": "Purple Smile",
+      "category": "netflix_classics",
+      "category_name": "Clássicos Netflix",
+      "img": "/static/avatars/netflix_classics_purple_smile.png"
+    },
+    {
+      "id": "netflix_classics_pink_smile",
+      "name": "Pink Smile",
+      "category": "netflix_classics",
+      "category_name": "Clássicos Netflix",
+      "img": "/static/avatars/netflix_classics_pink_smile.png"
+    },
+    {
+      "id": "netflix_classics_blue_classic_icon",
+      "name": "Blue Classic Icon",
+      "category": "netflix_classics",
+      "category_name": "Clássicos Netflix",
+      "img": "/static/avatars/netflix_classics_blue_classic_icon.png"
+    }
+  ]
+}

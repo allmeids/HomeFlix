@@ -61,6 +61,10 @@ class HomeFlixApp {
     this.selectedAvatar = 'spiderman';
     this.editingProfileId = null;
 
+    this.avatarCatalog = null;
+    this.avatarMap = new Map();
+    this.loadAvatarCatalog();
+
     this.currentCategory = 'action';
     this.categoryPage = 1;
     this.allCategoriesList = [];
@@ -804,13 +808,46 @@ class HomeFlixApp {
     this.updateProfileUI();
   }
 
+  async loadAvatarCatalog() {
+    try {
+      const res = await fetch('/static/avatars/catalog.json');
+      if (res.ok) {
+        this.avatarCatalog = await res.json();
+        if (this.avatarCatalog && this.avatarCatalog.avatars) {
+          this.avatarCatalog.avatars.forEach(av => {
+            this.avatarMap.set(av.id, av);
+          });
+        }
+      }
+    } catch (e) {
+      console.warn('[HomeFlix] Falha ao carregar catalog.json de avatares:', e);
+    }
+  }
+
+  async getAvatarCatalog() {
+    if (this.avatarCatalog) return this.avatarCatalog;
+    await this.loadAvatarCatalog();
+    return this.avatarCatalog || { categories: [], avatars: CATALOG_AVATARS };
+  }
+
   getAvatarVisual(avatarKey, name = 'P') {
+    // 1. Catálogo em memória (291 avatares)
+    if (this.avatarMap && this.avatarMap.has(avatarKey)) {
+      const av = this.avatarMap.get(avatarKey);
+      return { isImage: true, url: av.img, name: av.name };
+    }
+    // 2. Catálogo estático padrão
     const found = CATALOG_AVATARS.find(a => a.id === avatarKey);
     if (found) {
       return { isImage: true, url: found.img, name: found.name };
     }
+    // 3. URLs absolutas ou estáticas diretas
     if (avatarKey && (avatarKey.startsWith('http') || avatarKey.startsWith('/'))) {
       return { isImage: true, url: avatarKey, name: name };
+    }
+    // 4. Se for ID de categoria de avatar (ex: stranger_things_eleven)
+    if (avatarKey && avatarKey.includes('_') && !avatarKey.startsWith('avatar-')) {
+      return { isImage: true, url: `/static/avatars/${avatarKey}.png`, name: name };
     }
     // Fallback legado de gradiente
     const palette = {
@@ -988,6 +1025,9 @@ class HomeFlixApp {
       if (sub) sub.textContent = 'Troque de perfil ou gerencie suas preferências';
     }
 
+    const modalWrapper = modal.querySelector('.profile-modal-wrapper');
+    if (modalWrapper) modalWrapper.classList.remove('editing');
+
     grid.style.display = 'flex';
     formBox.style.display = 'none';
     footerBtns.style.display = 'flex';
@@ -1082,21 +1122,27 @@ class HomeFlixApp {
     }, 80);
   }
 
-  showProfileForm(profileToEdit = null) {
+  async showProfileForm(profileToEdit = null) {
     const grid = document.getElementById('profileModalGrid');
     const formBox = document.getElementById('profileFormBox');
     const footerBtns = document.getElementById('profileModalFooterBtns');
     const titleEl = document.getElementById('profileFormTitle');
     const nameInput = document.getElementById('profileFormNameInput');
     const deleteBtn = document.getElementById('deleteProfileBtn');
-    const avatarGrid = document.getElementById('avatarPickerGrid');
     const previewEl = document.getElementById('profileAvatarPreview');
+    const sectionsContainer = document.getElementById('avatarPickerSectionsContainer');
+    const categoriesTrack = document.getElementById('avatarCategoriesTrack');
+    const searchInput = document.getElementById('avatarSearchInput');
+    const clearSearchBtn = document.getElementById('avatarClearSearchBtn');
+    const countEl = document.getElementById('avatarPickerCount');
+    const modalWrapper = document.querySelector('.profile-modal-wrapper');
 
+    if (modalWrapper) modalWrapper.classList.add('editing');
     grid.style.display = 'none';
     footerBtns.style.display = 'none';
     formBox.style.display = 'block';
 
-    this.selectedAvatar = profileToEdit?.avatar || 'spiderman';
+    this.selectedAvatar = profileToEdit?.avatar || 'stranger_things_eleven';
     this.editingProfileId = profileToEdit ? profileToEdit.id : null;
 
     if (profileToEdit) {
@@ -1123,25 +1169,185 @@ class HomeFlixApp {
     };
     updatePreview();
 
-    avatarGrid.innerHTML = '';
-    CATALOG_AVATARS.forEach(av => {
-      const avBtn = document.createElement('div');
-      avBtn.className = `avatar-catalog-item ${av.id === this.selectedAvatar ? 'selected' : ''}`;
-      avBtn.style.backgroundImage = `url('${av.img}')`;
-      avBtn.title = av.name;
-
-      avBtn.onclick = () => {
-        this.selectedAvatar = av.id;
-        avatarGrid.querySelectorAll('.avatar-catalog-item').forEach(b => b.classList.remove('selected'));
-        avBtn.classList.add('selected');
-        updatePreview();
-      };
-      avatarGrid.appendChild(avBtn);
-    });
-
     nameInput.oninput = () => {
       updatePreview();
     };
+
+    // Carrega o catálogo completo de 291 avatares da Netflix
+    const catalog = await this.getAvatarCatalog();
+    const categories = catalog.categories || [];
+    const allAvatars = catalog.avatars || [];
+
+    let activeCategory = 'all';
+
+    const renderGridItems = (items, targetEl) => {
+      items.forEach(av => {
+        const avBtn = document.createElement('div');
+        const isSelected = av.id === this.selectedAvatar || av.img === this.selectedAvatar;
+        avBtn.className = `avatar-catalog-item ${isSelected ? 'selected' : ''}`;
+        avBtn.style.backgroundImage = `url('${av.img}')`;
+        avBtn.title = `${av.name} (${av.category_name || ''})`;
+        avBtn.setAttribute('tabindex', '0');
+        avBtn.setAttribute('role', 'button');
+
+        const selectThis = () => {
+          this.selectedAvatar = av.id;
+          if (sectionsContainer) {
+            sectionsContainer.querySelectorAll('.avatar-catalog-item').forEach(b => b.classList.remove('selected'));
+          }
+          avBtn.classList.add('selected');
+          updatePreview();
+        };
+
+        avBtn.onclick = selectThis;
+        avBtn.onkeydown = (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            selectThis();
+          }
+        };
+
+        targetEl.appendChild(avBtn);
+      });
+    };
+
+    const renderSections = (selectedCatId = 'all', filterText = '') => {
+      if (!sectionsContainer) return;
+      sectionsContainer.innerHTML = '';
+
+      const query = filterText.trim().toLowerCase();
+
+      // MODO BUSCA: pesquisa instantânea em todos os 291 avatares
+      if (query) {
+        const matched = allAvatars.filter(av => 
+          av.name.toLowerCase().includes(query) || 
+          (av.category_name && av.category_name.toLowerCase().includes(query)) ||
+          av.id.toLowerCase().includes(query)
+        );
+
+        if (countEl) countEl.textContent = `${matched.length} encontrados`;
+
+        if (matched.length === 0) {
+          sectionsContainer.innerHTML = `
+            <div style="text-align: center; color: #888; padding: 36px 12px;">
+              <div style="font-size: 32px; margin-bottom: 8px;">🔍</div>
+              <div>Nenhum personagem encontrado para "<strong>${filterText}</strong>"</div>
+              <div style="font-size: 12px; color: #666; margin-top: 6px;">Dica: tente pesquisar por Eleven, Wandinha, Luffy, Round 6, Dalí...</div>
+            </div>
+          `;
+          return;
+        }
+
+        const gridEl = document.createElement('div');
+        gridEl.className = 'avatar-section-grid';
+        renderGridItems(matched, gridEl);
+        sectionsContainer.appendChild(gridEl);
+        return;
+      }
+
+      // MODO CATEGORIA ÚNICA ESPECÍFICA
+      if (selectedCatId !== 'all') {
+        const cat = categories.find(c => c.id === selectedCatId);
+        if (cat) {
+          if (countEl) countEl.textContent = `${cat.items.length} personagens`;
+          const secEl = document.createElement('div');
+          secEl.className = 'avatar-category-section';
+
+          const title = document.createElement('div');
+          title.className = 'avatar-section-title';
+          title.textContent = `${cat.name} (${cat.items.length})`;
+          secEl.appendChild(title);
+
+          const gridEl = document.createElement('div');
+          gridEl.className = 'avatar-section-grid';
+          renderGridItems(cat.items, gridEl);
+          secEl.appendChild(gridEl);
+
+          sectionsContainer.appendChild(secEl);
+          return;
+        }
+      }
+
+      // MODO TODOS: agrupado ordenadamente por cada série com cabeçalho
+      if (countEl) countEl.textContent = `${allAvatars.length} personagens`;
+      categories.forEach(cat => {
+        if (!cat.items || cat.items.length === 0) return;
+
+        const secEl = document.createElement('div');
+        secEl.className = 'avatar-category-section';
+
+        const title = document.createElement('div');
+        title.className = 'avatar-section-title';
+        title.textContent = `${cat.name} (${cat.items.length})`;
+        secEl.appendChild(title);
+
+        const gridEl = document.createElement('div');
+        gridEl.className = 'avatar-section-grid';
+        renderGridItems(cat.items, gridEl);
+        secEl.appendChild(gridEl);
+
+        sectionsContainer.appendChild(secEl);
+      });
+    };
+
+    // Renderizar Abas de Categorias / Séries Netflix
+    if (categoriesTrack) {
+      categoriesTrack.innerHTML = '';
+
+      const makePill = (id, label, count) => {
+        const pill = document.createElement('button');
+        pill.type = 'button';
+        pill.className = `avatar-category-pill ${id === activeCategory ? 'active' : ''}`;
+        pill.textContent = count !== undefined ? `${label} (${count})` : label;
+        pill.onclick = () => {
+          activeCategory = id;
+          categoriesTrack.querySelectorAll('.avatar-category-pill').forEach(p => p.classList.remove('active'));
+          pill.classList.add('active');
+          if (searchInput) {
+            searchInput.value = '';
+            if (clearSearchBtn) clearSearchBtn.style.display = 'none';
+          }
+          renderSections(activeCategory, '');
+        };
+        return pill;
+      };
+
+      // Pill "Todos"
+      categoriesTrack.appendChild(makePill('all', 'Todos', allAvatars.length));
+
+      // Pills para cada show / categoria
+      categories.forEach(cat => {
+        categoriesTrack.appendChild(makePill(cat.id, cat.name, cat.items?.length));
+      });
+    }
+
+    // Campo de Busca Instantânea com Debounce
+    if (searchInput) {
+      searchInput.value = '';
+      if (clearSearchBtn) clearSearchBtn.style.display = 'none';
+
+      let debounceTimer = null;
+      searchInput.oninput = () => {
+        const q = searchInput.value.trim();
+        if (clearSearchBtn) clearSearchBtn.style.display = q ? 'flex' : 'none';
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+          renderSections(activeCategory, q);
+        }, 40);
+      };
+
+      if (clearSearchBtn) {
+        clearSearchBtn.onclick = () => {
+          searchInput.value = '';
+          clearSearchBtn.style.display = 'none';
+          renderSections(activeCategory, '');
+          searchInput.focus();
+        };
+      }
+    }
+
+    // Render inicial
+    renderSections('all', '');
   }
 
   /* ================================================================

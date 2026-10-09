@@ -3607,13 +3607,203 @@ body.in-details-view .navbar {
   color: #fff;
 }
 
-.avatar-catalog-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));
+/* Seletor Avançado de Avatares com Categorias e Busca */
+.profile-modal-wrapper.editing {
+  max-width: 820px;
+  transition: max-width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.avatar-picker-wrapper {
+  background: rgba(20, 20, 24, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 16px;
+  margin-top: 14px;
+}
+
+.avatar-picker-header {
+  display: flex;
+  flex-direction: column;
   gap: 12px;
-  max-height: 240px;
+  margin-bottom: 12px;
+}
+
+.avatar-picker-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.avatar-picker-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.3px;
+}
+
+.avatar-picker-count {
+  font-size: 12px;
+  font-weight: 600;
+  color: #888;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 3px 8px;
+  border-radius: 12px;
+}
+
+.avatar-picker-search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 6px 12px;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.avatar-picker-search-bar:focus-within {
+  border-color: var(--accent-red);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 8px rgba(229, 9, 20, 0.3);
+}
+
+.avatar-search-icon {
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+.avatar-search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-size: 13px;
+  font-family: inherit;
+}
+
+.avatar-search-input::placeholder {
+  color: #888;
+}
+
+.avatar-clear-search-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: #fff;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.avatar-clear-search-btn:hover {
+  background: var(--accent-red);
+}
+
+/* Trilho de Categorias em Pills (Estilo Netflix) */
+.avatar-categories-track {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px 2px 8px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.avatar-categories-track::-webkit-scrollbar {
+  height: 4px;
+}
+
+.avatar-categories-track::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.avatar-category-pill {
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #ccc;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.avatar-category-pill:hover {
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.avatar-category-pill.active {
+  background: var(--accent-red);
+  color: #fff;
+  border-color: var(--accent-red);
+  box-shadow: 0 2px 10px rgba(229, 9, 20, 0.4);
+}
+
+/* Área de Rolagem do Catálogo de Avatares */
+.avatar-catalog-scroll-box {
+  max-height: 290px;
   overflow-y: auto;
-  padding: 8px 4px;
+  padding: 4px 6px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.avatar-catalog-scroll-box::-webkit-scrollbar {
+  width: 6px;
+}
+
+.avatar-catalog-scroll-box::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.avatar-catalog-sections-container {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.avatar-category-section {
+  content-visibility: auto;
+  contain-intrinsic-size: 140px;
+}
+
+.avatar-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #bbb;
+  text-align: left;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.avatar-section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.avatar-section-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+  gap: 10px;
 }
 
 .avatar-catalog-item {
@@ -3622,41 +3812,54 @@ body.in-details-view .navbar {
   border-radius: 10px;
   overflow: hidden;
   cursor: pointer;
-  border: 2px solid rgba(255, 255, 255, 0.15);
-  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  border: 2px solid rgba(255, 255, 255, 0.12);
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
   position: relative;
   background-size: cover;
   background-position: center;
-  background-color: #222;
+  background-color: #1a1a1e;
+  will-change: transform;
 }
 
-.avatar-catalog-item:hover {
-  transform: scale(1.08);
-  border-color: rgba(255, 255, 255, 0.8);
-  z-index: 2;
+.avatar-catalog-item:hover,
+.avatar-catalog-item:focus {
+  transform: scale(1.1);
+  border-color: rgba(255, 255, 255, 0.9);
+  z-index: 3;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  outline: none;
 }
 
 .avatar-catalog-item.selected {
   border-color: var(--accent-red);
-  box-shadow: 0 0 14px rgba(229, 9, 20, 0.8);
-  transform: scale(1.05);
+  box-shadow: 0 0 14px rgba(229, 9, 20, 0.85);
+  transform: scale(1.06);
 }
 
 .avatar-catalog-item.selected::after {
   content: '✓';
   position: absolute;
-  bottom: 4px;
-  right: 4px;
+  bottom: 3px;
+  right: 3px;
   background: var(--accent-red);
   color: #fff;
   border-radius: 50%;
-  width: 18px;
-  height: 18px;
-  font-size: 11px;
+  width: 17px;
+  height: 17px;
+  font-size: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 900;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+/* Otimização Global de Performance de Renderização (Smart TVs & Desktops) */
+.media-carousel-row,
+.live-channel-card,
+.category-card-item {
+  content-visibility: auto;
+  contain-intrinsic-size: 200px 140px;
 }
 
 /* ================================================================

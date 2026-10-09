@@ -10,6 +10,8 @@ def get_db_connection() -> sqlite3.Connection:
     conn.execute("PRAGMA journal_mode = WAL;")
     conn.execute("PRAGMA synchronous = NORMAL;")
     conn.execute("PRAGMA cache_size = -64000;")
+    conn.execute("PRAGMA mmap_size = 268435456;")
+    conn.execute("PRAGMA temp_store = MEMORY;")
     conn.execute("PRAGMA foreign_keys = ON;")
     return conn
 
@@ -69,6 +71,8 @@ def init_db():
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_progress_profile ON progress(profile_id, updated_at DESC);")
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_favorites_profile ON favorites(profile_id, added_at DESC);")
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_progress_lookup ON progress(profile_id, media_id, season_number, episode_number);")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_profiles_name ON profiles(name);")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_favorites_lookup ON favorites(profile_id, media_id);")
 
     # Migrações seguras de colunas em profiles
     try:

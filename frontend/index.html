@@ -19,7 +19,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/style.css?v=8.8">
+  <link rel="stylesheet" href="/static/css/style.css?v=8.9">
   <!-- HLS.js para streaming HLS/m3u8 no navegador -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -758,8 +758,27 @@
           </div>
         </div>
         
-        <div style="margin: 20px 0 10px; font-size: 14px; font-weight: 600; color: #ddd; text-align: left;">Escolha um personagem do catálogo para o seu avatar:</div>
-        <div class="avatar-catalog-grid" id="avatarPickerGrid"></div>
+        <!-- Seletor Avançado de Avatares com Categorias Netflix & Busca -->
+        <div class="avatar-picker-wrapper">
+          <div class="avatar-picker-header">
+            <div class="avatar-picker-title-row">
+              <span class="avatar-picker-title">Escolha seu Avatar</span>
+              <span class="avatar-picker-count" id="avatarPickerCount">291 personagens</span>
+            </div>
+            <div class="avatar-picker-search-bar">
+              <span class="avatar-search-icon">🔍</span>
+              <input type="text" id="avatarSearchInput" class="avatar-search-input" placeholder="Buscar personagem ou série (ex: Eleven, Wandinha, Luffy, Dalí, Geralt)..." />
+              <button type="button" id="avatarClearSearchBtn" class="avatar-clear-search-btn" style="display: none;">✕</button>
+            </div>
+            <!-- Abas de Categorias / Franquias Estilo Netflix -->
+            <div class="avatar-categories-track" id="avatarCategoriesTrack"></div>
+          </div>
+
+          <!-- Área de rolagem dos avatares agrupados por categoria -->
+          <div class="avatar-catalog-scroll-box" id="avatarCatalogScrollBox">
+            <div class="avatar-catalog-sections-container" id="avatarPickerSectionsContainer"></div>
+          </div>
+        </div>
 
         <div style="display: flex; gap: 12px; justify-content: center; margin-top: 24px;">
           <button class="btn btn-primary" id="saveProfileBtn">Salvar Alterações</button>
@@ -814,8 +833,8 @@
   </div>
 
   <!-- Scripts -->
-  <script src="/static/js/api.js?v=8.8"></script>
-  <script src="/static/js/player.js?v=8.8"></script>
-  <script src="/static/js/app.js?v=8.8"></script>
+  <script src="/static/js/api.js?v=8.9"></script>
+  <script src="/static/js/player.js?v=8.9"></script>
+  <script src="/static/js/app.js?v=8.9"></script>
 </body>
 </html>
