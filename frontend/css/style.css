@@ -2528,7 +2528,8 @@ body.in-details-view .navbar {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
-  padding: 20px;
+  padding: 16px;
+  overflow-y: auto;
 }
 
 .modal-backdrop.open {
@@ -2541,6 +2542,7 @@ body.in-details-view .navbar {
   border-radius: 14px;
   width: 100%;
   max-width: 850px;
+  max-height: calc(100vh - 32px);
   position: relative;
   box-shadow: 0 16px 50px rgba(0, 0, 0, 0.95);
   border: 1px solid var(--border-glass);
@@ -3578,55 +3580,122 @@ body.in-details-view .navbar {
 /* ================================================================
    AVATARES DO CATÁLOGO & EDIÇÃO DE PERFIL ESTILO NETFLIX
    ================================================================ */
+.profile-modal-wrapper.editing {
+  max-width: 860px;
+  width: 95vw;
+  max-height: min(92vh, 680px);
+  padding: 16px 22px 14px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  overflow: hidden;
+  transition: max-width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.profile-modal-wrapper.editing .profile-modal-heading,
+.profile-modal-wrapper.editing .profile-modal-sub,
+.profile-modal-wrapper.editing .profile-gate-logo {
+  display: none !important;
+}
+
+.profile-gate-screen .profile-modal-wrapper.editing {
+  background: #18181c !important;
+  border-radius: 14px !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8) !important;
+  padding: 16px 22px 14px !important;
+}
+
+.profile-form-box {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.profile-form-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #fff;
+  text-align: center;
+  flex-shrink: 0;
+}
+
 .profile-avatar-preview-container {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 14px;
   background: rgba(255, 255, 255, 0.04);
-  padding: 16px;
-  border-radius: 12px;
+  padding: 8px 14px;
+  border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  margin-bottom: 16px;
+  margin-bottom: 8px;
+  flex-shrink: 0;
 }
 
 .profile-avatar-preview {
-  width: 72px;
-  height: 72px;
-  border-radius: 12px;
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
   overflow: hidden;
   background-size: cover;
   background-position: center;
   border: 2px solid var(--accent-red);
-  box-shadow: 0 4px 18px rgba(229, 9, 20, 0.4);
+  box-shadow: 0 4px 14px rgba(229, 9, 20, 0.35);
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 26px;
+  font-size: 20px;
   font-weight: 800;
   color: #fff;
 }
 
-/* Seletor Avançado de Avatares Estilo Netflix & Disney+ */
-.profile-modal-wrapper.editing {
-  max-width: 860px;
-  width: 95vw;
-  transition: max-width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+.profile-avatar-preview-label {
+  font-size: 12px;
+  color: #aaa;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.profile-name-input {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 7px 12px;
+  color: #fff;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.profile-name-input:focus {
+  border-color: var(--accent-red);
 }
 
 .avatar-picker-wrapper {
   background: rgba(18, 18, 22, 0.7);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
-  padding: 16px 18px;
-  margin-top: 14px;
+  border-radius: 12px;
+  padding: 10px 14px 8px;
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .avatar-picker-header {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: 6px;
+  margin-bottom: 6px;
+  flex-shrink: 0;
 }
 
 .avatar-picker-title-row {
@@ -3636,26 +3705,26 @@ body.in-details-view .navbar {
 }
 
 .avatar-picker-title {
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 700;
   color: #fff;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.3px;
 }
 
 .avatar-picker-count {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   color: #aaa;
   background: rgba(255, 255, 255, 0.06);
-  padding: 3px 10px;
-  border-radius: 12px;
+  padding: 2px 8px;
+  border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* Linha de Controles: Busca + Dropdown de Franquia */
 .avatar-picker-controls-row {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   align-items: center;
 }
 
@@ -3663,11 +3732,11 @@ body.in-details-view .navbar {
   flex: 1;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 10px;
-  padding: 8px 12px;
+  border-radius: 8px;
+  padding: 6px 10px;
   transition: all 0.2s ease;
 }
 
@@ -3678,7 +3747,7 @@ body.in-details-view .navbar {
 }
 
 .avatar-search-icon {
-  font-size: 14px;
+  font-size: 13px;
   opacity: 0.75;
 }
 
@@ -3688,7 +3757,7 @@ body.in-details-view .navbar {
   border: none;
   outline: none;
   color: #fff;
-  font-size: 13px;
+  font-size: 12px;
   font-family: inherit;
 }
 
@@ -3701,9 +3770,9 @@ body.in-details-view .navbar {
   border: none;
   color: #fff;
   border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  font-size: 11px;
+  width: 18px;
+  height: 18px;
+  font-size: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3724,9 +3793,9 @@ body.in-details-view .navbar {
   background: #141418;
   color: #eee;
   border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 10px;
-  padding: 8px 14px;
-  font-size: 13px;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 12px;
   font-weight: 600;
   font-family: inherit;
   outline: none;
@@ -3746,16 +3815,17 @@ body.in-details-view .navbar {
   display: flex;
   align-items: center;
   gap: 4px;
+  margin-top: 2px;
 }
 
 .avatar-chips-nav-btn {
   background: rgba(20, 20, 24, 0.85);
   border: 1px solid rgba(255, 255, 255, 0.15);
   color: #fff;
-  width: 26px;
-  height: 26px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: bold;
   display: flex;
   align-items: center;
@@ -3774,10 +3844,10 @@ body.in-details-view .navbar {
 .avatar-categories-track {
   flex: 1;
   display: flex;
-  gap: 8px;
+  gap: 6px;
   overflow-x: auto;
   scroll-behavior: smooth;
-  padding: 4px 6px;
+  padding: 2px 4px;
   scrollbar-width: none;
 }
 
@@ -3790,10 +3860,10 @@ body.in-details-view .navbar {
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: #bbb;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
-  padding: 5px 13px;
-  border-radius: 20px;
+  padding: 3px 10px;
+  border-radius: 16px;
   cursor: pointer;
   transition: all 0.18s ease;
   white-space: nowrap;
@@ -3815,9 +3885,11 @@ body.in-details-view .navbar {
 
 /* Caixa com Rolagem dos Trilhos */
 .avatar-catalog-scroll-box {
-  max-height: 340px;
+  flex: 1 1 auto;
+  min-height: 120px;
+  max-height: clamp(150px, 24vh, 205px);
   overflow-y: auto;
-  padding: 6px 8px 12px;
+  padding: 4px 6px 6px;
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
   overscroll-behavior: contain;
@@ -3924,10 +3996,10 @@ body.in-details-view .navbar {
 
 /* Card do Avatar (Design Leve com <img>) */
 .avatar-card {
-  flex: 0 0 70px;
-  width: 70px;
-  height: 70px;
-  border-radius: 12px;
+  flex: 0 0 62px;
+  width: 62px;
+  height: 62px;
+  border-radius: 10px;
   overflow: hidden;
   position: relative;
   border: 2px solid rgba(255, 255, 255, 0.14);
@@ -3950,7 +4022,7 @@ body.in-details-view .navbar {
 
 .avatar-card:hover,
 .avatar-card:focus {
-  transform: scale(1.12);
+  transform: scale(1.1);
   border-color: #fff;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.85);
   z-index: 5;
@@ -3959,20 +4031,20 @@ body.in-details-view .navbar {
 .avatar-card.selected {
   border-color: var(--accent-red);
   box-shadow: 0 0 16px rgba(229, 9, 20, 0.9);
-  transform: scale(1.06);
+  transform: scale(1.04);
 }
 
 .avatar-card.selected::after {
   content: '✓';
   position: absolute;
-  bottom: 3px;
-  right: 3px;
+  bottom: 2px;
+  right: 2px;
   background: var(--accent-red);
   color: #fff;
   border-radius: 50%;
-  width: 17px;
-  height: 17px;
-  font-size: 10px;
+  width: 16px;
+  height: 16px;
+  font-size: 9px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3983,9 +4055,62 @@ body.in-details-view .navbar {
 /* Grid de Resultados de Busca Instantânea */
 .avatar-search-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  gap: 10px;
   padding: 4px;
+}
+
+/* Botões de Ação na Base do Modal de Edição (Garantidos 100% Visíveis) */
+.profile-form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+  padding-top: 2px;
+  flex-shrink: 0;
+}
+
+.profile-form-actions .btn {
+  padding: 8px 22px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 6px;
+}
+
+/* Salvaguarda de Viewport Reduzida (Monitores 720p / Laptops / Altas Escalas) */
+@media (max-height: 760px) {
+  .profile-modal-wrapper.editing {
+    padding: 12px 18px 10px;
+  }
+  .profile-form-title {
+    font-size: 16px;
+    margin-bottom: 6px;
+  }
+  .profile-avatar-preview-container {
+    padding: 6px 10px;
+    margin-bottom: 6px;
+  }
+  .profile-avatar-preview {
+    width: 44px;
+    height: 44px;
+    font-size: 16px;
+  }
+  .avatar-picker-wrapper {
+    padding: 8px 10px 6px;
+    margin-top: 2px;
+  }
+  .avatar-catalog-scroll-box {
+    max-height: clamp(120px, 20vh, 160px);
+  }
+  .avatar-card {
+    flex: 0 0 54px;
+    width: 54px;
+    height: 54px;
+  }
+  .profile-form-actions {
+    margin-top: 8px;
+  }
 }
 
 /* Otimização Global de Performance de Renderização (Smart TVs & Desktops) */

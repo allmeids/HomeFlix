@@ -19,7 +19,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/style.css?v=9.0">
+  <link rel="stylesheet" href="/static/css/style.css?v=9.1">
   <!-- HLS.js para streaming HLS/m3u8 no navegador -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -748,7 +748,7 @@
 
       <!-- Formulário de Criar / Editar Perfil (Estilo Netflix com Avatares do Catálogo) -->
       <div class="profile-form-box" id="profileFormBox" style="display: none;">
-        <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 16px;" id="profileFormTitle">Editar Perfil</h3>
+        <h3 class="profile-form-title" id="profileFormTitle">Editar Perfil</h3>
         
         <div class="profile-avatar-preview-container">
           <div class="profile-avatar-preview" id="profileAvatarPreview"></div>
@@ -807,7 +807,7 @@
           </div>
         </div>
 
-        <div style="display: flex; gap: 12px; justify-content: center; margin-top: 24px;">
+        <div class="profile-form-actions">
           <button class="btn btn-primary" id="saveProfileBtn">Salvar Alterações</button>
           <button class="btn btn-secondary" id="cancelProfileBtn">Cancelar</button>
           <button class="btn btn-dark" id="deleteProfileBtn" style="display:none; color:#e50914;">Excluir</button>
@@ -860,8 +860,8 @@
   </div>
 
   <!-- Scripts -->
-  <script src="/static/js/api.js?v=9.0"></script>
-  <script src="/static/js/player.js?v=9.0"></script>
-  <script src="/static/js/app.js?v=9.0"></script>
+  <script src="/static/js/api.js?v=9.1"></script>
+  <script src="/static/js/player.js?v=9.1"></script>
+  <script src="/static/js/app.js?v=9.1"></script>
 </body>
 </html>
