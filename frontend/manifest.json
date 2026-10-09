@@ -1,6 +1,6 @@
 {
-  "name": "HomeFlix",
-  "short_name": "HomeFlix",
+  "name": "HOMEFLIX",
+  "short_name": "HOMEFLIX",
   "description": "Seu Cinema & TV ao Vivo Pessoal em 4K Ultra HD",
   "start_url": "/",
   "id": "/",
@@ -13,6 +13,11 @@
   "lang": "pt-BR",
   "categories": ["entertainment", "multimedia", "movies"],
   "icons": [
+    {
+      "src": "/static/icons/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
     {
       "src": "/static/icons/icon-192.png",
       "sizes": "192x192",

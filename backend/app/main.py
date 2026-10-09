@@ -11,7 +11,7 @@ from app.routers import media, streams, live_tv, profiles, progress, proxy, subt
 from app.services import cloud_sync_service, backup_service
 
 app = FastAPI(
-    title="HomeFlix API",
+    title="HOMEFLIX API",
     description="Plataforma de Streaming Pessoal & TV ao Vivo",
     version="1.0.0"
 )
@@ -69,7 +69,11 @@ if os.path.exists(FRONTEND_DIR):
             media_type="application/javascript"
         )
 
+    @app.get("/favicon.ico")
+    def serve_favicon():
+        return FileResponse(os.path.join(FRONTEND_DIR, "icons", "favicon.ico"))
+
 @app.get("/api/health")
 def health_check():
-    return {"status": "ok", "app": "HomeFlix", "version": "1.0.0"}
+    return {"status": "ok", "app": "HOMEFLIX", "version": "1.0.0"}
 
