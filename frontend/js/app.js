@@ -1,3 +1,13 @@
+// Garantir título oficial e renovação ativa de favicon na aba
+document.title = 'HOMEFLIX';
+try {
+  const _favLink = document.querySelector("link[rel*='icon']") || document.createElement('link');
+  _favLink.type = 'image/png';
+  _favLink.rel = 'shortcut icon';
+  _favLink.href = '/static/icons/favicon-32x32.png?v=' + Date.now();
+  document.head.appendChild(_favLink);
+} catch (e) {}
+
 const CATALOG_AVATARS = [
   { id: 'mario', name: 'Mario', img: 'https://image.tmdb.org/t/p/w200/qNBAXBIQlnOThrVvA6mA2B5ggV6.jpg' },
   { id: 'spiderman', name: 'Homem-Aranha', img: 'https://image.tmdb.org/t/p/w200/gh4cZbhZxyTbgxQPxD0dOudNPTn.jpg' },

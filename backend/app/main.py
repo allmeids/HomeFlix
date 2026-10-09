@@ -71,7 +71,10 @@ if os.path.exists(FRONTEND_DIR):
 
     @app.get("/favicon.ico")
     def serve_favicon():
-        return FileResponse(os.path.join(FRONTEND_DIR, "icons", "favicon.ico"))
+        return FileResponse(
+            os.path.join(FRONTEND_DIR, "icons", "favicon.ico"),
+            headers={"Cache-Control": "no-cache, no-store, must-revalidate", "Pragma": "no-cache", "Expires": "0"}
+        )
 
 @app.get("/api/health")
 def health_check():
