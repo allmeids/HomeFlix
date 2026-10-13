@@ -22,8 +22,16 @@ env/
 venv/
 ENV/
 
-# Logs & Runtime
 *.log
 homeflix_server.log
 .DS_Store
 Thumbs.db
+
+# Android Build & Outputs
+.gradle/
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+dist/
+*.apk

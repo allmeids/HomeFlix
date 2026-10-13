@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">HomeFlix</string>
+    <string name="default_server_url">http://100.111.162.28:8080</string>
+    <string name="update_title">Atualização Disponível</string>
+    <string name="update_message">Uma nova versão do HomeFlix (v%1$s) está pronta para instalação. Deseja atualizar agora?</string>
+    <string name="btn_update">Atualizar Agora</string>
+    <string name="btn_later">Depois</string>
+    <string name="server_error_title">Servidor Desconectado</string>
+    <string name="server_error_message">Não foi possível conectar ao servidor HomeFlix em %1$s.\nVerifique se o computador ou Tailscale está ativo.</string>
+    <string name="btn_retry">Tentar Novamente</string>
+    <string name="btn_change_ip">Mudar Endereço IP</string>
+</resources>

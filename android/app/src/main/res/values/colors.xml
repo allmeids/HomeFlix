@@ -1,0 +1,7 @@
+<resources>
+    <color name="black">#141414</color>
+    <color name="netflix_red">#E50914</color>
+    <color name="surface_dark">#181818</color>
+    <color name="white">#FFFFFF</color>
+    <color name="status_bar_black">#000000</color>
+</resources>

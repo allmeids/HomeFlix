@@ -1,0 +1,9 @@
+<resources>
+    <style name="Theme.HomeFlix" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@color/black</item>
+        <item name="android:colorBackground">@color/black</item>
+        <item name="android:statusBarColor">@color/status_bar_black</item>
+        <item name="android:navigationBarColor">@color/status_bar_black</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>
