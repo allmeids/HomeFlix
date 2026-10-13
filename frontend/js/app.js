@@ -860,11 +860,22 @@ class HomeFlixApp {
 
   async loadAvatarCatalog() {
     try {
-      const res = await fetch('/static/avatars/catalog.json');
+      const res = await fetch(`/static/avatars/catalog.json?v=${Date.now()}`);
       if (res.ok) {
         this.avatarCatalog = await res.json();
+        if (this.avatarCatalog && this.avatarCatalog.categories) {
+          // Higienização estrita: remove qualquer menção residual de nomes externos
+          this.avatarCatalog.categories.forEach(c => {
+            if (c.name && /netflix/i.test(c.name)) {
+              c.name = c.name.replace(/netflix/gi, '').trim() || 'Os Clássicos';
+            }
+          });
+        }
         if (this.avatarCatalog && this.avatarCatalog.avatars) {
           this.avatarCatalog.avatars.forEach(av => {
+            if (av.category_name && /netflix/i.test(av.category_name)) {
+              av.category_name = av.category_name.replace(/netflix/gi, '').trim() || 'Os Clássicos';
+            }
             this.avatarMap.set(av.id, av);
           });
         }
