@@ -16,7 +16,7 @@ class CachedStaticFiles(StaticFiles):
         if any(p_str.endswith(ext) for ext in ['.png', '.jpg', '.jpeg', '.webp', '.svg', '.ico', '.woff', '.woff2', '.ttf']):
             resp.headers['Cache-Control'] = 'public, max-age=604800, immutable'
         elif any(p_str.endswith(ext) for ext in ['.css', '.js']):
-            resp.headers['Cache-Control'] = 'public, max-age=86400'
+            resp.headers['Cache-Control'] = 'no-cache, must-revalidate'
         return resp
 
 from app.database import init_db
@@ -67,7 +67,10 @@ if os.path.exists(FRONTEND_DIR):
 
     @app.get("/")
     def serve_home():
-        return FileResponse(os.path.join(FRONTEND_DIR, "index.html"))
+        return FileResponse(
+            os.path.join(FRONTEND_DIR, "index.html"),
+            headers={"Cache-Control": "no-cache, no-store, must-revalidate", "Pragma": "no-cache", "Expires": "0"}
+        )
 
     @app.get("/manifest.json")
     def serve_manifest():

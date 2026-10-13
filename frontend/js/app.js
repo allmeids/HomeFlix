@@ -49,6 +49,7 @@ class HomeFlixApp {
   constructor() {
     this.currentTab = 'home';
     this.previousTab = 'home';
+    this._loadToken = 0;
     this.profiles = [];
     this.currentProfile = null;
     this.heroItem = null;
@@ -877,81 +878,80 @@ class HomeFlixApp {
   }
 
   applyTabSectionVisibility(tab) {
-    const secSuperheroes = document.getElementById('superheroesSection');
-    const secAction = document.getElementById('actionMoviesSection');
-    const secPopularMovies = document.getElementById('popularMoviesSection');
-    const secPopularSeries = document.getElementById('popularSeriesSection');
-    const secScifi = document.getElementById('scifiMoviesSection');
-    const secComedy = document.getElementById('comedyMoviesSection');
-    const secHorror = document.getElementById('horrorMoviesSection');
-    const secThriller = document.getElementById('thrillerMoviesSection');
-    const secTop = document.getElementById('topMoviesSection');
-    const secFamily = document.getElementById('familyMoviesSection');
-    const secAnimeSagas = document.getElementById('animeSagasSection');
-    const secAnimeHits = document.getElementById('animeHitsSection');
-    const secAnimes = document.getElementById('animesSection');
+    const movieSections = [
+      'superheroesSection',
+      'actionMoviesSection',
+      'popularMoviesSection',
+      'scifiMoviesSection',
+      'comedyMoviesSection',
+      'horrorMoviesSection',
+      'thrillerMoviesSection',
+      'familyMoviesSection'
+    ];
+    const seriesSections = [
+      'popularSeriesSection',
+      'animeSagasSection',
+      'animeHitsSection',
+      'animesSection'
+    ];
+
     const trendingTitle = document.getElementById('trendingTitle');
     const popularMoviesTitle = document.getElementById('popularMoviesTitle');
     const popularSeriesTitle = document.getElementById('popularSeriesTitle');
     const topMoviesTitle = document.getElementById('topMoviesTitle');
+    const secTop = document.getElementById('topMoviesSection');
 
     if (tab === 'series') {
-      // Oculta compulsoriamente seções exclusivas de cinema/filmes (incluindo Vingadores/Heróis)
-      if (secSuperheroes) secSuperheroes.style.display = 'none';
-      if (secAction) secAction.style.display = 'none';
-      if (secPopularMovies) secPopularMovies.style.display = 'none';
-      if (secScifi) secScifi.style.display = 'none';
-      if (secComedy) secComedy.style.display = 'none';
-      if (secHorror) secHorror.style.display = 'none';
-      if (secThriller) secThriller.style.display = 'none';
-      if (secFamily) secFamily.style.display = 'none';
+      // 1. Oculta compulsoriamente com !important e limpa HTML de todas as seções de filmes (adeus Vingadores/cinema)
+      movieSections.forEach(id => {
+        const sec = document.getElementById(id);
+        if (sec) {
+          sec.style.setProperty('display', 'none', 'important');
+          const carousel = sec.querySelector('.media-carousel');
+          if (carousel) carousel.innerHTML = '';
+        }
+      });
 
-      // Exibe e adapta seções de séries e animes
-      if (secPopularSeries) secPopularSeries.style.display = 'block';
-      if (secTop) secTop.style.display = 'block';
-      if (secAnimeSagas) secAnimeSagas.style.display = 'block';
-      if (secAnimeHits) secAnimeHits.style.display = 'block';
-      if (secAnimes) secAnimes.style.display = 'block';
+      // 2. Exibe com !important seções de séries
+      seriesSections.forEach(id => {
+        const sec = document.getElementById(id);
+        if (sec) sec.style.setProperty('display', 'block', 'important');
+      });
+      if (secTop) secTop.style.setProperty('display', 'block', 'important');
 
       if (trendingTitle) trendingTitle.textContent = 'Séries em Alta no HomeFlix';
-      if (popularSeriesTitle) popularSeriesTitle.textContent = 'Séries Mais Assistidas';
+      if (popularSeriesTitle) popularSeriesTitle.textContent = 'Séries Populares';
       if (topMoviesTitle) topMoviesTitle.textContent = 'Séries Mais Bem Avaliadas';
-    } else if (tab === 'movies') {
-      // Oculta seções de séries
-      if (secPopularSeries) secPopularSeries.style.display = 'none';
-      if (secAnimeSagas) secAnimeSagas.style.display = 'none';
-      if (secAnimeHits) secAnimeHits.style.display = 'none';
-      if (secAnimes) secAnimes.style.display = 'none';
 
-      // Exibe seções de filmes
-      if (secSuperheroes) secSuperheroes.style.display = 'block';
-      if (secAction) secAction.style.display = 'block';
-      if (secPopularMovies) secPopularMovies.style.display = 'block';
-      if (secScifi) secScifi.style.display = 'block';
-      if (secComedy) secComedy.style.display = 'block';
-      if (secHorror) secHorror.style.display = 'block';
-      if (secThriller) secThriller.style.display = 'block';
-      if (secTop) secTop.style.display = 'block';
-      if (secFamily) secFamily.style.display = 'block';
+    } else if (tab === 'movies') {
+      // 1. Oculta com !important e limpa HTML de seções de séries
+      seriesSections.forEach(id => {
+        const sec = document.getElementById(id);
+        if (sec) {
+          sec.style.setProperty('display', 'none', 'important');
+          const carousel = sec.querySelector('.media-carousel');
+          if (carousel) carousel.innerHTML = '';
+        }
+      });
+
+      // 2. Exibe seções de filmes
+      movieSections.forEach(id => {
+        const sec = document.getElementById(id);
+        if (sec) sec.style.setProperty('display', 'block', 'important');
+      });
+      if (secTop) secTop.style.setProperty('display', 'block', 'important');
 
       if (trendingTitle) trendingTitle.textContent = 'Filmes em Alta no Cinema & Streaming';
       if (popularMoviesTitle) popularMoviesTitle.textContent = 'Grandes Sucessos do Cinema';
       if (topMoviesTitle) topMoviesTitle.textContent = 'Filmes Mais Bem Avaliados';
+
     } else {
-      // Home: todas as seções ativas (catálogo misto)
-      if (secSuperheroes) secSuperheroes.style.display = 'block';
-      if (secAction) secAction.style.display = 'block';
-      if (secPopularMovies) secPopularMovies.style.display = 'block';
-      if (secPopularSeries) secPopularSeries.style.display = 'block';
-      if (secScifi) secScifi.style.display = 'block';
-      if (secComedy) secComedy.style.display = 'block';
-      if (secHorror) secHorror.style.display = 'block';
-      if (secThriller) secThriller.style.display = 'block';
-      if (secTop) secTop.style.display = 'block';
-      if (secFamily) secFamily.style.display = 'block';
-      if (secAnimeSagas) secAnimeSagas.style.display = 'block';
-      if (secAnimeHits) secAnimeHits.style.display = 'block';
-      if (secAnimes) secAnimes.style.display = 'block';
+      // Home: todas as seções ativas
+      [...movieSections, ...seriesSections].forEach(id => {
+        const sec = document.getElementById(id);
+        if (sec) sec.style.setProperty('display', 'block', 'important');
+      });
+      if (secTop) secTop.style.setProperty('display', 'block', 'important');
 
       if (trendingTitle) trendingTitle.textContent = 'Em Alta no HomeFlix';
       if (popularMoviesTitle) popularMoviesTitle.textContent = 'Grandes Sucessos do Cinema';
@@ -1483,10 +1483,17 @@ class HomeFlixApp {
 
 
   async loadHome(retryCount = 0) {
+    const token = ++this._loadToken;
     this.applyTabSectionVisibility('home');
 
     // 1. Carrega o catálogo completo da Home (desduplicado pelo backend)
     const homeData = await API.getHomeCatalog();
+
+    // Se o usuário trocou de aba enquanto baixava os dados da home, aborta imediatamente!
+    if (this.currentTab !== 'home' || this._loadToken !== token) {
+      console.log('[HomeFlix] Descartando carga da Home pois aba ativa agora é:', this.currentTab);
+      return;
+    }
 
     if (!homeData) {
       if (retryCount < 8) {
@@ -1582,6 +1589,7 @@ class HomeFlixApp {
   }
 
   async loadMoviesTab() {
+    const token = ++this._loadToken;
     this.applyTabSectionVisibility('movies');
 
     // Limpa o Hero se atualmente for uma série para não misturar no topo
@@ -1602,6 +1610,8 @@ class HomeFlixApp {
         API.getCategoryItems('superheroes', 1),
         API.getCategoryItems('action', 1)
       ]);
+
+      if (this.currentTab !== 'movies' || this._loadToken !== token) return;
 
       (popular || []).forEach(it => { it.media_type = 'movie'; });
       (top || []).forEach(it => { it.media_type = 'movie'; });
@@ -1626,6 +1636,7 @@ class HomeFlixApp {
   }
 
   async loadSeriesTab() {
+    const token = ++this._loadToken;
     this.applyTabSectionVisibility('series');
 
     // Limpa imediatamente o Hero se for filme (elimina banner dos Vingadores/filmes na aba de séries)
@@ -1646,6 +1657,8 @@ class HomeFlixApp {
         API.getAnimeSagas(1),
         API.getAnimeHits(1)
       ]);
+
+      if (this.currentTab !== 'series' || this._loadToken !== token) return;
 
       // Garante media_type 'tv' em todos os itens da aba de séries
       (popular || []).forEach(it => { it.media_type = 'tv'; });
@@ -1879,11 +1892,43 @@ class HomeFlixApp {
     const container = document.getElementById(containerId);
     if (!container) return;
     const section = container.closest('.media-section');
-    if (!items || items.length === 0) {
-      if (section) section.style.display = 'none';
+
+    const movieCarousels = [
+      'superheroesCarousel',
+      'actionMoviesCarousel',
+      'popularMoviesCarousel',
+      'scifiMoviesCarousel',
+      'comedyMoviesCarousel',
+      'horrorMoviesCarousel',
+      'thrillerMoviesCarousel',
+      'familyMoviesCarousel'
+    ];
+    const seriesCarousels = [
+      'popularSeriesCarousel',
+      'animeSagasCarousel',
+      'animeHitsCarousel',
+      'animesCarousel'
+    ];
+
+    // Se estiver na aba Séries, bloqueia categoricamente qualquer carrossel de cinema/filmes
+    if (this.currentTab === 'series' && movieCarousels.includes(containerId)) {
+      if (section) section.style.setProperty('display', 'none', 'important');
+      container.innerHTML = '';
       return;
     }
-    if (section) section.style.display = 'block';
+
+    // Se estiver na aba Filmes, bloqueia carrosséis de séries
+    if (this.currentTab === 'movies' && seriesCarousels.includes(containerId)) {
+      if (section) section.style.setProperty('display', 'none', 'important');
+      container.innerHTML = '';
+      return;
+    }
+
+    if (!items || items.length === 0) {
+      if (section) section.style.setProperty('display', 'none', 'important');
+      return;
+    }
+    if (section) section.style.setProperty('display', 'block', 'important');
     container.innerHTML = '';
 
     items.forEach(item => {
