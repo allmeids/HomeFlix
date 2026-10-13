@@ -1666,6 +1666,24 @@ class HomeFlixApp {
       typeEl.textContent = mediaType === 'movie' ? 'FILME' : 'SÉRIE';
     }
 
+    const maturityEl = document.getElementById('heroMaturityBadge');
+    if (maturityEl) {
+      maturityEl.textContent = item.adult ? 'A18' : (rating >= 7.8 ? 'A16' : 'A14');
+    }
+
+    const soundBtn = document.getElementById('heroSoundBtn');
+    if (soundBtn && !soundBtn._initialized) {
+      soundBtn._initialized = true;
+      let isMuted = false;
+      soundBtn.onclick = () => {
+        isMuted = !isMuted;
+        soundBtn.innerHTML = isMuted 
+          ? `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>`
+          : `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>`;
+        soundBtn.title = isMuted ? 'Áudio desativado' : 'Áudio ativado';
+      };
+    }
+
     document.getElementById('heroOverview').textContent = overview;
 
     document.getElementById('heroPlayBtn').onclick = () => {
@@ -1980,16 +1998,18 @@ class HomeFlixApp {
             : poster;
 
           epRow.innerHTML = `
-            <img class="episode-thumb" src="${epThumb}" alt="${ep.name}" loading="lazy" />
+            <div class="episode-number-col">${ep.episode_number}</div>
+            <div class="episode-thumb-col">
+              <img class="episode-thumb" src="${epThumb}" alt="${ep.name}" loading="lazy" />
+              <div class="episode-play-icon">▶</div>
+            </div>
             <div class="episode-info">
               <div class="episode-title-row">
-                <span class="episode-number">EP ${ep.episode_number}</span>
                 <span class="episode-name">${ep.name}</span>
-                <span class="episode-time">${ep.runtime ? `${ep.runtime} min` : ''}</span>
+                <span class="episode-time">${ep.runtime ? `${ep.runtime}min` : ''}</span>
               </div>
               <p class="episode-desc">${ep.overview || 'Sem sinopse disponível.'}</p>
             </div>
-            <button class="btn btn-primary btn-sm" style="align-self:center;">▶ Assistir</button>
           `;
 
           epRow.onclick = () => {

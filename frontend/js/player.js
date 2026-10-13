@@ -108,12 +108,12 @@ class HomeFlixPlayer {
     // Atualização de tempo e progresso
     this.video.addEventListener('timeupdate', () => this.onTimeUpdate());
     this.video.addEventListener('play', () => {
-      this.playBtn.innerHTML = '⏸';
+      this.updatePlayPauseIcon(true);
       this.startHeartbeat();
       this.resetControlsTimeout();
     });
     this.video.addEventListener('pause', () => {
-      this.playBtn.innerHTML = '▶';
+      this.updatePlayPauseIcon(false);
       this.stopHeartbeat();
       this.syncProgress();
       this.hideSpinner();
@@ -173,11 +173,21 @@ class HomeFlixPlayer {
       }
     });
 
-    // Volume / Mudo
+    // Volume / Mudo & Slider
+    this.volumeInput = document.getElementById('playerVolumeInput');
     this.volumeBtn.addEventListener('click', () => {
       this.video.muted = !this.video.muted;
-      this.volumeBtn.innerHTML = this.video.muted ? '🔇' : '🔊';
+      this.updateVolumeUi();
     });
+
+    if (this.volumeInput) {
+      this.volumeInput.addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value);
+        this.video.volume = val;
+        this.video.muted = (val === 0);
+        this.updateVolumeUi();
+      });
+    }
 
     // Fullscreen
     this.fullscreenBtn.addEventListener('click', () => this.toggleFullscreen());
@@ -1002,6 +1012,32 @@ class HomeFlixPlayer {
   /* ================================================================
      CONTROLES DE REPRODUÇÃO GERAIS (PLAY, SEEK, PROGRESSO)
      ================================================================ */
+
+  updatePlayPauseIcon(isPlaying) {
+    if (!this.playBtn) return;
+    const iconPlay = this.playBtn.querySelector('.icon-play');
+    const iconPause = this.playBtn.querySelector('.icon-pause');
+    if (iconPlay && iconPause) {
+      iconPlay.style.display = isPlaying ? 'none' : 'block';
+      iconPause.style.display = isPlaying ? 'block' : 'none';
+    } else {
+      this.playBtn.innerHTML = isPlaying ? '⏸' : '▶';
+    }
+  }
+
+  updateVolumeUi() {
+    if (!this.volumeBtn) return;
+    const isMuted = this.video.muted || this.video.volume === 0;
+    const iconVolHigh = this.volumeBtn.querySelector('.icon-vol-high');
+    const iconVolMute = this.volumeBtn.querySelector('.icon-vol-mute');
+    if (iconVolHigh && iconVolMute) {
+      iconVolHigh.style.display = isMuted ? 'none' : 'block';
+      iconVolMute.style.display = isMuted ? 'block' : 'none';
+    }
+    if (this.volumeInput) {
+      this.volumeInput.value = isMuted ? 0 : this.video.volume;
+    }
+  }
 
   togglePlay() {
     if (this.video.paused) {
