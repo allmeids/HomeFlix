@@ -93,15 +93,16 @@ class HomeFlixPlayer {
     // Play / Pause
     this.playBtn.addEventListener('click', () => this.togglePlay());
     this.video.addEventListener('click', (e) => {
-      // Se clicou fora dos controles, fecha a sidebar se estiver aberta ou alterna play
-      if (this.sidebar.classList.contains('open')) {
+      // Se clicou fora dos controles, fecha a sidebar se estiver aberta
+      if (this.sidebar && this.sidebar.classList.contains('open')) {
         this.toggleSidebar(false);
+        return;
+      }
+      // Alterna exibição do HUD sem pausar a reprodução (pausa só no botão ou Espaço)
+      if (this.overlay.classList.contains('hud-hidden')) {
+        this.wakeHud();
       } else {
-        if (this.overlay.classList.contains('hud-hidden')) {
-          this.wakeHud();
-        } else {
-          this.togglePlay();
-        }
+        this.hideHud();
       }
     });
 
@@ -379,6 +380,26 @@ class HomeFlixPlayer {
     this.overlay.addEventListener('mousedown', () => this.wakeHud());
     this.overlay.addEventListener('touchstart', () => this.wakeHud(), { passive: true });
     this.overlay.addEventListener('wheel', () => this.wakeHud(), { passive: true });
+  }
+
+  preparePlayback(options = {}) {
+    this.overlay.classList.add('open');
+    document.body.classList.add('player-open');
+    this.wakeHud();
+    this.enterFullscreenWithOrientation();
+
+    const title = options.title || 'Carregando título...';
+    if (this.titleDisplay) this.titleDisplay.textContent = title;
+    if (this.subtitleDisplay) {
+      if (options.mediaType === 'tv' && options.season && options.episode) {
+        this.subtitleDisplay.textContent = `T${options.season} : E${options.episode} ${options.episodeTitle ? `• ${options.episodeTitle}` : ''}`.trim();
+        this.subtitleDisplay.style.display = 'block';
+      } else {
+        this.subtitleDisplay.style.display = 'none';
+      }
+    }
+
+    this.showSpinner('🍿 Conectando ao melhor servidor em alta definição...');
   }
 
   play(options) {

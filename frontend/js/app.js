@@ -2250,6 +2250,18 @@ class HomeFlixApp {
   }
 
   async fetchAndPlay(mediaType, tmdbId, title, details, season = 1, episode = 1, epTitle = null, resumeTime = 0) {
+    // 1. Abre imediatamente o player com feedback visual cinematográfico e status de carregamento
+    if (this.player && typeof this.player.preparePlayback === 'function') {
+      this.player.preparePlayback({
+        title,
+        mediaType,
+        season,
+        episode,
+        episodeTitle: epTitle,
+        backdrop: details?.backdrop_path || details?.poster_path
+      });
+    }
+
     const playBtn = document.getElementById('detailsPlayBtn');
     if (playBtn) playBtn.innerHTML = 'Conectando ao melhor servidor...';
 
@@ -2263,7 +2275,11 @@ class HomeFlixApp {
     const isCinema = !!resolved?.is_cinema_version || (bestStream && bestStream.is_cinema);
 
     if (!bestStream) {
-      this.showToast('Nenhuma transmissão disponível no momento para este título.');
+      if (this.player && typeof this.player.showErrorScreen === 'function') {
+        this.player.showErrorScreen('Nenhuma transmissão disponível no momento para este título.');
+      } else {
+        this.showToast('Nenhuma transmissão disponível no momento para este título.');
+      }
       return;
     }
 
