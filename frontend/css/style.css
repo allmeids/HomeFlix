@@ -2775,271 +2775,260 @@ body.in-details-view .navbar {
   border: none;
 }
 
-/* Perfil Modal & Avatar Picker */
-.profile-modal-wrapper {
-  max-width: 640px;
+/* ================================================================
+   TELA DE PERFIS 100% FULL-SCREEN IMERSIVA (NETFLIX 2026 AUTHENTIC)
+   ================================================================ */
+.netflix-profile-gateway {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #141414 !important;
+  z-index: 99999;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+.netflix-profile-gateway.open {
+  display: flex !important;
+  animation: fadeInNetflixGate 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeInNetflixGate {
+  from { opacity: 0; transform: scale(1.02); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.profile-gateway-topbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4%;
+  box-sizing: border-box;
+  background: linear-gradient(180deg, rgba(0,0,0,0.7) 10%, transparent);
+  pointer-events: none;
+}
+
+.profile-gateway-topbar .profile-gate-logo {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+}
+
+.profile-gateway-topbar .logo-text {
+  font-family: 'Bebas Neue', Impact, 'Arial Black', sans-serif;
+  font-size: 42px;
+  letter-spacing: 2.5px;
+  line-height: 1;
+}
+
+.profile-gateway-close-btn {
+  pointer-events: auto;
+  background: none;
+  border: none;
+  color: #808080;
+  font-size: 28px;
+  cursor: pointer;
+  padding: 6px 12px;
+  line-height: 1;
+  transition: color 0.15s ease;
+}
+
+.profile-gateway-close-btn:hover {
+  color: #ffffff;
+}
+
+.profile-gateway-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 1100px;
+  padding: 40px 24px;
+  margin: auto;
+  box-sizing: border-box;
+}
+
+/* Vista 1: Seleção de Perfis */
+.profile-view-select {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
   text-align: center;
-  padding: 36px 30px;
 }
 
-.profile-modal-heading {
-  font-size: 32px;
-  font-weight: 900;
-  margin-bottom: 8px;
-}
-
-.profile-modal-sub {
-  color: var(--text-muted);
-  font-size: 14px;
-  margin-bottom: 28px;
+.profile-view-select .profile-modal-heading {
+  font-size: clamp(34px, 4.2vw, 56px);
+  font-weight: 500;
+  color: #ffffff;
+  margin: 0 0 clamp(32px, 4vh, 52px) 0;
+  letter-spacing: -0.5px;
+  font-family: 'Netflix Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 .profile-modal-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 24px;
+  gap: clamp(18px, 2.8vw, 36px);
   justify-content: center;
-  align-items: center;
-  padding: 20px 0 30px;
+  align-items: flex-start;
+  max-width: 100%;
+  margin: 0 auto;
 }
 
 .profile-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
   cursor: pointer;
-  transition: transform 0.2s ease;
-}
-
-.profile-card:hover {
-  transform: scale(1.1);
+  width: clamp(110px, 10vw, 150px);
+  outline: none;
+  transition: transform 0.15s ease;
 }
 
 .profile-avatar-large {
   position: relative;
-  width: 105px;
-  height: 105px;
-  background: #25252b;
-  border-radius: 16px;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #222;
+  border: 2px solid transparent;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 52px;
-  border: 3px solid transparent;
-  transition: all 0.2s ease;
+  font-size: 48px;
+  font-weight: 700;
+  color: #ffffff;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.profile-card:hover .profile-avatar-large, .profile-card.active .profile-avatar-large {
-  border-color: #fff;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+.profile-card:hover .profile-avatar-large,
+.profile-card:focus-visible .profile-avatar-large,
+.profile-card.tv-focused .profile-avatar-large {
+  border-color: #ffffff !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.7);
 }
 
-.profile-card.active .profile-avatar-large {
-  border-color: var(--accent-red);
+.profile-card.manage-mode .profile-avatar-large {
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
-.profile-card.tv-focused .profile-avatar-large,
-.profile-card:focus-visible .profile-avatar-large {
-  border-color: #fff;
-  transform: scale(1.08);
-  outline: 2px solid #ffffff;
+.profile-card.manage-mode:hover .profile-avatar-large {
+  border-color: #ffffff !important;
 }
 
-.profile-edit-badge {
+/* Overlay de Lápis em Modo Gerenciamento */
+.profile-manage-pencil-overlay {
   position: absolute;
-  top: -6px;
-  right: -6px;
-  background: rgba(0, 0, 0, 0.8);
-  border: 1px solid var(--border-glass);
-  border-radius: 50%;
-  width: 26px;
-  height: 26px;
-  font-size: 12px;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: background 0.15s ease;
+}
+
+.profile-card:hover .profile-manage-pencil-overlay {
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.profile-pencil-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.profile-card:hover .profile-pencil-circle {
+  transform: scale(1.08);
+  border-color: #ffffff;
+  background: rgba(0, 0, 0, 0.75);
 }
 
 .profile-name-large {
-  font-size: 15px;
-  color: var(--text-muted);
-  font-weight: 700;
+  margin-top: 14px;
+  font-size: clamp(14px, 1.2vw, 18px);
+  color: #808080;
+  font-weight: 400;
+  text-align: center;
+  letter-spacing: normal;
+  transition: color 0.15s ease;
+  word-break: break-word;
 }
 
-.profile-card:hover .profile-name-large, .profile-card.active .profile-name-large {
-  color: #fff;
+.profile-card:hover .profile-name-large,
+.profile-card:focus-visible .profile-name-large {
+  color: #ffffff;
 }
 
+/* Card de Adicionar Perfil */
+.profile-card-add .profile-avatar-large {
+  border: 2px dashed rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.profile-card-add .add-icon-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 2px solid #808080;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  line-height: 1;
+  color: #808080;
+  transition: all 0.15s ease;
+}
+
+.profile-card-add:hover .add-icon-circle {
+  border-color: #ffffff;
+  color: #ffffff;
+  transform: scale(1.05);
+}
+
+.profile-card-add:hover .profile-avatar-large {
+  border-color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Botão Gerenciar perfis / Concluído */
 .profile-modal-footer-btns {
   display: flex;
-  gap: 14px;
   justify-content: center;
-  margin-top: 10px;
-}
-
-.profile-form-box {
-  background: #141418;
-  border: 1px solid var(--border-subtle);
-  border-radius: 12px;
-  padding: 24px;
-  margin: 10px 0;
-}
-
-.profile-name-input {
-  background: #202026;
-  border: 1px solid var(--border-glass);
-  color: #fff;
-  font-size: 16px;
-  padding: 10px 16px;
-  border-radius: 8px;
-  width: 100%;
-  max-width: 320px;
-  outline: none;
-  text-align: center;
-  margin: 0 auto 14px;
-}
-
-.profile-name-input:focus {
-  border-color: var(--accent-red);
-  box-shadow: 0 0 12px rgba(229, 9, 20, 0.3);
-}
-
-.avatar-picker-grid {
-  display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  gap: 10px;
-  max-width: 400px;
-  margin: 0 auto;
-}
-
-.avatar-item {
-  width: 42px;
-  height: 42px;
-  background: #222228;
-  border: 2px solid transparent;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 22px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.avatar-item:hover, .avatar-item.selected {
-  border-color: var(--accent-red);
-  transform: scale(1.15);
-  background: #2d2d35;
-}
-
-.profile-card-add .profile-avatar-large {
-  border: 2px dashed rgba(255, 255, 255, 0.35);
-  background: rgba(255, 255, 255, 0.03);
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 40px;
-}
-
-.profile-card-add:hover .profile-avatar-large,
-.profile-card-add.tv-focused .profile-avatar-large {
-  border-color: #fff;
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-}
-
-/* ================================================================
-   TELA INICIAL DE PERFIS (ESTILO NETFLIX GATEWAY)
-   ================================================================ */
-.modal-backdrop.profile-gate-screen {
-  background: #141414 !important;
-  opacity: 1 !important;
-  pointer-events: auto !important;
-  z-index: 10000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 20px;
-  animation: fadeInGate 0.35s ease forwards;
-}
-
-@keyframes fadeInGate {
-  from { opacity: 0; transform: scale(0.98); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-.profile-gate-screen .profile-modal-wrapper {
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  max-width: 960px;
-  width: 100%;
-  padding: 0;
-}
-
-.profile-gate-logo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0;
-  margin-bottom: 28px;
-}
-
-.profile-gate-logo .logo-text {
-  font-family: 'Bebas Neue', Impact, 'Arial Black', sans-serif;
-  font-size: 46px;
-  letter-spacing: 2.5px;
-  line-height: 1;
-}
-
-.profile-gate-screen .profile-modal-heading {
-  font-size: 42px;
-  font-weight: 500;
-  color: #ffffff;
-  margin-bottom: 10px;
-  letter-spacing: -0.3px;
-  font-family: 'Inter', sans-serif;
-}
-
-.profile-gate-screen .profile-modal-sub {
-  font-size: 15px;
-  color: #8c8c8c;
-  margin-bottom: 32px;
-}
-
-.profile-gate-screen .profile-modal-grid {
-  gap: 32px;
-  padding: 10px 0 36px;
-}
-
-.profile-gate-screen .profile-avatar-large {
-  width: 125px;
-  height: 125px;
-  font-size: 52px;
-  border-radius: 8px;
-}
-
-.profile-gate-screen .profile-name-large {
-  font-size: 16px;
-  margin-top: 8px;
-  color: #808080;
-  font-weight: 500;
-  transition: color 0.2s ease;
-}
-
-.profile-gate-screen .profile-card:hover .profile-name-large,
-.profile-gate-screen .profile-card.active .profile-name-large {
-  color: #ffffff;
+  gap: 16px;
+  margin-top: clamp(40px, 6vh, 68px);
 }
 
 .btn-outline-netflix {
   background: transparent;
   color: #808080;
   border: 1px solid #808080;
-  padding: 10px 28px;
-  font-size: 13px;
-  font-weight: 600;
+  padding: 10px 30px;
+  font-size: clamp(12px, 1vw, 15px);
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 2.2px;
   border-radius: 2px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -3051,22 +3040,225 @@ body.in-details-view .navbar {
   border-color: #ffffff;
   color: #ffffff;
   outline: none;
-  background: rgba(255, 255, 255, 0.08);
+  background: transparent;
 }
 
-@media (max-width: 768px) {
-  .profile-gate-screen .profile-modal-heading {
-    font-size: 28px;
-  }
-  .profile-gate-screen .profile-avatar-large {
-    width: 95px;
-    height: 95px;
-    font-size: 42px;
-  }
-  .profile-gate-screen .profile-modal-grid {
-    gap: 18px;
-  }
+.btn-outline-netflix.done-btn {
+  background: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
+  font-weight: 700;
 }
+
+.btn-outline-netflix.done-btn:hover {
+  background: #e50914;
+  border-color: #e50914;
+  color: #ffffff;
+}
+
+/* Vista 2: Edição de Perfil Oficial Netflix */
+.profile-view-edit {
+  width: 100%;
+  max-width: 620px;
+  text-align: left;
+  animation: fadeInNetflixGate 0.2s ease;
+}
+
+.profile-edit-title {
+  font-size: clamp(34px, 4vw, 54px);
+  font-weight: 500;
+  color: #ffffff;
+  margin: 0 0 16px 0;
+  letter-spacing: -0.5px;
+}
+
+.profile-edit-divider {
+  width: 100%;
+  height: 1px;
+  background: #333333;
+  margin: 22px 0;
+}
+
+.profile-edit-content-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 28px;
+  margin: 24px 0;
+}
+
+.profile-edit-avatar-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.profile-edit-avatar-trigger {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 0.15s ease;
+}
+
+.profile-edit-avatar-trigger:hover {
+  border-color: #ffffff;
+}
+
+.profile-edit-avatar-trigger .profile-avatar-large {
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+}
+
+.profile-edit-avatar-badge {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease;
+}
+
+.profile-edit-avatar-trigger:hover .profile-edit-avatar-badge {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.profile-edit-avatar-hint {
+  font-size: 13px;
+  color: #808080;
+  transition: color 0.15s ease;
+  cursor: pointer;
+}
+
+.profile-edit-avatar-col:hover .profile-edit-avatar-hint {
+  color: #ffffff;
+}
+
+.profile-edit-form-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.profile-netflix-name-input {
+  background: #333333;
+  border: 1px solid transparent;
+  color: #ffffff;
+  font-size: 17px;
+  padding: 12px 16px;
+  border-radius: 2px;
+  width: 100%;
+  box-sizing: border-box;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.profile-netflix-name-input:focus {
+  background: #444444;
+  border-color: #ffffff;
+}
+
+.profile-edit-subtext {
+  font-size: 13px;
+  color: #808080;
+  line-height: 1.5;
+}
+
+.profile-netflix-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 26px;
+  flex-wrap: wrap;
+}
+
+.btn-netflix-action {
+  padding: 11px 28px;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-netflix-save {
+  background: #ffffff;
+  color: #000000;
+  border: 1px solid #ffffff;
+}
+
+.btn-netflix-save:hover {
+  background: #e50914;
+  border-color: #e50914;
+  color: #ffffff;
+}
+
+.btn-netflix-cancel {
+  background: transparent;
+  color: #808080;
+  border: 1px solid #808080;
+}
+
+.btn-netflix-cancel:hover {
+  border-color: #ffffff;
+  color: #ffffff;
+}
+
+.btn-netflix-delete {
+  background: transparent;
+  color: #808080;
+  border: 1px solid #808080;
+}
+
+.btn-netflix-delete:hover {
+  border-color: #e50914;
+  color: #e50914;
+}
+
+/* Vista 3: Seletor Completo de Avatares */
+.profile-view-avatars {
+  width: 100%;
+  max-width: 1100px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  animation: fadeInNetflixGate 0.2s ease;
+}
+
+.avatar-picker-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.btn-netflix-back {
+  background: transparent;
+  color: #808080;
+  border: 1px solid #808080;
+  padding: 8px 18px;
+  border-radius: 2px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-netflix-back:hover {
+  border-color: #ffffff;
+  color: #ffffff;
+}
+
 
 /* Responsividade */
 @media (max-width: 900px) {

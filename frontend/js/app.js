@@ -981,7 +981,7 @@ class HomeFlixApp {
     const modal = document.getElementById('profileModal');
     if (modal) {
       modal.classList.remove('open');
-      modal.classList.remove('profile-gate-screen');
+      modal.style.display = 'none';
     }
     this.isProfileGateMode = false;
 
@@ -994,44 +994,53 @@ class HomeFlixApp {
     this.loadContinueWatching();
     this.loadRecommendations();
 
-    const activeNav = document.querySelector('.nav-links .nav-item.active');
-    if (activeNav && activeNav.dataset.tab === 'watchlist') {
-      this.loadWatchlist();
-    }
+    // Rota direta e obrigatória para a Home 2026 oficial ao selecionar o perfil
+    this.switchTab('home');
+    this.loadHome();
   }
 
   async openProfileModal(isManageMode = false, isGateMode = false) {
     this.isProfileGateMode = isGateMode;
+    this.isManageMode = isManageMode;
     const modal = document.getElementById('profileModal');
+    const selectView = document.getElementById('profileSelectView');
+    const editView = document.getElementById('profileEditView');
+    const avatarPickerView = document.getElementById('profileAvatarPickerView');
     const grid = document.getElementById('profileModalGrid');
-    const formBox = document.getElementById('profileFormBox');
-    const footerBtns = document.getElementById('profileModalFooterBtns');
     const closeBtn = document.getElementById('profileCloseBtn');
-    const gateLogo = document.getElementById('profileGateLogo');
-    const heading = modal.querySelector('.profile-modal-heading');
-    const sub = modal.querySelector('.profile-modal-sub');
+    const heading = document.getElementById('profileModalHeading');
+    const manageBtn = document.getElementById('manageProfilesToggleBtn');
 
-    if (isGateMode) {
-      modal.classList.add('profile-gate-screen');
-      if (closeBtn) closeBtn.style.display = 'none';
-      if (gateLogo) gateLogo.style.display = 'flex';
-      if (heading) heading.textContent = 'Quem está assistindo?';
-      if (sub) sub.textContent = 'Escolha seu perfil para começar a assistir suas séries e filmes';
-    } else {
-      modal.classList.remove('profile-gate-screen');
-      if (closeBtn) closeBtn.style.display = 'block';
-      if (gateLogo) gateLogo.style.display = 'none';
-      if (heading) heading.textContent = 'Quem está assistindo?';
-      if (sub) sub.textContent = 'Troque de perfil ou gerencie suas preferências';
+    if (!modal || !grid) return;
+
+    // Garante que a tela comece na lista de perfis
+    if (selectView) selectView.style.display = 'flex';
+    if (editView) editView.style.display = 'none';
+    if (avatarPickerView) avatarPickerView.style.display = 'none';
+
+    // Botão Fechar/Voltar (só exibido se já estiver logado e não for portão inicial)
+    if (closeBtn) {
+      closeBtn.style.display = (this.currentProfile && !isGateMode) ? 'block' : 'none';
+      closeBtn.onclick = () => {
+        modal.classList.remove('open');
+        modal.style.display = 'none';
+      };
     }
 
-    const modalWrapper = modal.querySelector('.profile-modal-wrapper');
-    if (modalWrapper) modalWrapper.classList.remove('editing');
+    // Título oficial Netflix
+    if (heading) {
+      heading.textContent = isManageMode ? 'Gerenciar perfis:' : 'Quem está assistindo?';
+    }
 
-    grid.style.display = 'flex';
-    formBox.style.display = 'none';
-    footerBtns.style.display = 'flex';
-    
+    // Botão inferior oficial Netflix
+    if (manageBtn) {
+      manageBtn.textContent = isManageMode ? 'Concluído' : 'Gerenciar perfis';
+      manageBtn.className = isManageMode ? 'btn-outline-netflix done-btn' : 'btn-outline-netflix';
+      manageBtn.onclick = () => {
+        this.openProfileModal(!isManageMode, isGateMode);
+      };
+    }
+
     if (!this.profiles || this.profiles.length === 0) {
       grid.innerHTML = '<div style="color:#aaa; padding:20px; text-align:center;">Carregando perfis...</div>';
       this.profiles = (await API.getProfiles()) || [];
@@ -1040,6 +1049,7 @@ class HomeFlixApp {
     grid.innerHTML = '';
     if (this.profiles.length === 0) {
       this.showProfileForm(null);
+      modal.style.display = 'flex';
       modal.classList.add('open');
       return;
     }
@@ -1048,16 +1058,26 @@ class HomeFlixApp {
       const isCurrent = this.currentProfile && String(p.id) === String(this.currentProfile.id);
       const visual = this.getAvatarVisual(p.avatar, p.name);
       const card = document.createElement('div');
-      card.className = `profile-card ${isCurrent ? 'active' : ''}`;
+      card.className = `profile-card ${isManageMode ? 'manage-mode' : ''} ${isCurrent ? 'active' : ''}`;
       card.setAttribute('tabindex', '0');
       
+      const pencilOverlayHtml = isManageMode ? `
+        <div class="profile-manage-pencil-overlay">
+          <div class="profile-pencil-circle">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none">
+              <path fill="#ffffff" fill-rule="evenodd" d="M19.121 1.707a3 3 0 0 0-4.242 0l-1.586 1.586-.707.707-11 11A2 2 0 0 0 1 16.414V21a2 2 0 0 0 2 2h4.586A2 2 0 0 0 9 22.414l11-11 .707-.707 1.586-1.586a3 3 0 0 0 0-4.242zM15.586 7 14 5.414l-11 11V19a2 2 0 0 1 2 2h2.586l11-11L17 8.414 6.707 18.707l-1.414-1.414zm.707-3.879a1 1 0 0 1 1.414 0l3.172 3.172a1 1 0 0 1 0 1.414L20 8.586 15.414 4z" clip-rule="evenodd"></path>
+            </svg>
+          </div>
+        </div>
+      ` : '';
+
       const avatarContent = visual.isImage 
-        ? `<div class="profile-avatar-large" style="background: url('${visual.url}') center/cover no-repeat; border-radius: 14px; border: 2px solid rgba(255,255,255,0.3); box-shadow: 0 4px 15px rgba(0,0,0,0.6);">
-             ${isManageMode ? '<span class="profile-edit-badge" style="font-size: 10px; font-weight: 700; background: rgba(0,0,0,0.85); color: #fff; border-radius: 4px; padding: 2px 4px;">EDIT</span>' : ''}
+        ? `<div class="profile-avatar-large" style="background: url('${visual.url}') center/cover no-repeat;">
+             ${pencilOverlayHtml}
            </div>`
-        : `<div class="profile-avatar-large" style="background: ${visual.bg}; color: #ffffff; font-family: 'Inter', sans-serif; font-weight: 800; border-radius: 14px;">
+        : `<div class="profile-avatar-large" style="background: ${visual.bg}; color: #ffffff; font-family: 'Inter', sans-serif; font-weight: 800;">
              <span>${visual.initial}</span>
-             ${isManageMode ? '<span class="profile-edit-badge" style="font-size: 10px; font-weight: 700; background: rgba(0,0,0,0.85); color: #fff; border-radius: 4px; padding: 2px 4px;">EDIT</span>' : ''}
+             ${pencilOverlayHtml}
            </div>`;
 
       card.innerHTML = `
@@ -1087,9 +1107,9 @@ class HomeFlixApp {
       addCard.setAttribute('tabindex', '0');
       addCard.innerHTML = `
         <div class="profile-avatar-large">
-          <span>+</span>
+          <div class="add-icon-circle">+</div>
         </div>
-        <div class="profile-name-large">Adicionar</div>
+        <div class="profile-name-large">Adicionar perfil</div>
       `;
       addCard.onclick = () => this.showProfileForm(null);
       addCard.addEventListener('keydown', (e) => {
@@ -1098,21 +1118,7 @@ class HomeFlixApp {
       grid.appendChild(addCard);
     }
 
-    const manageBtn = document.getElementById('manageProfilesToggleBtn');
-    if (manageBtn) {
-      manageBtn.textContent = isManageMode ? 'Concluído' : 'Gerenciar perfis';
-      manageBtn.onclick = () => {
-        this.openProfileModal(!isManageMode, isGateMode);
-      };
-    }
-
-    const createBtn = document.getElementById('createNewProfileBtn');
-    if (createBtn) {
-      createBtn.onclick = () => this.showProfileForm(null);
-    }
-
-
-
+    modal.style.display = 'flex';
     modal.classList.add('open');
 
     // Auto-focus no primeiro perfil
@@ -1123,13 +1129,74 @@ class HomeFlixApp {
   }
 
   async showProfileForm(profileToEdit = null) {
-    const grid = document.getElementById('profileModalGrid');
-    const formBox = document.getElementById('profileFormBox');
-    const footerBtns = document.getElementById('profileModalFooterBtns');
-    const titleEl = document.getElementById('profileFormTitle');
+    const selectView = document.getElementById('profileSelectView');
+    const editView = document.getElementById('profileEditView');
+    const avatarPickerView = document.getElementById('profileAvatarPickerView');
+    const titleEl = document.getElementById('profileEditTitle');
     const nameInput = document.getElementById('profileFormNameInput');
     const deleteBtn = document.getElementById('deleteProfileBtn');
     const previewEl = document.getElementById('profileAvatarPreview');
+    const avatarTrigger = document.getElementById('profileAvatarEditTrigger');
+    const avatarPickerBackBtn = document.getElementById('avatarPickerBackBtn');
+
+    if (selectView) selectView.style.display = 'none';
+    if (avatarPickerView) avatarPickerView.style.display = 'none';
+    if (editView) editView.style.display = 'block';
+
+    this.selectedAvatar = profileToEdit?.avatar || 'stranger_things_s1_eleven';
+    this.editingProfileId = profileToEdit ? profileToEdit.id : null;
+
+    if (profileToEdit) {
+      if (titleEl) titleEl.textContent = 'Editar perfil';
+      if (nameInput) nameInput.value = profileToEdit.name;
+      if (deleteBtn) deleteBtn.style.display = this.profiles.length > 1 ? 'inline-block' : 'none';
+    } else {
+      if (titleEl) titleEl.textContent = 'Adicionar perfil';
+      if (nameInput) nameInput.value = '';
+      if (deleteBtn) deleteBtn.style.display = 'none';
+    }
+
+    const updatePreview = () => {
+      if (!previewEl) return;
+      const visual = this.getAvatarVisual(this.selectedAvatar, nameInput ? (nameInput.value || 'P') : 'P');
+      if (visual.isImage) {
+        previewEl.textContent = '';
+        previewEl.style.background = `url('${visual.url}') center/cover no-repeat`;
+      } else {
+        previewEl.textContent = visual.initial;
+        previewEl.style.background = visual.bg;
+      }
+    };
+    updatePreview();
+
+    if (nameInput) {
+      nameInput.oninput = () => {
+        updatePreview();
+      };
+    }
+
+    // Ao clicar no avatar da tela de edição: abre o catálogo com 291 avatares
+    if (avatarTrigger) {
+      avatarTrigger.onclick = () => {
+        this.openAvatarPickerView(updatePreview);
+      };
+    }
+
+    if (avatarPickerBackBtn) {
+      avatarPickerBackBtn.onclick = () => {
+        if (avatarPickerView) avatarPickerView.style.display = 'none';
+        if (editView) editView.style.display = 'block';
+      };
+    }
+
+    setTimeout(() => {
+      if (nameInput) nameInput.focus();
+    }, 60);
+  }
+
+  async openAvatarPickerView(onAvatarSelectedCallback) {
+    const editView = document.getElementById('profileEditView');
+    const avatarPickerView = document.getElementById('profileAvatarPickerView');
     const sectionsContainer = document.getElementById('avatarPickerSectionsContainer');
     const categoriesTrack = document.getElementById('avatarCategoriesTrack');
     const franchiseSelect = document.getElementById('avatarFranchiseSelect');
@@ -1138,52 +1205,16 @@ class HomeFlixApp {
     const searchInput = document.getElementById('avatarSearchInput');
     const clearSearchBtn = document.getElementById('avatarClearSearchBtn');
     const countEl = document.getElementById('avatarPickerCount');
-    const modalWrapper = document.querySelector('.profile-modal-wrapper');
 
-    if (modalWrapper) modalWrapper.classList.add('editing');
-    grid.style.display = 'none';
-    footerBtns.style.display = 'none';
-    formBox.style.display = 'block';
+    if (editView) editView.style.display = 'none';
+    if (avatarPickerView) avatarPickerView.style.display = 'flex';
 
-    this.selectedAvatar = profileToEdit?.avatar || 'stranger_things_s1_eleven';
-    this.editingProfileId = profileToEdit ? profileToEdit.id : null;
-
-    if (profileToEdit) {
-      titleEl.textContent = `Editar Perfil: ${profileToEdit.name}`;
-      nameInput.value = profileToEdit.name;
-      deleteBtn.style.display = this.profiles.length > 1 ? 'inline-block' : 'none';
-    } else {
-      titleEl.textContent = 'Criar Novo Perfil';
-      nameInput.value = '';
-      deleteBtn.style.display = 'none';
-    }
-
-    const updatePreview = () => {
-      if (!previewEl) return;
-      const visual = this.getAvatarVisual(this.selectedAvatar, nameInput.value || 'P');
-      if (visual.isImage) {
-        previewEl.textContent = '';
-        previewEl.style.background = `url('${visual.url}') center/cover no-repeat`;
-        previewEl.style.border = '2px solid var(--accent-red)';
-      } else {
-        previewEl.textContent = visual.initial;
-        previewEl.style.background = visual.bg;
-      }
-    };
-    updatePreview();
-
-    nameInput.oninput = () => {
-      updatePreview();
-    };
-
-    // 1. Carrega catálogo de 291 avatares oficiais
     const catalog = await this.getAvatarCatalog();
     const categories = catalog.categories || [];
     const allAvatars = catalog.avatars || [];
 
     if (countEl) countEl.textContent = `${allAvatars.length} personagens`;
 
-    // 2. Helper de renderização rápida de card com <img> nativo (zero lag de CPU)
     const renderCardHtml = (av) => {
       const isSelected = av.id === this.selectedAvatar || av.img === this.selectedAvatar;
       return `
@@ -1193,7 +1224,6 @@ class HomeFlixApp {
       `;
     };
 
-    // 3. Renderiza todos os Trilhos Horizontais de Franquias (Estilo Netflix & Disney+) em lote
     const renderAllRails = () => {
       if (!sectionsContainer) return;
       let html = '';
@@ -1220,7 +1250,6 @@ class HomeFlixApp {
       sectionsContainer.innerHTML = html;
     };
 
-    // 4. Renderiza resultados de busca instantânea em grade compacta
     const renderSearchGrid = (query) => {
       if (!sectionsContainer) return;
       const q = query.trim().toLowerCase();
@@ -1250,14 +1279,12 @@ class HomeFlixApp {
       `;
     };
 
-    // 5. Configurar Dropdown de Franquia (Estilo Disney+)
     if (franchiseSelect) {
       franchiseSelect.innerHTML = `<option value="all">🍿 Todas as Franquias & Séries (${allAvatars.length})</option>` +
         categories.map(c => `<option value="${c.id}">${c.name} (${c.items?.length || 0})</option>`).join('');
 
       franchiseSelect.onchange = () => {
         const selectedCat = franchiseSelect.value;
-        // Sincroniza chips
         if (categoriesTrack) {
           categoriesTrack.querySelectorAll('.avatar-category-pill').forEach(p => {
             p.classList.toggle('active', p.dataset.cat === selectedCat);
@@ -1273,14 +1300,11 @@ class HomeFlixApp {
           if (scrollBox) scrollBox.scrollTo({ top: 0, behavior: 'smooth' });
         } else {
           const rail = document.getElementById(`avatarRail_${selectedCat}`);
-          if (rail) {
-            rail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-          }
+          if (rail) rail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
       };
     }
 
-    // 6. Configurar Chips de Franquias (Estilo Disney+)
     if (categoriesTrack) {
       let chipsHtml = `<button type="button" class="avatar-category-pill active" data-cat="all">Todas (${allAvatars.length})</button>`;
       categories.forEach(cat => {
@@ -1296,7 +1320,6 @@ class HomeFlixApp {
         pill.classList.add('active');
 
         if (franchiseSelect) franchiseSelect.value = catId;
-
         if (searchInput && searchInput.value.trim()) {
           searchInput.value = '';
           if (clearSearchBtn) clearSearchBtn.style.display = 'none';
@@ -1308,37 +1331,28 @@ class HomeFlixApp {
           if (scrollBox) scrollBox.scrollTo({ top: 0, behavior: 'smooth' });
         } else {
           const rail = document.getElementById(`avatarRail_${catId}`);
-          if (rail) {
-            rail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-          }
+          if (rail) rail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
       };
 
-      if (chipsNavLeft) {
-        chipsNavLeft.onclick = () => categoriesTrack.scrollBy({ left: -200, behavior: 'smooth' });
-      }
-      if (chipsNavRight) {
-        chipsNavRight.onclick = () => categoriesTrack.scrollBy({ left: 200, behavior: 'smooth' });
-      }
+      if (chipsNavLeft) chipsNavLeft.onclick = () => categoriesTrack.scrollBy({ left: -200, behavior: 'smooth' });
+      if (chipsNavRight) chipsNavRight.onclick = () => categoriesTrack.scrollBy({ left: 200, behavior: 'smooth' });
     }
 
-    // 7. Event Delegation no container de avatares (Zero overhead de memória)
     if (sectionsContainer) {
       sectionsContainer.onclick = (e) => {
-        // Seleção de card
         const card = e.target.closest('.avatar-card');
         if (card) {
           const avatarId = card.dataset.id;
           if (avatarId) {
             this.selectedAvatar = avatarId;
-            sectionsContainer.querySelectorAll('.avatar-card').forEach(c => c.classList.remove('selected'));
-            card.classList.add('selected');
-            updatePreview();
+            if (onAvatarSelectedCallback) onAvatarSelectedCallback();
+            if (avatarPickerView) avatarPickerView.style.display = 'none';
+            if (editView) editView.style.display = 'block';
           }
           return;
         }
 
-        // Navegação de setas do trilho
         const navBtn = e.target.closest('.avatar-rail-nav-btn');
         if (navBtn) {
           const trackId = navBtn.dataset.railId;
@@ -1351,44 +1365,37 @@ class HomeFlixApp {
       };
     }
 
-    // 8. Busca Instantânea com debounce suave
     if (searchInput) {
       searchInput.value = '';
       if (clearSearchBtn) clearSearchBtn.style.display = 'none';
-
       let searchDebounce = null;
       searchInput.oninput = () => {
         const q = searchInput.value.trim();
         if (clearSearchBtn) clearSearchBtn.style.display = q ? 'flex' : 'none';
         clearTimeout(searchDebounce);
         searchDebounce = setTimeout(() => {
-          if (q) {
-            renderSearchGrid(q);
-          } else {
+          if (q) renderSearchGrid(q);
+          else {
             if (countEl) countEl.textContent = `${allAvatars.length} personagens`;
             renderAllRails();
           }
-        }, 40);
+        }, 80);
       };
-
-      if (clearSearchBtn) {
-        clearSearchBtn.onclick = () => {
-          searchInput.value = '';
-          clearSearchBtn.style.display = 'none';
-          if (countEl) countEl.textContent = `${allAvatars.length} personagens`;
-          renderAllRails();
-          searchInput.focus();
-        };
-      }
     }
 
-    // Render inicial dos trilhos
+    if (clearSearchBtn) {
+      clearSearchBtn.onclick = () => {
+        searchInput.value = '';
+        clearSearchBtn.style.display = 'none';
+        if (countEl) countEl.textContent = `${allAvatars.length} personagens`;
+        renderAllRails();
+        searchInput.focus();
+      };
+    }
+
     renderAllRails();
   }
 
-  /* ================================================================
-     CARREGAMENTO DO CATÁLOGO & RECOMENDAÇÕES
-     ================================================================ */
 
   async loadHome(retryCount = 0) {
     // 1. Carrega o catálogo completo da Home (desduplicado pelo backend)
@@ -2411,6 +2418,8 @@ class HomeFlixApp {
     searchContainer.style.display = 'block';
 
     const titleEl = document.getElementById('searchTitle');
+    const subEl = document.getElementById('searchSub');
+    if (subEl) subEl.textContent = '';
     const grid = document.getElementById('searchGrid');
     const backBtn = document.getElementById('searchBackBtn');
     if (backBtn) backBtn.style.display = 'none';

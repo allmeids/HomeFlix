@@ -19,7 +19,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/style.css?v=9.1">
+  <link rel="stylesheet" href="/static/css/style.css?v=9.3">
   <!-- HLS.js para streaming HLS/m3u8 no navegador -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -775,90 +775,107 @@
     </div>
   </div>
 
-  <!-- Modal de Perfis / Contas ("Quem está assistindo?") -->
-  <div class="modal-backdrop" id="profileModal">
-    <div class="modal-content profile-modal-wrapper">
-      <div class="profile-gate-logo" id="profileGateLogo" style="display: none;">
+  <!-- Tela de Perfis / Contas Oficial Netflix ("Quem está assistindo?") -->
+  <div class="netflix-profile-gateway" id="profileModal">
+    <!-- Topbar com Logo e botão Voltar/Fechar (apenas se já logado) -->
+    <div class="profile-gateway-topbar">
+      <div class="profile-gate-logo" id="profileGateLogo">
         <span class="logo-text">HOME<span class="logo-accent">FLIX</span></span>
       </div>
-      <button class="modal-close-btn" id="profileCloseBtn">✕</button>
-      <h2 class="profile-modal-heading">Quem está assistindo?</h2>
-      <p class="profile-modal-sub">Escolha seu perfil para acessar suas recomendações personalizadas, favoritos e histórico</p>
+      <button class="profile-gateway-close-btn" id="profileCloseBtn" title="Voltar ao Catálogo" style="display: none;">✕</button>
+    </div>
+
+    <!-- Container Centralizador -->
+    <div class="profile-gateway-container">
       
-      <div class="profile-modal-grid" id="profileModalGrid"></div>
-
-      <!-- Formulário de Criar / Editar Perfil (Estilo Netflix com Avatares do Catálogo) -->
-      <div class="profile-form-box" id="profileFormBox" style="display: none;">
-        <h3 class="profile-form-title" id="profileFormTitle">Editar Perfil</h3>
+      <!-- VISTA 1: Lista de Perfis ("Quem está assistindo?" / "Gerenciar perfis:") -->
+      <div class="profile-view-select" id="profileSelectView">
+        <h1 class="profile-modal-heading" id="profileModalHeading">Quem está assistindo?</h1>
         
-        <div class="profile-avatar-preview-container">
-          <div class="profile-avatar-preview" id="profileAvatarPreview"></div>
-          <div style="flex: 1;">
-            <label style="font-size: 13px; color: #aaa; display: block; margin-bottom: 6px;">Nome do Perfil:</label>
-            <input type="text" id="profileFormNameInput" class="profile-name-input" placeholder="Ex: Lucas, Quarto, Cinema" maxlength="20" />
-          </div>
-        </div>
-        
-        <!-- Seletor de Avatares Estilo Netflix & Disney+ (Trilhos de Séries e Zero Lag) -->
-        <div class="avatar-picker-wrapper">
-          <div class="avatar-picker-header">
-            <div class="avatar-picker-title-row">
-              <span class="avatar-picker-title">Escolha um Ícone de Perfil</span>
-              <span class="avatar-picker-count" id="avatarPickerCount">291 personagens</span>
-            </div>
-            
-            <!-- Controles de Filtro & Busca Estilo Netflix / Disney+ -->
-            <div class="avatar-picker-controls-row">
-              <div class="avatar-picker-search-bar">
-                <span class="avatar-search-icon">🔍</span>
-                <input type="text" id="avatarSearchInput" class="avatar-search-input" placeholder="Buscar personagem ou série (ex: Eleven, Wandinha, Luffy, Dalí, Geralt)..." autocomplete="off" />
-                <button type="button" id="avatarClearSearchBtn" class="avatar-clear-search-btn" style="display: none;">✕</button>
-              </div>
+        <div class="profile-modal-grid" id="profileModalGrid"></div>
 
-              <!-- Menu Seletor Rápido de Franquia Estilo Disney+ -->
-              <div class="avatar-franchise-select-wrapper">
-                <select id="avatarFranchiseSelect" class="avatar-franchise-select" aria-label="Filtrar por franquia">
-                  <option value="all">🍿 Todas as Franquias & Séries (291)</option>
-                  <option value="stranger_things">Stranger Things (35)</option>
-                  <option value="wednesday">Wandinha / Wednesday (25)</option>
-                  <option value="squid_game">Round 6 / Squid Game (27)</option>
-                  <option value="money_heist">La Casa de Papel (10)</option>
-                  <option value="the_witcher">The Witcher (18)</option>
-                  <option value="one_piece">One Piece (14)</option>
-                  <option value="arcane_games">Arcane, Animes & Games (40)</option>
-                  <option value="cobra_kai">Cobra Kai (24)</option>
-                  <option value="bridgerton">Bridgerton & Drama (30)</option>
-                  <option value="popular_series">Séries Populares & Sci-Fi (45)</option>
-                  <option value="netflix_classics">Clássicos Netflix (23)</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- Trilho de Chips de Marcas / Séries Estilo Disney+ -->
-            <div class="avatar-chips-carousel-wrapper">
-              <button type="button" class="avatar-chips-nav-btn avatar-chips-nav-left" id="avatarChipsNavLeft" aria-label="Rolar para esquerda">‹</button>
-              <div class="avatar-categories-track" id="avatarCategoriesTrack"></div>
-              <button type="button" class="avatar-chips-nav-btn avatar-chips-nav-right" id="avatarChipsNavRight" aria-label="Rolar para direita">›</button>
-            </div>
-          </div>
-
-          <!-- Trilhos Horizontais de Avatares (Carrosséis por Franquia) -->
-          <div class="avatar-catalog-scroll-box" id="avatarCatalogScrollBox">
-            <div class="avatar-catalog-sections-container" id="avatarPickerSectionsContainer"></div>
-          </div>
-        </div>
-
-        <div class="profile-form-actions">
-          <button class="btn btn-primary" id="saveProfileBtn">Salvar Alterações</button>
-          <button class="btn btn-secondary" id="cancelProfileBtn">Cancelar</button>
-          <button class="btn btn-dark" id="deleteProfileBtn" style="display:none; color:#e50914;">Excluir</button>
+        <div class="profile-modal-footer-btns" id="profileModalFooterBtns">
+          <button class="btn-outline-netflix" id="manageProfilesToggleBtn">Gerenciar perfis</button>
+          <button class="btn-outline-netflix" id="createNewProfileBtn" style="display:none;">+ Adicionar perfil</button>
         </div>
       </div>
 
-      <div class="profile-modal-footer-btns" id="profileModalFooterBtns">
-        <button class="btn btn-outline-netflix" id="manageProfilesToggleBtn">Gerenciar perfis</button>
-        <button class="btn btn-outline-netflix" id="createNewProfileBtn" style="display:none;">+ Adicionar perfil</button>
+      <!-- VISTA 2: Edição de Perfil Oficial Netflix -->
+      <div class="profile-view-edit" id="profileEditView" style="display: none;">
+        <h1 class="profile-edit-title" id="profileEditTitle">Editar perfil</h1>
+        <div class="profile-edit-divider"></div>
+        
+        <div class="profile-edit-content-row">
+          <!-- Coluna Avatar com overlay de troca -->
+          <div class="profile-edit-avatar-col">
+            <div class="profile-edit-avatar-trigger" id="profileAvatarEditTrigger" title="Escolha um avatar oficial da Netflix">
+              <div class="profile-avatar-large" id="profileAvatarPreview"></div>
+              <div class="profile-edit-avatar-badge">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none">
+                  <path fill="#ffffff" fill-rule="evenodd" d="M19.121 1.707a3 3 0 0 0-4.242 0l-1.586 1.586-.707.707-11 11A2 2 0 0 0 1 16.414V21a2 2 0 0 0 2 2h4.586A2 2 0 0 0 9 22.414l11-11 .707-.707 1.586-1.586a3 3 0 0 0 0-4.242zM15.586 7 14 5.414l-11 11V19a2 2 0 0 1 2 2h2.586l11-11L17 8.414 6.707 18.707l-1.414-1.414zm.707-3.879a1 1 0 0 1 1.414 0l3.172 3.172a1 1 0 0 1 0 1.414L20 8.586 15.414 4z" clip-rule="evenodd"></path>
+                </svg>
+              </div>
+            </div>
+            <span class="profile-edit-avatar-hint">Trocar avatar</span>
+          </div>
+
+          <!-- Coluna Dados do Perfil -->
+          <div class="profile-edit-form-col">
+            <label style="font-size: 13px; color: #808080; display: block; margin-bottom: 4px;">Nome do perfil:</label>
+            <input type="text" id="profileFormNameInput" class="profile-netflix-name-input" placeholder="Nome do perfil" maxlength="20" autocomplete="off" />
+            <div class="profile-edit-subtext">Clique na imagem ao lado para escolher entre 291 avatares oficiais da Netflix.</div>
+          </div>
+        </div>
+
+        <div class="profile-edit-divider"></div>
+
+        <div class="profile-netflix-actions">
+          <button class="btn-netflix-action btn-netflix-save" id="saveProfileBtn">Salvar</button>
+          <button class="btn-netflix-action btn-netflix-cancel" id="cancelProfileBtn">Cancelar</button>
+          <button class="btn-netflix-action btn-netflix-delete" id="deleteProfileBtn" style="display:none;">Excluir perfil</button>
+        </div>
       </div>
+
+      <!-- VISTA 3: Seletor Completo de Avatares (291 avatares oficiais da Netflix) -->
+      <div class="profile-view-avatars" id="profileAvatarPickerView" style="display: none;">
+        <div class="avatar-picker-top">
+          <button type="button" class="btn-netflix-back" id="avatarPickerBackBtn">
+            ← Voltar para edição
+          </button>
+          <div class="avatar-picker-title-row">
+            <span class="avatar-picker-title">Escolha um Ícone de Perfil</span>
+            <span class="avatar-picker-count" id="avatarPickerCount">291 personagens</span>
+          </div>
+        </div>
+
+        <!-- Controles de Filtro & Busca Estilo Netflix / Disney+ -->
+        <div class="avatar-picker-controls-row">
+          <div class="avatar-picker-search-bar">
+            <span class="avatar-search-icon">🔍</span>
+            <input type="text" id="avatarSearchInput" class="avatar-search-input" placeholder="Buscar personagem ou série (ex: Eleven, Wandinha, Luffy, Dalí, Geralt)..." autocomplete="off" />
+            <button type="button" id="avatarClearSearchBtn" class="avatar-clear-search-btn" style="display: none;">✕</button>
+          </div>
+
+          <div class="avatar-franchise-select-wrapper">
+            <select id="avatarFranchiseSelect" class="avatar-franchise-select" aria-label="Filtrar por franquia">
+              <option value="all">🍿 Todas as Franquias & Séries (291)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Trilho de Chips de Marcas / Séries Estilo Disney+ -->
+        <div class="avatar-chips-carousel-wrapper">
+          <button type="button" class="avatar-chips-nav-btn avatar-chips-nav-left" id="avatarChipsNavLeft" aria-label="Rolar para esquerda">‹</button>
+          <div class="avatar-categories-track" id="avatarCategoriesTrack"></div>
+          <button type="button" class="avatar-chips-nav-btn avatar-chips-nav-right" id="avatarChipsNavRight" aria-label="Rolar para direita">›</button>
+        </div>
+
+        <!-- Trilhos Horizontais de Avatares -->
+        <div class="avatar-catalog-scroll-box" id="avatarCatalogScrollBox">
+          <div class="avatar-catalog-sections-container" id="avatarPickerSectionsContainer"></div>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -901,8 +918,8 @@
   </div>
 
   <!-- Scripts -->
-  <script src="/static/js/api.js?v=9.1"></script>
-  <script src="/static/js/player.js?v=9.1"></script>
-  <script src="/static/js/app.js?v=9.1"></script>
+  <script src="/static/js/api.js?v=9.3"></script>
+  <script src="/static/js/player.js?v=9.3"></script>
+  <script src="/static/js/app.js?v=9.3"></script>
 </body>
 </html>
