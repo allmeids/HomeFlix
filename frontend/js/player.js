@@ -385,7 +385,44 @@ class HomeFlixPlayer {
   preparePlayback(options = {}) {
     this.overlay.classList.add('open');
     document.body.classList.add('player-open');
-    this.wakeHud();
+    this.isLive = !!options.isLive;
+
+    // Configura botões exclusivos antes de qualquer exibição de HUD
+    if (this.isLive) {
+      if (this.prevChannelBtn) this.prevChannelBtn.style.display = 'flex';
+      if (this.nextChannelBtn) this.nextChannelBtn.style.display = 'flex';
+      if (this.guideBtn) this.guideBtn.style.display = 'inline-flex';
+      if (this.guideBtnTop) this.guideBtnTop.style.display = 'inline-flex';
+      if (this.sidebarOpenTab) this.sidebarOpenTab.style.display = 'flex';
+      if (this.rewindBtn) this.rewindBtn.style.display = 'none';
+      if (this.forwardBtn) this.forwardBtn.style.display = 'none';
+      if (this.progressBar) this.progressBar.style.display = 'none';
+      if (this.timeDisplay) this.timeDisplay.textContent = 'AO VIVO';
+    } else {
+      if (this.prevChannelBtn) this.prevChannelBtn.style.display = 'none';
+      if (this.nextChannelBtn) this.nextChannelBtn.style.display = 'none';
+      if (this.guideBtn) this.guideBtn.style.display = 'none';
+      if (this.guideBtnTop) this.guideBtnTop.style.display = 'none';
+      if (this.sidebarOpenTab) this.sidebarOpenTab.style.display = 'none';
+      if (this.sidebar) this.sidebar.classList.remove('open');
+      if (this.rewindBtn) this.rewindBtn.style.display = 'flex';
+      if (this.forwardBtn) this.forwardBtn.style.display = 'flex';
+      if (this.progressBar) this.progressBar.style.display = 'block';
+      if (this.timeDisplay) this.timeDisplay.textContent = '00:00 / 00:00';
+    }
+
+    // Mantém topo visível (título e botão voltar) e esconde controles inferiores durante o pré-carregamento
+    const top = document.querySelector('.player-topbar');
+    const bottom = document.querySelector('.player-controls-bottom');
+    if (top) {
+      top.style.opacity = '1';
+      top.style.pointerEvents = 'auto';
+    }
+    if (bottom) {
+      bottom.style.opacity = '0';
+      bottom.style.pointerEvents = 'none';
+    }
+
     this.enterFullscreenWithOrientation();
 
     const title = options.title || 'Carregando título...';

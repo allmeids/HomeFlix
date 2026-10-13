@@ -307,32 +307,29 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
 
     # 2. Busca paralela de alta velocidade (FrostStream + SuperStream + EmbedPlayer simultaneamente)
     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
-        f_frost = executor.submit(fetch_froststream, media_type, imdb_id, season, episode)
-        f_super = executor.submit(fetch_superstream, media_type, imdb_id, season, episode)
-        f_embed = executor.submit(fetch_embedplayer, media_type, imdb_id, season, episode)
+        tasks = {
+            executor.submit(fetch_froststream, media_type, imdb_id, season, episode): "FrostStream",
+            executor.submit(fetch_superstream, media_type, imdb_id, season, episode): "SuperStream",
+            executor.submit(fetch_embedplayer, media_type, imdb_id, season, episode): "EmbedPlayer"
+        }
+        done, not_done = concurrent.futures.wait(tasks.keys(), timeout=5.5)
 
-        try:
-            frost_streams = f_frost.result(timeout=8)
-            for s in frost_streams:
-                s["_provider"] = "FrostStream"
-                raw_streams.append(s)
-        except Exception as exc:
-            print(f"[Parallel FrostStream Error] {exc}")
+        for f in done:
+            provider = tasks[f]
+            try:
+                streams_res = f.result() or []
+                for s in streams_res:
+                    if "_provider" not in s:
+                        s["_provider"] = provider
+                    raw_streams.append(s)
+            except Exception as exc:
+                print(f"[Parallel {provider} Error] {exc}")
 
-        try:
-            super_streams = f_super.result(timeout=8)
-            for s in super_streams:
-                s["_provider"] = "SuperStream"
-                raw_streams.append(s)
-        except Exception as exc:
-            print(f"[Parallel SuperStream Error] {exc}")
-
-        try:
-            embed_streams = f_embed.result(timeout=8)
-            for s in embed_streams:
-                raw_streams.append(s)
-        except Exception as exc:
-            print(f"[Parallel EmbedPlayer Error] {exc}")
+        for f in not_done:
+            try:
+                f.cancel()
+            except Exception:
+                pass
 
     theatrical_cam = False
     if media_type in ("movie", "filme"):
