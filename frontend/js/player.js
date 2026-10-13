@@ -191,6 +191,8 @@ class HomeFlixPlayer {
 
     // Fullscreen
     this.fullscreenBtn.addEventListener('click', () => this.toggleFullscreen());
+    document.addEventListener('fullscreenchange', () => this.handleFullscreenChange());
+    document.addEventListener('webkitfullscreenchange', () => this.handleFullscreenChange());
 
     // Voltar / Fechar
     this.backBtn.addEventListener('click', () => this.close());
@@ -409,13 +411,10 @@ class HomeFlixPlayer {
     if (this.failoverBadge) this.failoverBadge.style.display = 'none';
 
     this.overlay.classList.add('open');
+    document.body.classList.add('player-open');
 
-    // Modo Celular: trava automaticamente na horizontal ao reproduzir
-    try {
-      if (screen.orientation && typeof screen.orientation.lock === 'function') {
-        screen.orientation.lock('landscape').catch(() => {});
-      }
-    } catch (_) {}
+    // Modo Celular / Fullscreen: aciona tela cheia e trava na horizontal automaticamente
+    this.enterFullscreenWithOrientation();
 
     // Configura elementos exclusivos de TV ao Vivo vs VOD
     if (this.isLive) {
@@ -1144,11 +1143,66 @@ class HomeFlixPlayer {
     }
   }
 
-  toggleFullscreen() {
-    if (!document.fullscreenElement) {
-      this.overlay.requestFullscreen().catch(err => console.log(err));
+  enterFullscreenWithOrientation() {
+    const el = this.overlay || document.documentElement;
+    const req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen || el.mozRequestFullScreen;
+    if (req && !document.fullscreenElement && !document.webkitFullscreenElement) {
+      try {
+        const p = req.call(el);
+        if (p && typeof p.then === 'function') {
+          p.then(() => {
+            this.lockLandscapeOrientation();
+          }).catch(() => {
+            this.lockLandscapeOrientation();
+          });
+        }
+      } catch (_) {
+        this.lockLandscapeOrientation();
+      }
     } else {
-      document.exitFullscreen().catch(err => console.log(err));
+      this.lockLandscapeOrientation();
+    }
+  }
+
+  lockLandscapeOrientation() {
+    try {
+      if (screen.orientation && typeof screen.orientation.lock === 'function') {
+        screen.orientation.lock('landscape').catch(() => {});
+      }
+    } catch (_) {}
+    // Fallback nativo para iOS Safari caso fullscreen de elemento seja restrito
+    if (this.video && typeof this.video.webkitEnterFullscreen === 'function' && window.innerWidth <= 800) {
+      try { this.video.webkitEnterFullscreen(); } catch (_) {}
+    }
+  }
+
+  handleFullscreenChange() {
+    const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    if (isFs && this.overlay && this.overlay.classList.contains('open')) {
+      this.lockLandscapeOrientation();
+    } else if (!isFs && this.overlay && !this.overlay.classList.contains('open')) {
+      try {
+        if (screen.orientation && typeof screen.orientation.unlock === 'function') {
+          screen.orientation.unlock();
+        }
+      } catch (_) {}
+    }
+  }
+
+  toggleFullscreen() {
+    const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    if (!isFs) {
+      this.enterFullscreenWithOrientation();
+    } else {
+      const exit = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
+      if (exit) {
+        try { exit.call(document); } catch (_) {}
+      }
+      try {
+        if (screen.orientation && typeof screen.orientation.unlock === 'function') {
+          screen.orientation.unlock();
+        }
+      } catch (_) {}
     }
   }
 
@@ -1258,14 +1312,18 @@ class HomeFlixPlayer {
     this.failedUrls.clear();
     this.overlay.classList.remove('open');
     this.overlay.classList.remove('hud-hidden');
+    document.body.classList.remove('player-open');
     this.sidebar.classList.remove('open');
     if (this.liveOsd) this.liveOsd.classList.remove('show');
     if (this.subtitlesMenu) this.subtitlesMenu.style.display = 'none';
     this.clearSubtitles();
     this.hideSpinner();
 
-    if (document.fullscreenElement) {
-      document.exitFullscreen().catch(() => {});
+    if (document.fullscreenElement || document.webkitFullscreenElement) {
+      const exit = document.exitFullscreen || document.webkitExitFullscreen;
+      if (exit) {
+        try { exit.call(document); } catch (_) {}
+      }
     }
 
     // Restaura orientação do celular ao sair do player

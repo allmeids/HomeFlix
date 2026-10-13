@@ -218,18 +218,37 @@ class HomeFlixApp {
       });
     }
 
-    // Search em Tempo Real (Live Search Estilo Netflix)
+    // Search em Tempo Real (Desktop & Mobile)
     const searchInput = document.getElementById('searchInput');
+    const mobileSearchInput = document.getElementById('mobileSearchInput');
+    const mobileSearchClearBtn = document.getElementById('mobileSearchClearBtn');
     let debounceTimer;
-    searchInput.addEventListener('input', (e) => {
+
+    const handleSearchInput = (e) => {
       clearTimeout(debounceTimer);
       const q = e.target.value.trim();
+      if (searchInput && e.target !== searchInput) searchInput.value = e.target.value;
+      if (mobileSearchInput && e.target !== mobileSearchInput) mobileSearchInput.value = e.target.value;
+      if (mobileSearchClearBtn) {
+        mobileSearchClearBtn.style.display = q.length > 0 ? 'inline-flex' : 'none';
+      }
       if (q.length >= 2) {
         debounceTimer = setTimeout(() => this.searchMedia(q), 280);
       } else if (q.length === 0) {
         this.closeSearch();
       }
-    });
+    };
+
+    if (searchInput) searchInput.addEventListener('input', handleSearchInput);
+    if (mobileSearchInput) mobileSearchInput.addEventListener('input', handleSearchInput);
+    if (mobileSearchClearBtn) {
+      mobileSearchClearBtn.addEventListener('click', () => {
+        if (searchInput) searchInput.value = '';
+        if (mobileSearchInput) mobileSearchInput.value = '';
+        mobileSearchClearBtn.style.display = 'none';
+        this.closeSearch();
+      });
+    }
 
     // Botão Voltar da Busca
     const searchBackBtn = document.getElementById('searchBackBtn');
@@ -248,13 +267,9 @@ class HomeFlixApp {
             btn.classList.add('active');
             this.switchTab(tab);
           } else if (btn.id === 'bottomNavSearch') {
-            const searchBox = document.querySelector('.search-box');
-            if (searchBox) searchBox.classList.add('active');
-            const searchInp = document.getElementById('searchInput');
-            if (searchInp) {
-              searchInp.focus();
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
+            bottomNav.querySelectorAll('.nflx-bottom-nav-item').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            this.openSearchPage();
           } else if (btn.id === 'bottomNavProfile') {
             this.openProfileModal(false, false);
           }
@@ -1483,6 +1498,8 @@ class HomeFlixApp {
     this.renderCarousel('popularMoviesCarousel', top);
     const animes = await API.getAnimes(1);
     this.renderCarousel('popularSeriesCarousel', animes);
+    this.renderCarousel('animeSagasCarousel', animes);
+    this.renderCarousel('animeHitsCarousel', animes);
   }
 
   async loadContinueWatching() {
@@ -1665,6 +1682,9 @@ class HomeFlixApp {
     document.getElementById('heroOverview').textContent = overview;
 
     document.getElementById('heroPlayBtn').onclick = () => {
+      if (this.player && typeof this.player.enterFullscreenWithOrientation === 'function') {
+        this.player.enterFullscreenWithOrientation();
+      }
       this.openMediaDetails(mediaType, item.id, { autoPlay: true });
     };
 
@@ -1703,7 +1723,7 @@ class HomeFlixApp {
       const posterPath = item.poster_path || item.backdrop_path;
       if (!posterPath) return;
       const title = item.title || item.name || '';
-      const mediaType = item.media_type || (item.title ? 'movie' : 'tv');
+      const mediaType = (this.currentTab === 'series') ? 'tv' : (item.media_type || (item.first_air_date ? 'tv' : (item.title ? 'movie' : 'tv')));
       const rating = item.vote_average ? item.vote_average.toFixed(1) : '';
       const date = item.release_date || item.first_air_date || '';
       const year = date ? date.split('-')[0] : '';
@@ -1730,9 +1750,9 @@ class HomeFlixApp {
         </div>
       `;
 
-      card.onclick = () => this.openMediaDetails(mediaType, item.id);
+      card.onclick = () => this.openMediaDetails(mediaType, item.id, { title });
       card.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') this.openMediaDetails(mediaType, item.id);
+        if (e.key === 'Enter') this.openMediaDetails(mediaType, item.id, { title });
       });
 
       container.appendChild(card);
@@ -1753,17 +1773,64 @@ class HomeFlixApp {
 
     // Esconde as outras telas e exibe a tela de detalhes completa
     document.body.classList.add('in-details-view');
-    heroSection.style.display = 'none';
+    if (heroSection) heroSection.style.display = 'none';
     if (categoriesBar) categoriesBar.style.display = 'none';
-    sectionsContainer.style.display = 'none';
-    liveTvContainer.style.display = 'none';
-    searchContainer.style.display = 'none';
+    if (sectionsContainer) sectionsContainer.style.display = 'none';
+    if (liveTvContainer) liveTvContainer.style.display = 'none';
+    if (searchContainer) searchContainer.style.display = 'none';
 
     try {
       if (!history.state || history.state.view !== 'details' || history.state.id !== tmdbId) {
         history.pushState({ view: 'details', id: tmdbId }, '');
       }
     } catch (_) {}
+
+    // Limpa imediatamente o conteúdo do título anterior para evitar dados obsoletos em tela
+    const heroBannerEl = document.getElementById('detailsHeroBanner');
+    const posterImgEl = document.getElementById('detailsPosterImg');
+    const mainTitleEl = document.getElementById('detailsMainTitle');
+    const topTitleEl = document.getElementById('detailsViewTopTitle');
+    const taglineEl = document.getElementById('detailsTagline');
+    const ratingEl = document.getElementById('detailsRating');
+    const yearEl = document.getElementById('detailsYear');
+    const runtimeEl = document.getElementById('detailsRuntime');
+    const typeBadgeEl = document.getElementById('detailsTypeBadge');
+    const overviewEl = document.getElementById('detailsOverview');
+    const genresEl = document.getElementById('detailsGenresText');
+    const directorsEl = document.getElementById('detailsDirectorsText');
+    const castGridEl = document.getElementById('detailsCastGrid');
+    const castSectionEl = document.getElementById('detailsCastSection');
+    const tvSectionEl = document.getElementById('detailsTvSection');
+    const episodesGridEl = document.getElementById('detailsEpisodesGrid');
+    const seasonSelectEl = document.getElementById('detailsSeasonDropdown');
+    const cinemaBadgeEl = document.getElementById('detailsCinemaBadge');
+    const upcomingNoticeEl = document.getElementById('detailsUpcomingNotice');
+    const trailerBtnEl = document.getElementById('detailsTrailerBtn');
+    const similarSecEl = document.getElementById('detailsSimilarSection');
+    const similarCarouselEl = document.getElementById('detailsSimilarCarousel');
+
+    if (heroBannerEl) heroBannerEl.style.backgroundImage = 'none';
+    if (posterImgEl) posterImgEl.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="450" fill="%231a1a1f"/>';
+    if (mainTitleEl) mainTitleEl.textContent = opts.title || 'Carregando...';
+    if (topTitleEl) topTitleEl.textContent = opts.title || 'HomeFlix';
+    if (taglineEl) taglineEl.textContent = '';
+    if (ratingEl) ratingEl.textContent = '★ --';
+    if (yearEl) yearEl.textContent = '----';
+    if (runtimeEl) runtimeEl.textContent = '';
+    if (typeBadgeEl) typeBadgeEl.textContent = mediaType === 'movie' ? 'FILME' : 'SÉRIE';
+    if (overviewEl) overviewEl.textContent = 'Carregando sinopse e detalhes oficiais...';
+    if (genresEl) genresEl.textContent = '...';
+    if (directorsEl) directorsEl.textContent = '...';
+    if (castGridEl) castGridEl.innerHTML = '';
+    if (castSectionEl) castSectionEl.style.display = 'none';
+    if (tvSectionEl) tvSectionEl.style.display = 'none';
+    if (episodesGridEl) episodesGridEl.innerHTML = '';
+    if (seasonSelectEl) seasonSelectEl.innerHTML = '';
+    if (cinemaBadgeEl) cinemaBadgeEl.style.display = 'none';
+    if (upcomingNoticeEl) upcomingNoticeEl.style.display = 'none';
+    if (trailerBtnEl) trailerBtnEl.style.display = 'none';
+    if (similarSecEl) similarSecEl.style.display = 'none';
+    if (similarCarouselEl) similarCarouselEl.innerHTML = '';
 
     detailsView.style.display = 'block';
     window.scrollTo({ top: 0, behavior: 'instant' });
@@ -1772,11 +1839,17 @@ class HomeFlixApp {
     const details = await API.getMediaDetails(mediaType, tmdbId);
     if (!details) {
       alert('Não foi possível carregar os detalhes do título.');
-      this.switchTab(this.currentTab);
+      this.switchTab(this.previousTab || 'home');
       return;
     }
 
-    const title = details.title || details.name || '';
+    // Auto-correção de tipo se for detectada como série
+    const isTvShow = mediaType === 'tv' || !!(details.number_of_seasons && details.number_of_seasons > 0) || !!(details.seasons && details.seasons.length > 0) || !!details.first_air_date;
+    if (isTvShow) {
+      mediaType = 'tv';
+    }
+
+    const title = details.title || details.name || opts.title || '';
     const tagline = details.tagline ? `"${details.tagline}"` : '';
     const overview = details.overview || 'Sinopse não disponível no momento.';
     const rating = details.vote_average ? details.vote_average.toFixed(1) : '8.8';
@@ -1793,49 +1866,46 @@ class HomeFlixApp {
       : `https://image.tmdb.org/t/p/w500${details.backdrop_path}`;
 
     // Popula Hero de Detalhes
-    document.getElementById('detailsHeroBanner').style.backgroundImage = `url('${backdrop}')`;
-    document.getElementById('detailsPosterImg').src = poster;
-    document.getElementById('detailsMainTitle').textContent = title;
-    document.getElementById('detailsViewTopTitle').textContent = title;
-    document.getElementById('detailsTagline').textContent = tagline;
-    document.getElementById('detailsRating').textContent = `★ ${rating}`;
-    document.getElementById('detailsYear').textContent = year;
-    document.getElementById('detailsRuntime').textContent = runtime;
-    document.getElementById('detailsTypeBadge').textContent = mediaType === 'movie' ? 'FILME' : 'SÉRIE';
-    document.getElementById('detailsOverview').textContent = overview;
+    if (heroBannerEl) heroBannerEl.style.backgroundImage = `url('${backdrop}')`;
+    if (posterImgEl) posterImgEl.src = poster;
+    if (mainTitleEl) mainTitleEl.textContent = title;
+    if (topTitleEl) topTitleEl.textContent = title;
+    if (taglineEl) taglineEl.textContent = tagline;
+    if (ratingEl) ratingEl.textContent = `★ ${rating}`;
+    if (yearEl) yearEl.textContent = year;
+    if (runtimeEl) runtimeEl.textContent = runtime;
+    if (typeBadgeEl) typeBadgeEl.textContent = mediaType === 'movie' ? 'FILME' : 'SÉRIE';
+    if (overviewEl) overviewEl.textContent = overview;
 
     // Gêneros & Direção
     const genres = (details.genres || []).map(g => g.name).join(', ');
-    document.getElementById('detailsGenresText').textContent = genres || 'Variados';
+    if (genresEl) genresEl.textContent = genres || 'Variados';
     const directors = (details.directors || []).join(', ');
-    document.getElementById('detailsDirectorsText').textContent = directors || 'Não informado';
+    if (directorsEl) directorsEl.textContent = directors || 'Não informado';
 
     // Badge de cinema CAM / Em Exibição nos Cinemas
-    const cinemaBadge = document.getElementById('detailsCinemaBadge');
     const isInTheaters = details.is_in_theaters || (details.release_date && (() => {
       const rd = new Date(details.release_date);
       const diffDays = (new Date() - rd) / (1000 * 60 * 60 * 24);
       return diffDays >= 0 && diffDays < 75;
     })());
 
-    if (cinemaBadge) {
+    if (cinemaBadgeEl) {
       if (isInTheaters) {
-        cinemaBadge.style.display = 'flex';
-        cinemaBadge.innerHTML = '🎬 Em Exibição nos Cinemas';
-        cinemaBadge.title = 'Filme em cartaz. Transmissões online podem conter imagens gravadas de sala (CAM).';
+        cinemaBadgeEl.style.display = 'flex';
+        cinemaBadgeEl.innerHTML = '🎬 Em Exibição nos Cinemas';
+        cinemaBadgeEl.title = 'Filme em cartaz. Transmissões online podem conter imagens gravadas de sala (CAM).';
       } else {
-        cinemaBadge.style.display = 'none';
+        cinemaBadgeEl.style.display = 'none';
       }
     }
 
     // Banner de Filme Ainda Não Lançado / Em Breve nos Cinemas
     const isUpcoming = details.is_unreleased || (details.release_date && new Date(details.release_date) > new Date()) || ["In Production", "Post Production", "Planned"].includes(details.status);
-    const upcomingNotice = document.getElementById('detailsUpcomingNotice');
-    const toggleSourcesBtn = document.getElementById('detailsToggleSourcesBtn');
 
-    if (upcomingNotice) {
+    if (upcomingNoticeEl) {
       if (isUpcoming) {
-        upcomingNotice.style.display = 'flex';
+        upcomingNoticeEl.style.display = 'flex';
         let releaseStr = 'Em breve';
         if (details.release_date) {
           const parts = details.release_date.split('-');
@@ -1844,51 +1914,44 @@ class HomeFlixApp {
         document.getElementById('detailsUpcomingHeading').textContent = `📅 Estreia nos Cinemas: ${releaseStr}`;
         document.getElementById('detailsUpcomingSub').textContent = `Este filme ainda não estreou. Assista ao trailer oficial com exclusividade!`;
       } else {
-        upcomingNotice.style.display = 'none';
+        upcomingNoticeEl.style.display = 'none';
       }
     }
 
-    // Botão Voltar
+    // Botão Voltar (Círculo Moderno)
     const backBtn = document.getElementById('detailsViewBackBtn');
     if (backBtn) {
       backBtn.onclick = () => {
         detailsView.style.display = 'none';
         document.body.classList.remove('in-details-view');
         this.closeSearch();
-        this.switchTab('home');
+        this.switchTab(this.previousTab || 'home');
       };
     }
 
     // Botão Trailer Oficial
-    const trailerBtn = document.getElementById('detailsTrailerBtn');
-    if (details.trailer_key) {
-      trailerBtn.style.display = 'inline-flex';
-      // Se ainda não estreou, torna o Trailer o botão principal de destaque
-      if (isUpcoming) {
-        trailerBtn.className = 'btn btn-primary btn-lg';
-        trailerBtn.innerHTML = '<span>🎬</span> Assistir Trailer Oficial';
+    if (trailerBtnEl) {
+      if (details.trailer_key) {
+        trailerBtnEl.style.display = 'inline-flex';
+        if (isUpcoming) {
+          trailerBtnEl.className = 'btn btn-primary btn-lg';
+          trailerBtnEl.innerHTML = '<span>🎬</span> Assistir Trailer Oficial';
+        } else {
+          trailerBtnEl.className = 'btn btn-secondary btn-lg';
+          trailerBtnEl.innerHTML = 'Assistir Trailer';
+        }
+        trailerBtnEl.onclick = () => {
+          this.openTrailerModal(details.trailer_key, title);
+        };
       } else {
-        trailerBtn.className = 'btn btn-secondary btn-lg';
-        trailerBtn.innerHTML = 'Assistir Trailer';
+        trailerBtnEl.style.display = 'none';
       }
-      trailerBtn.onclick = () => {
-        this.openTrailerModal(details.trailer_key, title);
-      };
-    } else {
-      trailerBtn.style.display = 'none';
-    }
-
-    if (toggleSourcesBtn) {
-      toggleSourcesBtn.style.display = isUpcoming ? 'none' : 'inline-flex';
     }
 
     // Botão Favorito / Minha Lista
     const favBtn = document.getElementById('detailsFavBtn');
-    const favBtnTop = document.getElementById('detailsViewFavBtnTop');
     const updateFavUi = (isFav) => {
-      const text = isFav ? 'Na Minha Lista' : '+ Minha Lista';
-      favBtn.innerHTML = `<span>${isFav ? '✓' : '+'}</span> ${isFav ? 'Na Minha Lista' : 'Minha Lista'}`;
-      if (favBtnTop) favBtnTop.textContent = text;
+      if (favBtn) favBtn.innerHTML = `<span>${isFav ? '✓' : '+'}</span> ${isFav ? 'Na Minha Lista' : 'Minha Lista'}`;
     };
 
     // Checa se já é favorito
@@ -1912,22 +1975,7 @@ class HomeFlixApp {
       updateFavUi(res.is_favorite);
     };
 
-    favBtn.onclick = toggleFavAction;
-    if (favBtnTop) favBtnTop.onclick = toggleFavAction;
-
-    // Botão Alternar Servidores
-    const sourcesSec = document.getElementById('detailsSourcesSection');
-    if (toggleSourcesBtn) {
-      toggleSourcesBtn.onclick = async () => {
-        if (sourcesSec && sourcesSec.style.display === 'block') {
-          sourcesSec.style.display = 'none';
-        } else {
-          if (sourcesSec) sourcesSec.style.display = 'block';
-          this.loadSourcesList(mediaType, tmdbId, currentSeason, currentEpisode, title, details);
-          if (sourcesSec) sourcesSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      };
-    }
+    if (favBtn) favBtn.onclick = toggleFavAction;
 
     // Elenco Principal (Cast)
     const castGrid = document.getElementById('detailsCastGrid');
@@ -2002,6 +2050,9 @@ class HomeFlixApp {
           epRow.onclick = () => {
             currentSeason = seasonNum;
             currentEpisode = ep.episode_number;
+            if (this.player && typeof this.player.enterFullscreenWithOrientation === 'function') {
+              this.player.enterFullscreenWithOrientation();
+            }
             this.fetchAndPlay(mediaType, tmdbId, title, details, currentSeason, currentEpisode, ep.name);
           };
           epRow.addEventListener('keydown', (e) => {
@@ -2112,12 +2163,18 @@ class HomeFlixApp {
       playBtn.innerHTML = `<span>▶</span> Continuar Assistindo${remText ? `<small style="font-size:12px; font-weight:normal; opacity:0.85; margin-left:6px;">${remText}</small>` : ''}`;
       playBtn.title = `Continuar aos ${min} min`;
       playBtn.onclick = () => {
+        if (this.player && typeof this.player.enterFullscreenWithOrientation === 'function') {
+          this.player.enterFullscreenWithOrientation();
+        }
         this.fetchAndPlay(mediaType, tmdbId, title, details, season, episode, null, resumeTime);
       };
     } else {
       playBtn.innerHTML = `<span>▶</span> Assistir Agora`;
       playBtn.title = `Iniciar reprodução`;
       playBtn.onclick = () => {
+        if (this.player && typeof this.player.enterFullscreenWithOrientation === 'function') {
+          this.player.enterFullscreenWithOrientation();
+        }
         this.fetchAndPlay(mediaType, tmdbId, title, details, season, episode, null, 0);
       };
     }
@@ -2495,12 +2552,54 @@ class HomeFlixApp {
   closeSearch() {
     const searchInput = document.getElementById('searchInput');
     if (searchInput) searchInput.value = '';
+    const mobileSearchInput = document.getElementById('mobileSearchInput');
+    if (mobileSearchInput) mobileSearchInput.value = '';
+    const mobileClear = document.getElementById('mobileSearchClearBtn');
+    if (mobileClear) mobileClear.style.display = 'none';
     const searchContainer = document.getElementById('searchContainer');
     if (searchContainer) searchContainer.style.display = 'none';
     const detailsView = document.getElementById('detailsView');
     if (detailsView) detailsView.style.display = 'none';
     document.body.classList.remove('in-details-view');
     this.switchTab('home');
+  }
+
+  openSearchPage() {
+    const heroSection = document.getElementById('heroSection');
+    const categoriesBar = document.getElementById('categoriesBarWrapper');
+    const sectionsContainer = document.getElementById('sectionsContainer');
+    const liveTvContainer = document.getElementById('liveTvContainer');
+    const categoriesContainer = document.getElementById('categoriesContainer');
+    const collectionsContainer = document.getElementById('collectionsContainer');
+    const detailsView = document.getElementById('detailsView');
+    const searchContainer = document.getElementById('searchContainer');
+
+    if (heroSection) heroSection.style.display = 'none';
+    if (categoriesBar) categoriesBar.style.display = 'none';
+    if (sectionsContainer) sectionsContainer.style.display = 'none';
+    if (liveTvContainer) liveTvContainer.style.display = 'none';
+    if (categoriesContainer) categoriesContainer.style.display = 'none';
+    if (collectionsContainer) collectionsContainer.style.display = 'none';
+    if (detailsView) detailsView.style.display = 'none';
+    document.body.classList.remove('in-details-view');
+
+    if (searchContainer) searchContainer.style.display = 'block';
+
+    const titleEl = document.getElementById('searchTitle');
+    const subEl = document.getElementById('searchStatusSubtitle');
+    const backBtn = document.getElementById('searchBackBtn');
+
+    if (backBtn) backBtn.style.display = 'inline-block';
+    if (titleEl) titleEl.textContent = 'Explorar & Buscar';
+    if (subEl) subEl.textContent = 'Digite o nome de filmes, séries, atores ou gêneros para pesquisar em tempo real.';
+
+    const mobileInp = document.getElementById('mobileSearchInput');
+    const deskInp = document.getElementById('searchInput');
+    if (window.innerWidth <= 768 && mobileInp) {
+      setTimeout(() => mobileInp.focus(), 150);
+    } else if (deskInp) {
+      setTimeout(() => deskInp.focus(), 150);
+    }
   }
 
   /* ================================================================
