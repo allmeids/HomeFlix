@@ -61,16 +61,34 @@ def get_popular_movies(page: int = 1) -> List[Dict[str, Any]]:
     return data.get("results", [])
 
 def get_popular_series(page: int = 1) -> List[Dict[str, Any]]:
-    data = tmdb_request("tv/popular", {"page": page})
-    return data.get("results", [])
+    # Busca séries scripted populares (sem talk shows ou notícias)
+    data = tmdb_request("discover/tv", {
+        "sort_by": "popularity.desc",
+        "vote_count.gte": 60,
+        "without_genres": "10763,10767",
+        "page": page
+    })
+    results = data.get("results", [])
+    if not results:
+        data = tmdb_request("tv/popular", {"page": page})
+        results = data.get("results", [])
+    for it in results:
+        it["media_type"] = "tv"
+    return results
 
 def get_top_rated_movies(page: int = 1) -> List[Dict[str, Any]]:
     data = tmdb_request("movie/top_rated", {"page": page})
-    return data.get("results", [])
+    results = data.get("results", [])
+    for it in results:
+        it["media_type"] = "movie"
+    return results
 
 def get_top_rated_series(page: int = 1) -> List[Dict[str, Any]]:
     data = tmdb_request("tv/top_rated", {"page": page})
-    return data.get("results", [])
+    results = data.get("results", [])
+    for it in results:
+        it["media_type"] = "tv"
+    return results
 
 def get_now_playing(page: int = 1) -> List[Dict[str, Any]]:
     data = tmdb_request("movie/now_playing", {"page": page})

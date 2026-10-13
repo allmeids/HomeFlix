@@ -59,6 +59,16 @@ const API = {
     return data?.results || [];
   },
 
+  async getAnimeSagas(page = 1) {
+    const data = await this.request(`/api/media/animes/sagas?page=${page}`);
+    return data?.results || [];
+  },
+
+  async getAnimeHits(page = 1) {
+    const data = await this.request(`/api/media/animes/hits?page=${page}`);
+    return data?.results || [];
+  },
+
   async getRecommendations(profileId) {
     const data = await this.request(`/api/media/recommendations?profile_id=${profileId}`);
     return data?.results || [];

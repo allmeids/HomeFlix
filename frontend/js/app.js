@@ -777,6 +777,18 @@ class HomeFlixApp {
       }
     });
 
+    // Sincroniza também a Bottom Navigation Bar oficial mobile
+    const bottomNav = document.getElementById('netflixMobileBottomNav');
+    if (bottomNav) {
+      bottomNav.querySelectorAll('.nflx-bottom-nav-item').forEach(b => {
+        if (b.dataset.tab === tab) {
+          b.classList.add('active');
+        } else if (b.dataset.tab) {
+          b.classList.remove('active');
+        }
+      });
+    }
+
     const heroSection = document.getElementById('heroSection');
     const categoriesBar = document.getElementById('categoriesBarWrapper');
     const sectionsContainer = document.getElementById('sectionsContainer');
@@ -800,6 +812,9 @@ class HomeFlixApp {
       void el.offsetWidth; // trigger reflow
       el.classList.add('tab-view-fade');
     };
+
+    // Aplica visibilidade e títulos estritos por aba (elimina filmes na aba de séries e vice-versa)
+    this.applyTabSectionVisibility(tab);
 
     if (tab === 'home') {
       heroSection.style.display = 'flex';
@@ -858,6 +873,90 @@ class HomeFlixApp {
       sectionsContainer.style.display = 'none';
       liveTvContainer.style.display = 'none';
       this.loadWatchlist();
+    }
+  }
+
+  applyTabSectionVisibility(tab) {
+    const secSuperheroes = document.getElementById('superheroesSection');
+    const secAction = document.getElementById('actionMoviesSection');
+    const secPopularMovies = document.getElementById('popularMoviesSection');
+    const secPopularSeries = document.getElementById('popularSeriesSection');
+    const secScifi = document.getElementById('scifiMoviesSection');
+    const secComedy = document.getElementById('comedyMoviesSection');
+    const secHorror = document.getElementById('horrorMoviesSection');
+    const secThriller = document.getElementById('thrillerMoviesSection');
+    const secTop = document.getElementById('topMoviesSection');
+    const secFamily = document.getElementById('familyMoviesSection');
+    const secAnimeSagas = document.getElementById('animeSagasSection');
+    const secAnimeHits = document.getElementById('animeHitsSection');
+    const secAnimes = document.getElementById('animesSection');
+    const trendingTitle = document.getElementById('trendingTitle');
+    const popularMoviesTitle = document.getElementById('popularMoviesTitle');
+    const popularSeriesTitle = document.getElementById('popularSeriesTitle');
+    const topMoviesTitle = document.getElementById('topMoviesTitle');
+
+    if (tab === 'series') {
+      // Oculta compulsoriamente seções exclusivas de cinema/filmes (incluindo Vingadores/Heróis)
+      if (secSuperheroes) secSuperheroes.style.display = 'none';
+      if (secAction) secAction.style.display = 'none';
+      if (secPopularMovies) secPopularMovies.style.display = 'none';
+      if (secScifi) secScifi.style.display = 'none';
+      if (secComedy) secComedy.style.display = 'none';
+      if (secHorror) secHorror.style.display = 'none';
+      if (secThriller) secThriller.style.display = 'none';
+      if (secFamily) secFamily.style.display = 'none';
+
+      // Exibe e adapta seções de séries e animes
+      if (secPopularSeries) secPopularSeries.style.display = 'block';
+      if (secTop) secTop.style.display = 'block';
+      if (secAnimeSagas) secAnimeSagas.style.display = 'block';
+      if (secAnimeHits) secAnimeHits.style.display = 'block';
+      if (secAnimes) secAnimes.style.display = 'block';
+
+      if (trendingTitle) trendingTitle.textContent = 'Séries em Alta no HomeFlix';
+      if (popularSeriesTitle) popularSeriesTitle.textContent = 'Séries Mais Assistidas';
+      if (topMoviesTitle) topMoviesTitle.textContent = 'Séries Mais Bem Avaliadas';
+    } else if (tab === 'movies') {
+      // Oculta seções de séries
+      if (secPopularSeries) secPopularSeries.style.display = 'none';
+      if (secAnimeSagas) secAnimeSagas.style.display = 'none';
+      if (secAnimeHits) secAnimeHits.style.display = 'none';
+      if (secAnimes) secAnimes.style.display = 'none';
+
+      // Exibe seções de filmes
+      if (secSuperheroes) secSuperheroes.style.display = 'block';
+      if (secAction) secAction.style.display = 'block';
+      if (secPopularMovies) secPopularMovies.style.display = 'block';
+      if (secScifi) secScifi.style.display = 'block';
+      if (secComedy) secComedy.style.display = 'block';
+      if (secHorror) secHorror.style.display = 'block';
+      if (secThriller) secThriller.style.display = 'block';
+      if (secTop) secTop.style.display = 'block';
+      if (secFamily) secFamily.style.display = 'block';
+
+      if (trendingTitle) trendingTitle.textContent = 'Filmes em Alta no Cinema & Streaming';
+      if (popularMoviesTitle) popularMoviesTitle.textContent = 'Grandes Sucessos do Cinema';
+      if (topMoviesTitle) topMoviesTitle.textContent = 'Filmes Mais Bem Avaliados';
+    } else {
+      // Home: todas as seções ativas (catálogo misto)
+      if (secSuperheroes) secSuperheroes.style.display = 'block';
+      if (secAction) secAction.style.display = 'block';
+      if (secPopularMovies) secPopularMovies.style.display = 'block';
+      if (secPopularSeries) secPopularSeries.style.display = 'block';
+      if (secScifi) secScifi.style.display = 'block';
+      if (secComedy) secComedy.style.display = 'block';
+      if (secHorror) secHorror.style.display = 'block';
+      if (secThriller) secThriller.style.display = 'block';
+      if (secTop) secTop.style.display = 'block';
+      if (secFamily) secFamily.style.display = 'block';
+      if (secAnimeSagas) secAnimeSagas.style.display = 'block';
+      if (secAnimeHits) secAnimeHits.style.display = 'block';
+      if (secAnimes) secAnimes.style.display = 'block';
+
+      if (trendingTitle) trendingTitle.textContent = 'Em Alta no HomeFlix';
+      if (popularMoviesTitle) popularMoviesTitle.textContent = 'Grandes Sucessos do Cinema';
+      if (popularSeriesTitle) popularSeriesTitle.textContent = 'Séries Populares';
+      if (topMoviesTitle) topMoviesTitle.textContent = 'Mais Bem Avaliados';
     }
   }
 
@@ -1384,6 +1483,8 @@ class HomeFlixApp {
 
 
   async loadHome(retryCount = 0) {
+    this.applyTabSectionVisibility('home');
+
     // 1. Carrega o catálogo completo da Home (desduplicado pelo backend)
     const homeData = await API.getHomeCatalog();
 
@@ -1481,25 +1582,91 @@ class HomeFlixApp {
   }
 
   async loadMoviesTab() {
-    const popular = await API.getPopularMovies(1);
-    if (popular.length > 0) this.setupHeroSlideshow(popular);
-    this.renderCarousel('trendingCarousel', popular);
-    const top = await API.getTopRatedMovies(1);
-    this.renderCarousel('popularMoviesCarousel', top);
-    const nowPlaying = await API.getNowPlaying(1);
-    this.renderCarousel('popularSeriesCarousel', nowPlaying);
+    this.applyTabSectionVisibility('movies');
+
+    // Limpa o Hero se atualmente for uma série para não misturar no topo
+    if (this.heroItem && (this.heroItem.media_type === 'tv' || !this.heroItem.title)) {
+      this.pauseHeroSlideshow();
+      const heroType = document.getElementById('heroType');
+      if (heroType) {
+        heroType.textContent = 'FILME';
+        heroType.style.display = 'inline-block';
+      }
+    }
+
+    try {
+      const [popular, top, nowPlaying, superheroes, action] = await Promise.all([
+        API.getPopularMovies(1),
+        API.getTopRatedMovies(1),
+        API.getNowPlaying(1),
+        API.getCategoryItems('superheroes', 1),
+        API.getCategoryItems('action', 1)
+      ]);
+
+      (popular || []).forEach(it => { it.media_type = 'movie'; });
+      (top || []).forEach(it => { it.media_type = 'movie'; });
+      (nowPlaying || []).forEach(it => { it.media_type = 'movie'; });
+
+      if (popular && popular.length > 0) {
+        this.setupHeroSlideshow(popular);
+      }
+
+      this.renderCarousel('trendingCarousel', popular || []);
+      this.renderCarousel('popularMoviesCarousel', nowPlaying || []);
+      this.renderCarousel('topMoviesCarousel', top || []);
+      if (superheroes && superheroes.results) {
+        this.renderCarousel('superheroesCarousel', superheroes.results);
+      }
+      if (action && action.results) {
+        this.renderCarousel('actionMoviesCarousel', action.results);
+      }
+    } catch (e) {
+      console.error('[HomeFlix] Erro ao carregar aba de filmes:', e);
+    }
   }
 
   async loadSeriesTab() {
-    const popular = await API.getPopularSeries(1);
-    if (popular.length > 0) this.setupHeroSlideshow(popular);
-    this.renderCarousel('trendingCarousel', popular);
-    const top = await API.getTopRatedSeries(1);
-    this.renderCarousel('popularMoviesCarousel', top);
-    const animes = await API.getAnimes(1);
-    this.renderCarousel('popularSeriesCarousel', animes);
-    this.renderCarousel('animeSagasCarousel', animes);
-    this.renderCarousel('animeHitsCarousel', animes);
+    this.applyTabSectionVisibility('series');
+
+    // Limpa imediatamente o Hero se for filme (elimina banner dos Vingadores/filmes na aba de séries)
+    if (this.heroItem && (this.heroItem.media_type === 'movie' || this.heroItem.title)) {
+      this.pauseHeroSlideshow();
+      const heroType = document.getElementById('heroType');
+      if (heroType) {
+        heroType.textContent = 'SÉRIE';
+        heroType.style.display = 'inline-block';
+      }
+    }
+
+    try {
+      const [popular, top, animes, sagaAnimes, animeHits] = await Promise.all([
+        API.getPopularSeries(1),
+        API.getTopRatedSeries(1),
+        API.getAnimes(1),
+        API.getAnimeSagas(1),
+        API.getAnimeHits(1)
+      ]);
+
+      // Garante media_type 'tv' em todos os itens da aba de séries
+      (popular || []).forEach(it => { it.media_type = 'tv'; });
+      (top || []).forEach(it => { it.media_type = 'tv'; });
+      (animes || []).forEach(it => { it.media_type = 'tv'; });
+      (sagaAnimes || []).forEach(it => { it.media_type = 'tv'; });
+      (animeHits || []).forEach(it => { it.media_type = 'tv'; });
+
+      if (popular && popular.length > 0) {
+        this.setupHeroSlideshow(popular);
+      }
+
+      this.renderCarousel('trendingCarousel', popular || []);
+      this.renderCarousel('popularSeriesCarousel', (popular || []).slice(6));
+      this.renderCarousel('topMoviesCarousel', top || []);
+      this.renderCarousel('animeSagasCarousel', sagaAnimes && sagaAnimes.length ? sagaAnimes : (animes || []));
+      this.renderCarousel('animeHitsCarousel', animeHits && animeHits.length ? animeHits : (animes || []));
+      this.renderCarousel('animesCarousel', animes || []);
+    } catch (e) {
+      console.error('[HomeFlix] Erro ao carregar aba de séries:', e);
+    }
   }
 
   async loadContinueWatching() {
