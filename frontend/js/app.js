@@ -97,12 +97,31 @@ class HomeFlixApp {
 
   setupPwa() {
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-          .then((reg) => console.log('[HomeFlix PWA] Service Worker registrado:', reg.scope))
-          .catch((err) => console.warn('[HomeFlix PWA] Erro ao registrar SW:', err));
+      navigator.serviceWorker.getRegistrations().then(regs => {
+        for (const reg of regs) reg.unregister();
       });
     }
+    // Suporte ao botão voltar do navegador / mouse / controle remoto
+    window.addEventListener('popstate', () => {
+      if (this.player && this.player.overlay && this.player.overlay.classList.contains('open')) {
+        this.player.close();
+        return;
+      }
+      const detailsView = document.getElementById('detailsView');
+      if (detailsView && detailsView.style.display !== 'none') {
+        detailsView.style.display = 'none';
+        document.body.classList.remove('in-details-view');
+        this.closeSearch();
+        this.switchTab('home');
+        return;
+      }
+      const searchContainer = document.getElementById('searchContainer');
+      if (searchContainer && searchContainer.style.display !== 'none') {
+        this.closeSearch();
+        return;
+      }
+      this.switchTab('home');
+    });
   }
 
   setupNavbar() {
@@ -115,15 +134,15 @@ class HomeFlixApp {
       }
     });
 
-    // Logo click
+    // Logo click - Sempre retorna para o Início limpando qualquer view aberta
     const navLogo = document.getElementById('navLogo');
     if (navLogo) {
       navLogo.addEventListener('click', () => {
-        if (this.currentTab === 'home') {
-          this.refreshCatalog();
-        } else {
-          this.switchTab('home');
-        }
+        const detailsView = document.getElementById('detailsView');
+        if (detailsView) detailsView.style.display = 'none';
+        document.body.classList.remove('in-details-view');
+        this.closeSearch();
+        this.switchTab('home');
       });
     }
 
@@ -132,6 +151,12 @@ class HomeFlixApp {
       item.setAttribute('tabindex', '0');
       item.addEventListener('click', (e) => {
         const tab = e.currentTarget.getAttribute('data-tab');
+        const detailsView = document.getElementById('detailsView');
+        if (detailsView) detailsView.style.display = 'none';
+        document.body.classList.remove('in-details-view');
+        if (tab === 'home') {
+          this.closeSearch();
+        }
         this.switchTab(tab);
       });
       item.addEventListener('keydown', (e) => {
@@ -1788,6 +1813,12 @@ class HomeFlixApp {
     liveTvContainer.style.display = 'none';
     searchContainer.style.display = 'none';
 
+    try {
+      if (!history.state || history.state.view !== 'details' || history.state.id !== tmdbId) {
+        history.pushState({ view: 'details', id: tmdbId }, '');
+      }
+    } catch (_) {}
+
     detailsView.style.display = 'block';
     window.scrollTo({ top: 0, behavior: 'instant' });
 
@@ -1873,11 +1904,14 @@ class HomeFlixApp {
 
     // Botão Voltar
     const backBtn = document.getElementById('detailsViewBackBtn');
-    backBtn.onclick = () => {
-      detailsView.style.display = 'none';
-      document.body.classList.remove('in-details-view');
-      this.switchTab(this.currentTab || 'home');
-    };
+    if (backBtn) {
+      backBtn.onclick = () => {
+        detailsView.style.display = 'none';
+        document.body.classList.remove('in-details-view');
+        this.closeSearch();
+        this.switchTab('home');
+      };
+    }
 
     // Botão Trailer Oficial
     const trailerBtn = document.getElementById('detailsTrailerBtn');
@@ -2517,7 +2551,10 @@ class HomeFlixApp {
     if (searchInput) searchInput.value = '';
     const searchContainer = document.getElementById('searchContainer');
     if (searchContainer) searchContainer.style.display = 'none';
-    this.switchTab(this.previousTab || 'home');
+    const detailsView = document.getElementById('detailsView');
+    if (detailsView) detailsView.style.display = 'none';
+    document.body.classList.remove('in-details-view');
+    this.switchTab('home');
   }
 
   /* ================================================================
