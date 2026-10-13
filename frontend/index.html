@@ -32,7 +32,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/style.css?v=9.5">
+  <link rel="stylesheet" href="/static/css/style.css?v=9.6">
   <!-- HLS.js para streaming HLS/m3u8 no navegador -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -912,9 +912,43 @@
     </div>
   </div>
 
+  <!-- Barra de Navegação Inferior Mobile Oficial da Netflix -->
+  <nav class="netflix-mobile-bottom-nav" id="netflixMobileBottomNav" aria-label="Navegação Principal Mobile">
+    <button type="button" class="nflx-bottom-nav-item active" data-tab="home" id="bottomNavHome">
+      <div class="nflx-bottom-nav-icon">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none"><path d="M12 3L2 11h3v10h6v-6h2v6h6V11h3L12 3z" fill="currentColor"/></svg>
+      </div>
+      <span class="nflx-bottom-nav-label">Início</span>
+    </button>
+    <button type="button" class="nflx-bottom-nav-item" data-tab="movies" id="bottomNavMovies">
+      <div class="nflx-bottom-nav-icon">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none"><rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="2"/><line x1="3" y1="9" x2="21" y2="9" stroke="currentColor" stroke-width="2"/><line x1="8" y1="4" x2="8" y2="9" stroke="currentColor" stroke-width="2"/><line x1="16" y1="4" x2="16" y2="9" stroke="currentColor" stroke-width="2"/></svg>
+      </div>
+      <span class="nflx-bottom-nav-label">Filmes</span>
+    </button>
+    <button type="button" class="nflx-bottom-nav-item" data-tab="series" id="bottomNavSeries">
+      <div class="nflx-bottom-nav-icon">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none"><rect x="2" y="7" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2"/><path d="M17 3l-5 4-5-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+      <span class="nflx-bottom-nav-label">Séries</span>
+    </button>
+    <button type="button" class="nflx-bottom-nav-item" id="bottomNavSearch">
+      <div class="nflx-bottom-nav-icon">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      </div>
+      <span class="nflx-bottom-nav-label">Buscar</span>
+    </button>
+    <button type="button" class="nflx-bottom-nav-item" id="bottomNavProfile">
+      <div class="nflx-bottom-nav-icon nflx-bottom-avatar-wrap">
+        <div class="nflx-bottom-avatar-img" id="bottomNavAvatarImg"></div>
+      </div>
+      <span class="nflx-bottom-nav-label">Meu Perfil</span>
+    </button>
+  </nav>
+
   <!-- Scripts -->
-  <script src="/static/js/api.js?v=9.5"></script>
-  <script src="/static/js/player.js?v=9.5"></script>
-  <script src="/static/js/app.js?v=9.5"></script>
+  <script src="/static/js/api.js?v=9.6"></script>
+  <script src="/static/js/player.js?v=9.6"></script>
+  <script src="/static/js/app.js?v=9.6"></script>
 </body>
 </html>

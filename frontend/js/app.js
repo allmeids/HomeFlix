@@ -236,6 +236,31 @@ class HomeFlixApp {
     if (searchBackBtn) {
       searchBackBtn.onclick = () => this.closeSearch();
     }
+
+    // Configuração da Bottom Navigation Bar Mobile Oficial da Netflix
+    const bottomNav = document.getElementById('netflixMobileBottomNav');
+    if (bottomNav) {
+      bottomNav.querySelectorAll('.nflx-bottom-nav-item').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const tab = btn.dataset.tab;
+          if (tab) {
+            bottomNav.querySelectorAll('.nflx-bottom-nav-item').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            this.switchTab(tab);
+          } else if (btn.id === 'bottomNavSearch') {
+            const searchBox = document.querySelector('.search-box');
+            if (searchBox) searchBox.classList.add('active');
+            const searchInp = document.getElementById('searchInput');
+            if (searchInp) {
+              searchInp.focus();
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+          } else if (btn.id === 'bottomNavProfile') {
+            this.openProfileModal(false, false);
+          }
+        });
+      });
+    }
   }
 
   setupCategoryBar() {
@@ -917,6 +942,22 @@ class HomeFlixApp {
         avatarEl.style.fontSize = '12px';
       }
       if (nameEl) nameEl.textContent = this.currentProfile.name || 'Perfil';
+
+      const bottomAvatar = document.getElementById('bottomNavAvatarImg');
+      if (bottomAvatar) {
+        if (visual.isImage) {
+          bottomAvatar.style.backgroundImage = `url('${visual.url}')`;
+          bottomAvatar.textContent = '';
+        } else {
+          bottomAvatar.style.background = visual.bg;
+          bottomAvatar.textContent = visual.initial;
+          bottomAvatar.style.color = '#fff';
+          bottomAvatar.style.display = 'flex';
+          bottomAvatar.style.alignItems = 'center';
+          bottomAvatar.style.justifyContent = 'center';
+          bottomAvatar.style.fontSize = '11px';
+        }
+      }
 
       const recTitle = document.getElementById('recommendationsTitle');
       if (recTitle) {

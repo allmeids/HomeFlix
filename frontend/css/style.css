@@ -574,11 +574,11 @@ body {
   height: 76vh;
   min-height: 520px;
   max-height: 760px;
-  margin: 12px 36px 24px;
+  margin: 12px 36px 32px;
   border-radius: 24px;
   overflow: hidden;
   box-shadow: rgba(0, 0, 0, 0.55) 0px 20px 40px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   background-size: cover;
   background-position: center 20%;
   display: flex;
@@ -858,10 +858,10 @@ body {
    BARRA / CARROSSEL DE CATEGORIAS ESTILO PRIME VIDEO
    ================================================================ */
 .categories-bar-wrapper {
-  padding: 10px 4% 30px;
+  padding: 0 4% 30px;
   position: relative;
   z-index: 25;
-  margin-top: -30px;
+  margin-top: 0;
 }
 
 .categories-bar-header {
@@ -2788,10 +2788,11 @@ body.in-details-view .navbar {
   display: none;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   overflow-y: auto;
   overflow-x: hidden;
   box-sizing: border-box;
+  padding-top: 80px;
 }
 
 .netflix-profile-gateway.open {
@@ -2805,7 +2806,7 @@ body.in-details-view .navbar {
 }
 
 .profile-gateway-topbar {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
@@ -2815,7 +2816,8 @@ body.in-details-view .navbar {
   justify-content: space-between;
   padding: 0 4%;
   box-sizing: border-box;
-  background: linear-gradient(180deg, rgba(0,0,0,0.7) 10%, transparent);
+  background: linear-gradient(180deg, rgba(20,20,20,0.95) 40%, transparent);
+  z-index: 100000;
   pointer-events: none;
 }
 
@@ -2852,11 +2854,11 @@ body.in-details-view .navbar {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   width: 100%;
-  max-width: 1100px;
-  padding: 40px 24px;
-  margin: auto;
+  max-width: 100%;
+  padding: 10px 4% 60px;
+  margin: 0;
   box-sizing: border-box;
 }
 
@@ -3228,13 +3230,13 @@ body.in-details-view .navbar {
    ================================================================ */
 .profile-view-avatars-netflix {
   width: 100%;
-  max-width: 1200px;
+  max-width: 100%;
   min-height: 80vh;
   display: flex;
   flex-direction: column;
   animation: fadeInNetflixGate 0.2s ease;
   box-sizing: border-box;
-  padding: 10px 24px 60px;
+  padding: 10px 4% 60px;
 }
 
 /* Header com Seta de Voltar, Título e Subtítulo */
@@ -5093,23 +5095,327 @@ body.in-details-view .navbar {
   50% { opacity: 1; transform: translateX(-50%) scale(1.02); }
 }
 
-/* Botão Pular Abertura */
-.ctrl-skip-intro {
-  background: rgba(255, 255, 255, 0.16) !important;
-  color: #ffffff !important;
-  border: 1px solid rgba(255, 255, 255, 0.25) !important;
-  border-radius: 6px !important;
-  padding: 6px 14px !important;
-  font-size: 12px !important;
-  font-weight: 700 !important;
-  cursor: pointer;
-  transition: all 0.2s !important;
+/* ================================================================
+   NETFLIX MOBILE DESIGN SYSTEM (APP NATIVO EXPERIENCE)
+   ================================================================ */
+/* Barra de Navegação Inferior (Mobile Bottom Nav) */
+.netflix-mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 64px;
+  background: rgba(18, 18, 18, 0.94);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  z-index: 9999;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 4px;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  box-sizing: border-box;
 }
 
-.ctrl-skip-intro:hover,
-.ctrl-skip-intro:focus {
-  background: rgba(255, 255, 255, 0.3) !important;
-  border-color: #ffffff !important;
-  outline: 2px solid #00d2ff !important;
+.nflx-bottom-nav-item {
+  background: none;
+  border: none;
+  color: #8c8c8c;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex: 1;
+  height: 100%;
+  cursor: pointer;
+  padding: 6px 0;
+  outline: none;
+  transition: color 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.nflx-bottom-nav-item.active,
+.nflx-bottom-nav-item:active {
+  color: #ffffff;
+}
+
+.nflx-bottom-nav-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease;
+}
+
+.nflx-bottom-nav-item.active .nflx-bottom-nav-icon {
+  transform: scale(1.1);
+  color: #ffffff;
+}
+
+.nflx-bottom-nav-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: -0.2px;
+  font-family: 'Netflix Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.nflx-bottom-avatar-wrap {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.nflx-bottom-avatar-img {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+}
+
+/* Regras Mobile Estritas (max-width: 768px) */
+@media (max-width: 768px) {
+  body {
+    padding-bottom: 74px; /* Espaço para não cobrir conteúdo com a bottom nav */
+  }
+
+  /* Exibe a barra de navegação inferior */
+  .netflix-mobile-bottom-nav {
+    display: flex !important;
+  }
+
+  /* Navbar superior vira o TopBar limpo da Netflix Mobile */
+  .navbar {
+    padding: 12px 16px;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.8) 0%, transparent 100%) !important;
+  }
+
+  .nav-links,
+  .profile-menu-container,
+  .search-box {
+    display: none !important; /* Itens movidos para a bottom nav */
+  }
+
+  /* Hero Banner Mobile (Card Retangular Estilo Netflix Mobile App) */
+  .hero {
+    height: 72vh !important;
+    min-height: 480px !important;
+    max-height: 560px !important;
+    margin: 6px 12px 20px !important;
+    border-radius: 16px !important;
+    padding: 0 16px 24px 16px !important;
+    align-items: flex-end !important;
+  }
+
+  .hero-title {
+    font-size: 32px !important;
+    margin-bottom: 10px !important;
+    text-align: center;
+  }
+
+  .hero-content {
+    max-width: 100% !important;
+    width: 100% !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .hero-meta {
+    justify-content: center;
+    gap: 8px;
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+
+  .hero-overview {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 13px !important;
+    line-height: 1.4 !important;
+    margin-bottom: 16px !important;
+    text-align: center;
+  }
+
+  .hero-actions {
+    width: 100%;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+
+  .hero-actions .btn {
+    flex: 1;
+    max-width: 180px;
+    padding: 11px 16px !important;
+    font-size: 14px !important;
+    justify-content: center;
+  }
+
+  .hero-context-badge {
+    display: none !important;
+  }
+
+  .hero-sound-btn {
+    top: 14px !important;
+    right: 14px !important;
+    bottom: auto !important;
+    width: 36px !important;
+    height: 36px !important;
+  }
+
+  /* Barra de Categorias Mobile */
+  .categories-bar-wrapper {
+    padding: 0 16px 20px !important;
+  }
+
+  .categories-bar-header {
+    display: none !important;
+  }
+
+  .cat-nav-btn {
+    display: none !important; /* No mobile o scroll é por toque */
+  }
+
+  .categories-carousel {
+    padding: 4px 0 !important;
+  }
+
+  .cat-card {
+    padding: 8px 16px !important;
+    font-size: 13px !important;
+  }
+
+  /* Seções e Carrosséis de Mídia */
+  .media-section {
+    padding: 0 16px !important;
+    margin-bottom: 24px !important;
+  }
+
+  .section-title {
+    font-size: 18px !important;
+    margin-bottom: 10px !important;
+  }
+
+  .carousel-nav-btn {
+    display: none !important; /* Deslize por toque suave nativo */
+  }
+
+  .media-card {
+    flex: 0 0 120px !important;
+    width: 120px !important;
+    height: 180px !important;
+  }
+
+  /* Vista de Detalhes Mobile (Alinhamento Perfeito Sem Sobreposição) */
+  .details-view {
+    padding: 0 !important;
+  }
+
+  .details-view-header {
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 56px;
+    background: rgba(20, 20, 20, 0.95);
+    backdrop-filter: blur(12px);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    box-sizing: border-box;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .btn-netflix-back-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 6px 0;
+  }
+
+  .details-view-title-truncate {
+    font-size: 16px;
+    font-weight: 700;
+    color: #ffffff;
+    max-width: 60%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .details-hero-banner {
+    border-radius: 0 !important;
+    height: auto !important;
+    min-height: 380px !important;
+    padding: 60px 16px 24px !important;
+  }
+
+  .details-hero-body {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: 16px !important;
+  }
+
+  .details-poster-wrap {
+    width: 150px !important;
+    height: 225px !important;
+    border-radius: 8px !important;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.9) !important;
+  }
+
+  .details-main-title {
+    font-size: 26px !important;
+  }
+
+  .details-actions-row {
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 10px !important;
+  }
+
+  .details-actions-row .btn {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  /* Gateway de Perfis Mobile */
+  .profile-gateway-container {
+    padding: 24px 16px !important;
+  }
+
+  .profile-view-select .profile-modal-heading {
+    font-size: 30px !important;
+    margin-bottom: 28px !important;
+  }
+
+  .profile-modal-grid {
+    gap: 16px !important;
+  }
+
+  .profile-card {
+    width: 100px !important;
+  }
+
+  .profile-name-large {
+    font-size: 14px !important;
+  }
 }
 

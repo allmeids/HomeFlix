@@ -410,6 +410,13 @@ class HomeFlixPlayer {
 
     this.overlay.classList.add('open');
 
+    // Modo Celular: trava automaticamente na horizontal ao reproduzir
+    try {
+      if (screen.orientation && typeof screen.orientation.lock === 'function') {
+        screen.orientation.lock('landscape').catch(() => {});
+      }
+    } catch (_) {}
+
     // Configura elementos exclusivos de TV ao Vivo vs VOD
     if (this.isLive) {
       this.prevChannelBtn.style.display = 'flex';
@@ -1260,6 +1267,13 @@ class HomeFlixPlayer {
     if (document.fullscreenElement) {
       document.exitFullscreen().catch(() => {});
     }
+
+    // Restaura orientação do celular ao sair do player
+    try {
+      if (screen.orientation && typeof screen.orientation.unlock === 'function') {
+        screen.orientation.unlock();
+      }
+    } catch (_) {}
     // Atualiza a home e continuar assistindo se disponível
     if (window.app) {
       window.app.loadContinueWatching();
