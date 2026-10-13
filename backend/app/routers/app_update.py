@@ -9,10 +9,10 @@ DIST_DIR = os.path.join(BASE_DIR, "dist")
 APK_PATH = os.path.join(DIST_DIR, "HomeFlix.apk")
 
 APP_INFO = {
-    "version_code": 1,
-    "version_name": "1.0.0",
+    "version_code": 2,
+    "version_name": "1.0.1",
     "download_url": "/api/app/download",
-    "changelog": "Versão oficial com Auto-Update online, modo cinema imersivo e reprodução fluida."
+    "changelog": "Correção de toque rápido no player, novo ícone de Play/Pause, remoção de highlights azuis e correção dos avatares de anime."
 }
 
 @router.get("/api/app/version")

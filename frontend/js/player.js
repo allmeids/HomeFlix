@@ -91,19 +91,68 @@ class HomeFlixPlayer {
 
   initListeners() {
     // Play / Pause
-    this.playBtn.addEventListener('click', () => this.togglePlay());
-    this.video.addEventListener('click', (e) => {
-      // Se clicou fora dos controles, fecha a sidebar se estiver aberta
+    this.playBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.togglePlay();
+    });
+
+    // Manipulador unificado de toque/clique para alternar HUD
+    const togglePlayerHud = () => {
       if (this.sidebar && this.sidebar.classList.contains('open')) {
         this.toggleSidebar(false);
         return;
       }
-      // Alterna exibição do HUD sem pausar a reprodução (pausa só no botão ou Espaço)
+      if (this.subtitlesMenu && this.subtitlesMenu.style.display !== 'none') {
+        this.toggleSubtitlesMenu(false);
+        return;
+      }
       if (this.overlay.classList.contains('hud-hidden')) {
         this.wakeHud();
       } else {
         this.hideHud();
       }
+    };
+
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchStartTime = 0;
+    let lastTouchHandledTime = 0;
+
+    // Rastreia início do toque na tela
+    this.overlay.addEventListener('touchstart', (e) => {
+      if (e.touches && e.touches.length === 1) {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+        touchStartTime = Date.now();
+      }
+    }, { passive: true });
+
+    // Alterna HUD instantaneamente em toque rápido no mobile (sem atraso de clique)
+    this.overlay.addEventListener('touchend', (e) => {
+      if (!this.overlay.classList.contains('open')) return;
+      const touchDuration = Date.now() - touchStartTime;
+      const touch = e.changedTouches && e.changedTouches[0];
+      if (!touch) return;
+
+      const dist = Math.hypot(touch.clientX - touchStartX, touch.clientY - touchStartY);
+      if (touchDuration < 400 && dist < 20) {
+        const isInteractive = e.target.closest(
+          'button, a, input, select, .player-progress-bar, .player-channels-sidebar, .player-subtitles-menu, .player-next-ep-card, .player-error-back-btn'
+        );
+        if (!isInteractive) {
+          e.preventDefault();
+          lastTouchHandledTime = Date.now();
+          togglePlayerHud();
+        }
+      }
+    }, { passive: false });
+
+    // Clique do mouse em desktop (ignora clique sintético logo após toque mobile)
+    this.video.addEventListener('click', (e) => {
+      if (Date.now() - lastTouchHandledTime < 500) {
+        return;
+      }
+      togglePlayerHud();
     });
 
     // Atualização de tempo e progresso
@@ -375,14 +424,15 @@ class HomeFlixPlayer {
       }
     });
 
-    // Auto-hide controls ao mexer o mouse, clicar ou tocar na tela
+    // Auto-hide controls ao mexer o mouse na tela em desktop
     this.overlay.addEventListener('mousemove', () => this.wakeHud());
-    this.overlay.addEventListener('mousedown', () => this.wakeHud());
-    this.overlay.addEventListener('touchstart', () => this.wakeHud(), { passive: true });
     this.overlay.addEventListener('wheel', () => this.wakeHud(), { passive: true });
   }
 
   preparePlayback(options = {}) {
+    this.overlay.style.display = 'flex';
+    this.overlay.style.pointerEvents = 'auto';
+    this.overlay.style.opacity = '1';
     this.overlay.classList.add('open');
     document.body.classList.add('player-open');
     this.isLive = !!options.isLive;
@@ -1370,6 +1420,21 @@ class HomeFlixPlayer {
     this.failedUrls.clear();
     this.overlay.classList.remove('open');
     this.overlay.classList.remove('hud-hidden');
+    this.overlay.style.display = 'none';
+    this.overlay.style.pointerEvents = 'none';
+    this.overlay.style.opacity = '0';
+
+    const top = document.querySelector('.player-topbar');
+    const bottom = document.querySelector('.player-controls-bottom');
+    if (top) {
+      top.style.pointerEvents = 'none';
+      top.style.opacity = '0';
+    }
+    if (bottom) {
+      bottom.style.pointerEvents = 'none';
+      bottom.style.opacity = '0';
+    }
+
     document.body.classList.remove('player-open');
     this.sidebar.classList.remove('open');
     if (this.liveOsd) this.liveOsd.classList.remove('show');
@@ -1390,6 +1455,9 @@ class HomeFlixPlayer {
         screen.orientation.unlock();
       }
     } catch (_) {}
+
+    // Notifica redimensionamento para restaurar reflow suave da página
+    window.dispatchEvent(new Event('resize'));
     // Atualiza a home e continuar assistindo se disponível
     if (window.app) {
       window.app.loadContinueWatching();

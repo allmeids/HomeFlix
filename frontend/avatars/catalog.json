@@ -734,21 +734,21 @@
           "name": "Eren Yeager",
           "category": "attack_on_titan_shingeki",
           "category_name": "Attack on Titan (Shingeki)",
-          "img": "https://images7.alphacoders.com/133/thumb-350-1339905.png"
+          "img": "/static/avatars/aot_eren.png"
         },
         {
           "id": "aot_levi",
           "name": "Levi Ackerman",
           "category": "attack_on_titan_shingeki",
           "category_name": "Attack on Titan (Shingeki)",
-          "img": "https://images8.alphacoders.com/133/thumb-350-1339906.png"
+          "img": "/static/avatars/aot_levi.png"
         },
         {
           "id": "aot_mikasa",
           "name": "Mikasa Ackerman",
           "category": "attack_on_titan_shingeki",
           "category_name": "Attack on Titan (Shingeki)",
-          "img": "https://images.alphacoders.com/133/thumb-350-1339907.png"
+          "img": "/static/avatars/aot_mikasa.png"
         }
       ],
       "count": 3
@@ -1539,35 +1539,35 @@
           "name": "Seiya de Pégaso",
           "category": "cavaleiros_do_zodiaco",
           "category_name": "Cavaleiros do Zodíaco",
-          "img": "https://images2.alphacoders.com/131/thumb-350-1318465.png"
+          "img": "/static/avatars/cdz_seiya.png"
         },
         {
           "id": "cdz_shiryu",
           "name": "Shiryu de Dragão",
           "category": "cavaleiros_do_zodiaco",
           "category_name": "Cavaleiros do Zodíaco",
-          "img": "https://images2.alphacoders.com/131/thumb-350-1318466.png"
+          "img": "/static/avatars/cdz_shiryu.png"
         },
         {
           "id": "cdz_hyoga",
           "name": "Hyoga de Cisne",
           "category": "cavaleiros_do_zodiaco",
           "category_name": "Cavaleiros do Zodíaco",
-          "img": "https://images2.alphacoders.com/131/thumb-350-1318467.png"
+          "img": "/static/avatars/cdz_hyoga.png"
         },
         {
           "id": "cdz_shun",
           "name": "Shun de Andrômeda",
           "category": "cavaleiros_do_zodiaco",
           "category_name": "Cavaleiros do Zodíaco",
-          "img": "https://images2.alphacoders.com/131/thumb-350-1318468.png"
+          "img": "/static/avatars/cdz_shun.png"
         },
         {
           "id": "cdz_ikki",
           "name": "Ikki de Fênix",
           "category": "cavaleiros_do_zodiaco",
           "category_name": "Cavaleiros do Zodíaco",
-          "img": "https://images2.alphacoders.com/131/thumb-350-1318469.png"
+          "img": "/static/avatars/cdz_ikki.png"
         }
       ],
       "count": 5
@@ -1994,14 +1994,14 @@
           "name": "L Lawliet",
           "category": "death_note",
           "category_name": "Death Note",
-          "img": "https://images3.alphacoders.com/133/thumb-350-1339909.png"
+          "img": "/static/avatars/death_l.png"
         },
         {
           "id": "death_light",
           "name": "Light Yagami",
           "category": "death_note",
           "category_name": "Death Note",
-          "img": "https://images4.alphacoders.com/133/thumb-350-1339910.png"
+          "img": "/static/avatars/death_light.png"
         }
       ],
       "count": 2
@@ -2015,28 +2015,28 @@
           "name": "Tanjiro Kamado",
           "category": "demon_slayer_kimetsu",
           "category_name": "Demon Slayer (Kimetsu)",
-          "img": "https://images7.alphacoders.com/133/thumb-350-1339897.png"
+          "img": "/static/avatars/ds_tanjiro.png"
         },
         {
           "id": "ds_nezuko",
           "name": "Nezuko Kamado",
           "category": "demon_slayer_kimetsu",
           "category_name": "Demon Slayer (Kimetsu)",
-          "img": "https://images8.alphacoders.com/133/thumb-350-1339898.png"
+          "img": "/static/avatars/ds_nezuko.png"
         },
         {
           "id": "ds_zenitsu",
           "name": "Zenitsu Agatsuma",
           "category": "demon_slayer_kimetsu",
           "category_name": "Demon Slayer (Kimetsu)",
-          "img": "https://images.alphacoders.com/133/thumb-350-1339899.png"
+          "img": "/static/avatars/ds_zenitsu.png"
         },
         {
           "id": "ds_inosuke",
           "name": "Inosuke Hashibira",
           "category": "demon_slayer_kimetsu",
           "category_name": "Demon Slayer (Kimetsu)",
-          "img": "https://images2.alphacoders.com/133/thumb-350-1339900.png"
+          "img": "/static/avatars/ds_inosuke.png"
         }
       ],
       "count": 4
@@ -2050,35 +2050,35 @@
           "name": "Goku (Super Saiyajin)",
           "category": "dragon_ball",
           "category_name": "Dragon Ball",
-          "img": "https://images.alphacoders.com/132/thumb-350-1329241.png"
+          "img": "/static/avatars/dbz_goku.png"
         },
         {
           "id": "dbz_vegeta",
           "name": "Vegeta",
           "category": "dragon_ball",
           "category_name": "Dragon Ball",
-          "img": "https://images.alphacoders.com/133/thumb-350-1330364.png"
+          "img": "/static/avatars/dbz_vegeta.png"
         },
         {
           "id": "dbz_gohan",
           "name": "Gohan",
           "category": "dragon_ball",
           "category_name": "Dragon Ball",
-          "img": "https://images.alphacoders.com/133/thumb-350-1331741.png"
+          "img": "/static/avatars/dbz_gohan.png"
         },
         {
           "id": "dbz_piccolo",
           "name": "Piccolo",
           "category": "dragon_ball",
           "category_name": "Dragon Ball",
-          "img": "https://images.alphacoders.com/133/thumb-350-1330365.png"
+          "img": "/static/avatars/dbz_piccolo.png"
         },
         {
           "id": "dbz_trunks",
           "name": "Trunks do Futuro",
           "category": "dragon_ball",
           "category_name": "Dragon Ball",
-          "img": "https://images.alphacoders.com/133/thumb-350-1331742.png"
+          "img": "/static/avatars/dbz_trunks.png"
         }
       ],
       "count": 5
@@ -2260,28 +2260,28 @@
           "name": "Satoru Gojo",
           "category": "jujutsu_kaisen",
           "category_name": "Jujutsu Kaisen",
-          "img": "https://images3.alphacoders.com/133/thumb-350-1339901.png"
+          "img": "/static/avatars/jjk_gojo.png"
         },
         {
           "id": "jjk_itadori",
           "name": "Yuji Itadori",
           "category": "jujutsu_kaisen",
           "category_name": "Jujutsu Kaisen",
-          "img": "https://images4.alphacoders.com/133/thumb-350-1339902.png"
+          "img": "/static/avatars/jjk_itadori.png"
         },
         {
           "id": "jjk_megumi",
           "name": "Megumi Fushiguro",
           "category": "jujutsu_kaisen",
           "category_name": "Jujutsu Kaisen",
-          "img": "https://images5.alphacoders.com/133/thumb-350-1339903.png"
+          "img": "/static/avatars/jjk_megumi.png"
         },
         {
           "id": "jjk_sukuna",
           "name": "Ryomen Sukuna",
           "category": "jujutsu_kaisen",
           "category_name": "Jujutsu Kaisen",
-          "img": "https://images6.alphacoders.com/133/thumb-350-1339904.png"
+          "img": "/static/avatars/jjk_sukuna.png"
         }
       ],
       "count": 4
@@ -2680,28 +2680,28 @@
           "name": "Naruto Uzumaki",
           "category": "naruto_boruto",
           "category_name": "Naruto & Boruto",
-          "img": "https://images4.alphacoders.com/133/thumb-350-1339893.png"
+          "img": "/static/avatars/naruto_naruto.png"
         },
         {
           "id": "naruto_sasuke",
           "name": "Sasuke Uchiha",
           "category": "naruto_boruto",
           "category_name": "Naruto & Boruto",
-          "img": "https://images3.alphacoders.com/133/thumb-350-1339894.png"
+          "img": "/static/avatars/naruto_sasuke.png"
         },
         {
           "id": "naruto_kakashi",
           "name": "Kakashi Hatake",
           "category": "naruto_boruto",
           "category_name": "Naruto & Boruto",
-          "img": "https://images5.alphacoders.com/133/thumb-350-1339895.png"
+          "img": "/static/avatars/naruto_kakashi.png"
         },
         {
           "id": "naruto_itachi",
           "name": "Itachi Uchiha",
           "category": "naruto_boruto",
           "category_name": "Naruto & Boruto",
-          "img": "https://images6.alphacoders.com/133/thumb-350-1339896.png"
+          "img": "/static/avatars/naruto_itachi.png"
         }
       ],
       "count": 4
@@ -3933,7 +3933,7 @@
           "name": "Sung Jin-woo",
           "category": "solo_leveling",
           "category_name": "Solo Leveling",
-          "img": "https://images2.alphacoders.com/133/thumb-350-1339908.png"
+          "img": "/static/avatars/solo_jinwoo.png"
         }
       ],
       "count": 1
@@ -5590,21 +5590,21 @@
       "name": "Eren Yeager",
       "category": "attack_on_titan_shingeki",
       "category_name": "Attack on Titan (Shingeki)",
-      "img": "https://images7.alphacoders.com/133/thumb-350-1339905.png"
+      "img": "/static/avatars/aot_eren.png"
     },
     {
       "id": "aot_levi",
       "name": "Levi Ackerman",
       "category": "attack_on_titan_shingeki",
       "category_name": "Attack on Titan (Shingeki)",
-      "img": "https://images8.alphacoders.com/133/thumb-350-1339906.png"
+      "img": "/static/avatars/aot_levi.png"
     },
     {
       "id": "aot_mikasa",
       "name": "Mikasa Ackerman",
       "category": "attack_on_titan_shingeki",
       "category_name": "Attack on Titan (Shingeki)",
-      "img": "https://images.alphacoders.com/133/thumb-350-1339907.png"
+      "img": "/static/avatars/aot_mikasa.png"
     },
     {
       "id": "avatar_o_ultimo_mestre_do_ar_1",
@@ -6332,35 +6332,35 @@
       "name": "Seiya de Pégaso",
       "category": "cavaleiros_do_zodiaco",
       "category_name": "Cavaleiros do Zodíaco",
-      "img": "https://images2.alphacoders.com/131/thumb-350-1318465.png"
+      "img": "/static/avatars/cdz_seiya.png"
     },
     {
       "id": "cdz_shiryu",
       "name": "Shiryu de Dragão",
       "category": "cavaleiros_do_zodiaco",
       "category_name": "Cavaleiros do Zodíaco",
-      "img": "https://images2.alphacoders.com/131/thumb-350-1318466.png"
+      "img": "/static/avatars/cdz_shiryu.png"
     },
     {
       "id": "cdz_hyoga",
       "name": "Hyoga de Cisne",
       "category": "cavaleiros_do_zodiaco",
       "category_name": "Cavaleiros do Zodíaco",
-      "img": "https://images2.alphacoders.com/131/thumb-350-1318467.png"
+      "img": "/static/avatars/cdz_hyoga.png"
     },
     {
       "id": "cdz_shun",
       "name": "Shun de Andrômeda",
       "category": "cavaleiros_do_zodiaco",
       "category_name": "Cavaleiros do Zodíaco",
-      "img": "https://images2.alphacoders.com/131/thumb-350-1318468.png"
+      "img": "/static/avatars/cdz_shun.png"
     },
     {
       "id": "cdz_ikki",
       "name": "Ikki de Fênix",
       "category": "cavaleiros_do_zodiaco",
       "category_name": "Cavaleiros do Zodíaco",
-      "img": "https://images2.alphacoders.com/131/thumb-350-1318469.png"
+      "img": "/static/avatars/cdz_ikki.png"
     },
     {
       "id": "cobra_kai_1",
@@ -6766,77 +6766,77 @@
       "name": "L Lawliet",
       "category": "death_note",
       "category_name": "Death Note",
-      "img": "https://images3.alphacoders.com/133/thumb-350-1339909.png"
+      "img": "/static/avatars/death_l.png"
     },
     {
       "id": "death_light",
       "name": "Light Yagami",
       "category": "death_note",
       "category_name": "Death Note",
-      "img": "https://images4.alphacoders.com/133/thumb-350-1339910.png"
+      "img": "/static/avatars/death_light.png"
     },
     {
       "id": "ds_tanjiro",
       "name": "Tanjiro Kamado",
       "category": "demon_slayer_kimetsu",
       "category_name": "Demon Slayer (Kimetsu)",
-      "img": "https://images7.alphacoders.com/133/thumb-350-1339897.png"
+      "img": "/static/avatars/ds_tanjiro.png"
     },
     {
       "id": "ds_nezuko",
       "name": "Nezuko Kamado",
       "category": "demon_slayer_kimetsu",
       "category_name": "Demon Slayer (Kimetsu)",
-      "img": "https://images8.alphacoders.com/133/thumb-350-1339898.png"
+      "img": "/static/avatars/ds_nezuko.png"
     },
     {
       "id": "ds_zenitsu",
       "name": "Zenitsu Agatsuma",
       "category": "demon_slayer_kimetsu",
       "category_name": "Demon Slayer (Kimetsu)",
-      "img": "https://images.alphacoders.com/133/thumb-350-1339899.png"
+      "img": "/static/avatars/ds_zenitsu.png"
     },
     {
       "id": "ds_inosuke",
       "name": "Inosuke Hashibira",
       "category": "demon_slayer_kimetsu",
       "category_name": "Demon Slayer (Kimetsu)",
-      "img": "https://images2.alphacoders.com/133/thumb-350-1339900.png"
+      "img": "/static/avatars/ds_inosuke.png"
     },
     {
       "id": "dbz_goku",
       "name": "Goku (Super Saiyajin)",
       "category": "dragon_ball",
       "category_name": "Dragon Ball",
-      "img": "https://images.alphacoders.com/132/thumb-350-1329241.png"
+      "img": "/static/avatars/dbz_goku.png"
     },
     {
       "id": "dbz_vegeta",
       "name": "Vegeta",
       "category": "dragon_ball",
       "category_name": "Dragon Ball",
-      "img": "https://images.alphacoders.com/133/thumb-350-1330364.png"
+      "img": "/static/avatars/dbz_vegeta.png"
     },
     {
       "id": "dbz_gohan",
       "name": "Gohan",
       "category": "dragon_ball",
       "category_name": "Dragon Ball",
-      "img": "https://images.alphacoders.com/133/thumb-350-1331741.png"
+      "img": "/static/avatars/dbz_gohan.png"
     },
     {
       "id": "dbz_piccolo",
       "name": "Piccolo",
       "category": "dragon_ball",
       "category_name": "Dragon Ball",
-      "img": "https://images.alphacoders.com/133/thumb-350-1330365.png"
+      "img": "/static/avatars/dbz_piccolo.png"
     },
     {
       "id": "dbz_trunks",
       "name": "Trunks do Futuro",
       "category": "dragon_ball",
       "category_name": "Dragon Ball",
-      "img": "https://images.alphacoders.com/133/thumb-350-1331742.png"
+      "img": "/static/avatars/dbz_trunks.png"
     },
     {
       "id": "elite_1",
@@ -6997,28 +6997,28 @@
       "name": "Satoru Gojo",
       "category": "jujutsu_kaisen",
       "category_name": "Jujutsu Kaisen",
-      "img": "https://images3.alphacoders.com/133/thumb-350-1339901.png"
+      "img": "/static/avatars/jjk_gojo.png"
     },
     {
       "id": "jjk_itadori",
       "name": "Yuji Itadori",
       "category": "jujutsu_kaisen",
       "category_name": "Jujutsu Kaisen",
-      "img": "https://images4.alphacoders.com/133/thumb-350-1339902.png"
+      "img": "/static/avatars/jjk_itadori.png"
     },
     {
       "id": "jjk_megumi",
       "name": "Megumi Fushiguro",
       "category": "jujutsu_kaisen",
       "category_name": "Jujutsu Kaisen",
-      "img": "https://images5.alphacoders.com/133/thumb-350-1339903.png"
+      "img": "/static/avatars/jjk_megumi.png"
     },
     {
       "id": "jjk_sukuna",
       "name": "Ryomen Sukuna",
       "category": "jujutsu_kaisen",
       "category_name": "Jujutsu Kaisen",
-      "img": "https://images6.alphacoders.com/133/thumb-350-1339904.png"
+      "img": "/static/avatars/jjk_sukuna.png"
     },
     {
       "id": "la_casa_de_papel_1",
@@ -7382,28 +7382,28 @@
       "name": "Naruto Uzumaki",
       "category": "naruto_boruto",
       "category_name": "Naruto & Boruto",
-      "img": "https://images4.alphacoders.com/133/thumb-350-1339893.png"
+      "img": "/static/avatars/naruto_naruto.png"
     },
     {
       "id": "naruto_sasuke",
       "name": "Sasuke Uchiha",
       "category": "naruto_boruto",
       "category_name": "Naruto & Boruto",
-      "img": "https://images3.alphacoders.com/133/thumb-350-1339894.png"
+      "img": "/static/avatars/naruto_sasuke.png"
     },
     {
       "id": "naruto_kakashi",
       "name": "Kakashi Hatake",
       "category": "naruto_boruto",
       "category_name": "Naruto & Boruto",
-      "img": "https://images5.alphacoders.com/133/thumb-350-1339895.png"
+      "img": "/static/avatars/naruto_kakashi.png"
     },
     {
       "id": "naruto_itachi",
       "name": "Itachi Uchiha",
       "category": "naruto_boruto",
       "category_name": "Naruto & Boruto",
-      "img": "https://images6.alphacoders.com/133/thumb-350-1339896.png"
+      "img": "/static/avatars/naruto_itachi.png"
     },
     {
       "id": "one_piece_1",
@@ -8572,7 +8572,7 @@
       "name": "Sung Jin-woo",
       "category": "solo_leveling",
       "category_name": "Solo Leveling",
-      "img": "https://images2.alphacoders.com/133/thumb-350-1339908.png"
+      "img": "/static/avatars/solo_jinwoo.png"
     },
     {
       "id": "sonic_amy_rose",

@@ -158,15 +158,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Toque longo na tela abre opção para reconfigurar o servidor se necessário
-        webView.setOnLongClickListener(v -> {
-            WebView.HitTestResult result = webView.getHitTestResult();
-            if (result.getType() == WebView.HitTestResult.UNKNOWN_TYPE) {
-                showServerConfigDialog();
-                return true;
-            }
-            return false;
-        });
+        // Habilita foco e interação tátil suave
+        webView.setFocusable(true);
+        webView.setFocusableInTouchMode(true);
     }
 
     private void loadServerUrl(String url) {
