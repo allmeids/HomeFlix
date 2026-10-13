@@ -32,7 +32,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/style.css?v=9.4">
+  <link rel="stylesheet" href="/static/css/style.css?v=9.5">
   <!-- HLS.js para streaming HLS/m3u8 no navegador -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -849,44 +849,26 @@
         </div>
       </div>
 
-      <!-- VISTA 3: Seletor Completo de Avatares (291 avatares oficiais da Netflix) -->
-      <div class="profile-view-avatars" id="profileAvatarPickerView" style="display: none;">
-        <div class="avatar-picker-top">
-          <button type="button" class="btn-netflix-back" id="avatarPickerBackBtn">
-            ← Voltar para edição
+      <!-- VISTA 3: Seletor Oficial de Avatares (Layout Autêntico da Netflix) -->
+      <div class="profile-view-avatars-netflix" id="profileAvatarPickerView" style="display: none;">
+        <!-- Header da Página estilo Netflix Account Nav -->
+        <div class="nflx-avatar-page-header">
+          <button type="button" class="nflx-avatar-back-arrow" id="avatarPickerBackBtn" aria-label="Voltar para edição">
+            <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" fill="none">
+              <path fill="currentColor" fill-rule="evenodd" d="M6.414 11H21v2H6.414l5.293 5.293-1.414 1.414-7-7a1 1 0 0 1 0-1.414l7-7 1.414 1.414z" clip-rule="evenodd"></path>
+            </svg>
           </button>
-          <div class="avatar-picker-title-row">
-            <span class="avatar-picker-title">Escolha um Ícone de Perfil</span>
-            <span class="avatar-picker-count" id="avatarPickerCount">291 personagens</span>
+          <div class="nflx-avatar-title-block">
+            <h1 class="nflx-avatar-main-title">Escolha o ícone do seu perfil</h1>
+            <div class="nflx-avatar-subtitle-row">
+              <span class="nflx-avatar-subtitle-text" id="avatarPickerProfileSubtitle">Para Perfil</span>
+              <div class="nflx-avatar-subtitle-badge" id="avatarPickerCurrentBadge"></div>
+            </div>
           </div>
         </div>
 
-        <!-- Controles de Filtro & Busca Estilo Netflix / Disney+ -->
-        <div class="avatar-picker-controls-row">
-          <div class="avatar-picker-search-bar">
-            <span class="avatar-search-icon">🔍</span>
-            <input type="text" id="avatarSearchInput" class="avatar-search-input" placeholder="Buscar personagem ou série (ex: Eleven, Wandinha, Luffy, Dalí, Geralt)..." autocomplete="off" />
-            <button type="button" id="avatarClearSearchBtn" class="avatar-clear-search-btn" style="display: none;">✕</button>
-          </div>
-
-          <div class="avatar-franchise-select-wrapper">
-            <select id="avatarFranchiseSelect" class="avatar-franchise-select" aria-label="Filtrar por franquia">
-              <option value="all">🍿 Todas as Franquias & Séries (291)</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Trilho de Chips de Marcas / Séries Estilo Disney+ -->
-        <div class="avatar-chips-carousel-wrapper">
-          <button type="button" class="avatar-chips-nav-btn avatar-chips-nav-left" id="avatarChipsNavLeft" aria-label="Rolar para esquerda">‹</button>
-          <div class="avatar-categories-track" id="avatarCategoriesTrack"></div>
-          <button type="button" class="avatar-chips-nav-btn avatar-chips-nav-right" id="avatarChipsNavRight" aria-label="Rolar para direita">›</button>
-        </div>
-
-        <!-- Trilhos Horizontais de Avatares -->
-        <div class="avatar-catalog-scroll-box" id="avatarCatalogScrollBox">
-          <div class="avatar-catalog-sections-container" id="avatarPickerSectionsContainer"></div>
-        </div>
+        <!-- Trilhos Carrossel Oficiais da Netflix -->
+        <div class="nflx-avatar-rails-container" id="avatarPickerSectionsContainer"></div>
       </div>
 
     </div>
@@ -931,8 +913,8 @@
   </div>
 
   <!-- Scripts -->
-  <script src="/static/js/api.js?v=9.4"></script>
-  <script src="/static/js/player.js?v=9.4"></script>
-  <script src="/static/js/app.js?v=9.4"></script>
+  <script src="/static/js/api.js?v=9.5"></script>
+  <script src="/static/js/player.js?v=9.5"></script>
+  <script src="/static/js/app.js?v=9.5"></script>
 </body>
 </html>

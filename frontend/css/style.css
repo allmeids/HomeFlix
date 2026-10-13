@@ -3223,40 +3223,208 @@ body.in-details-view .navbar {
   color: #e50914;
 }
 
-/* Vista 3: Seletor Completo de Avatares */
-.profile-view-avatars {
+/* ================================================================
+   VISTA 3: SELETOR OFICIAL DE AVATARES NETFLIX (DESIGN AUTÊNTICO)
+   ================================================================ */
+.profile-view-avatars-netflix {
   width: 100%;
-  max-width: 1100px;
-  max-height: 85vh;
+  max-width: 1200px;
+  min-height: 80vh;
   display: flex;
   flex-direction: column;
   animation: fadeInNetflixGate 0.2s ease;
+  box-sizing: border-box;
+  padding: 10px 24px 60px;
 }
 
-.avatar-picker-top {
+/* Header com Seta de Voltar, Título e Subtítulo */
+.nflx-avatar-page-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 32px;
+  text-align: left;
+}
+
+.nflx-avatar-back-arrow {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  padding: 4px;
+  margin-top: 4px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 18px;
-  flex-wrap: wrap;
+  justify-content: center;
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.nflx-avatar-back-arrow:hover {
+  transform: translateX(-4px);
+  color: #e50914;
+}
+
+.nflx-avatar-title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nflx-avatar-main-title {
+  font-size: clamp(26px, 3.2vw, 40px);
+  font-weight: 500;
+  color: #ffffff;
+  margin: 0;
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+  font-family: 'Netflix Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.nflx-avatar-subtitle-row {
+  display: flex;
+  align-items: center;
   gap: 12px;
 }
 
-.btn-netflix-back {
-  background: transparent;
-  color: #808080;
-  border: 1px solid #808080;
-  padding: 8px 18px;
-  border-radius: 2px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s ease;
+.nflx-avatar-subtitle-text {
+  font-size: 16px;
+  color: #cccccc;
+  font-weight: 400;
 }
 
-.btn-netflix-back:hover {
-  border-color: #ffffff;
+.nflx-avatar-subtitle-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  flex-shrink: 0;
+}
+
+/* Container de Trilhos e Carrosséis */
+.nflx-avatar-rails-container {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  width: 100%;
+}
+
+.nflx-avatar-rail {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  text-align: left;
+}
+
+.nflx-avatar-rail-title {
+  font-size: 20px;
+  font-weight: 700;
   color: #ffffff;
+  margin: 0 0 14px 0;
+  letter-spacing: -0.2px;
+  font-family: 'Netflix Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Faixa com Efeito Fade Gradiente e Botões Flutuantes Netflix */
+.nflx-avatar-track-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.nflx-avatar-track {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 6px 4px 12px;
+  scrollbar-width: none; /* Oculta scrollbar padrão */
+  -ms-overflow-style: none;
+  width: 100%;
+}
+
+.nflx-avatar-track::-webkit-scrollbar {
+  display: none;
+}
+
+/* Botões Chevron de Navegação com Vinheta Translúcida */
+.nflx-avatar-nav-arrow {
+  position: absolute;
+  top: 0;
+  bottom: 12px;
+  width: 48px;
+  background: rgba(20, 20, 20, 0.65);
+  border: none;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.2s ease, background 0.2s ease;
+}
+
+.nflx-avatar-track-wrapper:hover .nflx-avatar-nav-arrow {
+  opacity: 1;
+}
+
+.nflx-avatar-nav-arrow:hover {
+  background: rgba(20, 20, 20, 0.9);
+}
+
+.nflx-avatar-nav-arrow.prev {
+  left: 0;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+.nflx-avatar-nav-arrow.next {
+  right: 0;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+
+/* Botão Card do Avatar - Quadrado Limpo com Bordas Curvadas */
+.nflx-avatar-item-btn {
+  flex: 0 0 clamp(90px, 8.5vw, 125px);
+  width: clamp(90px, 8.5vw, 125px);
+  aspect-ratio: 1;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  padding: 0;
+  margin: 0;
+  background: #222;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+  outline: none;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.nflx-avatar-item-btn:hover,
+.nflx-avatar-item-btn:focus-visible {
+  transform: scale(1.08);
+  border-color: #ffffff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.9);
+  z-index: 5;
+}
+
+.nflx-avatar-item-btn.selected {
+  border-color: #ffffff;
+  box-shadow: 0 0 0 2px #e50914, 0 8px 20px rgba(229, 9, 20, 0.4);
+}
+
+.nflx-avatar-item-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
 }
 
 

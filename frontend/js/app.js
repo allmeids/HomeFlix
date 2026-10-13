@@ -1223,152 +1223,76 @@ class HomeFlixApp {
     const editView = document.getElementById('profileEditView');
     const avatarPickerView = document.getElementById('profileAvatarPickerView');
     const sectionsContainer = document.getElementById('avatarPickerSectionsContainer');
-    const categoriesTrack = document.getElementById('avatarCategoriesTrack');
-    const franchiseSelect = document.getElementById('avatarFranchiseSelect');
-    const chipsNavLeft = document.getElementById('avatarChipsNavLeft');
-    const chipsNavRight = document.getElementById('avatarChipsNavRight');
-    const searchInput = document.getElementById('avatarSearchInput');
-    const clearSearchBtn = document.getElementById('avatarClearSearchBtn');
-    const countEl = document.getElementById('avatarPickerCount');
+    const profileSubtitle = document.getElementById('avatarPickerProfileSubtitle');
+    const currentBadge = document.getElementById('avatarPickerCurrentBadge');
+    const nameInput = document.getElementById('profileFormNameInput');
 
     if (editView) editView.style.display = 'none';
     if (avatarPickerView) avatarPickerView.style.display = 'flex';
 
+    // Rola para o topo do canvas
+    const gateRoot = document.getElementById('netflixProfileGate');
+    if (gateRoot) gateRoot.scrollTo({ top: 0, behavior: 'instant' });
+
+    // Atualiza o subtítulo "Para [Nome]" e o avatar atual
+    const profileName = (nameInput && nameInput.value.trim()) || 'Você';
+    if (profileSubtitle) profileSubtitle.textContent = `Para ${profileName}`;
+
+    if (currentBadge) {
+      const visual = this.getAvatarVisual(this.selectedAvatar, profileName);
+      if (visual.isImage) {
+        currentBadge.style.backgroundImage = `url('${visual.url}')`;
+        currentBadge.textContent = '';
+      } else {
+        currentBadge.style.background = visual.bg;
+        currentBadge.textContent = visual.initial;
+        currentBadge.style.display = 'flex';
+        currentBadge.style.alignItems = 'center';
+        currentBadge.style.justifyContent = 'center';
+        currentBadge.style.fontSize = '12px';
+        currentBadge.style.color = '#fff';
+      }
+    }
+
     const catalog = await this.getAvatarCatalog();
     const categories = catalog.categories || [];
-    const allAvatars = catalog.avatars || [];
-
-    if (countEl) countEl.textContent = `${allAvatars.length} personagens`;
 
     const renderCardHtml = (av) => {
       const isSelected = av.id === this.selectedAvatar || av.img === this.selectedAvatar;
       return `
-        <button type="button" class="avatar-card ${isSelected ? 'selected' : ''}" data-id="${av.id}" title="${av.name} (${av.category_name || ''})" aria-label="${av.name}">
-          <img src="${av.img}" loading="lazy" decoding="async" class="avatar-card-img" alt="${av.name}" />
+        <button type="button" class="nflx-avatar-item-btn ${isSelected ? 'selected' : ''}" data-id="${av.id}" title="${av.name}" aria-label="${av.name}">
+          <img src="${av.img}" loading="lazy" decoding="async" class="nflx-avatar-item-img" alt="${av.name}" />
         </button>
       `;
     };
 
-    const renderAllRails = () => {
-      if (!sectionsContainer) return;
+    if (sectionsContainer) {
       let html = '';
       categories.forEach(cat => {
         if (!cat.items || cat.items.length === 0) return;
         html += `
-          <div class="avatar-rail" id="avatarRail_${cat.id}" data-cat="${cat.id}">
-            <div class="avatar-rail-header">
-              <div class="avatar-rail-title-group">
-                <span class="avatar-rail-title">${cat.name}</span>
-                <span class="avatar-rail-badge">${cat.items.length} ÍCONES</span>
+          <div class="nflx-avatar-rail" id="nflxRail_${cat.id}">
+            <h2 class="nflx-avatar-rail-title">${cat.name}</h2>
+            <div class="nflx-avatar-track-wrapper">
+              <button type="button" class="nflx-avatar-nav-arrow prev" data-track-id="nflxTrack_${cat.id}" aria-label="Rolar para esquerda">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="none"><path fill="currentColor" fill-rule="evenodd" d="M15.414 19.414L8.707 12.707a1 1 0 010-1.414l6.707-6.707 1.414 1.414L10.828 12l5.999 5.999-1.413 1.415z"></path></svg>
+              </button>
+              <div class="nflx-avatar-track" id="nflxTrack_${cat.id}">
+                ${cat.items.map(av => renderCardHtml(av)).join('')}
               </div>
-              <div class="avatar-rail-nav">
-                <button type="button" class="avatar-rail-nav-btn avatar-rail-prev" data-rail-id="avatarTrack_${cat.id}" title="Voltar">‹</button>
-                <button type="button" class="avatar-rail-nav-btn avatar-rail-next" data-rail-id="avatarTrack_${cat.id}" title="Avançar">›</button>
-              </div>
-            </div>
-            <div class="avatar-rail-track" id="avatarTrack_${cat.id}">
-              ${cat.items.map(av => renderCardHtml(av)).join('')}
+              <button type="button" class="nflx-avatar-nav-arrow next" data-track-id="nflxTrack_${cat.id}" aria-label="Rolar para direita">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="none"><path fill="currentColor" fill-rule="evenodd" d="M8.586 4.586l6.707 6.707a1 1 0 010 1.414l-6.707 6.707-1.414-1.414L13.172 12 7.172 6.001l1.414-1.415z"></path></svg>
+              </button>
             </div>
           </div>
         `;
       });
       sectionsContainer.innerHTML = html;
-    };
 
-    const renderSearchGrid = (query) => {
-      if (!sectionsContainer) return;
-      const q = query.trim().toLowerCase();
-      const matched = allAvatars.filter(av => 
-        av.name.toLowerCase().includes(q) || 
-        (av.category_name && av.category_name.toLowerCase().includes(q)) ||
-        av.id.toLowerCase().includes(q)
-      );
-
-      if (countEl) countEl.textContent = `${matched.length} encontrados`;
-
-      if (matched.length === 0) {
-        sectionsContainer.innerHTML = `
-          <div style="text-align: center; color: #888; padding: 36px 12px;">
-            <div style="font-size: 32px; margin-bottom: 8px;">🔍</div>
-            <div>Nenhum personagem encontrado para "<strong>${query}</strong>"</div>
-            <div style="font-size: 12px; color: #666; margin-top: 6px;">Tente pesquisar por Eleven, Wandinha, Luffy, Round 6, Dalí...</div>
-          </div>
-        `;
-        return;
-      }
-
-      sectionsContainer.innerHTML = `
-        <div class="avatar-search-grid">
-          ${matched.map(av => renderCardHtml(av)).join('')}
-        </div>
-      `;
-    };
-
-    if (franchiseSelect) {
-      franchiseSelect.innerHTML = `<option value="all">🍿 Todas as Franquias & Séries (${allAvatars.length})</option>` +
-        categories.map(c => `<option value="${c.id}">${c.name} (${c.items?.length || 0})</option>`).join('');
-
-      franchiseSelect.onchange = () => {
-        const selectedCat = franchiseSelect.value;
-        if (categoriesTrack) {
-          categoriesTrack.querySelectorAll('.avatar-category-pill').forEach(p => {
-            p.classList.toggle('active', p.dataset.cat === selectedCat);
-          });
-        }
-        if (searchInput && searchInput.value.trim()) {
-          searchInput.value = '';
-          if (clearSearchBtn) clearSearchBtn.style.display = 'none';
-          renderAllRails();
-        }
-        if (selectedCat === 'all') {
-          const scrollBox = document.getElementById('avatarCatalogScrollBox');
-          if (scrollBox) scrollBox.scrollTo({ top: 0, behavior: 'smooth' });
-        } else {
-          const rail = document.getElementById(`avatarRail_${selectedCat}`);
-          if (rail) rail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-      };
-    }
-
-    if (categoriesTrack) {
-      let chipsHtml = `<button type="button" class="avatar-category-pill active" data-cat="all">Todas (${allAvatars.length})</button>`;
-      categories.forEach(cat => {
-        chipsHtml += `<button type="button" class="avatar-category-pill" data-cat="${cat.id}">${cat.name} (${cat.items?.length || 0})</button>`;
-      });
-      categoriesTrack.innerHTML = chipsHtml;
-
-      categoriesTrack.onclick = (e) => {
-        const pill = e.target.closest('.avatar-category-pill');
-        if (!pill) return;
-        const catId = pill.dataset.cat;
-        categoriesTrack.querySelectorAll('.avatar-category-pill').forEach(p => p.classList.remove('active'));
-        pill.classList.add('active');
-
-        if (franchiseSelect) franchiseSelect.value = catId;
-        if (searchInput && searchInput.value.trim()) {
-          searchInput.value = '';
-          if (clearSearchBtn) clearSearchBtn.style.display = 'none';
-          renderAllRails();
-        }
-
-        if (catId === 'all') {
-          const scrollBox = document.getElementById('avatarCatalogScrollBox');
-          if (scrollBox) scrollBox.scrollTo({ top: 0, behavior: 'smooth' });
-        } else {
-          const rail = document.getElementById(`avatarRail_${catId}`);
-          if (rail) rail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-      };
-
-      if (chipsNavLeft) chipsNavLeft.onclick = () => categoriesTrack.scrollBy({ left: -200, behavior: 'smooth' });
-      if (chipsNavRight) chipsNavRight.onclick = () => categoriesTrack.scrollBy({ left: 200, behavior: 'smooth' });
-    }
-
-    if (sectionsContainer) {
       sectionsContainer.onclick = (e) => {
-        const card = e.target.closest('.avatar-card');
-        if (card) {
-          const avatarId = card.dataset.id;
+        const itemBtn = e.target.closest('.nflx-avatar-item-btn');
+        if (itemBtn) {
+          const avatarId = itemBtn.dataset.id;
           if (avatarId) {
             this.selectedAvatar = avatarId;
             if (onAvatarSelectedCallback) onAvatarSelectedCallback();
@@ -1378,47 +1302,17 @@ class HomeFlixApp {
           return;
         }
 
-        const navBtn = e.target.closest('.avatar-rail-nav-btn');
-        if (navBtn) {
-          const trackId = navBtn.dataset.railId;
+        const navArrow = e.target.closest('.nflx-avatar-nav-arrow');
+        if (navArrow) {
+          const trackId = navArrow.dataset.trackId;
           const track = document.getElementById(trackId);
           if (track) {
-            const isPrev = navBtn.classList.contains('avatar-rail-prev');
-            track.scrollBy({ left: isPrev ? -280 : 280, behavior: 'smooth' });
+            const isPrev = navArrow.classList.contains('prev');
+            track.scrollBy({ left: isPrev ? -450 : 450, behavior: 'smooth' });
           }
         }
       };
     }
-
-    if (searchInput) {
-      searchInput.value = '';
-      if (clearSearchBtn) clearSearchBtn.style.display = 'none';
-      let searchDebounce = null;
-      searchInput.oninput = () => {
-        const q = searchInput.value.trim();
-        if (clearSearchBtn) clearSearchBtn.style.display = q ? 'flex' : 'none';
-        clearTimeout(searchDebounce);
-        searchDebounce = setTimeout(() => {
-          if (q) renderSearchGrid(q);
-          else {
-            if (countEl) countEl.textContent = `${allAvatars.length} personagens`;
-            renderAllRails();
-          }
-        }, 80);
-      };
-    }
-
-    if (clearSearchBtn) {
-      clearSearchBtn.onclick = () => {
-        searchInput.value = '';
-        clearSearchBtn.style.display = 'none';
-        if (countEl) countEl.textContent = `${allAvatars.length} personagens`;
-        renderAllRails();
-        searchInput.focus();
-      };
-    }
-
-    renderAllRails();
   }
 
 
