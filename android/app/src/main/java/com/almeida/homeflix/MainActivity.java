@@ -74,13 +74,41 @@ public class MainActivity extends AppCompatActivity {
 
         // Carrega o HomeFlix
         loadServerUrl(currentServerUrl);
+    }
 
-        // Verifica silenciosamente atualizações do aplicativo (OTA)
-        AppUpdater.checkForUpdates(this, currentServerUrl);
+    public class AndroidBridge {
+        @android.webkit.JavascriptInterface
+        public long getAppVersionCode() {
+            try {
+                android.content.pm.PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+                return Build.VERSION.SDK_INT >= Build.VERSION_CODES.P ?
+                        pInfo.getLongVersionCode() : pInfo.versionCode;
+            } catch (Exception e) {
+                return 1;
+            }
+        }
+
+        @android.webkit.JavascriptInterface
+        public String getAppVersionName() {
+            try {
+                android.content.pm.PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+                return pInfo.versionName;
+            } catch (Exception e) {
+                return "1.0.0";
+            }
+        }
+
+        @android.webkit.JavascriptInterface
+        public void startAppUpdate(String downloadUrl) {
+            runOnUiThread(() -> {
+                AppUpdater.startDownloadAndInstall(MainActivity.this, downloadUrl);
+            });
+        }
     }
 
     @SuppressLint("SetJavaScriptEnabled")
     private void setupWebView() {
+        webView.addJavascriptInterface(new AndroidBridge(), "HomeFlixApp");
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
@@ -110,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 applyImmersiveMode();
+                AppUpdater.checkForUpdates(MainActivity.this, currentServerUrl, webView);
             }
 
             @Override

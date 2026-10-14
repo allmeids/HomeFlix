@@ -9,10 +9,10 @@ DIST_DIR = os.path.join(BASE_DIR, "dist")
 APK_PATH = os.path.join(DIST_DIR, "HomeFlix.apk")
 
 APP_INFO = {
-    "version_code": 3,
-    "version_name": "1.0.2",
+    "version_code": 4,
+    "version_name": "1.0.3",
     "download_url": "/api/app/download",
-    "changelog": "Tela de carregamento clean oficial Netflix (anel vermelho + %), novos controles centrais touch, feedback visual play/pause, double-tap seek ±10s, barra com buffer/scrubbing e integração do botão Voltar."
+    "changelog": "Grade de busca em mosaico 3x3 no mobile; cabeçalho de busca limpo; Continuar Assistindo estilo Netflix com botões (i) e (✕); correção do banner no mobile; player de pausa minimalista sem textos gigantes; seleção de servidores 100% nos bastidores; e nova caixa de atualização personalizada HomeFlix."
 }
 
 @router.get("/api/app/version")

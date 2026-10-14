@@ -32,7 +32,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/style.css?v=9.15">
+  <link rel="stylesheet" href="/static/css/style.css?v=9.16">
   <!-- HLS.js para streaming HLS/m3u8 no navegador -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -585,26 +585,26 @@
     </div>
 
     <div class="search-page-header">
-      <div style="display: flex; align-items: center; gap: 14px;">
-        <button class="details-back-circle-btn" id="searchBackBtn" title="Voltar" aria-label="Voltar" style="display:none;">
-          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      <div class="search-header-inner">
+        <button class="search-back-btn" id="searchBackBtn" title="Voltar" aria-label="Voltar" style="display:none;">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
         </button>
-        <div>
-          <h1 style="font-size: 28px; font-weight: 800; margin: 0;" id="searchTitle">Resultados</h1>
-          <p style="color: #aaa; font-size: 14px; margin-top: 4px;" id="searchStatusSubtitle"></p>
+        <div class="search-header-texts">
+          <h1 class="search-main-title" id="searchTitle">Resultados</h1>
+          <p class="search-subtitle" id="searchStatusSubtitle"></p>
         </div>
       </div>
     </div>
 
-    <!-- Grid de Resultados Exatos ou Principais -->
-    <div class="channels-grid" id="searchGrid" style="grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));"></div>
+    <!-- Grid de Resultados em Mosaico Bonitinho Estilo Netflix -->
+    <div class="search-results-grid" id="searchGrid"></div>
 
     <!-- Seção de Títulos Semelhantes & Sugestões Estilo Netflix -->
-    <div class="search-similar-section" id="searchSimilarSection" style="display: none; margin-top: 40px;">
-      <div class="section-header" style="margin-bottom: 16px;">
+    <div class="search-similar-section" id="searchSimilarSection" style="display: none; margin-top: 32px;">
+      <div class="section-header" style="margin-bottom: 14px;">
         <h2 class="section-title" id="searchSimilarTitle">Títulos Semelhantes & Sugestões</h2>
       </div>
-      <div class="channels-grid" id="searchSimilarGrid" style="grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));"></div>
+      <div class="search-results-grid" id="searchSimilarGrid"></div>
     </div>
   </section>
 
@@ -989,6 +989,37 @@
     </div>
   </div>
 
+  <!-- Modal de Atualização Oficial do Aplicativo (Estilo HomeFlix / Netflix) -->
+  <div class="modal-backdrop" id="appUpdateModal" style="display: none; z-index: 100050;">
+    <div class="modal-content update-modal-wrapper">
+      <div class="update-modal-badge">
+        <span class="update-badge-dot"></span>
+        <span>NOVA ATUALIZAÇÃO DISPONÍVEL</span>
+      </div>
+      <div class="update-modal-header">
+        <div class="brand-logo" style="margin-bottom: 4px;">
+          <span class="logo-text">HOME<span class="logo-accent">FLIX</span></span>
+        </div>
+        <h2 class="update-modal-title" id="updateModalVersion">Versão 1.0.3</h2>
+        <p class="update-modal-sub">Uma nova versão oficial está pronta para instalação com novas funcionalidades e melhorias visuais.</p>
+      </div>
+
+      <div class="update-modal-body">
+        <div class="update-changelog-card">
+          <div class="update-changelog-header">✨ O que há de novo:</div>
+          <div class="update-changelog-text" id="updateModalChangelog"></div>
+        </div>
+      </div>
+
+      <div class="update-modal-footer">
+        <button type="button" class="btn btn-secondary update-later-btn" id="updateLaterBtn">Mais Tarde</button>
+        <button type="button" class="btn btn-primary update-now-btn" id="updateNowBtn">
+          <span>🚀 Atualizar Agora</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Barra de Navegação Inferior Mobile Oficial da Netflix -->
   <nav class="netflix-mobile-bottom-nav" id="netflixMobileBottomNav" aria-label="Navegação Principal Mobile">
     <button type="button" class="nflx-bottom-nav-item active" data-tab="home" id="bottomNavHome">
@@ -1024,8 +1055,8 @@
   </nav>
 
   <!-- Scripts -->
-  <script src="/static/js/api.js?v=9.15"></script>
-  <script src="/static/js/player.js?v=9.15"></script>
-  <script src="/static/js/app.js?v=9.15"></script>
+  <script src="/static/js/api.js?v=9.16"></script>
+  <script src="/static/js/player.js?v=9.16"></script>
+  <script src="/static/js/app.js?v=9.16"></script>
 </body>
 </html>

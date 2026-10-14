@@ -254,8 +254,53 @@ class HomeFlixApp {
     // Botão Voltar da Busca
     const searchBackBtn = document.getElementById('searchBackBtn');
     if (searchBackBtn) {
-      searchBackBtn.onclick = () => this.closeSearch();
+      searchBackBtn.onclick = () => {
+        this.closeSearch();
+        this.switchTab(this.previousTab && this.previousTab !== 'search' ? this.previousTab : 'home');
+      };
     }
+
+    // Modal de Atualização Customizado (Estilo Oficial HomeFlix)
+    const updateModal = document.getElementById('appUpdateModal');
+    const updateLaterBtn = document.getElementById('updateLaterBtn');
+    const updateNowBtn = document.getElementById('updateNowBtn');
+
+    if (updateLaterBtn && updateModal) {
+      updateLaterBtn.onclick = () => {
+        updateModal.classList.remove('open');
+        updateModal.style.display = 'none';
+        sessionStorage.setItem('hf_update_dismissed', '1');
+      };
+    }
+
+    window.showAppUpdateModal = (versionName, changelog, downloadUrl) => {
+      if (sessionStorage.getItem('hf_update_dismissed') === '1') return;
+      if (!updateModal) return;
+      const titleEl = document.getElementById('updateModalVersion');
+      const changeEl = document.getElementById('updateModalChangelog');
+      if (titleEl) titleEl.textContent = `Versão ${versionName}`;
+      if (changeEl) {
+        const parts = changelog.split(/[,;\n\.]+/).map(s => s.trim()).filter(Boolean);
+        if (parts.length > 1) {
+          changeEl.innerHTML = '<ul class="update-bullets">' + parts.map(p => `<li>${p}</li>`).join('') + '</ul>';
+        } else {
+          changeEl.textContent = changelog;
+        }
+      }
+      if (updateNowBtn) {
+        updateNowBtn.onclick = () => {
+          if (window.HomeFlixApp && typeof window.HomeFlixApp.startAppUpdate === 'function') {
+            window.HomeFlixApp.startAppUpdate(downloadUrl);
+            updateModal.classList.remove('open');
+            updateModal.style.display = 'none';
+          } else {
+            window.location.href = downloadUrl;
+          }
+        };
+      }
+      updateModal.style.display = 'flex';
+      setTimeout(() => updateModal.classList.add('open'), 10);
+    };
 
     // Configuração da Bottom Navigation Bar Mobile Oficial da Netflix
     const bottomNav = document.getElementById('netflixMobileBottomNav');
@@ -901,6 +946,8 @@ class HomeFlixApp {
     const topMoviesTitle = document.getElementById('topMoviesTitle');
     const secTop = document.getElementById('topMoviesSection');
 
+    const recSec = document.getElementById('recommendationsSection');
+
     if (tab === 'series') {
       // 1. Oculta compulsoriamente com !important e limpa HTML de todas as seções de filmes (adeus Vingadores/cinema)
       movieSections.forEach(id => {
@@ -911,6 +958,8 @@ class HomeFlixApp {
           if (carousel) carousel.innerHTML = '';
         }
       });
+      // Oculta recomendações mistas da home na aba de séries
+      if (recSec) recSec.style.setProperty('display', 'none', 'important');
 
       // 2. Exibe com !important seções de séries
       seriesSections.forEach(id => {
@@ -933,6 +982,8 @@ class HomeFlixApp {
           if (carousel) carousel.innerHTML = '';
         }
       });
+      // Oculta recomendações mistas na aba de filmes (filmes já têm categorias próprias)
+      if (recSec) recSec.style.setProperty('display', 'none', 'important');
 
       // 2. Exibe seções de filmes
       movieSections.forEach(id => {
@@ -946,7 +997,8 @@ class HomeFlixApp {
       if (topMoviesTitle) topMoviesTitle.textContent = 'Filmes Mais Bem Avaliados';
 
     } else {
-      // Home: todas as seções ativas
+      // Home: todas as seções ativas, incluindo recomendações personalizadas
+      if (recSec) recSec.style.setProperty('display', 'block', 'important');
       [...movieSections, ...seriesSections].forEach(id => {
         const sec = document.getElementById(id);
         if (sec) sec.style.setProperty('display', 'block', 'important');
@@ -1694,53 +1746,94 @@ class HomeFlixApp {
     }
 
     section.style.display = 'block';
+    const secTitle = section.querySelector('.section-title');
+    if (secTitle && this.currentProfile) {
+      secTitle.textContent = `Continuar assistindo como ${this.currentProfile.name}`;
+    }
     carousel.innerHTML = '';
 
     items.forEach(item => {
       const pct = item.duration > 0 ? (item.position / item.duration) * 100 : 0;
       const card = document.createElement('div');
-      card.className = 'media-card continue-card';
+      card.className = 'continue-netflix-card';
       card.setAttribute('tabindex', '0');
-      const bgImg = item.backdrop_path 
-        ? `https://image.tmdb.org/t/p/w500${item.backdrop_path}`
-        : (item.poster_path ? `https://image.tmdb.org/t/p/w500${item.poster_path}` : '');
+
+      // Pôster vertical oficial de alta fidelidade
+      const posterImg = item.poster_path 
+        ? `https://image.tmdb.org/t/p/w342${item.poster_path}`
+        : (item.backdrop_path ? `https://image.tmdb.org/t/p/w500${item.backdrop_path}` : 'https://images.placeholders.dev/?width=342&height=513&text=HomeFlix&theme=dark');
+
+      const isTv = item.media_type === 'tv';
+      const labelText = isTv ? `T${item.season_number || 1}:E${item.episode_number || 1}` : 'Filme';
 
       card.innerHTML = `
-        <button class="continue-remove-btn" title="Remover da lista" aria-label="Remover">✕</button>
-        <img class="media-card-poster" src="${bgImg}" alt="${item.title}" loading="lazy" />
-        <div class="progress-bar-container">
-          <div class="progress-bar-fill" style="width: ${pct}%;"></div>
-        </div>
-        <div class="media-card-info">
-          <div class="media-card-title">${item.title}</div>
-          <div class="media-card-sub">
-            <span>${item.media_type === 'tv' ? `T${item.season_number} E${item.episode_number}` : 'Filme'}</span>
-            <span style="color: var(--accent-red); font-weight:700;">▶ Retomar</span>
+        <div class="continue-poster-wrap">
+          <img class="continue-poster-img" src="${posterImg}" alt="${item.title}" loading="lazy" onerror="this.onerror=null; this.src='https://images.placeholders.dev/?width=342&height=513&text=HomeFlix&theme=dark';" />
+          <div class="continue-center-play" title="Retomar reprodução" aria-label="Retomar">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M6 3.5l14 8.5-14 8.5v-17z"/></svg>
           </div>
+          <div class="continue-progress-track">
+            <div class="continue-progress-bar" style="width: ${Math.max(5, Math.min(100, pct))}%;"></div>
+          </div>
+        </div>
+        <div class="continue-card-actions">
+          <button type="button" class="continue-action-btn continue-info-btn" title="Mais informações (${item.title})" aria-label="Informações">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+          </button>
+          <button type="button" class="continue-action-btn continue-remove-btn" title="Remover de Continuar Assistindo" aria-label="Remover">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
         </div>
       `;
 
-      const removeBtn = card.querySelector('.continue-remove-btn');
-      if (removeBtn) {
-        removeBtn.addEventListener('click', async (e) => {
+      // Clique no pôster / play retoma a reprodução instantaneamente
+      const posterWrap = card.querySelector('.continue-poster-wrap');
+      if (posterWrap) {
+        posterWrap.onclick = (e) => {
           e.stopPropagation();
-          await API.deleteProgress(this.currentProfile.id, item.media_id);
-          card.remove();
-          if (carousel.children.length === 0) {
-            section.style.display = 'none';
-          }
-        });
+          this.openMediaDetails(item.media_type, item.media_id, {
+            resumeTime: item.position,
+            season: item.season_number,
+            episode: item.episode_number,
+            autoPlay: true
+          });
+        };
       }
 
-      card.onclick = () => {
-        this.openMediaDetails(item.media_type, item.media_id, {
-          resumeTime: item.position,
-          season: item.season_number,
-          episode: item.episode_number
-        });
-      };
+      // Botão (i) abre a página de detalhes completos
+      const infoBtn = card.querySelector('.continue-info-btn');
+      if (infoBtn) {
+        infoBtn.onclick = (e) => {
+          e.stopPropagation();
+          this.openMediaDetails(item.media_type, item.media_id, {
+            resumeTime: item.position,
+            season: item.season_number,
+            episode: item.episode_number
+          });
+        };
+      }
+
+      // Botão (X) remove da lista de continuar assistindo com transição suave
+      const removeBtn = card.querySelector('.continue-remove-btn');
+      if (removeBtn) {
+        removeBtn.onclick = async (e) => {
+          e.stopPropagation();
+          card.classList.add('removing');
+          await API.deleteProgress(this.currentProfile.id, item.media_id);
+          setTimeout(() => {
+            card.remove();
+            if (carousel.children.length === 0) {
+              section.style.display = 'none';
+            }
+          }, 250);
+          this.showToast('Título removido de Continuar Assistindo');
+        };
+      }
+
       card.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') card.click();
+        if (e.key === 'Enter') {
+          posterWrap.click();
+        }
       });
 
       carousel.appendChild(card);
@@ -2848,9 +2941,7 @@ class HomeFlixApp {
 
     const titleEl = document.getElementById('searchTitle');
     const subEl = document.getElementById('searchStatusSubtitle');
-    const backBtn = document.getElementById('searchBackBtn');
-
-    if (backBtn) backBtn.style.display = 'inline-block';
+    if (backBtn) backBtn.style.display = (this.previousTab && this.previousTab !== 'search') ? 'inline-flex' : 'none';
     if (titleEl) titleEl.textContent = 'Explorar & Buscar';
     if (subEl) subEl.textContent = 'Digite o nome de filmes, séries, atores ou gêneros para pesquisar em tempo real.';
 
@@ -3235,7 +3326,7 @@ class HomeFlixApp {
     const similarGrid = document.getElementById('searchSimilarGrid');
     const similarTitle = document.getElementById('searchSimilarTitle');
 
-    if (searchBackBtn) searchBackBtn.style.display = 'inline-block';
+    if (searchBackBtn) searchBackBtn.style.display = 'inline-flex';
     if (similarSec) similarSec.style.display = 'none';
 
     titleEl.textContent = `Resultados para "${query}"`;

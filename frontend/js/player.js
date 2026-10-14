@@ -679,10 +679,10 @@ class HomeFlixPlayer {
       }
     }
 
-    // Popula seletor de fontes
+    // Popula seletor de fontes (opera 100% por baixo dos panos)
     this.sourceSelector.innerHTML = '';
+    this.sourceSelector.style.display = 'none';
     if (this.sources.length > 0) {
-      this.sourceSelector.style.display = 'block';
       this.sources.forEach(s => {
         const opt = document.createElement('option');
         opt.value = s.url;
@@ -690,8 +690,6 @@ class HomeFlixPlayer {
         if (s.url === options.currentStreamUrl) opt.selected = true;
         this.sourceSelector.appendChild(opt);
       });
-    } else {
-      this.sourceSelector.style.display = 'none';
     }
 
     this.failedUrls.clear();
@@ -2038,8 +2036,7 @@ class HomeFlixPlayer {
       }
     }
     if (this.pauseScreenOverview) {
-      this.pauseScreenOverview.textContent = this.currentMedia?.overview || '';
-      this.pauseScreenOverview.style.display = this.currentMedia?.overview ? 'block' : 'none';
+      this.pauseScreenOverview.style.display = 'none';
     }
 
     this.overlay.classList.add('pause-idle');

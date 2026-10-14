@@ -30,7 +30,7 @@ public class AppUpdater {
 
     private static final String TAG = "HomeFlixUpdater";
 
-    public static void checkForUpdates(final Activity activity, final String serverBaseUrl) {
+    public static void checkForUpdates(final Activity activity, final String serverBaseUrl, final android.webkit.WebView webView) {
         new Thread(() -> {
             try {
                 String versionUrl = serverBaseUrl.replaceAll("/+$", "") + "/api/app/version";
@@ -66,7 +66,13 @@ public class AppUpdater {
 
                         new Handler(Looper.getMainLooper()).post(() -> {
                             if (!activity.isFinishing()) {
-                                showUpdateDialog(activity, remoteName, changelog, finalDownloadUrl);
+                                if (webView != null) {
+                                    String safeChangelog = JSONObject.quote(changelog);
+                                    webView.evaluateJavascript(
+                                        "if (window.showAppUpdateModal) { window.showAppUpdateModal('" + remoteName + "', " + safeChangelog + ", '" + finalDownloadUrl + "'); }",
+                                        null
+                                    );
+                                }
                             }
                         });
                     }
@@ -77,19 +83,11 @@ public class AppUpdater {
         }).start();
     }
 
-    private static void showUpdateDialog(final Activity activity, final String versionName, final String changelog, final String downloadUrl) {
-        new AlertDialog.Builder(activity)
-                .setTitle("🍿 Nova Atualização do HomeFlix")
-                .setMessage("Versão " + versionName + " disponível!\n\n" + changelog + "\n\nDeseja atualizar agora?")
-                .setPositiveButton("Atualizar Agora", (dialog, which) -> {
-                    startDownloadAndInstall(activity, downloadUrl);
-                })
-                .setNegativeButton("Mais Tarde", null)
-                .setCancelable(true)
-                .show();
+    public static void checkForUpdates(final Activity activity, final String serverBaseUrl) {
+        checkForUpdates(activity, serverBaseUrl, null);
     }
 
-    private static void startDownloadAndInstall(final Activity activity, final String downloadUrl) {
+    public static void startDownloadAndInstall(final Activity activity, final String downloadUrl) {
         final ProgressDialog progress = new ProgressDialog(activity);
         progress.setTitle("Baixando HomeFlix");
         progress.setMessage("Conectando ao servidor...");

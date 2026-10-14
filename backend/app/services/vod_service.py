@@ -312,7 +312,7 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
             executor.submit(fetch_superstream, media_type, imdb_id, season, episode): "SuperStream",
             executor.submit(fetch_embedplayer, media_type, imdb_id, season, episode): "EmbedPlayer"
         }
-        done, not_done = concurrent.futures.wait(tasks.keys(), timeout=5.5)
+        done, not_done = concurrent.futures.wait(tasks.keys(), timeout=9.0)
 
         for f in done:
             provider = tasks[f]
@@ -393,6 +393,9 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
             for res in results:
                 if res is not None:
                     valid_streams.append(res)
+        # Se a validação concorrente descartou tudo por timeout de rede, mantém as fontes normalizadas como garantia
+        if not valid_streams and normalized:
+            valid_streams = normalized
         normalized = valid_streams
 
     # 4.2 Filtragem Estrita Anti-Cinema: Se já existe qualquer versão digital limpa (4K, 1080p, 720p),
