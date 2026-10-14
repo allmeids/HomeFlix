@@ -2021,8 +2021,17 @@ class HomeFlixApp {
     const similarSecEl = document.getElementById('detailsSimilarSection');
     const similarCarouselEl = document.getElementById('detailsSimilarCarousel');
 
+    const posterSkeletonEl = document.getElementById('detailsPosterSkeleton');
+    const posterFallbackEl = document.getElementById('detailsPosterFallback');
+    const fallbackTitleEl = document.getElementById('detailsFallbackTitle');
+
     if (heroBannerEl) heroBannerEl.style.backgroundImage = 'none';
-    if (posterImgEl) posterImgEl.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="450" fill="%231a1a1f"/>';
+    if (posterSkeletonEl) posterSkeletonEl.style.display = 'block';
+    if (posterFallbackEl) posterFallbackEl.style.display = 'none';
+    if (posterImgEl) {
+      posterImgEl.style.opacity = '0';
+      posterImgEl.removeAttribute('src');
+    }
     if (mainTitleEl) mainTitleEl.textContent = opts.title || 'Carregando...';
     if (topTitleEl) topTitleEl.textContent = opts.title || 'HomeFlix';
     if (taglineEl) taglineEl.textContent = '';
@@ -2071,15 +2080,36 @@ class HomeFlixApp {
 
     const backdrop = details.backdrop_path 
       ? `https://image.tmdb.org/t/p/original${details.backdrop_path}`
-      : `https://image.tmdb.org/t/p/original${details.poster_path}`;
+      : (details.poster_path ? `https://image.tmdb.org/t/p/original${details.poster_path}` : '');
 
     const poster = details.poster_path 
       ? `https://image.tmdb.org/t/p/w500${details.poster_path}`
-      : `https://image.tmdb.org/t/p/w500${details.backdrop_path}`;
+      : (details.backdrop_path ? `https://image.tmdb.org/t/p/w500${details.backdrop_path}` : null);
 
     // Popula Hero de Detalhes
-    if (heroBannerEl) heroBannerEl.style.backgroundImage = `url('${backdrop}')`;
-    if (posterImgEl) posterImgEl.src = poster;
+    if (heroBannerEl && backdrop) heroBannerEl.style.backgroundImage = `url('${backdrop}')`;
+
+    // Carregamento resiliente do pôster com fallback cinematográfico
+    if (fallbackTitleEl) fallbackTitleEl.textContent = title;
+    if (poster && posterImgEl) {
+      posterImgEl.onload = () => {
+        if (posterSkeletonEl) posterSkeletonEl.style.display = 'none';
+        if (posterFallbackEl) posterFallbackEl.style.display = 'none';
+        posterImgEl.style.opacity = '1';
+      };
+      posterImgEl.onerror = () => {
+        if (posterSkeletonEl) posterSkeletonEl.style.display = 'none';
+        posterImgEl.style.display = 'none';
+        if (posterFallbackEl) posterFallbackEl.style.display = 'flex';
+      };
+      posterImgEl.style.display = 'block';
+      posterImgEl.src = poster;
+    } else {
+      if (posterSkeletonEl) posterSkeletonEl.style.display = 'none';
+      if (posterImgEl) posterImgEl.style.display = 'none';
+      if (posterFallbackEl) posterFallbackEl.style.display = 'flex';
+    }
+
     if (mainTitleEl) mainTitleEl.textContent = title;
     if (topTitleEl) topTitleEl.textContent = title;
     if (taglineEl) taglineEl.textContent = tagline;

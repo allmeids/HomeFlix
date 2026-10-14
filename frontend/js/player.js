@@ -112,6 +112,11 @@ class HomeFlixPlayer {
     this.pauseScreenTimer = null;
     this.progressBuffered = document.getElementById('playerProgressBuffered');
     this.progressTooltip = document.getElementById('playerProgressTooltip');
+    this.previewCard = document.getElementById('playerPreviewCard');
+    this.previewVideo = document.getElementById('playerPreviewVideo');
+    this.previewFallback = document.getElementById('playerPreviewFallback');
+    this.previewTime = document.getElementById('playerPreviewTime');
+    this.previewDebounceTimer = null;
     this.isScrubbing = false;
 
     this.initListeners();
@@ -1833,7 +1838,7 @@ class HomeFlixPlayer {
   initProgressScrubbing() {
     if (!this.progressBar) return;
 
-    const updateSeekFromEvent = (clientX) => {
+    const updateSeekFromEvent = (clientX, isMoving = false) => {
       if (this.isLive || !this.video || !this.video.duration) return;
       const rect = this.progressBar.getBoundingClientRect();
       const pct = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
@@ -1842,11 +1847,7 @@ class HomeFlixPlayer {
       this.progressFill.style.width = `${pct * 100}%`;
       this.timeDisplay.textContent = `${this.formatTime(targetTime)} / ${this.formatTime(this.video.duration)}`;
 
-      if (this.progressTooltip) {
-        this.progressTooltip.textContent = this.formatTime(targetTime);
-        this.progressTooltip.style.left = `${pct * 100}%`;
-        this.progressTooltip.style.display = 'block';
-      }
+      this.updatePreviewCard(clientX, rect, pct, targetTime);
       return targetTime;
     };
 
@@ -1855,19 +1856,19 @@ class HomeFlixPlayer {
       if (this.isLive) return;
       this.isScrubbing = true;
       this.progressBar.classList.add('scrubbing');
-      const targetTime = updateSeekFromEvent(e.clientX);
+      const targetTime = updateSeekFromEvent(e.clientX, true);
 
       const onMouseMove = (ev) => {
         if (!this.isScrubbing) return;
-        updateSeekFromEvent(ev.clientX);
+        updateSeekFromEvent(ev.clientX, true);
       };
 
       const onMouseUp = (ev) => {
         if (!this.isScrubbing) return;
         this.isScrubbing = false;
         this.progressBar.classList.remove('scrubbing');
-        if (this.progressTooltip) this.progressTooltip.style.display = 'none';
-        const finalTime = updateSeekFromEvent(ev.clientX);
+        this.hidePreviewCard();
+        const finalTime = updateSeekFromEvent(ev.clientX, false);
         if (finalTime !== undefined) this.video.currentTime = finalTime;
         document.removeEventListener('mousemove', onMouseMove);
         document.removeEventListener('mouseup', onMouseUp);
@@ -1882,43 +1883,105 @@ class HomeFlixPlayer {
       if (this.isLive || !e.touches[0]) return;
       this.isScrubbing = true;
       this.progressBar.classList.add('scrubbing');
-      updateSeekFromEvent(e.touches[0].clientX);
+      updateSeekFromEvent(e.touches[0].clientX, true);
     }, { passive: true });
 
     this.progressBar.addEventListener('touchmove', (e) => {
       if (!this.isScrubbing || !e.touches[0]) return;
-      updateSeekFromEvent(e.touches[0].clientX);
+      updateSeekFromEvent(e.touches[0].clientX, true);
     }, { passive: true });
 
     this.progressBar.addEventListener('touchend', (e) => {
       if (!this.isScrubbing) return;
       this.isScrubbing = false;
       this.progressBar.classList.remove('scrubbing');
-      if (this.progressTooltip) this.progressTooltip.style.display = 'none';
+      this.hidePreviewCard();
       const touch = e.changedTouches && e.changedTouches[0];
       if (touch) {
-        const finalTime = updateSeekFromEvent(touch.clientX);
+        const finalTime = updateSeekFromEvent(touch.clientX, false);
         if (finalTime !== undefined) this.video.currentTime = finalTime;
       }
     }, { passive: true });
 
-    // Hover na barra para exibir tooltip no desktop
+    // Hover na barra para exibir preview no desktop
     this.progressBar.addEventListener('mousemove', (e) => {
       if (this.isLive || this.isScrubbing || !this.video || !this.video.duration) return;
       const rect = this.progressBar.getBoundingClientRect();
       const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-      if (this.progressTooltip) {
-        this.progressTooltip.textContent = this.formatTime(pct * this.video.duration);
-        this.progressTooltip.style.left = `${pct * 100}%`;
-        this.progressTooltip.style.display = 'block';
-      }
+      const targetTime = pct * this.video.duration;
+      this.updatePreviewCard(e.clientX, rect, pct, targetTime);
     });
 
     this.progressBar.addEventListener('mouseleave', () => {
-      if (!this.isScrubbing && this.progressTooltip) {
-        this.progressTooltip.style.display = 'none';
+      if (!this.isScrubbing) {
+        this.hidePreviewCard();
       }
     });
+  }
+
+  updatePreviewCard(clientX, barRect, pct, targetTime) {
+    if (this.isLive) return;
+
+    if (this.previewCard) {
+      this.previewCard.style.display = 'flex';
+      // Posiciona horizontalmente respeitando as bordas da tela
+      const cardWidth = 160;
+      const halfCard = cardWidth / 2;
+      const rawX = clientX - barRect.left;
+      const boundedX = Math.max(halfCard, Math.min(barRect.width - halfCard, rawX));
+      this.previewCard.style.left = `${boundedX}px`;
+
+      if (this.previewTime) {
+        this.previewTime.textContent = this.formatTime(targetTime);
+      }
+
+      // Sincroniza vídeo secundário de thumbnail para mostrar a cena exata
+      if (this.previewVideo) {
+        const src = this.video?.src || '';
+        if (src && !src.includes('.m3u8')) {
+          if (this.previewVideo.src !== src) {
+            this.previewVideo.src = src;
+          }
+          this.previewVideo.style.display = 'block';
+          if (this.previewFallback) this.previewFallback.style.display = 'none';
+
+          // Debounce suave do seek do frame
+          clearTimeout(this.previewDebounceTimer);
+          this.previewDebounceTimer = setTimeout(() => {
+            try {
+              if (this.previewVideo && Math.abs(this.previewVideo.currentTime - targetTime) > 0.5) {
+                this.previewVideo.currentTime = targetTime;
+              }
+            } catch (_) {}
+          }, 35);
+        } else {
+          // Em streams HLS onde não é possível clone direto, exibe o backdrop oficial em miniatura
+          this.previewVideo.style.display = 'none';
+          if (this.previewFallback) {
+            this.previewFallback.style.display = 'block';
+            const bg = this.currentMedia?.backdrop || this.currentMedia?.poster || '';
+            if (bg) {
+              const bgUrl = bg.startsWith('http') ? bg : `https://image.tmdb.org/t/p/w300${bg}`;
+              this.previewFallback.style.backgroundImage = `url('${bgUrl}')`;
+            }
+          }
+        }
+      }
+    } else if (this.progressTooltip) {
+      this.progressTooltip.textContent = this.formatTime(targetTime);
+      this.progressTooltip.style.left = `${pct * 100}%`;
+      this.progressTooltip.style.display = 'block';
+    }
+  }
+
+  hidePreviewCard() {
+    if (this.previewCard) {
+      this.previewCard.style.display = 'none';
+    }
+    if (this.progressTooltip) {
+      this.progressTooltip.style.display = 'none';
+    }
+    clearTimeout(this.previewDebounceTimer);
   }
 
   updateBufferedBar() {

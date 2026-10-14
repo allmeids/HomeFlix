@@ -32,7 +32,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/style.css?v=9.14">
+  <link rel="stylesheet" href="/static/css/style.css?v=9.15">
   <!-- HLS.js para streaming HLS/m3u8 no navegador -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -401,8 +401,13 @@
       <div class="details-hero-gradient"></div>
       
       <div class="details-hero-body">
-        <div class="details-poster-box">
-          <img class="details-poster-img" id="detailsPosterImg" src="" alt="Poster" />
+        <div class="details-poster-box" id="detailsPosterBox">
+          <div class="details-poster-skeleton" id="detailsPosterSkeleton"></div>
+          <img class="details-poster-img" id="detailsPosterImg" alt="Poster" />
+          <div class="details-poster-fallback" id="detailsPosterFallback" style="display: none;">
+            <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line></svg>
+            <span class="fallback-title" id="detailsFallbackTitle">HomeFlix Cinema</span>
+          </div>
           <div class="details-poster-badge" id="detailsCinemaBadge" style="display: none;">Imagem Cinema (CAM)</div>
         </div>
 
@@ -782,56 +787,65 @@
       <div class="player-progress-bar" id="playerProgressBar">
         <div class="player-progress-buffered" id="playerProgressBuffered"></div>
         <div class="player-progress-current" id="playerProgressCurrent"><span class="player-progress-knob"></span></div>
-        <div class="player-progress-tooltip" id="playerProgressTooltip">0:00</div>
-      </div>
-
-      <div class="player-controls-row">
-        <div class="controls-left">
-          <button class="ctrl-btn ctrl-play-btn" id="playPauseBtn" title="Play / Pause (Espaço)" aria-label="Reproduzir ou Pausar">
-            <svg class="icon-play" viewBox="0 0 24 24" width="30" height="30" fill="currentColor"><path d="M5 2.691c0-.76.815-1.243 1.482-.876l16.925 9.309a1 1 0 0 1 0 1.752L6.482 22.185C5.815 22.552 5 22.069 5 21.31z"/></svg>
-            <svg class="icon-pause" style="display:none;" viewBox="0 0 24 24" width="30" height="30" fill="currentColor"><path d="M4.5 3a.5.5 0 0 0-.5.5v17a.5.5 0 0 0 .5.5h5a.5.5 0 0 0 .5-.5v-17a.5.5 0 0 0-.5-.5zm10 0a.5.5 0 0 0-.5.5v17a.5.5 0 0 0 .5.5h5a.5.5 0 0 0 .5-.5v-17a.5.5 0 0 0-.5-.5z"/></svg>
-          </button>
-          
-          <!-- Botões de Zapping / Próximo para TV ao Vivo ou Episódio de Série -->
-          <button class="ctrl-btn ctrl-channel-btn" id="playerPrevChannelBtn" style="display: none;" title="Canal Anterior (Seta Cima / PageUp)">⏮</button>
-          <button class="ctrl-btn ctrl-channel-btn" id="playerNextChannelBtn" style="display: none;" title="Próximo Canal (Seta Baixo / PageDown)">⏭</button>
-
-          <button class="ctrl-btn" id="playerRewindBtn" title="Voltar 10s (Seta Esquerda)">
-            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" fill-rule="evenodd" d="M11.02 2.05A10 10 0 1 1 2 12H0a12 12 0 1 0 5-9.75V1H3v4a1 1 0 0 0 1 1h4V4H6a10 10 0 0 1 5.02-1.95M2 4v3h3v2H1a1 1 0 0 1-1-1V4zm12.13 12q-.88 0-1.53-.42-.64-.44-1-1.22a5 5 0 0 1-.35-1.86q0-1.05.35-1.85.36-.79 1-1.22A2.7 2.7 0 0 1 14.13 9a2.65 2.65 0 0 1 2.52 1.65q.35.79.35 1.85 0 1.07-.35 1.86a3 3 0 0 1-1.01 1.22 2.7 2.7 0 0 1-1.52.42m0-1.35q.59 0 .91-.56.34-.56.34-1.59 0-1.01-.34-1.58-.33-.57-.91-.57-.6 0-.92.57-.34.56-.34 1.58t.34 1.6q.33.54.91.55m-5.53 1.2v-5.13l-1.6.42V9.82l3.2-.8v6.84z" clip-rule="evenodd"></path></svg>
-          </button>
-          <button class="ctrl-btn" id="playerForwardBtn" title="Avançar 10s (Seta Direita)">
-            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" fill-rule="evenodd" d="M6.44 3.69A10 10 0 0 1 18 4h-2v2h4a1 1 0 0 0 1-1V1h-2v1.25A12 12 0 1 0 24 12h-2A10 10 0 1 1 6.44 3.69M22 4v3h-3v2h4a1 1 0 0 0 1-1V4zm-9.4 11.58q.66.42 1.53.42a2.7 2.7 0 0 0 1.5-.42q.67-.44 1.02-1.22.35-.8.35-1.86 0-1.05-.35-1.85A2.65 2.65 0 0 0 14.13 9a2.7 2.7 0 0 0-1.53.43q-.64.44-1 1.22a4.5 4.5 0 0 0-.35 1.85q0 1.07.35 1.86.36.78 1 1.22m2.44-1.49q-.33.56-.91.56-.6 0-.92-.56-.34-.56-.34-1.59 0-1.01.34-1.58.33-.57.91-.57.6 0 .92.57.34.56.34 1.58t-.34 1.6M8.6 10.72v5.14h1.6V9.02l-3.2.8v1.32z" clip-rule="evenodd"></path></svg>
-          </button>
-          <button class="ctrl-btn ctrl-skip-intro" id="playerSkipIntroBtn" title="Pular Abertura (+85s)" style="display: none;">⏭ Pular Abertura (+85s)</button>
-
-          <!-- Volume com Slider Deslizante Horizontal Netflix -->
-          <div class="player-volume-wrapper" id="playerVolumeWrapper">
-            <button class="ctrl-btn" id="playerVolumeBtn" title="Mudo / Volume">
-              <svg class="icon-vol-high" viewBox="0 0 24 24" width="26" height="26" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" fill-rule="evenodd" d="M24 12a14 14 0 0 0-4.1-9.9l-1.415 1.415a12 12 0 0 1 0 16.97L19.9 21.9A14 14 0 0 0 24 12M11 4a1 1 0 0 0-1.707-.707L4.586 8H1a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h3.586l4.707 4.707A1 1 0 0 0 11 20zM5.707 9.707 9 6.414v11.172l-3.293-3.293L5.414 14H2v-4h3.414zM16 12a6 6 0 0 0-1.757-4.243l-1.415 1.415a4 4 0 0 1 0 5.656l1.415 1.415A6 6 0 0 0 16 12m1.07-7.071a10 10 0 0 1 0 14.142l-1.413-1.414a8 8 0 0 0 0-11.314z" clip-rule="evenodd"></path></svg>
-              <svg class="icon-vol-mute" style="display:none;" viewBox="0 0 24 24" width="26" height="26" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" fill-rule="evenodd" d="M11 4a1 1 0 0 0-1.707-.707L4.586 8H1a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h3.586l4.707 4.707A1 1 0 0 0 11 20zM5.707 9.707 9 6.414v11.172l-3.293-3.293L5.414 14H2v-4h3.414zM16.293 8.293 18.586 10.586l2.293-2.293 1.414 1.414-2.293 2.293 2.293 2.293-1.414 1.414-2.293-2.293-2.293 2.293-1.414-1.414 2.293-2.293-2.293-2.293z" clip-rule="evenodd"></path></svg>
-            </button>
-            <div class="volume-slider-track" id="playerVolumeSliderTrack">
-              <input type="range" class="volume-range-input" id="playerVolumeInput" min="0" max="1" step="0.05" value="1" />
+          <!-- Miniatura Flutuante de Pré-visualização de Cena ao Passar/Arrastar a Barra -->
+          <div class="player-preview-card" id="playerPreviewCard" style="display: none;">
+            <div class="preview-thumb-box">
+              <video class="preview-thumb-video" id="playerPreviewVideo" preload="auto" muted playsinline></video>
+              <div class="preview-thumb-fallback" id="playerPreviewFallback"></div>
             </div>
+            <span class="preview-thumb-time" id="playerPreviewTime">0:00</span>
           </div>
-
-          <span class="time-display" id="playerTimeDisplay">00:00 / 00:00</span>
+          <div class="player-progress-tooltip" id="playerProgressTooltip">0:00</div>
         </div>
 
-        <div class="controls-right">
-          <button class="ctrl-btn live-btn-guide" id="playerChannelGuideBtn" title="Guia de Canais (C)">Canais (C)</button>
-          
-          <!-- Seletor de Legendas & Áudio (SVG Oficial SubtitlesMedium) -->
-          <button class="ctrl-btn" id="playerSubtitlesBtn" title="Legendas e Faixas de Áudio (CC / L)">
-            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" fill-rule="evenodd" d="M1 3a1 1 0 0 1 1-1h20a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-3v3a1 1 0 0 1-1.55.83L11.7 18H2a1 1 0 0 1-1-1zm2 1v12h9.3l.25.17L17 19.13V16h4V4zm7 5H5V7h5zm9 2h-5v2h5zm-7 2H5v-2h7zm7-6h-7v2h7z" clip-rule="evenodd"></path></svg>
-          </button>
-          
-          <select id="playerSourceSelect" style="background: rgba(0,0,0,0.7); color:#fff; border:1px solid rgba(255,255,255,0.3); border-radius:6px; padding:6px 12px; font-size:12px;"></select>
-          
-          <!-- Tela Cheia (SVG Oficial FullscreenEnterMedium) -->
-          <button class="ctrl-btn" id="playerFullscreenBtn" title="Tela Cheia (F)">
-            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" fill-rule="evenodd" d="M0 5c0-1.1.9-2 2-2h7v2H2v4H0zm22 0h-7V3h7a2 2 0 0 1 2 2v4h-2zM2 15v4h7v2H2a2 2 0 0 1-2-2v-4zm20 4v-4h2v4a2 2 0 0 1-2 2h-7v-2z" clip-rule="evenodd"></path></svg>
-          </button>
+        <div class="player-controls-row">
+          <div class="controls-left">
+            <button class="ctrl-btn ctrl-play-btn" id="playPauseBtn" title="Play / Pause (Espaço)" aria-label="Reproduzir ou Pausar">
+              <svg class="icon-play" viewBox="0 0 24 24" width="30" height="30" fill="currentColor"><path d="M5 2.691c0-.76.815-1.243 1.482-.876l16.925 9.309a1 1 0 0 1 0 1.752L6.482 22.185C5.815 22.552 5 22.069 5 21.31z"/></svg>
+              <svg class="icon-pause" style="display:none;" viewBox="0 0 24 24" width="30" height="30" fill="currentColor"><path d="M4.5 3a.5.5 0 0 0-.5.5v17a.5.5 0 0 0 .5.5h5a.5.5 0 0 0 .5-.5v-17a.5.5 0 0 0-.5-.5zm10 0a.5.5 0 0 0-.5.5v17a.5.5 0 0 0 .5.5h5a.5.5 0 0 0 .5-.5v-17a.5.5 0 0 0-.5-.5z"/></svg>
+            </button>
+            
+            <!-- Botões de Zapping / Próximo para TV ao Vivo ou Episódio de Série -->
+            <button class="ctrl-btn ctrl-channel-btn" id="playerPrevChannelBtn" style="display: none;" title="Canal Anterior (Seta Cima / PageUp)">⏮</button>
+            <button class="ctrl-btn ctrl-channel-btn" id="playerNextChannelBtn" style="display: none;" title="Próximo Canal (Seta Baixo / PageDown)">⏭</button>
+
+            <button class="ctrl-btn" id="playerRewindBtn" title="Voltar 10s (Seta Esquerda)">
+              <svg viewBox="0 0 24 24" width="26" height="26" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" fill-rule="evenodd" d="M11.02 2.05A10 10 0 1 1 2 12H0a12 12 0 1 0 5-9.75V1H3v4a1 1 0 0 0 1 1h4V4H6a10 10 0 0 1 5.02-1.95M2 4v3h3v2H1a1 1 0 0 1-1-1V4zm12.13 12q-.88 0-1.53-.42-.64-.44-1-1.22a5 5 0 0 1-.35-1.86q0-1.05.35-1.85.36-.79 1-1.22A2.7 2.7 0 0 1 14.13 9a2.65 2.65 0 0 1 2.52 1.65q.35.79.35 1.85 0 1.07-.35 1.86a3 3 0 0 1-1.01 1.22 2.7 2.7 0 0 1-1.52.42m0-1.35q.59 0 .91-.56.34-.56.34-1.59 0-1.01-.34-1.58-.33-.57-.91-.57-.6 0-.92.57-.34.56-.34 1.58t.34 1.6q.33.54.91.55m-5.53 1.2v-5.13l-1.6.42V9.82l3.2-.8v6.84z" clip-rule="evenodd"></path></svg>
+            </button>
+            <button class="ctrl-btn" id="playerForwardBtn" title="Avançar 10s (Seta Direita)">
+              <svg viewBox="0 0 24 24" width="26" height="26" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" fill-rule="evenodd" d="M6.44 3.69A10 10 0 0 1 18 4h-2v2h4a1 1 0 0 0 1-1V1h-2v1.25A12 12 0 1 0 24 12h-2A10 10 0 1 1 6.44 3.69M22 4v3h-3v2h4a1 1 0 0 0 1-1V4zm-9.4 11.58q.66.42 1.53.42a2.7 2.7 0 0 0 1.5-.42q.67-.44 1.02-1.22.35-.8.35-1.86 0-1.05-.35-1.85A2.65 2.65 0 0 0 14.13 9a2.7 2.7 0 0 0-1.53.43q-.64.44-1 1.22a4.5 4.5 0 0 0-.35 1.85q0 1.07.35 1.86.36.78 1 1.22m2.44-1.49q-.33.56-.91.56-.6 0-.92-.56-.34-.56-.34-1.59 0-1.01.34-1.58.33-.57.91-.57.6 0 .92.57.34.56.34 1.58t-.34 1.6M8.6 10.72v5.14h1.6V9.02l-3.2.8v1.32z" clip-rule="evenodd"></path></svg>
+            </button>
+            <button class="ctrl-btn ctrl-skip-intro" id="playerSkipIntroBtn" title="Pular Abertura (+85s)" style="display: none;">⏭ Pular Abertura (+85s)</button>
+
+            <!-- Volume com Slider Deslizante Horizontal Netflix -->
+            <div class="player-volume-wrapper" id="playerVolumeWrapper">
+              <button class="ctrl-btn" id="playerVolumeBtn" title="Mudo / Volume">
+                <svg class="icon-vol-high" viewBox="0 0 24 24" width="26" height="26" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" fill-rule="evenodd" d="M24 12a14 14 0 0 0-4.1-9.9l-1.415 1.415a12 12 0 0 1 0 16.97L19.9 21.9A14 14 0 0 0 24 12M11 4a1 1 0 0 0-1.707-.707L4.586 8H1a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h3.586l4.707 4.707A1 1 0 0 0 11 20zM5.707 9.707 9 6.414v11.172l-3.293-3.293L5.414 14H2v-4h3.414zM16 12a6 6 0 0 0-1.757-4.243l-1.415 1.415a4 4 0 0 1 0 5.656l1.415 1.415A6 6 0 0 0 16 12m1.07-7.071a10 10 0 0 1 0 14.142l-1.413-1.414a8 8 0 0 0 0-11.314z" clip-rule="evenodd"></path></svg>
+                <svg class="icon-vol-mute" style="display:none;" viewBox="0 0 24 24" width="26" height="26" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" fill-rule="evenodd" d="M11 4a1 1 0 0 0-1.707-.707L4.586 8H1a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h3.586l4.707 4.707A1 1 0 0 0 11 20zM5.707 9.707 9 6.414v11.172l-3.293-3.293L5.414 14H2v-4h3.414zM16.293 8.293 18.586 10.586l2.293-2.293 1.414 1.414-2.293 2.293 2.293 2.293-1.414 1.414-2.293-2.293-2.293 2.293-1.414-1.414 2.293-2.293-2.293-2.293z" clip-rule="evenodd"></path></svg>
+              </button>
+              <div class="volume-slider-track" id="playerVolumeSliderTrack">
+                <input type="range" class="volume-range-input" id="playerVolumeInput" min="0" max="1" step="0.05" value="1" />
+              </div>
+            </div>
+
+            <span class="time-display" id="playerTimeDisplay">00:00 / 00:00</span>
+          </div>
+
+          <div class="controls-right">
+            <button class="ctrl-btn live-btn-guide" id="playerChannelGuideBtn" title="Guia de Canais (C)">Canais (C)</button>
+            
+            <!-- Seletor de Legendas & Áudio (SVG Oficial SubtitlesMedium) -->
+            <button class="ctrl-btn" id="playerSubtitlesBtn" title="Legendas e Faixas de Áudio (CC / L)">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" fill-rule="evenodd" d="M1 3a1 1 0 0 1 1-1h20a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-3v3a1 1 0 0 1-1.55.83L11.7 18H2a1 1 0 0 1-1-1zm2 1v12h9.3l.25.17L17 19.13V16h4V4zm7 5H5V7h5zm9 2h-5v2h5zm-7 2H5v-2h7zm7-6h-7v2h7z" clip-rule="evenodd"></path></svg>
+            </button>
+            
+            <!-- Seleção de fontes opera nos bastidores (smart auto-play e auto-failover) -->
+            <select id="playerSourceSelect" style="display: none;"></select>
+            
+            <!-- Tela Cheia (SVG Oficial FullscreenEnterMedium) -->
+            <button class="ctrl-btn" id="playerFullscreenBtn" title="Tela Cheia (F)">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" fill-rule="evenodd" d="M0 5c0-1.1.9-2 2-2h7v2H2v4H0zm22 0h-7V3h7a2 2 0 0 1 2 2v4h-2zM2 15v4h7v2H2a2 2 0 0 1-2-2v-4zm20 4v-4h2v4a2 2 0 0 1-2 2h-7v-2z" clip-rule="evenodd"></path></svg>
+            </button>
         </div>
       </div>
     </div>
@@ -1010,8 +1024,8 @@
   </nav>
 
   <!-- Scripts -->
-  <script src="/static/js/api.js?v=9.14"></script>
-  <script src="/static/js/player.js?v=9.14"></script>
-  <script src="/static/js/app.js?v=9.14"></script>
+  <script src="/static/js/api.js?v=9.15"></script>
+  <script src="/static/js/player.js?v=9.15"></script>
+  <script src="/static/js/app.js?v=9.15"></script>
 </body>
 </html>
