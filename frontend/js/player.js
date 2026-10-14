@@ -1920,54 +1920,11 @@ class HomeFlixPlayer {
   updatePreviewCard(clientX, barRect, pct, targetTime) {
     if (this.isLive) return;
 
-    if (this.previewCard) {
-      this.previewCard.style.display = 'flex';
-      // Posiciona horizontalmente respeitando as bordas da tela
-      const cardWidth = 160;
-      const halfCard = cardWidth / 2;
-      const rawX = clientX - barRect.left;
-      const boundedX = Math.max(halfCard, Math.min(barRect.width - halfCard, rawX));
-      this.previewCard.style.left = `${boundedX}px`;
-
-      if (this.previewTime) {
-        this.previewTime.textContent = this.formatTime(targetTime);
-      }
-
-      // Sincroniza vídeo secundário de thumbnail para mostrar a cena exata
-      if (this.previewVideo) {
-        const src = this.video?.src || '';
-        if (src && !src.includes('.m3u8')) {
-          if (this.previewVideo.src !== src) {
-            this.previewVideo.src = src;
-          }
-          this.previewVideo.style.display = 'block';
-          if (this.previewFallback) this.previewFallback.style.display = 'none';
-
-          // Debounce suave do seek do frame
-          clearTimeout(this.previewDebounceTimer);
-          this.previewDebounceTimer = setTimeout(() => {
-            try {
-              if (this.previewVideo && Math.abs(this.previewVideo.currentTime - targetTime) > 0.5) {
-                this.previewVideo.currentTime = targetTime;
-              }
-            } catch (_) {}
-          }, 35);
-        } else {
-          // Em streams HLS onde não é possível clone direto, exibe o backdrop oficial em miniatura
-          this.previewVideo.style.display = 'none';
-          if (this.previewFallback) {
-            this.previewFallback.style.display = 'block';
-            const bg = this.currentMedia?.backdrop || this.currentMedia?.poster || '';
-            if (bg) {
-              const bgUrl = bg.startsWith('http') ? bg : `https://image.tmdb.org/t/p/w300${bg}`;
-              this.previewFallback.style.backgroundImage = `url('${bgUrl}')`;
-            }
-          }
-        }
-      }
-    } else if (this.progressTooltip) {
+    if (this.progressTooltip) {
       this.progressTooltip.textContent = this.formatTime(targetTime);
-      this.progressTooltip.style.left = `${pct * 100}%`;
+      const rawX = clientX - barRect.left;
+      const boundedX = Math.max(24, Math.min(barRect.width - 24, rawX));
+      this.progressTooltip.style.left = `${boundedX}px`;
       this.progressTooltip.style.display = 'block';
     }
   }

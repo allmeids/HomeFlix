@@ -289,26 +289,18 @@ class HomeFlixApp {
     }
 
     // Modal de Atualização Customizado (Estilo Oficial HomeFlix)
-    const updateModal = document.getElementById('appUpdateModal');
-    const updateLaterBtn = document.getElementById('updateLaterBtn');
-    const updateNowBtn = document.getElementById('updateNowBtn');
-
-    if (updateLaterBtn && updateModal) {
-      updateLaterBtn.onclick = () => {
-        updateModal.classList.remove('open');
-        updateModal.style.display = 'none';
-        const titleEl = document.getElementById('updateModalVersion');
-        sessionStorage.setItem('hf_update_dismissed_' + (titleEl?.textContent || 'latest'), '1');
-      };
-    }
-
     window.showAppUpdateModal = (versionName, changelog, downloadUrl) => {
-      if (sessionStorage.getItem('hf_update_dismissed_Versão ' + versionName) === '1') return;
+      const vKey = versionName || 'latest';
+      if (sessionStorage.getItem('hf_update_dismissed_' + vKey) === '1') return;
+      const updateModal = document.getElementById('appUpdateModal');
       if (!updateModal) return;
       const titleEl = document.getElementById('updateModalVersion');
       const changeEl = document.getElementById('updateModalChangelog');
-      if (titleEl) titleEl.textContent = `Versão ${versionName}`;
-      if (changeEl) {
+      const updateNowBtn = document.getElementById('updateNowBtn');
+      const updateLaterBtn = document.getElementById('updateLaterBtn');
+
+      if (titleEl) titleEl.textContent = `Versão ${vKey}`;
+      if (changeEl && changelog) {
         const parts = changelog.split(/[,;\n\.]+/).map(s => s.trim()).filter(Boolean);
         if (parts.length > 1) {
           changeEl.innerHTML = '<ul class="update-bullets">' + parts.map(p => `<li>${p}</li>`).join('') + '</ul>';
@@ -316,6 +308,15 @@ class HomeFlixApp {
           changeEl.textContent = changelog;
         }
       }
+
+      if (updateLaterBtn) {
+        updateLaterBtn.onclick = () => {
+          updateModal.classList.remove('open');
+          updateModal.style.display = 'none';
+          sessionStorage.setItem('hf_update_dismissed_' + vKey, '1');
+        };
+      }
+
       if (updateNowBtn) {
         updateNowBtn.onclick = () => {
           if (window.HomeFlixApp && typeof window.HomeFlixApp.startAppUpdate === 'function') {
@@ -327,8 +328,9 @@ class HomeFlixApp {
           }
         };
       }
+
       updateModal.style.display = 'flex';
-      setTimeout(() => updateModal.classList.add('open'), 10);
+      setTimeout(() => updateModal.classList.add('open'), 20);
     };
 
     // Configuração da Bottom Navigation Bar Mobile Oficial da Netflix

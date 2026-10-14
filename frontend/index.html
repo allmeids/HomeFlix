@@ -32,7 +32,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/style.css?v=9.16">
+  <link rel="stylesheet" href="/static/css/style.css?v=9.18">
   <!-- HLS.js para streaming HLS/m3u8 no navegador -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -623,12 +623,14 @@
   <div class="player-overlay" id="playerOverlay">
     <!-- Barra Superior do Player -->
     <div class="player-topbar">
-      <button class="player-back-btn" id="playerBackBtn" title="Voltar (Esc)">
-        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" fill-rule="evenodd" d="M6.414 11H21v2H6.414l5.293 5.293-1.414 1.414-7-7a1 1 0 0 1 0-1.414l7-7 1.414 1.414z" clip-rule="evenodd"></path></svg>
-      </button>
-      <div class="player-title-box">
-        <div class="player-title-display" id="playerTitle">HomeFlix Cinema</div>
-        <div class="player-sub-display" id="playerSubtitle"></div>
+      <div class="player-top-left">
+        <button class="player-back-btn" id="playerBackBtn" title="Voltar (Esc)" aria-label="Voltar">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" fill-rule="evenodd" d="M6.414 11H21v2H6.414l5.293 5.293-1.414 1.414-7-7a1 1 0 0 1 0-1.414l7-7 1.414 1.414z" clip-rule="evenodd"></path></svg>
+        </button>
+        <div class="player-title-box">
+          <div class="player-title-display" id="playerTitle">HomeFlix Cinema</div>
+          <div class="player-sub-display" id="playerSubtitle"></div>
+        </div>
       </div>
       <div class="player-top-actions">
         <button class="btn-icon" id="playerToggleSidebarBtnTop" title="Abrir Guia de Canais (Tecla C ou Seta Esquerda)">Guia de Canais</button>
@@ -787,16 +789,8 @@
       <div class="player-progress-bar" id="playerProgressBar">
         <div class="player-progress-buffered" id="playerProgressBuffered"></div>
         <div class="player-progress-current" id="playerProgressCurrent"><span class="player-progress-knob"></span></div>
-          <!-- Miniatura Flutuante de Pré-visualização de Cena ao Passar/Arrastar a Barra -->
-          <div class="player-preview-card" id="playerPreviewCard" style="display: none;">
-            <div class="preview-thumb-box">
-              <video class="preview-thumb-video" id="playerPreviewVideo" preload="auto" muted playsinline></video>
-              <div class="preview-thumb-fallback" id="playerPreviewFallback"></div>
-            </div>
-            <span class="preview-thumb-time" id="playerPreviewTime">0:00</span>
-          </div>
-          <div class="player-progress-tooltip" id="playerProgressTooltip">0:00</div>
-        </div>
+        <div class="player-progress-tooltip" id="playerProgressTooltip">0:00</div>
+      </div>
 
         <div class="player-controls-row">
           <div class="controls-left">
@@ -1055,8 +1049,8 @@
   </nav>
 
   <!-- Scripts -->
-  <script src="/static/js/api.js?v=9.16"></script>
-  <script src="/static/js/player.js?v=9.16"></script>
-  <script src="/static/js/app.js?v=9.16"></script>
+  <script src="/static/js/api.js?v=9.18"></script>
+  <script src="/static/js/player.js?v=9.18"></script>
+  <script src="/static/js/app.js?v=9.18"></script>
 </body>
 </html>
