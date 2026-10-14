@@ -2478,6 +2478,9 @@ class HomeFlixApp {
     if (playBtn) playBtn.innerHTML = 'Conectando ao melhor servidor...';
 
     const resolved = await API.resolveStreams(mediaType, tmdbId, season, episode);
+    if (this.player && typeof this.player.setLoadingProgress === 'function') {
+      this.player.setLoadingProgress(70);
+    }
     if (playBtn) {
       this.updateDetailsPlayButton(mediaType, tmdbId, title, details, season, episode, resumeTime);
     }
@@ -2495,7 +2498,6 @@ class HomeFlixApp {
       return;
     }
 
-
     // Fecha o modal e inicia o player instantaneamente
     const detailsModal = document.getElementById('detailsModal');
     if (detailsModal) detailsModal.classList.remove('open');
@@ -2504,6 +2506,7 @@ class HomeFlixApp {
       mediaId: tmdbId,
       mediaType: mediaType,
       title: title,
+      overview: details?.overview || null,
       poster: details.poster_path,
       backdrop: details.backdrop_path,
       season: season,

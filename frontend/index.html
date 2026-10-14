@@ -32,7 +32,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/style.css?v=9.13">
+  <link rel="stylesheet" href="/static/css/style.css?v=9.14">
   <!-- HLS.js para streaming HLS/m3u8 no navegador -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -694,15 +694,72 @@
     <!-- Elemento Vídeo Principal -->
     <video id="videoPlayer" class="player-video" playsinline></video>
 
-    <!-- Indicador de Carregamento & Buffer Cinematográfico -->
+    <!-- Escurecimento suave do vídeo quando o HUD está visível (estilo Netflix Mobile) -->
+    <div class="player-hud-scrim" aria-hidden="true"></div>
+
+    <!-- Tela de Carregamento Clean Estilo Netflix (anel vermelho + porcentagem, sem textos) -->
+    <div class="player-loading-screen" id="playerLoadingScreen" aria-hidden="true">
+      <div class="player-loading-backdrop" id="playerLoadingBackdrop"></div>
+      <div class="nf-loader">
+        <svg class="nf-loader-ring" viewBox="0 0 50 50" aria-hidden="true">
+          <circle class="nf-loader-track" cx="25" cy="25" r="21"></circle>
+          <circle class="nf-loader-arc" cx="25" cy="25" r="21"></circle>
+        </svg>
+        <span class="nf-loader-pct" id="playerLoadingPct">0%</span>
+      </div>
+    </div>
+
+    <!-- Spinner de Buffer (sem texto) & Tela de Erro -->
     <div class="player-spinner" id="playerSpinner" style="display: none;">
       <div class="spinner-circle"></div>
-      <div class="spinner-text" id="playerSpinnerText">Carregando transmissão...</div>
+      <div class="spinner-text" id="playerSpinnerText"></div>
+    </div>
+
+    <!-- Feedback central de Play/Pause (pulso estilo Netflix) -->
+    <div class="player-center-flash" id="playerCenterFlash" aria-hidden="true"></div>
+
+    <!-- Indicadores de Avanço/Retrocesso por toque duplo -->
+    <div class="player-seek-ripple left" id="playerSeekRippleLeft" aria-hidden="true">
+      <span class="seek-ripple-icon">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M11 6v12l-8.5-6zm9.5 0v12L12 12z"/></svg>
+      </span>
+      <span class="seek-ripple-label">10 s</span>
+    </div>
+    <div class="player-seek-ripple right" id="playerSeekRippleRight" aria-hidden="true">
+      <span class="seek-ripple-label">10 s</span>
+      <span class="seek-ripple-icon">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M13 6v12l8.5-6zM3.5 6v12L12 12z"/></svg>
+      </span>
+    </div>
+
+    <!-- Controles Centrais para Toque (Celular / Tablet — estilo app Netflix) -->
+    <div class="player-center-controls" id="playerCenterControls">
+      <button class="center-ctrl-btn" id="playerCenterRewindBtn" title="Voltar 10s" aria-label="Voltar 10 segundos">
+        <svg viewBox="0 0 24 24" width="40" height="40" fill="none"><path fill="currentColor" fill-rule="evenodd" d="M11.02 2.05A10 10 0 1 1 2 12H0a12 12 0 1 0 5-9.75V1H3v4a1 1 0 0 0 1 1h4V4H6a10 10 0 0 1 5.02-1.95M2 4v3h3v2H1a1 1 0 0 1-1-1V4zm12.13 12q-.88 0-1.53-.42-.64-.44-1-1.22a5 5 0 0 1-.35-1.86q0-1.05.35-1.85.36-.79 1-1.22A2.7 2.7 0 0 1 14.13 9a2.65 2.65 0 0 1 2.52 1.65q.35.79.35 1.85 0 1.07-.35 1.86a3 3 0 0 1-1.01 1.22 2.7 2.7 0 0 1-1.52.42m0-1.35q.59 0 .91-.56.34-.56.34-1.59 0-1.01-.34-1.58-.33-.57-.91-.57-.6 0-.92.57-.34.56-.34 1.58t.34 1.6q.33.54.91.55m-5.53 1.2v-5.13l-1.6.42V9.82l3.2-.8v6.84z" clip-rule="evenodd"/></svg>
+      </button>
+      <button class="center-ctrl-btn center-play-btn" id="playerCenterPlayBtn" title="Reproduzir / Pausar" aria-label="Reproduzir ou Pausar">
+        <svg class="icon-play" viewBox="0 0 24 24" width="56" height="56" fill="currentColor"><path d="M5 2.691c0-.76.815-1.243 1.482-.876l16.925 9.309a1 1 0 0 1 0 1.752L6.482 22.185C5.815 22.552 5 22.069 5 21.31z"/></svg>
+        <svg class="icon-pause" style="display:none;" viewBox="0 0 24 24" width="56" height="56" fill="currentColor"><path d="M4.5 3a.5.5 0 0 0-.5.5v17a.5.5 0 0 0 .5.5h5a.5.5 0 0 0 .5-.5v-17a.5.5 0 0 0-.5-.5zm10 0a.5.5 0 0 0-.5.5v17a.5.5 0 0 0 .5.5h5a.5.5 0 0 0 .5-.5v-17a.5.5 0 0 0-.5-.5z"/></svg>
+      </button>
+      <button class="center-ctrl-btn" id="playerCenterForwardBtn" title="Avançar 10s" aria-label="Avançar 10 segundos">
+        <svg viewBox="0 0 24 24" width="40" height="40" fill="none"><path fill="currentColor" fill-rule="evenodd" d="M6.44 3.69A10 10 0 0 1 18 4h-2v2h4a1 1 0 0 0 1-1V1h-2v1.25A12 12 0 1 0 24 12h-2A10 10 0 1 1 6.44 3.69M22 4v3h-3v2h4a1 1 0 0 0 1-1V4zm-9.4 11.58q.66.42 1.53.42a2.7 2.7 0 0 0 1.5-.42q.67-.44 1.02-1.22.35-.8.35-1.86 0-1.05-.35-1.85A2.65 2.65 0 0 0 14.13 9a2.7 2.7 0 0 0-1.53.43q-.64.44-1 1.22a4.5 4.5 0 0 0-.35 1.85q0 1.07.35 1.86.36.78 1 1.22m2.44-1.49q-.33.56-.91.56-.6 0-.92-.56-.34-.56-.34-1.59 0-1.01.34-1.58.33-.57.91-.57.6 0 .92.57.34.56.34 1.58t-.34 1.6M8.6 10.72v5.14h1.6V9.02l-3.2.8v1.32z" clip-rule="evenodd"/></svg>
+      </button>
+    </div>
+
+    <!-- Tela de Pausa "Você está assistindo" (estilo Netflix) -->
+    <div class="player-pause-screen" id="playerPauseScreen" aria-hidden="true">
+      <div class="pause-screen-content">
+        <div class="pause-screen-label">Você está assistindo</div>
+        <div class="pause-screen-title" id="pauseScreenTitle"></div>
+        <div class="pause-screen-meta" id="pauseScreenMeta"></div>
+        <div class="pause-screen-overview" id="pauseScreenOverview"></div>
+      </div>
+      <div class="pause-screen-status">Pausado</div>
     </div>
 
     <!-- Badge Discreto de Failover de Servidor / Fonte -->
     <div class="player-failover-badge" id="playerFailoverBadge" style="display: none;">
-      <span id="playerFailoverText">⚡ Conectando à fonte alternativa...</span>
+      <span id="playerFailoverText">Alternando servidor...</span>
     </div>
 
     <!-- Card Flutuante de Próximo Episódio (Estilo Netflix Binge-Watching) -->
@@ -723,14 +780,16 @@
     <!-- Controles Inferiores do Player -->
     <div class="player-controls-bottom">
       <div class="player-progress-bar" id="playerProgressBar">
-        <div class="player-progress-current" id="playerProgressCurrent"></div>
+        <div class="player-progress-buffered" id="playerProgressBuffered"></div>
+        <div class="player-progress-current" id="playerProgressCurrent"><span class="player-progress-knob"></span></div>
+        <div class="player-progress-tooltip" id="playerProgressTooltip">0:00</div>
       </div>
 
       <div class="player-controls-row">
         <div class="controls-left">
           <button class="ctrl-btn ctrl-play-btn" id="playPauseBtn" title="Play / Pause (Espaço)" aria-label="Reproduzir ou Pausar">
-            <svg class="icon-play" viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M6 3.868v16.264a1 1 0 0 0 1.543.841l12.836-8.132a1 1 0 0 0 0-1.682L7.543 3.027A1 1 0 0 0 6 3.868z"/></svg>
-            <svg class="icon-pause" style="display:none;" viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path fill-rule="evenodd" d="M6 4.5a1.5 1.5 0 0 1 1.5-1.5h1.5A1.5 1.5 0 0 1 10.5 4.5v15a1.5 1.5 0 0 1-1.5 1.5H7.5A1.5 1.5 0 0 1 6 19.5v-15zm7.5 0A1.5 1.5 0 0 1 15 3h1.5a1.5 1.5 0 0 1 1.5 1.5v15a1.5 1.5 0 0 1-1.5 1.5H15a1.5 1.5 0 0 1-1.5-1.5v-15z" clip-rule="evenodd"/></svg>
+            <svg class="icon-play" viewBox="0 0 24 24" width="30" height="30" fill="currentColor"><path d="M5 2.691c0-.76.815-1.243 1.482-.876l16.925 9.309a1 1 0 0 1 0 1.752L6.482 22.185C5.815 22.552 5 22.069 5 21.31z"/></svg>
+            <svg class="icon-pause" style="display:none;" viewBox="0 0 24 24" width="30" height="30" fill="currentColor"><path d="M4.5 3a.5.5 0 0 0-.5.5v17a.5.5 0 0 0 .5.5h5a.5.5 0 0 0 .5-.5v-17a.5.5 0 0 0-.5-.5zm10 0a.5.5 0 0 0-.5.5v17a.5.5 0 0 0 .5.5h5a.5.5 0 0 0 .5-.5v-17a.5.5 0 0 0-.5-.5z"/></svg>
           </button>
           
           <!-- Botões de Zapping / Próximo para TV ao Vivo ou Episódio de Série -->
@@ -951,8 +1010,8 @@
   </nav>
 
   <!-- Scripts -->
-  <script src="/static/js/api.js?v=9.13"></script>
-  <script src="/static/js/player.js?v=9.13"></script>
-  <script src="/static/js/app.js?v=9.13"></script>
+  <script src="/static/js/api.js?v=9.14"></script>
+  <script src="/static/js/player.js?v=9.14"></script>
+  <script src="/static/js/app.js?v=9.14"></script>
 </body>
 </html>

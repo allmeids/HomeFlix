@@ -86,6 +86,34 @@ class HomeFlixPlayer {
     this.failoverText = document.getElementById('playerFailoverText');
     this.failoverTimer = null;
 
+    // Tela de Carregamento Clean (estilo Netflix)
+    this.loadingScreen = document.getElementById('playerLoadingScreen');
+    this.loadingBackdrop = document.getElementById('playerLoadingBackdrop');
+    this.loadingPctEl = document.getElementById('playerLoadingPct');
+    this.loadingActive = false;
+    this.loadingPct = 0;
+    this.loadingTarget = 0;
+    this.loadingTimer = null;
+
+    // Controles centrais (touch), feedback de play/pause, ripples de seek e tela de pausa
+    this.centerControls = document.getElementById('playerCenterControls');
+    this.centerPlayBtn = document.getElementById('playerCenterPlayBtn');
+    this.centerRewindBtn = document.getElementById('playerCenterRewindBtn');
+    this.centerForwardBtn = document.getElementById('playerCenterForwardBtn');
+    this.centerFlash = document.getElementById('playerCenterFlash');
+    this.seekRippleLeft = document.getElementById('playerSeekRippleLeft');
+    this.seekRippleRight = document.getElementById('playerSeekRippleRight');
+    this.seekAccum = { left: 0, right: 0 };
+    this.seekRippleTimers = { left: null, right: null };
+    this.pauseScreen = document.getElementById('playerPauseScreen');
+    this.pauseScreenTitle = document.getElementById('pauseScreenTitle');
+    this.pauseScreenMeta = document.getElementById('pauseScreenMeta');
+    this.pauseScreenOverview = document.getElementById('pauseScreenOverview');
+    this.pauseScreenTimer = null;
+    this.progressBuffered = document.getElementById('playerProgressBuffered');
+    this.progressTooltip = document.getElementById('playerProgressTooltip');
+    this.isScrubbing = false;
+
     this.initListeners();
   }
 
@@ -106,6 +134,10 @@ class HomeFlixPlayer {
         this.toggleSubtitlesMenu(false);
         return;
       }
+      if (this.overlay.classList.contains('pause-idle')) {
+        this.wakeHud();
+        return;
+      }
       if (this.overlay.classList.contains('hud-hidden')) {
         this.wakeHud();
       } else {
@@ -117,6 +149,10 @@ class HomeFlixPlayer {
     let touchStartY = 0;
     let touchStartTime = 0;
     let lastTouchHandledTime = 0;
+    let lastTapTime = 0;
+    let lastTapSide = null;
+    let hudHiddenBeforeTap = false;
+    let seekStreak = false;
 
     // Rastreia início do toque na tela
     this.overlay.addEventListener('touchstart', (e) => {
@@ -127,7 +163,7 @@ class HomeFlixPlayer {
       }
     }, { passive: true });
 
-    // Alterna HUD instantaneamente em toque rápido no mobile (sem atraso de clique)
+    // Toque simples: alterna HUD na hora. Toque duplo nas laterais: ±10s (estilo app Netflix)
     this.overlay.addEventListener('touchend', (e) => {
       if (!this.overlay.classList.contains('open')) return;
       const touchDuration = Date.now() - touchStartTime;
@@ -135,31 +171,93 @@ class HomeFlixPlayer {
       if (!touch) return;
 
       const dist = Math.hypot(touch.clientX - touchStartX, touch.clientY - touchStartY);
-      if (touchDuration < 400 && dist < 20) {
-        const isInteractive = e.target.closest(
-          'button, a, input, select, .player-progress-bar, .player-channels-sidebar, .player-subtitles-menu, .player-next-ep-card, .player-error-back-btn'
-        );
-        if (!isInteractive) {
-          e.preventDefault();
-          lastTouchHandledTime = Date.now();
-          togglePlayerHud();
+      if (touchDuration >= 400 || dist >= 20) return;
+
+      const isInteractive = e.target.closest(
+        'button, a, input, select, .player-progress-bar, .player-channels-sidebar, .player-subtitles-menu, .player-next-ep-card, .player-error-back-btn'
+      );
+      if (isInteractive) return;
+
+      e.preventDefault();
+      const now = Date.now();
+      lastTouchHandledTime = now;
+
+      const width = this.overlay.clientWidth || window.innerWidth;
+      const side = touch.clientX < width * 0.35 ? 'left' : (touch.clientX > width * 0.65 ? 'right' : 'center');
+      const canSeek = !this.isLive && !this.loadingActive && side !== 'center';
+
+      if (canSeek && side === lastTapSide && (now - lastTapTime) < 320) {
+        // Toque duplo (ou sequência): desfaz o toggle do primeiro toque e avança/retrocede
+        if (!seekStreak) {
+          if (hudHiddenBeforeTap) this.hideHud(); else this.wakeHud();
         }
+        seekStreak = true;
+        lastTapTime = now;
+        this.seekBy(side === 'left' ? -10 : 10, true);
+        return;
       }
+
+      seekStreak = false;
+      hudHiddenBeforeTap = this.overlay.classList.contains('hud-hidden');
+      lastTapTime = now;
+      lastTapSide = side;
+      togglePlayerHud();
     }, { passive: false });
 
-    // Clique do mouse em desktop (ignora clique sintético logo após toque mobile)
+    // Clique do mouse em desktop: pausa/despausa como na Netflix (ignora clique sintético após toque)
     this.video.addEventListener('click', (e) => {
       if (Date.now() - lastTouchHandledTime < 500) {
         return;
       }
-      togglePlayerHud();
+      if (this.loadingActive) return;
+      if ((this.sidebar && this.sidebar.classList.contains('open')) ||
+          (this.subtitlesMenu && this.subtitlesMenu.style.display !== 'none')) {
+        togglePlayerHud();
+        return;
+      }
+      this.togglePlay(true);
+      this.wakeHud();
     });
+
+    // Duplo clique no desktop alterna tela cheia (comportamento padrão de players)
+    this.video.addEventListener('dblclick', (e) => {
+      if (Date.now() - lastTouchHandledTime < 500) return;
+      e.preventDefault();
+      this.toggleFullscreen();
+    });
+
+    // Controles centrais (touch)
+    if (this.centerPlayBtn) {
+      this.centerPlayBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.togglePlay();
+        this.wakeHud();
+      });
+    }
+    if (this.centerRewindBtn) {
+      this.centerRewindBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.seekBy(-10, true);
+        this.wakeHud();
+      });
+    }
+    if (this.centerForwardBtn) {
+      this.centerForwardBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.seekBy(10, true);
+        this.wakeHud();
+      });
+    }
+
+    // Arrastar a barra de progresso (mouse e toque) com prévia de tempo
+    this.initProgressScrubbing();
 
     // Atualização de tempo e progresso
     this.video.addEventListener('timeupdate', () => this.onTimeUpdate());
     this.video.addEventListener('play', () => {
       this.updatePlayPauseIcon(true);
       this.startHeartbeat();
+      this.hidePauseScreen();
       this.resetControlsTimeout();
     });
     this.video.addEventListener('pause', () => {
@@ -170,31 +268,27 @@ class HomeFlixPlayer {
       this.wakeHud();
     });
 
-    // Eventos de buffer e fluidez visual
-    this.video.addEventListener('waiting', () => this.showSpinner('Carregando transmissão...'));
-    this.video.addEventListener('seeking', () => this.showSpinner('Buscando ponto do vídeo...'));
+    // Eventos de buffer e fluidez visual (spinner limpo, sem textos)
+    this.video.addEventListener('waiting', () => this.showSpinner());
+    this.video.addEventListener('seeking', () => this.showSpinner());
+    this.video.addEventListener('seeked', () => {
+      if (this.video.readyState >= 3) this.hideSpinner();
+    });
+    this.video.addEventListener('loadedmetadata', () => this.setLoadingProgress(85));
+    this.video.addEventListener('loadeddata', () => this.setLoadingProgress(93));
     this.video.addEventListener('canplay', () => this.hideSpinner());
     this.video.addEventListener('playing', () => {
       this.hideSpinner();
       this.clearStallWatchdog();
+      this.finishLoadingScreen();
       this.resetControlsTimeout();
     });
+    this.video.addEventListener('progress', () => this.updateBufferedBar());
     this.video.addEventListener('error', (e) => this.handleMediaError(e));
 
-    // Seek na barra
-    this.progressBar.addEventListener('click', (e) => this.seek(e));
-
     // Pular 10s
-    this.rewindBtn.addEventListener('click', () => {
-      if (!this.isLive) {
-        this.video.currentTime = Math.max(0, this.video.currentTime - 10);
-      }
-    });
-    this.forwardBtn.addEventListener('click', () => {
-      if (!this.isLive) {
-        this.video.currentTime = Math.min(this.video.duration || 0, this.video.currentTime + 10);
-      }
-    });
+    this.rewindBtn.addEventListener('click', () => this.seekBy(-10, true));
+    this.forwardBtn.addEventListener('click', () => this.seekBy(10, true));
 
     // Pular Abertura (+85s)
     if (this.skipIntroBtn) {
@@ -310,7 +404,7 @@ class HomeFlixPlayer {
       // 1. Play / Pause ou Despertar HUD com Enter / OK / Espaço
       if (key === ' ' || code === 'Space') {
         e.preventDefault();
-        this.togglePlay();
+        this.togglePlay(true);
       }
       else if (key === 'Enter') {
         // Se a sidebar de canais estiver aberta, o Enter seleciona o canal focado
@@ -328,7 +422,7 @@ class HomeFlixPlayer {
           }
           return;
         }
-        this.togglePlay();
+        this.togglePlay(true);
       }
       // 2. Fullscreen
       else if (key === 'f' || key === 'F') {
@@ -388,7 +482,7 @@ class HomeFlixPlayer {
           // Na TV ao vivo, Seta Esquerda abre a gaveta lateral de canais!
           this.toggleSidebar(true);
         } else {
-          this.video.currentTime = Math.max(0, this.video.currentTime - 10);
+          this.seekBy(-10, true);
         }
       }
       else if (key === 'ArrowRight') {
@@ -401,7 +495,7 @@ class HomeFlixPlayer {
             this.triggerLiveOsd(true);
           }
         } else {
-          this.video.currentTime = Math.min(this.video.duration || 0, this.video.currentTime + 10);
+          this.seekBy(10, true);
         }
       }
       // 8. Entrada Numérica Direta (ex: digitou 105 para canal 105)
@@ -420,7 +514,7 @@ class HomeFlixPlayer {
       // 10. Mudo (M)
       else if (key === 'm' || key === 'M') {
         this.video.muted = !this.video.muted;
-        this.volumeBtn.innerHTML = this.video.muted ? '🔇' : '🔊';
+        this.updateVolumeUi();
       }
     });
 
@@ -486,7 +580,9 @@ class HomeFlixPlayer {
       }
     }
 
-    this.showSpinner('🍿 Conectando ao melhor servidor em alta definição...');
+    this.hidePauseScreen();
+    this.startLoadingScreen(options.backdrop);
+    this.setLoadingProgress(35);
   }
 
   play(options) {
@@ -612,11 +708,16 @@ class HomeFlixPlayer {
     return this._hevcSupported;
   }
 
-  showSpinner(text = 'Carregando...') {
+  showSpinner(text = '') {
+    // Se a tela inicial de carregamento com anel + % estiver ativa, não sobrepõe com spinner
+    if (this.loadingActive) return;
     if (this.spinner) {
       const circle = this.spinner.querySelector('.spinner-circle');
       if (circle) circle.style.display = 'block';
-      if (this.spinnerText) this.spinnerText.textContent = text;
+      if (this.spinnerText) {
+        this.spinnerText.textContent = text;
+        this.spinnerText.style.display = text ? 'block' : 'none';
+      }
       const backBtn = this.spinner.querySelector('.player-error-back-btn');
       if (backBtn) backBtn.remove();
       this.spinner.style.display = 'flex';
@@ -630,10 +731,17 @@ class HomeFlixPlayer {
   }
 
   showErrorScreen(msg = 'Transmissão indisponível no momento.') {
+    if (this.loadingScreen) {
+      this.loadingScreen.classList.remove('active', 'fade-out');
+      this.loadingActive = false;
+    }
     if (this.spinner) {
       const circle = this.spinner.querySelector('.spinner-circle');
       if (circle) circle.style.display = 'none';
-      if (this.spinnerText) this.spinnerText.textContent = msg;
+      if (this.spinnerText) {
+        this.spinnerText.textContent = msg;
+        this.spinnerText.style.display = 'block';
+      }
       let backBtn = this.spinner.querySelector('.player-error-back-btn');
       if (!backBtn) {
         backBtn = document.createElement('button');
@@ -1128,36 +1236,36 @@ class HomeFlixPlayer {
      ================================================================ */
 
   updatePlayPauseIcon(isPlaying) {
-    if (!this.playBtn) return;
-    const iconPlay = this.playBtn.querySelector('.icon-play');
-    const iconPause = this.playBtn.querySelector('.icon-pause');
-    if (iconPlay && iconPause) {
-      iconPlay.style.display = isPlaying ? 'none' : 'block';
-      iconPause.style.display = isPlaying ? 'block' : 'none';
-    } else {
-      this.playBtn.innerHTML = isPlaying ? '⏸' : '▶';
+    if (this.playBtn) {
+      const iconPlay = this.playBtn.querySelector('.icon-play');
+      const iconPause = this.playBtn.querySelector('.icon-pause');
+      if (iconPlay && iconPause) {
+        iconPlay.style.display = isPlaying ? 'none' : 'block';
+        iconPause.style.display = isPlaying ? 'block' : 'none';
+      } else {
+        this.playBtn.innerHTML = isPlaying ? '⏸' : '▶';
+      }
+    }
+    if (this.centerPlayBtn) {
+      const iconPlay = this.centerPlayBtn.querySelector('.icon-play');
+      const iconPause = this.centerPlayBtn.querySelector('.icon-pause');
+      if (iconPlay && iconPause) {
+        iconPlay.style.display = isPlaying ? 'none' : 'block';
+        iconPause.style.display = isPlaying ? 'block' : 'none';
+      }
     }
   }
 
-  updateVolumeUi() {
-    if (!this.volumeBtn) return;
-    const isMuted = this.video.muted || this.video.volume === 0;
-    const iconVolHigh = this.volumeBtn.querySelector('.icon-vol-high');
-    const iconVolMute = this.volumeBtn.querySelector('.icon-vol-mute');
-    if (iconVolHigh && iconVolMute) {
-      iconVolHigh.style.display = isMuted ? 'none' : 'block';
-      iconVolMute.style.display = isMuted ? 'block' : 'none';
-    }
-    if (this.volumeInput) {
-      this.volumeInput.value = isMuted ? 0 : this.video.volume;
-    }
-  }
-
-  togglePlay() {
+  togglePlay(triggerFlash = false) {
+    if (!this.video) return;
     if (this.video.paused) {
-      this.video.play();
+      this.video.play().then(() => {
+        if (triggerFlash) this.triggerCenterFlash('play');
+      }).catch(() => {});
     } else {
       this.video.pause();
+      if (triggerFlash) this.triggerCenterFlash('pause');
+      this.schedulePauseScreen();
     }
   }
 
@@ -1399,10 +1507,16 @@ class HomeFlixPlayer {
     clearTimeout(this.hideControlsTimer);
     clearTimeout(this.cinemaWarningTimer);
     clearTimeout(this.osdTimer);
-    clearTimeout(this.numberInputTimer);
     clearTimeout(this.noticeTimer);
     clearTimeout(this.failoverTimer);
+    clearTimeout(this.pauseScreenTimer);
+    clearInterval(this.loadingTimer);
     if (this.failoverBadge) this.failoverBadge.style.display = 'none';
+    if (this.loadingScreen) {
+      this.loadingScreen.classList.remove('active', 'fade-out');
+      this.loadingActive = false;
+    }
+    this.hidePauseScreen();
 
     if (this.video) {
       this.video.pause();
@@ -1599,6 +1713,279 @@ class HomeFlixPlayer {
     existingTracks.forEach(t => t.remove());
     for (let i = 0; i < this.video.textTracks.length; i++) {
       this.video.textTracks[i].mode = 'disabled';
+    }
+  }
+
+  /* ================================================================
+     TELA DE CARREGAMENTO CLEAN ESTILO NETFLIX (ANEL VERMELHO + %)
+     ================================================================ */
+
+  startLoadingScreen(backdropUrl = null) {
+    this.loadingActive = true;
+    this.loadingPct = 5;
+    this.loadingTarget = 20;
+
+    if (this.loadingScreen) {
+      this.loadingScreen.classList.remove('fade-out');
+      this.loadingScreen.classList.add('active');
+    }
+    if (this.loadingBackdrop) {
+      if (backdropUrl) {
+        const fullUrl = backdropUrl.startsWith('http') ? backdropUrl : `https://image.tmdb.org/t/p/original${backdropUrl}`;
+        this.loadingBackdrop.style.backgroundImage = `url('${fullUrl}')`;
+      } else {
+        this.loadingBackdrop.style.backgroundImage = 'none';
+      }
+    }
+    this.updateLoadingUi(this.loadingPct);
+
+    clearInterval(this.loadingTimer);
+    this.loadingTimer = setInterval(() => {
+      if (!this.loadingActive) return;
+      if (this.loadingPct < this.loadingTarget) {
+        const step = Math.max(1, Math.round((this.loadingTarget - this.loadingPct) * 0.25));
+        this.loadingPct = Math.min(this.loadingTarget, this.loadingPct + step);
+        this.updateLoadingUi(this.loadingPct);
+      }
+    }, 120);
+  }
+
+  setLoadingProgress(pct) {
+    if (!this.loadingActive) return;
+    this.loadingTarget = Math.max(this.loadingTarget, Math.min(96, pct));
+  }
+
+  updateLoadingUi(pct) {
+    if (this.loadingPctEl) {
+      this.loadingPctEl.textContent = `${Math.round(pct)}%`;
+    }
+  }
+
+  finishLoadingScreen() {
+    if (!this.loadingActive) return;
+    this.loadingTarget = 100;
+    this.loadingPct = 100;
+    this.updateLoadingUi(100);
+
+    clearInterval(this.loadingTimer);
+    this.loadingTimer = null;
+
+    if (this.loadingScreen) {
+      this.loadingScreen.classList.add('fade-out');
+      setTimeout(() => {
+        if (this.loadingScreen) {
+          this.loadingScreen.classList.remove('active', 'fade-out');
+        }
+        this.loadingActive = false;
+      }, 350);
+    } else {
+      this.loadingActive = false;
+    }
+  }
+
+  /* ================================================================
+     FEEDBACK CENTRAL PLAY/PAUSE & DOUBLE-TAP SEEK (ESTILO NETFLIX)
+     ================================================================ */
+
+  triggerCenterFlash(type = 'play') {
+    if (!this.centerFlash) return;
+    const playSvg = '<svg viewBox="0 0 24 24" width="48" height="48" fill="currentColor"><path d="M5 2.691c0-.76.815-1.243 1.482-.876l16.925 9.309a1 1 0 0 1 0 1.752L6.482 22.185C5.815 22.552 5 22.069 5 21.31z"/></svg>';
+    const pauseSvg = '<svg viewBox="0 0 24 24" width="48" height="48" fill="currentColor"><path d="M4.5 3a.5.5 0 0 0-.5.5v17a.5.5 0 0 0 .5.5h5a.5.5 0 0 0 .5-.5v-17a.5.5 0 0 0-.5-.5zm10 0a.5.5 0 0 0-.5.5v17a.5.5 0 0 0 .5.5h5a.5.5 0 0 0 .5-.5v-17a.5.5 0 0 0-.5-.5z"/></svg>';
+
+    this.centerFlash.innerHTML = type === 'play' ? playSvg : pauseSvg;
+    this.centerFlash.classList.remove('animate');
+    void this.centerFlash.offsetWidth; // Force reflow
+    this.centerFlash.classList.add('animate');
+  }
+
+  seekBy(seconds, showRipple = false) {
+    if (this.isLive || !this.video) return;
+    const duration = this.video.duration || 0;
+    const current = this.video.currentTime || 0;
+    const target = Math.max(0, Math.min(duration, current + seconds));
+    this.video.currentTime = target;
+
+    if (showRipple) {
+      const side = seconds < 0 ? 'left' : 'right';
+      const el = side === 'left' ? this.seekRippleLeft : this.seekRippleRight;
+      if (el) {
+        this.seekAccum[side] = (this.seekAccum[side] || 0) + Math.abs(seconds);
+        const label = el.querySelector('.seek-ripple-label');
+        if (label) label.textContent = `${this.seekAccum[side]} s`;
+
+        el.classList.remove('animate');
+        void el.offsetWidth;
+        el.classList.add('animate');
+
+        clearTimeout(this.seekRippleTimers[side]);
+        this.seekRippleTimers[side] = setTimeout(() => {
+          el.classList.remove('animate');
+          this.seekAccum[side] = 0;
+        }, 700);
+      }
+    }
+  }
+
+  /* ================================================================
+     SCRUBBING DE BARRA DE PROGRESSO & BUFFER
+     ================================================================ */
+
+  initProgressScrubbing() {
+    if (!this.progressBar) return;
+
+    const updateSeekFromEvent = (clientX) => {
+      if (this.isLive || !this.video || !this.video.duration) return;
+      const rect = this.progressBar.getBoundingClientRect();
+      const pct = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+      const targetTime = pct * this.video.duration;
+
+      this.progressFill.style.width = `${pct * 100}%`;
+      this.timeDisplay.textContent = `${this.formatTime(targetTime)} / ${this.formatTime(this.video.duration)}`;
+
+      if (this.progressTooltip) {
+        this.progressTooltip.textContent = this.formatTime(targetTime);
+        this.progressTooltip.style.left = `${pct * 100}%`;
+        this.progressTooltip.style.display = 'block';
+      }
+      return targetTime;
+    };
+
+    // Arraste com mouse
+    this.progressBar.addEventListener('mousedown', (e) => {
+      if (this.isLive) return;
+      this.isScrubbing = true;
+      this.progressBar.classList.add('scrubbing');
+      const targetTime = updateSeekFromEvent(e.clientX);
+
+      const onMouseMove = (ev) => {
+        if (!this.isScrubbing) return;
+        updateSeekFromEvent(ev.clientX);
+      };
+
+      const onMouseUp = (ev) => {
+        if (!this.isScrubbing) return;
+        this.isScrubbing = false;
+        this.progressBar.classList.remove('scrubbing');
+        if (this.progressTooltip) this.progressTooltip.style.display = 'none';
+        const finalTime = updateSeekFromEvent(ev.clientX);
+        if (finalTime !== undefined) this.video.currentTime = finalTime;
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+      };
+
+      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mouseup', onMouseUp);
+    });
+
+    // Arraste por toque no mobile
+    this.progressBar.addEventListener('touchstart', (e) => {
+      if (this.isLive || !e.touches[0]) return;
+      this.isScrubbing = true;
+      this.progressBar.classList.add('scrubbing');
+      updateSeekFromEvent(e.touches[0].clientX);
+    }, { passive: true });
+
+    this.progressBar.addEventListener('touchmove', (e) => {
+      if (!this.isScrubbing || !e.touches[0]) return;
+      updateSeekFromEvent(e.touches[0].clientX);
+    }, { passive: true });
+
+    this.progressBar.addEventListener('touchend', (e) => {
+      if (!this.isScrubbing) return;
+      this.isScrubbing = false;
+      this.progressBar.classList.remove('scrubbing');
+      if (this.progressTooltip) this.progressTooltip.style.display = 'none';
+      const touch = e.changedTouches && e.changedTouches[0];
+      if (touch) {
+        const finalTime = updateSeekFromEvent(touch.clientX);
+        if (finalTime !== undefined) this.video.currentTime = finalTime;
+      }
+    }, { passive: true });
+
+    // Hover na barra para exibir tooltip no desktop
+    this.progressBar.addEventListener('mousemove', (e) => {
+      if (this.isLive || this.isScrubbing || !this.video || !this.video.duration) return;
+      const rect = this.progressBar.getBoundingClientRect();
+      const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+      if (this.progressTooltip) {
+        this.progressTooltip.textContent = this.formatTime(pct * this.video.duration);
+        this.progressTooltip.style.left = `${pct * 100}%`;
+        this.progressTooltip.style.display = 'block';
+      }
+    });
+
+    this.progressBar.addEventListener('mouseleave', () => {
+      if (!this.isScrubbing && this.progressTooltip) {
+        this.progressTooltip.style.display = 'none';
+      }
+    });
+  }
+
+  updateBufferedBar() {
+    if (this.isLive || !this.video || !this.progressBuffered) return;
+    const duration = this.video.duration;
+    if (!duration || this.video.buffered.length === 0) return;
+
+    try {
+      const current = this.video.currentTime;
+      let bufferedEnd = 0;
+      for (let i = 0; i < this.video.buffered.length; i++) {
+        if (this.video.buffered.start(i) <= current && current <= this.video.buffered.end(i)) {
+          bufferedEnd = this.video.buffered.end(i);
+          break;
+        }
+      }
+      if (!bufferedEnd && this.video.buffered.length > 0) {
+        bufferedEnd = this.video.buffered.end(this.video.buffered.length - 1);
+      }
+      const pct = Math.min(100, (bufferedEnd / duration) * 100);
+      this.progressBuffered.style.width = `${pct}%`;
+    } catch (_) {}
+  }
+
+  /* ================================================================
+     TELA DE PAUSA "VOCÊ ESTÁ ASSISTINDO" (ESTILO NETFLIX)
+     ================================================================ */
+
+  schedulePauseScreen() {
+    clearTimeout(this.pauseScreenTimer);
+    if (this.isLive) return;
+
+    // Se pausado por mais de 2.8s sem interação, exibe a tela elegante de pausa
+    this.pauseScreenTimer = setTimeout(() => {
+      if (this.video && this.video.paused && this.overlay && this.overlay.classList.contains('open')) {
+        this.showPauseScreen();
+      }
+    }, 2800);
+  }
+
+  showPauseScreen() {
+    if (!this.pauseScreen || this.isLive) return;
+    if (this.pauseScreenTitle) {
+      this.pauseScreenTitle.textContent = this.currentMedia?.title || 'HomeFlix';
+    }
+    if (this.pauseScreenMeta) {
+      if (this.currentMedia?.mediaType === 'tv') {
+        const epNum = this.currentMedia?.episode ? `T${this.currentMedia?.season || 1}:E${this.currentMedia?.episode}` : '';
+        const epTitle = this.currentMedia?.episodeTitle ? ` • ${this.currentMedia?.episodeTitle}` : '';
+        this.pauseScreenMeta.textContent = `${epNum}${epTitle}`.trim();
+        this.pauseScreenMeta.style.display = 'block';
+      } else {
+        this.pauseScreenMeta.style.display = 'none';
+      }
+    }
+    if (this.pauseScreenOverview) {
+      this.pauseScreenOverview.textContent = this.currentMedia?.overview || '';
+      this.pauseScreenOverview.style.display = this.currentMedia?.overview ? 'block' : 'none';
+    }
+
+    this.overlay.classList.add('pause-idle');
+  }
+
+  hidePauseScreen() {
+    clearTimeout(this.pauseScreenTimer);
+    if (this.overlay) {
+      this.overlay.classList.remove('pause-idle');
     }
   }
 }

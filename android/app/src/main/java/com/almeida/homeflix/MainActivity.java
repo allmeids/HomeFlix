@@ -237,10 +237,43 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        if (webView.canGoBack()) {
-            webView.goBack();
-        } else {
-            super.onBackPressed();
+        // Tenta fechar Player aberto ou modal através de script JS no WebView
+        if (webView != null) {
+            String checkAndCloseJs =
+                    "(function() {" +
+                    "  if (window.app && window.app.player && window.app.player.overlay && window.app.player.overlay.classList.contains('open')) {" +
+                    "    window.app.player.close();" +
+                    "    return true;" +
+                    "  }" +
+                    "  const detailsView = document.getElementById('detailsView');" +
+                    "  if (detailsView && detailsView.style.display !== 'none') {" +
+                    "    detailsView.style.display = 'none';" +
+                    "    document.body.classList.remove('in-details-view');" +
+                    "    if (window.app) window.app.switchTab('home');" +
+                    "    return true;" +
+                    "  }" +
+                    "  const openModal = document.querySelector('.modal-backdrop.open');" +
+                    "  if (openModal) {" +
+                    "    openModal.classList.remove('open');" +
+                    "    return true;" +
+                    "  }" +
+                    "  return false;" +
+                    "})();";
+
+            webView.evaluateJavascript(checkAndCloseJs, value -> {
+                if ("true".equals(value)) {
+                    // O player ou modal foi fechado com sucesso, sem sair da tela
+                    return;
+                }
+                if (webView.canGoBack()) {
+                    webView.goBack();
+                } else {
+                    super.onBackPressed();
+                }
+            });
+            return;
         }
+
+        super.onBackPressed();
     }
 }
