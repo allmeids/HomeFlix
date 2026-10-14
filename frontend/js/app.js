@@ -94,6 +94,8 @@ class HomeFlixApp {
     } else {
       this.openProfileGate();
     }
+
+    this.checkAppUpdate();
   }
 
   setupPwa() {
@@ -123,6 +125,32 @@ class HomeFlixApp {
       }
       this.switchTab('home');
     });
+  }
+
+  async checkAppUpdate() {
+    try {
+      const res = await fetch('/api/app/version');
+      if (!res.ok) return;
+      const data = await res.json();
+      if (!data || !data.version_code) return;
+
+      let currentCode = 0;
+      if (window.HomeFlixApp && typeof window.HomeFlixApp.getAppVersionCode === 'function') {
+        currentCode = Number(window.HomeFlixApp.getAppVersionCode());
+      } else {
+        currentCode = Number(localStorage.getItem('hf_installed_version_code') || 3);
+      }
+
+      if (data.version_code > currentCode) {
+        if (typeof window.showAppUpdateModal === 'function') {
+          setTimeout(() => {
+            window.showAppUpdateModal(data.version_name, data.changelog, data.download_url);
+          }, 800);
+        }
+      }
+    } catch (e) {
+      console.log('[HomeFlix] Verificação de update web:', e);
+    }
   }
 
   setupNavbar() {
@@ -269,12 +297,13 @@ class HomeFlixApp {
       updateLaterBtn.onclick = () => {
         updateModal.classList.remove('open');
         updateModal.style.display = 'none';
-        sessionStorage.setItem('hf_update_dismissed', '1');
+        const titleEl = document.getElementById('updateModalVersion');
+        sessionStorage.setItem('hf_update_dismissed_' + (titleEl?.textContent || 'latest'), '1');
       };
     }
 
     window.showAppUpdateModal = (versionName, changelog, downloadUrl) => {
-      if (sessionStorage.getItem('hf_update_dismissed') === '1') return;
+      if (sessionStorage.getItem('hf_update_dismissed_Versão ' + versionName) === '1') return;
       if (!updateModal) return;
       const titleEl = document.getElementById('updateModalVersion');
       const changeEl = document.getElementById('updateModalChangelog');
