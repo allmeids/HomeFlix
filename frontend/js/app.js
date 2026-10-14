@@ -94,8 +94,6 @@ class HomeFlixApp {
     } else {
       this.openProfileGate();
     }
-
-    this.checkAppUpdate();
   }
 
   setupPwa() {
@@ -125,32 +123,6 @@ class HomeFlixApp {
       }
       this.switchTab('home');
     });
-  }
-
-  async checkAppUpdate() {
-    try {
-      const res = await fetch('/api/app/version');
-      if (!res.ok) return;
-      const data = await res.json();
-      if (!data || !data.version_code) return;
-
-      let currentCode = 0;
-      if (window.HomeFlixApp && typeof window.HomeFlixApp.getAppVersionCode === 'function') {
-        currentCode = Number(window.HomeFlixApp.getAppVersionCode());
-      } else {
-        currentCode = Number(localStorage.getItem('hf_installed_version_code') || 3);
-      }
-
-      if (data.version_code > currentCode) {
-        if (typeof window.showAppUpdateModal === 'function') {
-          setTimeout(() => {
-            window.showAppUpdateModal(data.version_name, data.changelog, data.download_url);
-          }, 800);
-        }
-      }
-    } catch (e) {
-      console.log('[HomeFlix] Verificação de update web:', e);
-    }
   }
 
   setupNavbar() {
@@ -287,51 +259,6 @@ class HomeFlixApp {
         this.switchTab(this.previousTab && this.previousTab !== 'search' ? this.previousTab : 'home');
       };
     }
-
-    // Modal de Atualização Customizado (Estilo Oficial HomeFlix)
-    window.showAppUpdateModal = (versionName, changelog, downloadUrl) => {
-      const vKey = versionName || 'latest';
-      if (sessionStorage.getItem('hf_update_dismissed_' + vKey) === '1') return;
-      const updateModal = document.getElementById('appUpdateModal');
-      if (!updateModal) return;
-      const titleEl = document.getElementById('updateModalVersion');
-      const changeEl = document.getElementById('updateModalChangelog');
-      const updateNowBtn = document.getElementById('updateNowBtn');
-      const updateLaterBtn = document.getElementById('updateLaterBtn');
-
-      if (titleEl) titleEl.textContent = `Versão ${vKey}`;
-      if (changeEl && changelog) {
-        const parts = changelog.split(/[,;\n\.]+/).map(s => s.trim()).filter(Boolean);
-        if (parts.length > 1) {
-          changeEl.innerHTML = '<ul class="update-bullets">' + parts.map(p => `<li>${p}</li>`).join('') + '</ul>';
-        } else {
-          changeEl.textContent = changelog;
-        }
-      }
-
-      if (updateLaterBtn) {
-        updateLaterBtn.onclick = () => {
-          updateModal.classList.remove('open');
-          updateModal.style.display = 'none';
-          sessionStorage.setItem('hf_update_dismissed_' + vKey, '1');
-        };
-      }
-
-      if (updateNowBtn) {
-        updateNowBtn.onclick = () => {
-          if (window.HomeFlixApp && typeof window.HomeFlixApp.startAppUpdate === 'function') {
-            window.HomeFlixApp.startAppUpdate(downloadUrl);
-            updateModal.classList.remove('open');
-            updateModal.style.display = 'none';
-          } else {
-            window.location.href = downloadUrl;
-          }
-        };
-      }
-
-      updateModal.style.display = 'flex';
-      setTimeout(() => updateModal.classList.add('open'), 20);
-    };
 
     // Configuração da Bottom Navigation Bar Mobile Oficial da Netflix
     const bottomNav = document.getElementById('netflixMobileBottomNav');
@@ -1787,7 +1714,6 @@ class HomeFlixApp {
       const pct = item.duration > 0 ? (item.position / item.duration) * 100 : 0;
       const card = document.createElement('div');
       card.className = 'continue-netflix-card';
-      card.setAttribute('tabindex', '0');
 
       // Pôster vertical oficial de alta fidelidade
       const posterImg = item.poster_path 
@@ -1808,11 +1734,11 @@ class HomeFlixApp {
           </div>
         </div>
         <div class="continue-card-actions">
-          <button type="button" class="continue-action-btn continue-info-btn" title="Mais informações (${item.title})" aria-label="Informações">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+          <button type="button" class="continue-action-btn continue-action-info" title="Mais informações (${item.title})" aria-label="Informações">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" cy="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
           </button>
-          <button type="button" class="continue-action-btn continue-remove-btn" title="Remover de Continuar Assistindo" aria-label="Remover">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          <button type="button" class="continue-action-btn continue-action-remove" title="Remover de Continuar Assistindo" aria-label="Remover">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
           </button>
         </div>
       `;
@@ -1832,7 +1758,7 @@ class HomeFlixApp {
       }
 
       // Botão (i) abre a página de detalhes completos
-      const infoBtn = card.querySelector('.continue-info-btn');
+      const infoBtn = card.querySelector('.continue-action-info');
       if (infoBtn) {
         infoBtn.onclick = (e) => {
           e.stopPropagation();
@@ -1845,7 +1771,7 @@ class HomeFlixApp {
       }
 
       // Botão (X) remove da lista de continuar assistindo com transição suave
-      const removeBtn = card.querySelector('.continue-remove-btn');
+      const removeBtn = card.querySelector('.continue-action-remove');
       if (removeBtn) {
         removeBtn.onclick = async (e) => {
           e.stopPropagation();
@@ -1861,11 +1787,14 @@ class HomeFlixApp {
         };
       }
 
-      card.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          posterWrap.click();
-        }
-      });
+      if (this.isTvMode) {
+        card.setAttribute('tabindex', '0');
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            posterWrap.click();
+          }
+        });
+      }
 
       carousel.appendChild(card);
     });

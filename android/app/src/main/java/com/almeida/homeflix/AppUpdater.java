@@ -66,13 +66,7 @@ public class AppUpdater {
 
                         new Handler(Looper.getMainLooper()).post(() -> {
                             if (!activity.isFinishing()) {
-                                if (webView != null) {
-                                    String safeChangelog = JSONObject.quote(changelog);
-                                    webView.evaluateJavascript(
-                                        "if (window.showAppUpdateModal) { window.showAppUpdateModal('" + remoteName + "', " + safeChangelog + ", '" + finalDownloadUrl + "'); }",
-                                        null
-                                    );
-                                }
+                                showUpdateDialog(activity, remoteName, changelog, finalDownloadUrl);
                             }
                         });
                     }
@@ -81,6 +75,18 @@ public class AppUpdater {
                 Log.d(TAG, "Verificação de update silenciosa: " + e.getMessage());
             }
         }).start();
+    }
+
+    private static void showUpdateDialog(final Activity activity, final String versionName, final String changelog, final String downloadUrl) {
+        new AlertDialog.Builder(activity)
+                .setTitle("🍿 Nova Atualização do HomeFlix")
+                .setMessage("Versão " + versionName + " disponível!\n\n" + changelog + "\n\nDeseja atualizar agora?")
+                .setPositiveButton("Atualizar Agora", (dialog, which) -> {
+                    startDownloadAndInstall(activity, downloadUrl);
+                })
+                .setNegativeButton("Mais Tarde", null)
+                .setCancelable(true)
+                .show();
     }
 
     public static void checkForUpdates(final Activity activity, final String serverBaseUrl) {
