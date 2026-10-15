@@ -12,6 +12,8 @@ HEADERS = {
 
 FROSTSTREAM_URL = "https://froststream.cloutteam.com"
 SUPERSTREAM_URL = "https://da5f663b4690-superstream.baby-beamup.club"
+FENIXFLIX_URL = "https://fenixflix.fenixhub.online"
+BESTCINE_URL = "https://bestcine.dpdns.org"
 
 # Sessão persistente para scrapers VOD com Keep-Alive
 _vod_session = requests.Session()
@@ -102,6 +104,42 @@ def fetch_superstream(media_type: str, imdb_id: str, season: Optional[int] = Non
             return r.json().get("streams", [])
     except Exception as exc:
         print(f"[SuperStream Error] {exc}")
+    return []
+
+def fetch_fenixflix(media_type: str, query_id: str, season: Optional[int] = None, episode: Optional[int] = None) -> List[Dict[str, Any]]:
+    """Provedor FenixFlix: catálogo ultra-rápido focado em PT-BR (Dublado 1080p/720p)."""
+    stype = "series" if media_type in ("tv", "series") else "movie"
+    if stype == "series":
+        s = season or 1
+        ep = episode or 1
+        url = f"{FENIXFLIX_URL}/stream/series/{query_id}:{s}:{ep}.json"
+    else:
+        url = f"{FENIXFLIX_URL}/stream/movie/{query_id}.json"
+
+    try:
+        r = _vod_session.get(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}, timeout=7)
+        if r.status_code == 200:
+            return r.json().get("streams", [])
+    except Exception as exc:
+        print(f"[FenixFlix Error] {exc}")
+    return []
+
+def fetch_bestcine(media_type: str, query_id: str, season: Optional[int] = None, episode: Optional[int] = None) -> List[Dict[str, Any]]:
+    """Provedor BestCine: catálogo massivo nacional com múltiplos servidores dedicados em alta fidelidade."""
+    stype = "series" if media_type in ("tv", "series") else "movie"
+    if stype == "series":
+        s = season or 1
+        ep = episode or 1
+        url = f"{BESTCINE_URL}/stream/series/{query_id}:{s}:{ep}.json"
+    else:
+        url = f"{BESTCINE_URL}/stream/movie/{query_id}.json"
+
+    try:
+        r = _vod_session.get(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}, timeout=7)
+        if r.status_code == 200:
+            return r.json().get("streams", [])
+    except Exception as exc:
+        print(f"[BestCine Error] {exc}")
     return []
 
 def fetch_embedplayer(media_type: str, imdb_id: str, season: Optional[int] = None, episode: Optional[int] = None) -> List[Dict[str, Any]]:
@@ -237,15 +275,25 @@ def validate_stream_alive(item: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         except Exception:
             return None
 
-    # 3. SuperStream ou links diretos
+    # 3. FenixFlix / BestCine / SuperStream ou links diretos
     try:
-        r = _vod_session.head(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=2.5, allow_redirects=True)
-        if r.status_code >= 400:
-            return None
+        r = _vod_session.head(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}, timeout=2.0, allow_redirects=True)
+        if r.status_code in (200, 206, 301, 302, 307, 308):
+            return item
+        if r.status_code in (403, 404, 405):
+            r_range = _vod_session.get(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)", "Range": "bytes=0-1024"}, timeout=2.0, stream=True, allow_redirects=True)
+            if r_range.status_code in (200, 206):
+                return item
+        return None
     except Exception:
-        pass
+        try:
+            r_range = _vod_session.get(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)", "Range": "bytes=0-1024"}, timeout=1.5, stream=True, allow_redirects=True)
+            if r_range.status_code in (200, 206):
+                return item
+        except Exception:
+            return None
 
-    return item
+    return None
 
 def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None, episode: Optional[int] = None) -> Dict[str, Any]:
     cache_key = f"{media_type}_{tmdb_id}_{season}_{episode}"
@@ -291,7 +339,7 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
         except Exception:
             pass
 
-    if not imdb_id:
+    if not imdb_id and not tmdb_id:
         return {
             "title": title,
             "imdb_id": None,
@@ -304,14 +352,19 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
         }
 
     raw_streams = []
+    tmdb_query_id = f"tmdb:{tmdb_id}" if tmdb_id else imdb_id
 
-    # 2. Busca paralela de alta velocidade (FrostStream + SuperStream + EmbedPlayer simultaneamente)
-    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
-        tasks = {
-            executor.submit(fetch_froststream, media_type, imdb_id, season, episode): "FrostStream",
-            executor.submit(fetch_superstream, media_type, imdb_id, season, episode): "SuperStream",
-            executor.submit(fetch_embedplayer, media_type, imdb_id, season, episode): "EmbedPlayer"
-        }
+    # 2. Busca paralela de alta velocidade (FrostStream + FenixFlix + BestCine + SuperStream + EmbedPlayer simultaneamente)
+    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+        tasks = {}
+        if imdb_id:
+            tasks[executor.submit(fetch_froststream, media_type, imdb_id, season, episode)] = "FrostStream"
+            tasks[executor.submit(fetch_superstream, media_type, imdb_id, season, episode)] = "SuperStream"
+            tasks[executor.submit(fetch_embedplayer, media_type, imdb_id, season, episode)] = "EmbedPlayer"
+        if tmdb_query_id:
+            tasks[executor.submit(fetch_fenixflix, media_type, tmdb_query_id, season, episode)] = "FenixFlix"
+            tasks[executor.submit(fetch_bestcine, media_type, tmdb_query_id, season, episode)] = "BestCine"
+
         done, not_done = concurrent.futures.wait(tasks.keys(), timeout=9.0)
 
         for f in done:
@@ -437,10 +490,14 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
         else:
             score += 80   # Bônus para versão digital de alta fidelidade
 
-        # Bônus de fidelidade e estabilidade (FrostStream tem bitrate e fidelidade visual muito superior a embeds re-comprimidos)
+        # Bônus de fidelidade e estabilidade
         prov = item.get("provider", "")
         if prov == "FrostStream":
             score += 35
+        elif prov == "FenixFlix":
+            score += 35
+        elif prov == "BestCine":
+            score += 32
         elif prov == "SuperStream":
             score += 30
         elif prov == "EmbedPlayer":
