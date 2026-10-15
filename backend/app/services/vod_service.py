@@ -239,16 +239,23 @@ def is_url_mismatched(url: str, title: str, orig_title: str = "") -> bool:
         path = urllib.parse.unquote(urllib.parse.urlparse(url).path).lower()
         parts = [p.strip() for p in path.split('/') if p.strip()]
         if len(parts) > 1:
-            folder = parts[-2]
-            slug_words = re.findall(r'[a-z]{3,}', folder)
-            if len(slug_words) >= 2:
-                stopwords = {'dos', 'das', 'uma', 'uns', 'the', 'and', 'for', 'com', 'que', 'sem', 'filme', 'movie', 'series', 'season', 'episode', 'episodes', 'dublado', 'legendado'}
-                significant = [w for w in slug_words if w not in stopwords]
-                if significant:
-                    title_text = strip_accents(f"{title} {orig_title}").lower()
-                    clean_sig = [strip_accents(w) for w in significant]
-                    matches = [w for w in clean_sig if w in title_text]
-                    if not matches:
+            stopwords = {
+                'dos', 'das', 'uma', 'uns', 'the', 'and', 'for', 'com', 'que', 'sem',
+                'filme', 'filmes', 'movie', 'movies', 'series', 'serie', 'season', 'episode',
+                'episodes', 'dublado', 'legendado', 'anime', 'animes', 'stream', 'streams',
+                'video', 'videos', 'server', 'servers', 'media', 'upload', 'uploads',
+                'uncategorized', 'hls', 'mp4', 'mkv', 'static', 'assets', 'cdns', 's3v3', 'tv'
+            }
+            title_text = strip_accents(f"{title} {orig_title}").lower()
+            title_words = set(re.findall(r'[a-z]{3,}', title_text))
+
+            for folder in parts[:-1]:
+                slug_words = [w for w in re.findall(r'[a-z]{3,}', folder) if w not in stopwords]
+                if slug_words:
+                    clean_sig = [strip_accents(w) for w in slug_words]
+                    has_match = any(w in title_words or any(w in tw or tw in w for tw in title_words if len(tw) >= 4) for w in clean_sig)
+                    # Se o folder contiver palavras sem correspondência no título pesquisado
+                    if not has_match and (len(clean_sig) >= 2 or any(len(w) >= 5 for w in clean_sig)):
                         return True
     except Exception:
         pass
@@ -282,6 +289,7 @@ def validate_stream_alive(item: Dict[str, Any], title: str = "", orig_title: str
                 return None
             if is_url_mismatched(r.url, title, orig_title):
                 print(f"[Stream Mismatch Discarded] {r.url} does not match {title}")
+                item["is_mismatch"] = True
                 return None
             return item
         except Exception:
@@ -297,6 +305,7 @@ def validate_stream_alive(item: Dict[str, Any], title: str = "", orig_title: str
                 cdn_url = r.headers["Location"]
                 if is_url_mismatched(cdn_url, title, orig_title):
                     print(f"[FrostStream Mismatch Discarded] {cdn_url} does not match {title}")
+                    item["is_mismatch"] = True
                     return None
                 try:
                     r_cdn = _vod_session.get(cdn_url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)", "Range": "bytes=0-1024"}, timeout=3.0, stream=True)
@@ -310,10 +319,11 @@ def validate_stream_alive(item: Dict[str, Any], title: str = "", orig_title: str
 
     # 3. FenixFlix / BestCine / SuperStream ou links diretos
     try:
-        r = _vod_session.head(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}, timeout=2.0, allow_redirects=True)
+        r = _vod_session.head(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}, timeout=2.5, allow_redirects=True)
         if r.status_code in (200, 206, 301, 302, 307, 308):
             if is_url_mismatched(r.url, title, orig_title):
                 print(f"[Stream Mismatch Discarded] {r.url} does not match {title}")
+                item["is_mismatch"] = True
                 return None
             return item
         if r.status_code in (403, 404, 405):
@@ -321,15 +331,17 @@ def validate_stream_alive(item: Dict[str, Any], title: str = "", orig_title: str
             if r_range.status_code in (200, 206):
                 if is_url_mismatched(r_range.url, title, orig_title):
                     print(f"[Stream Mismatch Discarded] {r_range.url} does not match {title}")
+                    item["is_mismatch"] = True
                     return None
                 return item
         return None
     except Exception:
         try:
-            r_range = _vod_session.get(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)", "Range": "bytes=0-1024"}, timeout=1.5, stream=True, allow_redirects=True)
+            r_range = _vod_session.get(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)", "Range": "bytes=0-1024"}, timeout=2.0, stream=True, allow_redirects=True)
             if r_range.status_code in (200, 206):
                 if is_url_mismatched(r_range.url, title, orig_title):
                     print(f"[Stream Mismatch Discarded] {r_range.url} does not match {title}")
+                    item["is_mismatch"] = True
                     return None
                 return item
         except Exception:
@@ -452,14 +464,21 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
         # Detecta se é HEVC/H.265
         is_hevc = bool(re.search(r'\b(HEVC|H\.?265|X265|2160P|4K)\b', f"{raw_title} {name} {url}", re.IGNORECASE)) and ("4K" in quality or "HEVC" in raw_title)
 
-        # Limita redundância a no máximo 2 mirrors para não poluir a lista
+        # Detecta nome de servidor específico no título (ex: Servidor Maya, Arthur, Malfoy)
+        srv_match = re.search(r'(?:⚡\s*Servidor\s+|Servidor\s+|🚗\s*|🐉\s*|💧\s*)([A-Za-z0-9]+)', raw_title)
+        srv_subname = srv_match.group(1) if srv_match else None
+
         mirror_key = f"{provider_name}_{quality}_{audio}"
         provider_counts[mirror_key] = provider_counts.get(mirror_key, 0) + 1
         mirror_num = provider_counts[mirror_key]
-        if mirror_num > 2:
-            continue
 
-        prov_display = f"{provider_name} #{mirror_num}" if mirror_num > 1 else provider_name
+        if srv_subname and srv_subname.lower() not in provider_name.lower():
+            prov_display = f"{provider_name} ({srv_subname})"
+        elif mirror_num > 1:
+            prov_display = f"{provider_name} #{mirror_num}"
+        else:
+            prov_display = provider_name
+
         clean_name = f"{quality} • {audio} [{prov_display}]"
         if is_hevc:
             clean_name += " • HEVC"
@@ -490,10 +509,23 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
             for res in results:
                 if res is not None:
                     valid_streams.append(res)
-        # Se a validação concorrente descartou tudo por timeout de rede, mantém as fontes normalizadas como garantia
-        if not valid_streams and normalized:
-            valid_streams = normalized
-        normalized = valid_streams
+        
+        # ATENÇÃO CRÍTICA: Se a validação concorrente descartou por timeout, mantém apenas streams SEM mismatch!
+        # JAMAIS restaurar streams com mismatch de título (evita tocar documentário futebol americano em anime)
+        if valid_streams:
+            normalized = valid_streams
+        else:
+            normalized = [s for s in normalized if not s.get("is_mismatch") and not is_url_mismatched(s.get("url", ""), title, orig_title)]
+
+        # Limita redundância a no máximo 2 mirrors por (provedor, qualidade, áudio) entre as fontes que realmente funcionam
+        deduped = []
+        seen_mirrors = {}
+        for s in normalized:
+            k = f"{s.get('provider')}_{s.get('quality')}_{s.get('audio')}"
+            seen_mirrors[k] = seen_mirrors.get(k, 0) + 1
+            if seen_mirrors[k] <= 2:
+                deduped.append(s)
+        normalized = deduped
 
     # 4.2 Filtragem Estrita Anti-Cinema: Se já existe qualquer versão digital limpa (4K, 1080p, 720p),
     # descarta 100% das gravações de cinema (CAM/TS) para não poluir a lista nem correr risco de tocar CAM

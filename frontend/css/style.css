@@ -6294,21 +6294,23 @@ body.player-open .navbar,
 
 /* Seletor discreto e elegante de servidores */
 #playerSourceSelect {
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   color: #fff;
   border-radius: 6px;
-  padding: 4px 8px;
+  padding: 5px 10px;
   font-size: 12px;
   font-family: inherit;
   cursor: pointer;
   outline: none;
-  max-width: 170px;
+  max-width: 260px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   transition: all 0.2s ease;
 }
 #playerSourceSelect:hover {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.45);
 }
 #playerSourceSelect option {
   background: #18181c;
@@ -6317,7 +6319,7 @@ body.player-open .navbar,
 }
 @media (max-width: 768px) {
   #playerSourceSelect {
-    max-width: 110px;
+    max-width: 140px;
     font-size: 11px;
     padding: 3px 6px;
   }
