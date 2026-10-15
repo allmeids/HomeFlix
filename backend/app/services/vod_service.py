@@ -226,8 +226,36 @@ def fetch_embedplayer(media_type: str, imdb_id: str, season: Optional[int] = Non
         print(f"[EmbedPlayer Error] {exc}")
     return streams
 
-def validate_stream_alive(item: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-    """Testa se o link remoto está ativo e não expirado (evita repassar streams mortas/404 para o cliente)."""
+import unicodedata
+
+def strip_accents(s: str) -> str:
+    return ''.join(c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn')
+
+def is_url_mismatched(url: str, title: str, orig_title: str = "") -> bool:
+    """Verifica se o link final redireciona para outra obra completamente diferente (ex: Titletown High em vez de Cavaleiros do Zodíaco)."""
+    if not url or not title:
+        return False
+    try:
+        path = urllib.parse.unquote(urllib.parse.urlparse(url).path).lower()
+        parts = [p.strip() for p in path.split('/') if p.strip()]
+        if len(parts) > 1:
+            folder = parts[-2]
+            slug_words = re.findall(r'[a-z]{3,}', folder)
+            if len(slug_words) >= 2:
+                stopwords = {'dos', 'das', 'uma', 'uns', 'the', 'and', 'for', 'com', 'que', 'sem', 'filme', 'movie', 'series', 'season', 'episode', 'episodes', 'dublado', 'legendado'}
+                significant = [w for w in slug_words if w not in stopwords]
+                if significant:
+                    title_text = strip_accents(f"{title} {orig_title}").lower()
+                    clean_sig = [strip_accents(w) for w in significant]
+                    matches = [w for w in clean_sig if w in title_text]
+                    if not matches:
+                        return True
+    except Exception:
+        pass
+    return False
+
+def validate_stream_alive(item: Dict[str, Any], title: str = "", orig_title: str = "") -> Optional[Dict[str, Any]]:
+    """Testa se o link remoto está ativo e não expirado, descartando também redirecionamentos com títulos divergentes."""
     url = item.get("url")
     if not url:
         return None
@@ -252,6 +280,9 @@ def validate_stream_alive(item: Dict[str, Any]) -> Optional[Dict[str, Any]]:
             r = _vod_session.get(target_url, headers=headers, stream=True, timeout=3.0, allow_redirects=True)
             if r.status_code >= 400:
                 return None
+            if is_url_mismatched(r.url, title, orig_title):
+                print(f"[Stream Mismatch Discarded] {r.url} does not match {title}")
+                return None
             return item
         except Exception:
             return None
@@ -264,8 +295,10 @@ def validate_stream_alive(item: Dict[str, Any]) -> Optional[Dict[str, Any]]:
                 return None
             if r.status_code in (301, 302, 307, 308) and "Location" in r.headers:
                 cdn_url = r.headers["Location"]
+                if is_url_mismatched(cdn_url, title, orig_title):
+                    print(f"[FrostStream Mismatch Discarded] {cdn_url} does not match {title}")
+                    return None
                 try:
-                    # Muitos CDNs de vídeo (ex: Nginx/Apache de VOD) rejeitam HEAD com 404 mas aceitam Range GET com 206
                     r_cdn = _vod_session.get(cdn_url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)", "Range": "bytes=0-1024"}, timeout=3.0, stream=True)
                     if r_cdn.status_code not in (200, 206):
                         return None
@@ -279,16 +312,25 @@ def validate_stream_alive(item: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     try:
         r = _vod_session.head(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}, timeout=2.0, allow_redirects=True)
         if r.status_code in (200, 206, 301, 302, 307, 308):
+            if is_url_mismatched(r.url, title, orig_title):
+                print(f"[Stream Mismatch Discarded] {r.url} does not match {title}")
+                return None
             return item
         if r.status_code in (403, 404, 405):
             r_range = _vod_session.get(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)", "Range": "bytes=0-1024"}, timeout=2.0, stream=True, allow_redirects=True)
             if r_range.status_code in (200, 206):
+                if is_url_mismatched(r_range.url, title, orig_title):
+                    print(f"[Stream Mismatch Discarded] {r_range.url} does not match {title}")
+                    return None
                 return item
         return None
     except Exception:
         try:
             r_range = _vod_session.get(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)", "Range": "bytes=0-1024"}, timeout=1.5, stream=True, allow_redirects=True)
             if r_range.status_code in (200, 206):
+                if is_url_mismatched(r_range.url, title, orig_title):
+                    print(f"[Stream Mismatch Discarded] {r_range.url} does not match {title}")
+                    return None
                 return item
         except Exception:
             return None
@@ -427,6 +469,7 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
         normalized.append({
             "id": f"stream_{idx+1}",
             "name": name,
+            "raw_title": raw_title,
             "quality": quality,
             "audio": audio,
             "is_cinema": is_cam,
@@ -438,11 +481,12 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
             "behaviorHints": s.get("behaviorHints", {})
         })
 
-    # 4.1 Validação concorrente rápida para descartar streams mortas/expiradas (elimina 404s no cliente)
+    # 4.1 Validação concorrente rápida para descartar streams mortas/expiradas e links divergentes
     if normalized:
         valid_streams = []
+        orig_title = details.get("original_name") or details.get("original_title") or ""
         with concurrent.futures.ThreadPoolExecutor(max_workers=min(len(normalized), 8)) as validator:
-            results = validator.map(validate_stream_alive, normalized)
+            results = validator.map(lambda it: validate_stream_alive(it, title=title, orig_title=orig_title), normalized)
             for res in results:
                 if res is not None:
                     valid_streams.append(res)
@@ -490,14 +534,21 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
         else:
             score += 80   # Bônus para versão digital de alta fidelidade
 
+        # Detecção de spin-offs divergentes (ex: Ômega quando buscando série clássica)
+        rt = item.get("raw_title", "").lower()
+        if ("ômega" in rt or "omega" in rt) and ("ômega" not in title.lower() and "omega" not in title.lower()):
+            score -= 150
+        if ("the lost canvas" in rt or "lost canvas" in rt) and ("lost canvas" not in title.lower()):
+            score -= 150
+
         # Bônus de fidelidade e estabilidade
         prov = item.get("provider", "")
-        if prov == "FrostStream":
+        if prov == "BestCine":
+            score += 40
+        elif prov == "FrostStream":
             score += 35
         elif prov == "FenixFlix":
             score += 35
-        elif prov == "BestCine":
-            score += 32
         elif prov == "SuperStream":
             score += 30
         elif prov == "EmbedPlayer":

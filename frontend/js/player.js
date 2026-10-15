@@ -679,10 +679,10 @@ class HomeFlixPlayer {
       }
     }
 
-    // Popula seletor de fontes (opera 100% por baixo dos panos)
+    // Popula seletor de fontes (permite alternar manualmente se houver multiplas fontes)
     this.sourceSelector.innerHTML = '';
-    this.sourceSelector.style.display = 'none';
-    if (this.sources.length > 0) {
+    if (this.sources.length > 1) {
+      this.sourceSelector.style.display = 'inline-block';
       this.sources.forEach(s => {
         const opt = document.createElement('option');
         opt.value = s.url;
@@ -690,6 +690,8 @@ class HomeFlixPlayer {
         if (s.url === options.currentStreamUrl) opt.selected = true;
         this.sourceSelector.appendChild(opt);
       });
+    } else {
+      this.sourceSelector.style.display = 'none';
     }
 
     this.failedUrls.clear();

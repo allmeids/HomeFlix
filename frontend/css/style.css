@@ -6292,9 +6292,35 @@ body.player-open .navbar,
   }
 }
 
-/* Ocultação forçada da seleção manual de servidores */
+/* Seletor discreto e elegante de servidores */
 #playerSourceSelect {
-  display: none !important;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #fff;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+  max-width: 170px;
+  transition: all 0.2s ease;
+}
+#playerSourceSelect:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+#playerSourceSelect option {
+  background: #18181c;
+  color: #fff;
+  padding: 6px;
+}
+@media (max-width: 768px) {
+  #playerSourceSelect {
+    max-width: 110px;
+    font-size: 11px;
+    padding: 3px 6px;
+  }
 }
 
 @media (max-width: 768px) {
