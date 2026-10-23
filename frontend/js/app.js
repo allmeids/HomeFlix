@@ -1787,14 +1787,14 @@ class HomeFlixApp {
         };
       }
 
-      if (this.isTvMode) {
-        card.setAttribute('tabindex', '0');
-        card.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter') {
-            posterWrap.click();
-          }
-        });
-      }
+      card.setAttribute('tabindex', '0');
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          e.stopPropagation();
+          posterWrap.click();
+        }
+      });
 
       carousel.appendChild(card);
     });
@@ -2017,7 +2017,11 @@ class HomeFlixApp {
 
       card.onclick = () => this.openMediaDetails(mediaType, item.id, { title });
       card.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') this.openMediaDetails(mediaType, item.id, { title });
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          e.stopPropagation();
+          this.openMediaDetails(mediaType, item.id, { title });
+        }
       });
 
       container.appendChild(card);

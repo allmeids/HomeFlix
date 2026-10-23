@@ -9,10 +9,10 @@ DIST_DIR = os.path.join(BASE_DIR, "dist")
 APK_PATH = os.path.join(DIST_DIR, "HomeFlix.apk")
 
 APP_INFO = {
-    "version_code": 5,
-    "version_name": "1.0.4",
+    "version_code": 6,
+    "version_name": "1.0.5",
     "download_url": "/api/app/download",
-    "changelog": "Player de vídeo perfeitamente centralizado sem deslocamento vertical; botão voltar e título alinhados à esquerda; remoção de caixas de preview pesadas na barra de progresso com scrubbing limpo e leve; atualização de estabilidade visual."
+    "changelog": "Suporte nativo a Android TV (Mi Box 3 / Leanback Banner) com navegação completa por controle remoto, widescreen 16:9 automático e auto-descoberta de servidores HomeFlix (MacBook e Dell)."
 }
 
 @router.get("/api/app/version")
