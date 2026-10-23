@@ -76,6 +76,10 @@ class HomeFlixApp {
   }
 
   async init() {
+    if (window.HomeFlixApp || /MIBOX|Android TV|AFT|Bravia|SmartTV|Web0S|Tizen/i.test(navigator.userAgent)) {
+      this.isTvMode = true;
+      document.body.classList.add('tv-perf-mode');
+    }
     this.setupPwa();
     this.setupNavbar();
     this.setupCategoryBar();
@@ -473,7 +477,7 @@ class HomeFlixApp {
         const initial = actionBtns[0] || topBtns[0];
         if (initial) {
           initial.focus();
-          initial.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          initial.scrollIntoView({ behavior: 'auto', block: 'center' });
         }
       }
       return;
@@ -486,14 +490,14 @@ class HomeFlixApp {
       if (currentItemIndex < currentZone.items.length - 1) {
         const next = currentZone.items[currentItemIndex + 1];
         next.focus();
-        next.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        next.scrollIntoView({ behavior: 'auto', inline: 'center', block: 'nearest' });
       }
     } else if (key === 'ArrowLeft') {
       e.preventDefault();
       if (currentItemIndex > 0) {
         const prev = currentZone.items[currentItemIndex - 1];
         prev.focus();
-        prev.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        prev.scrollIntoView({ behavior: 'auto', inline: 'center', block: 'nearest' });
       }
     } else if (key === 'ArrowDown') {
       e.preventDefault();
@@ -503,7 +507,7 @@ class HomeFlixApp {
         const target = nextZone.items[targetIndex >= 0 ? targetIndex : 0];
         if (target) {
           target.focus();
-          target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          target.scrollIntoView({ behavior: 'auto', block: 'center' });
         }
       }
     } else if (key === 'ArrowUp') {
@@ -514,7 +518,7 @@ class HomeFlixApp {
         const target = prevZone.items[targetIndex >= 0 ? targetIndex : 0];
         if (target) {
           target.focus();
-          target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          target.scrollIntoView({ behavior: 'auto', block: 'center' });
         }
       }
     } else if (key === 'Enter') {
@@ -618,7 +622,7 @@ class HomeFlixApp {
         const initial = heroBtns[0] || (allZones[3] ? allZones[3].items[0] : navItems[0]);
         if (initial) {
           initial.focus();
-          initial.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          initial.scrollIntoView({ behavior: 'auto', block: 'center' });
         }
       }
       return;
@@ -633,7 +637,7 @@ class HomeFlixApp {
         this.switchTab('home');
       } else if (currentZoneIndex > 1) {
         e.preventDefault();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 0, behavior: 'auto' });
         if (heroBtns[0]) heroBtns[0].focus();
         else navItems[0].focus();
       }
@@ -654,14 +658,14 @@ class HomeFlixApp {
       if (currentItemIndex < currentZone.items.length - 1) {
         const next = currentZone.items[currentItemIndex + 1];
         next.focus();
-        next.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        next.scrollIntoView({ behavior: 'auto', inline: 'center', block: 'nearest' });
       }
     } else if (key === 'ArrowLeft') {
       e.preventDefault();
       if (currentItemIndex > 0) {
         const prev = currentZone.items[currentItemIndex - 1];
         prev.focus();
-        prev.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        prev.scrollIntoView({ behavior: 'auto', inline: 'center', block: 'nearest' });
       }
     }
     // Navegação Vertical (Seta Baixo / Seta Cima entre Carrosséis)
@@ -673,7 +677,7 @@ class HomeFlixApp {
         if (nextIndex < currentZone.items.length) {
           const target = currentZone.items[nextIndex];
           target.focus();
-          target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          target.scrollIntoView({ behavior: 'auto', block: 'center' });
           return;
         }
       }
@@ -684,7 +688,7 @@ class HomeFlixApp {
         const target = nextZone.items[targetIndex];
         if (target) {
           target.focus();
-          target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          target.scrollIntoView({ behavior: 'auto', block: 'center' });
         }
       }
     } else if (key === 'ArrowUp') {
@@ -695,7 +699,7 @@ class HomeFlixApp {
         if (prevIndex >= 0) {
           const target = currentZone.items[prevIndex];
           target.focus();
-          target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          target.scrollIntoView({ behavior: 'auto', block: 'center' });
           return;
         }
       }
@@ -706,10 +710,10 @@ class HomeFlixApp {
         const target = prevZone.items[targetIndex];
         if (target) {
           target.focus();
-          target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          target.scrollIntoView({ behavior: 'auto', block: 'center' });
         }
       } else {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 0, behavior: 'auto' });
       }
     }
   }
@@ -1829,6 +1833,7 @@ class HomeFlixApp {
 
   resumeHeroSlideshow() {
     this.pauseHeroSlideshow();
+    if (document.body.classList.contains('tv-perf-mode')) return;
     if (this.heroItems && this.heroItems.length > 1) {
       this.heroTimer = setInterval(() => {
         this.nextHeroSlide();

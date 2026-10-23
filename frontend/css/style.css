@@ -1086,8 +1086,8 @@ body {
   display: flex;
   gap: 16px;
   overflow-x: auto;
-  scroll-behavior: smooth;
-  padding: 12px 0 16px;
+  padding: 16px 12px 20px 12px;
+  margin: 0 -12px;
   scrollbar-width: none;
 }
 
@@ -1104,9 +1104,8 @@ body {
   border-radius: 10px;
   overflow: hidden;
   background-color: var(--bg-card);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.2s ease;
-  will-change: transform;
+  border: 2px solid rgba(255, 255, 255, 0.06);
+  transition: transform 0.14s ease-out, border-color 0.14s ease-out;
 }
 
 .media-card:hover {
@@ -5455,24 +5454,29 @@ body.player-open .navbar,
 }
 
 /* ================================================================
-   SMART TV: FOCO REFORÇADO (GLOW NEON & ESCALA SUAVE NO D-PAD)
+   SMART TV: FOCO LIMPO SEM CORTES & ALTA PERFORMANCE (60 FPS)
    ================================================================ */
 .media-card:focus,
 .media-card:focus-visible,
-.media-card.tv-focused {
-  transform: scale(1.06) !important;
-  outline: 3px solid #00d2ff !important;
-  outline-offset: 3px !important;
-  box-shadow: 0 12px 32px rgba(0, 210, 255, 0.4), 0 4px 16px rgba(0, 0, 0, 0.9) !important;
+.media-card.tv-focused,
+.continue-card:focus,
+.continue-card:focus-visible,
+.continue-card.tv-focused {
+  transform: scale(1.04) !important;
+  outline: none !important;
+  border-color: #ffffff !important;
+  box-shadow: 0 0 0 2px #ffffff, 0 8px 20px rgba(0, 0, 0, 0.85) !important;
   z-index: 40 !important;
 }
 
 .episode-card:focus,
-.episode-card:focus-visible {
-  outline: 2.5px solid #00d2ff !important;
-  background: rgba(255, 255, 255, 0.12) !important;
+.episode-card:focus-visible,
+.episode-card.tv-focused {
+  outline: none !important;
+  border: 2px solid #ffffff !important;
+  background: rgba(255, 255, 255, 0.14) !important;
   transform: translateY(-2px) !important;
-  box-shadow: 0 8px 24px rgba(0, 210, 255, 0.25) !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.7) !important;
 }
 
 /* ================================================================
@@ -6349,3 +6353,184 @@ body.player-open .navbar,
   }
 }
 
+/* ================================================================
+   ANDROID TV / MI BOX 3: TOPBAR AJUSTADA, FOCO SEM CORTES & 60 FPS
+   ================================================================ */
+.nav-item {
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+}
+
+.brand-logo,
+.nav-right,
+.search-box,
+.profile-btn {
+  flex-shrink: 0 !important;
+}
+
+@media (min-width: 769px) and (max-width: 1380px) {
+  .navbar {
+    padding: 0 2.2% !important;
+    height: 60px !important;
+    gap: 10px !important;
+  }
+  .nav-left {
+    gap: 12px !important;
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+  }
+  .logo-text {
+    font-size: 23px !important;
+    letter-spacing: 1.5px !important;
+  }
+  .nav-links {
+    gap: 3px !important;
+    flex-wrap: nowrap !important;
+  }
+  .nav-item {
+    padding: 6px 10px !important;
+    font-size: 12.5px !important;
+    white-space: nowrap !important;
+  }
+  .nav-right {
+    gap: 8px !important;
+    flex-shrink: 0 !important;
+  }
+  .search-box {
+    padding: 5px 10px !important;
+  }
+  .search-input {
+    width: 105px !important;
+    font-size: 12px !important;
+    margin-left: 6px !important;
+  }
+  .search-box:focus-within .search-input {
+    width: 145px !important;
+  }
+  .profile-btn {
+    padding: 4px 10px 4px 5px !important;
+    gap: 6px !important;
+  }
+  .profile-avatar-mini {
+    width: 24px !important;
+    height: 24px !important;
+  }
+  .profile-name-mini {
+    max-width: 72px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    font-size: 12px !important;
+  }
+}
+
+/* Impede corte de borda nos carrosséis e botões focados */
+.media-carousel,
+.categories-carousel,
+.continue-watching-carousel,
+#continueWatchingCarousel {
+  padding: 18px 14px 22px 14px !important;
+  margin: 0 -14px !important;
+  scroll-behavior: auto !important;
+}
+
+.nav-item.tv-focused,
+.nav-item:focus-visible {
+  outline: none !important;
+  box-shadow: inset 0 0 0 2px #ffffff !important;
+  background: rgba(255, 255, 255, 0.22) !important;
+  transform: none !important;
+}
+
+.profile-btn.tv-focused,
+.profile-btn:focus-visible,
+.search-box:has(#searchInput.tv-focused),
+.search-box:has(#searchInput:focus-visible) {
+  outline: none !important;
+  border-color: #ffffff !important;
+  box-shadow: 0 0 0 2px #ffffff !important;
+}
+
+#heroPlayBtn.tv-focused,
+#heroPlayBtn:focus-visible,
+#detailsPlayBtn.tv-focused,
+#detailsPlayBtn:focus-visible,
+.btn-primary.tv-focused,
+.btn-primary:focus-visible,
+.btn-secondary.tv-focused,
+.btn-secondary:focus-visible,
+#heroInfoBtn.tv-focused,
+#heroInfoBtn:focus-visible {
+  outline: none !important;
+  box-shadow: 0 0 0 2.5px #ffffff, 0 6px 16px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Modo Turbo 60 FPS para GPU Mali-450 / Android TV WebView */
+body.tv-perf-mode *,
+body.tv-perf-mode *::before,
+body.tv-perf-mode *::after {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+body.tv-perf-mode .navbar.scrolled {
+  background: rgba(12, 12, 16, 0.98) !important;
+}
+
+body.tv-perf-mode .media-card,
+body.tv-perf-mode .continue-card,
+body.tv-perf-mode .continue-netflix-card,
+body.tv-perf-mode .channel-card {
+  will-change: auto !important;
+  transition: transform 0.10s ease-out !important;
+  box-shadow: none !important;
+}
+
+body.tv-perf-mode .media-card.tv-focused,
+body.tv-perf-mode .media-card:focus-visible,
+body.tv-perf-mode .continue-card.tv-focused,
+body.tv-perf-mode .continue-card:focus-visible,
+body.tv-perf-mode .continue-netflix-card.tv-focused,
+body.tv-perf-mode .continue-netflix-card:focus-visible,
+body.tv-perf-mode .channel-card.tv-focused,
+body.tv-perf-mode .channel-card:focus-visible {
+  transform: scale(1.04) !important;
+  outline: none !important;
+  border-color: #ffffff !important;
+  box-shadow: 0 0 0 2px #ffffff, 0 6px 14px rgba(0, 0, 0, 0.85) !important;
+}
+
+/* Ajuste vertical de Hero e Detalhes em telas 16:9 com viewport 960x540 (Android TV) */
+@media (min-width: 769px) and (max-height: 650px) {
+  .hero {
+    min-height: 390px !important;
+    height: 70vh !important;
+    margin: 66px 2.2% 20px !important;
+    padding: 20px 3.5% 28px 3.5% !important;
+  }
+  .hero-title {
+    font-size: 34px !important;
+    margin-bottom: 8px !important;
+  }
+  .hero-meta {
+    margin-bottom: 10px !important;
+  }
+  .hero-overview {
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    font-size: 13.5px !important;
+    margin-bottom: 14px !important;
+  }
+  .details-hero-banner {
+    min-height: 440px !important;
+    padding: 72px 3.5% 28px !important;
+  }
+  .details-poster-box {
+    flex: 0 0 180px !important;
+  }
+  .details-main-title {
+    font-size: 28px !important;
+  }
+}
