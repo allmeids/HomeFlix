@@ -13,7 +13,52 @@ import threading
 from typing import Optional, Dict, Any, List
 import requests
 
-from supabase import create_client, Client
+try:
+    from supabase import create_client, Client
+except ImportError:
+    Client = Any
+    class _RestStorageBucket:
+        def __init__(self, url: str, key: str, bucket: str, get_token):
+            self.url = url
+            self.key = key
+            self.bucket = bucket
+            self.get_token = get_token
+        def download(self, path: str) -> bytes:
+            headers = {"apikey": self.key}
+            tok = self.get_token()
+            if tok:
+                headers["Authorization"] = f"Bearer {tok}"
+            r = requests.get(f"{self.url}/storage/v1/object/{self.bucket}/{path}", headers=headers, timeout=8)
+            r.raise_for_status()
+            return r.content
+        def update(self, path: str, file: bytes, file_options: dict = None):
+            return self.upload(path, file, file_options)
+        def upload(self, path: str, file: bytes, file_options: dict = None):
+            headers = {"apikey": self.key, "x-upsert": "true", "Content-Type": "application/json"}
+            tok = self.get_token() or self.key
+            headers["Authorization"] = f"Bearer {tok}"
+            r = requests.post(f"{self.url}/storage/v1/object/{self.bucket}/{path}", data=file, headers=headers, timeout=10)
+            r.raise_for_status()
+            return r.json()
+    class _RestStorage:
+        def __init__(self, url: str, key: str, get_token):
+            self.url = url
+            self.key = key
+            self.get_token = get_token
+        def from_(self, bucket: str):
+            return _RestStorageBucket(self.url, self.key, bucket, self.get_token)
+    class _RestAuth:
+        def set_session(self, access_token: str, refresh_token: str):
+            return None
+        def refresh_session(self, refresh_token: str):
+            return None
+    class _RestSupabaseClient:
+        def __init__(self, url: str, key: str):
+            self.auth = _RestAuth()
+            self.storage = _RestStorage(url, key, lambda: _access_token)
+    def create_client(url: str, key: str):
+        return _RestSupabaseClient(url, key)
+
 from app.database import get_db_connection
 
 SUPABASE_URL = "https://cxgxecgsrkhlaobfwxxy.supabase.co"
@@ -25,7 +70,7 @@ DEFAULT_USER_ID = "8820a9f4-2851-4ff8-82ca-a91d24d65e4a"
 DEFAULT_REFRESH_TOKEN = "4bipd47ejpfg"
 DEFAULT_EMAIL = "allmeiids@gmail.com"
 
-_client: Optional[Client] = None
+_client: Optional[Any] = None
 _user_id: Optional[str] = None
 _access_token: Optional[str] = None
 _sync_lock = threading.Lock()
