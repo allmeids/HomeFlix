@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" width="200" height="80">
+  <defs>
+    <linearGradient id="rnGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0051a8"/>
+      <stop offset="100%" stop-color="#001844"/>
+    </linearGradient>
+  </defs>
+  <rect width="200" height="80" rx="12" fill="url(#rnGrad)"/>
+  <circle cx="44" cy="40" r="24" fill="#0077ff" opacity="0.3"/>
+  <circle cx="44" cy="40" r="18" fill="none" stroke="#00aaff" stroke-width="3"/>
+  <ellipse cx="44" cy="40" rx="9" ry="18" fill="none" stroke="#ffffff" stroke-width="2"/>
+  <text x="78" y="38" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="16" fill="#ffffff" letter-spacing="1">RECORD</text>
+  <rect x="78" y="44" width="68" height="18" rx="4" fill="#e50914"/>
+  <text x="84" y="58" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="12" fill="#ffffff" letter-spacing="1.5">NEWS</text>
+</svg>

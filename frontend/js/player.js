@@ -47,6 +47,14 @@ class HomeFlixPlayer {
     this.osdProgressBar = document.getElementById('liveOsdProgressBar');
     this.osdNextShow = document.getElementById('liveOsdNextShow');
 
+    // OSD Elegante de Zapping Topo/Centro
+    this.zappingOsd = document.getElementById('playerZappingOsd');
+    this.zappingNumber = document.getElementById('zappingOsdNumber');
+    this.zappingLogoWrap = document.getElementById('zappingOsdLogoWrap');
+    this.zappingTitle = document.getElementById('zappingOsdTitle');
+    this.zappingShow = document.getElementById('zappingOsdShow');
+    this.zappingTimer = null;
+
     this.numberIndicator = document.getElementById('playerChannelNumberIndicator');
     this.numberValue = document.getElementById('playerChannelNumberValue');
 
@@ -406,10 +414,22 @@ class HomeFlixPlayer {
       const wasHudHidden = this.overlay.classList.contains('hud-hidden');
       this.wakeHud();
 
-      // 1. Play / Pause ou Despertar HUD com Enter / OK / Espaço
-      if (key === ' ' || code === 'Space') {
+      // 1. Play / Pause ou Despertar HUD com Enter / OK / Espaço / Teclas de Mídia
+      if (key === ' ' || code === 'Space' || key === 'MediaPlayPause' || key === 'k' || key === 'K') {
         e.preventDefault();
         this.togglePlay(true);
+      }
+      else if (key === 'MediaPlay') {
+        e.preventDefault();
+        if (this.video && this.video.paused) {
+          this.togglePlay(true);
+        }
+      }
+      else if (key === 'MediaPause') {
+        e.preventDefault();
+        if (this.video && !this.video.paused) {
+          this.togglePlay(true);
+        }
       }
       else if (key === 'Enter') {
         // Se a sidebar de canais estiver aberta, o Enter seleciona o canal focado
@@ -434,10 +454,11 @@ class HomeFlixPlayer {
         this.toggleFullscreen();
       }
       // 3. Voltar / Sair
-      else if (key === 'Escape' || key === 'Back' || key === 'BrowserBack') {
+      else if (key === 'Escape' || key === 'Back' || key === 'BrowserBack' || key === 'Backspace') {
+        e.preventDefault();
         if (this.subtitlesMenu && this.subtitlesMenu.style.display !== 'none') {
           this.toggleSubtitlesMenu(false);
-        } else if (this.sidebar.classList.contains('open')) {
+        } else if (this.sidebar && this.sidebar.classList.contains('open')) {
           this.toggleSidebar(false);
         } else if (!this.overlay.classList.contains('hud-hidden')) {
           // Se o HUD estiver visível, a tecla Voltar primeiro oculta o HUD
@@ -463,21 +484,52 @@ class HomeFlixPlayer {
         e.preventDefault();
         this.triggerLiveOsd(true);
       }
-      // 6. Zapping no Teclado / Controle Remoto (Seta Cima e Baixo)
-      else if (this.isLive && (key === 'ArrowUp' || key === 'PageUp' || key === 'ChannelUp')) {
+      // 6. Zapping no Teclado / Controle Remoto (Seta Cima e Baixo, ChannelUp, ChannelDown)
+      else if ((this.isLive || this.isLiveTv) && (key === 'ArrowUp' || key === 'PageUp' || key === 'ChannelUp')) {
         e.preventDefault();
         if (this.sidebar && this.sidebar.classList.contains('open')) {
           this.navigateSidebarChannels(-1);
         } else {
-          this.prevLiveChannel();
+          this.nextLiveChannel();
         }
       }
-      else if (this.isLive && (key === 'ArrowDown' || key === 'PageDown' || key === 'ChannelDown')) {
+      else if ((this.isLive || this.isLiveTv) && (key === 'ArrowDown' || key === 'PageDown' || key === 'ChannelDown')) {
         e.preventDefault();
         if (this.sidebar && this.sidebar.classList.contains('open')) {
           this.navigateSidebarChannels(1);
         } else {
+          this.prevLiveChannel();
+        }
+      }
+      // 6.1 Teclas Avançar e Retroceder de Mídia
+      else if (key === 'MediaFastForward' || key === 'FastForward') {
+        e.preventDefault();
+        if (!this.isLive) {
+          this.seekBy(10, true);
+        }
+      }
+      else if (key === 'MediaRewind' || key === 'Rewind') {
+        e.preventDefault();
+        if (!this.isLive) {
+          this.seekBy(-10, true);
+        }
+      }
+      else if (key === 'MediaTrackNext') {
+        e.preventDefault();
+        if (this.isLive || this.isLiveTv) {
           this.nextLiveChannel();
+        } else if (this.currentMedia && typeof this.currentMedia.onNextEpisode === 'function') {
+          this.triggerNextEpisode();
+        } else {
+          this.seekBy(10, true);
+        }
+      }
+      else if (key === 'MediaTrackPrevious') {
+        e.preventDefault();
+        if (this.isLive || this.isLiveTv) {
+          this.prevLiveChannel();
+        } else {
+          this.seekBy(-10, true);
         }
       }
       // 7. Navegação Lateral (Seta Esquerda e Direita)
@@ -529,12 +581,14 @@ class HomeFlixPlayer {
   }
 
   preparePlayback(options = {}) {
+    this.previousActiveElement = document.activeElement;
     this.overlay.style.display = 'flex';
     this.overlay.style.pointerEvents = 'auto';
     this.overlay.style.opacity = '1';
     this.overlay.classList.add('open');
     document.body.classList.add('player-open');
-    this.isLive = !!options.isLive;
+    this.isLive = !!options.isLive || !!options.isLiveTv || (options.mediaType === 'live');
+    this.isLiveTv = this.isLive;
 
     // Configura botões exclusivos antes de qualquer exibição de HUD
     if (this.isLive) {
@@ -600,7 +654,8 @@ class HomeFlixPlayer {
      * }
      */
     this.currentMedia = options;
-    this.isLive = !!options.isLive;
+    this.isLive = !!options.isLive || !!options.isLiveTv || (options.mediaType === 'live');
+    this.isLiveTv = this.isLive;
     this.sources = options.streams || [];
     this.liveChannels = options.liveChannels || window.app?.channels || [];
 
@@ -647,7 +702,8 @@ class HomeFlixPlayer {
 
       this.initSidebarCategories();
       this.renderSidebarChannels(this.activeSidebarCategory);
-      this.triggerLiveOsd(true, options.channel);
+      this.triggerZappingOsd(options.channel);
+      this.triggerLiveOsd(false, options.channel);
     } else {
       this.prevChannelBtn.style.display = 'none';
       this.nextChannelBtn.style.display = 'none';
@@ -1165,8 +1221,38 @@ class HomeFlixPlayer {
     this.subtitleDisplay.textContent = ch.current_show || 'Ao Vivo';
 
     this.loadStream(ch.stream_url, 0);
-    this.triggerLiveOsd(true, ch);
+    this.triggerZappingOsd(ch);
+    this.triggerLiveOsd(false, ch);
     this.renderSidebarChannels(this.activeSidebarCategory);
+  }
+
+  triggerZappingOsd(channel = null) {
+    const ch = channel || this.liveChannels[this.currentChannelIndex];
+    if (!ch || !this.zappingOsd) return;
+
+    clearTimeout(this.zappingTimer);
+
+    const chNum = ch.number ? `CH ${ch.number}` : 'AO VIVO';
+    if (this.zappingNumber) this.zappingNumber.textContent = chNum;
+
+    if (this.zappingLogoWrap) {
+      if (ch.logo) {
+        this.zappingLogoWrap.innerHTML = `<img class="zapping-osd-logo-img" src="${ch.logo}" alt="${ch.name}" />`;
+      } else {
+        this.zappingLogoWrap.innerHTML = `<span class="zapping-osd-logo-fallback">📡</span>`;
+      }
+    }
+
+    if (this.zappingTitle) this.zappingTitle.textContent = ch.name || 'Canal Ao Vivo';
+    if (this.zappingShow) this.zappingShow.textContent = ch.current_show || 'Transmissão Ao Vivo';
+
+    this.zappingOsd.classList.add('show');
+
+    this.zappingTimer = setTimeout(() => {
+      if (this.zappingOsd) {
+        this.zappingOsd.classList.remove('show');
+      }
+    }, 3000);
   }
 
   nextLiveChannel() {
@@ -1512,6 +1598,8 @@ class HomeFlixPlayer {
     clearTimeout(this.hideControlsTimer);
     clearTimeout(this.cinemaWarningTimer);
     clearTimeout(this.osdTimer);
+    clearTimeout(this.zappingTimer);
+    if (this.zappingOsd) this.zappingOsd.classList.remove('show');
     clearTimeout(this.noticeTimer);
     clearTimeout(this.failoverTimer);
     clearTimeout(this.pauseScreenTimer);
@@ -1577,6 +1665,18 @@ class HomeFlixPlayer {
 
     // Notifica redimensionamento para restaurar reflow suave da página
     window.dispatchEvent(new Event('resize'));
+
+    // Restaura o foco no elemento anterior da interface (card/botão) para navegação fluida por controle remoto
+    if (this.previousActiveElement && typeof this.previousActiveElement.focus === 'function') {
+      try {
+        this.previousActiveElement.focus();
+        if (window.app && typeof window.app.setTvFocus === 'function') {
+          window.app.setTvFocus(this.previousActiveElement);
+        }
+      } catch (_) {}
+      this.previousActiveElement = null;
+    }
+
     // Atualiza a home e continuar assistindo se disponível
     if (window.app) {
       window.app.loadContinueWatching();

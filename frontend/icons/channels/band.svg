@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" width="200" height="80">
+  <defs>
+    <linearGradient id="bandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00a859"/>
+      <stop offset="100%" stop-color="#ffd100"/>
+    </linearGradient>
+  </defs>
+  <rect width="200" height="80" rx="12" fill="#0d1117"/>
+  <ellipse cx="44" cy="40" rx="26" ry="16" fill="url(#bandGrad)"/>
+  <circle cx="44" cy="40" r="10" fill="#0d1117"/>
+  <circle cx="44" cy="40" r="5" fill="#ffd100"/>
+  <text x="80" y="45" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="26" fill="#ffffff" letter-spacing="1">BAND</text>
+  <text x="82" y="60" font-family="system-ui, -apple-system, sans-serif" font-weight="700" font-size="10" fill="#ffd100" letter-spacing="1.5">NEW BRASIL</text>
+</svg>

@@ -223,5 +223,35 @@ const API = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ preferred_genres: preferredGenres })
     });
+  },
+
+  // Downloads Offline
+  async startDownload(downloadData) {
+    return await this.request('/api/downloads/start', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(downloadData)
+    });
+  },
+
+  async getDownloads() {
+    const data = await this.request('/api/downloads');
+    return data?.downloads || [];
+  },
+
+  async getDownloadStatus(downloadId) {
+    return await this.request(`/api/downloads/${downloadId}/status`);
+  },
+
+  async cancelDownload(downloadId) {
+    return await this.request(`/api/downloads/${downloadId}/cancel`, {
+      method: 'POST'
+    });
+  },
+
+  async deleteDownload(downloadId) {
+    return await this.request(`/api/downloads/${downloadId}`, {
+      method: 'DELETE'
+    });
   }
 };

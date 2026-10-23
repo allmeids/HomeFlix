@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" width="200" height="80">
+  <defs>
+    <linearGradient id="rbGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0066cc"/>
+      <stop offset="100%" stop-color="#002266"/>
+    </linearGradient>
+  </defs>
+  <rect width="200" height="80" rx="12" fill="url(#rbGrad)"/>
+  <circle cx="44" cy="40" r="24" fill="#0088ff" opacity="0.3"/>
+  <path d="M28,40 Q44,20 60,40 Q44,60 28,40 Z" fill="#ffd100"/>
+  <circle cx="44" cy="40" r="8" fill="#ffffff"/>
+  <text x="76" y="38" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="14" fill="#ffd100" letter-spacing="1">REDE</text>
+  <text x="76" y="58" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="20" fill="#ffffff" letter-spacing="1">BRASIL</text>
+</svg>

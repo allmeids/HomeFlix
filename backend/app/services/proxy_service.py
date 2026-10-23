@@ -57,13 +57,14 @@ def stream_remote_media(target_url: str, request: Request) -> Response:
                     if not sline:
                         rewritten_lines.append(line)
                         continue
-                    if sline.startswith("#EXT-X-MEDIA") and 'URI="' in sline:
+                    if "URI=" in sline:
                         def sub_repl(m):
-                            u = m.group(1)
+                            quote_char = m.group(1)
+                            u = m.group(2)
                             full = urllib.parse.urljoin(base_url, u)
                             encoded = urllib.parse.quote(full, safe="")
-                            return f'URI="/api/proxy/stream?url={encoded}"'
-                        rewritten_lines.append(re.sub(r'URI="([^"]+)"', sub_repl, sline))
+                            return f'URI={quote_char}/api/proxy/stream?url={encoded}{quote_char}'
+                        rewritten_lines.append(re.sub(r'URI=("|\')(.*?)(\1)', sub_repl, sline))
                     elif sline.startswith("#"):
                         rewritten_lines.append(sline)
                     else:

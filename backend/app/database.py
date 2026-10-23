@@ -67,12 +67,35 @@ def init_db():
     )
     """)
 
+    # Tabela de Downloads Offline
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS downloads (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        media_type TEXT NOT NULL, -- 'movie' ou 'tv'
+        tmdb_id INTEGER,
+        season_number INTEGER,
+        episode_number INTEGER,
+        poster_path TEXT,
+        stream_url TEXT,
+        status TEXT DEFAULT 'pending', -- 'pending', 'downloading', 'completed', 'error', 'cancelled'
+        progress REAL DEFAULT 0.0, -- 0.0 a 100.0
+        downloaded_bytes INTEGER DEFAULT 0,
+        total_bytes INTEGER DEFAULT 0,
+        file_path TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
+
     # Índices para alta performance em consultas locais e Smart TVs
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_progress_profile ON progress(profile_id, updated_at DESC);")
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_favorites_profile ON favorites(profile_id, added_at DESC);")
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_progress_lookup ON progress(profile_id, media_id, season_number, episode_number);")
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_profiles_name ON profiles(name);")
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_favorites_lookup ON favorites(profile_id, media_id);")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_downloads_status ON downloads(status);")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_downloads_media ON downloads(media_type, tmdb_id, season_number, episode_number);")
 
     # Migrações seguras de colunas em profiles
     try:
@@ -274,3 +297,119 @@ def get_favorites(profile_id: int) -> List[Dict[str, Any]]:
     rows = conn.execute("SELECT * FROM favorites WHERE profile_id = ? ORDER BY added_at DESC", (profile_id,)).fetchall()
     conn.close()
     return [dict(r) for r in rows]
+
+# Helper functions para Downloads Offline
+def create_download(
+    title: str,
+    media_type: str,
+    tmdb_id: Optional[int] = None,
+    season_number: Optional[int] = None,
+    episode_number: Optional[int] = None,
+    poster_path: Optional[str] = None,
+    stream_url: Optional[str] = None,
+    status: str = "pending",
+    total_bytes: int = 0
+) -> Dict[str, Any]:
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("""
+    INSERT INTO downloads (
+        title, media_type, tmdb_id, season_number, episode_number,
+        poster_path, stream_url, status, progress, downloaded_bytes, total_bytes, created_at, updated_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0.0, 0, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+    """, (
+        title, media_type, tmdb_id, season_number, episode_number,
+        poster_path, stream_url, status, total_bytes
+    ))
+    download_id = cur.lastrowid
+    conn.commit()
+    row = cur.execute("SELECT * FROM downloads WHERE id = ?", (download_id,)).fetchone()
+    conn.close()
+    return dict(row)
+
+def get_downloads() -> List[Dict[str, Any]]:
+    conn = get_db_connection()
+    rows = conn.execute("SELECT * FROM downloads ORDER BY id DESC").fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+def get_download(download_id: int) -> Optional[Dict[str, Any]]:
+    conn = get_db_connection()
+    row = conn.execute("SELECT * FROM downloads WHERE id = ?", (download_id,)).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+def get_download_by_media(
+    media_type: str,
+    tmdb_id: int,
+    season_number: Optional[int] = None,
+    episode_number: Optional[int] = None
+) -> Optional[Dict[str, Any]]:
+    conn = get_db_connection()
+    if media_type == 'tv':
+        row = conn.execute("""
+        SELECT * FROM downloads
+        WHERE media_type = ? AND tmdb_id = ? AND season_number = ? AND episode_number = ?
+        ORDER BY id DESC LIMIT 1
+        """, (media_type, tmdb_id, season_number, episode_number)).fetchone()
+    else:
+        row = conn.execute("""
+        SELECT * FROM downloads
+        WHERE media_type = ? AND tmdb_id = ?
+        ORDER BY id DESC LIMIT 1
+        """, (media_type, tmdb_id)).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+def update_download(
+    download_id: int,
+    status: Optional[str] = None,
+    progress: Optional[float] = None,
+    downloaded_bytes: Optional[int] = None,
+    total_bytes: Optional[int] = None,
+    file_path: Optional[str] = None,
+    stream_url: Optional[str] = None
+) -> Optional[Dict[str, Any]]:
+    conn = get_db_connection()
+    cur = conn.cursor()
+    fields = []
+    params = []
+    if status is not None:
+        fields.append("status = ?")
+        params.append(status)
+    if progress is not None:
+        fields.append("progress = ?")
+        params.append(round(progress, 2))
+    if downloaded_bytes is not None:
+        fields.append("downloaded_bytes = ?")
+        params.append(downloaded_bytes)
+    if total_bytes is not None:
+        fields.append("total_bytes = ?")
+        params.append(total_bytes)
+    if file_path is not None:
+        fields.append("file_path = ?")
+        params.append(file_path)
+    if stream_url is not None:
+        fields.append("stream_url = ?")
+        params.append(stream_url)
+
+    if not fields:
+        conn.close()
+        return get_download(download_id)
+
+    fields.append("updated_at = CURRENT_TIMESTAMP")
+    params.append(download_id)
+
+    sql = f"UPDATE downloads SET {', '.join(fields)} WHERE id = ?"
+    cur.execute(sql, tuple(params))
+    conn.commit()
+    row = cur.execute("SELECT * FROM downloads WHERE id = ?", (download_id,)).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+def delete_download_record(download_id: int) -> bool:
+    conn = get_db_connection()
+    conn.execute("DELETE FROM downloads WHERE id = ?", (download_id,))
+    conn.commit()
+    conn.close()
+    return True

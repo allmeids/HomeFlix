@@ -13,6 +13,9 @@ __pycache__/
 backend/homeflix.db*
 homeflix.db*
 backend/backups/
+backend/downloads/
+downloads/
+*.part
 
 # Environments & Virtual Envs
 .env

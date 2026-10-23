@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" width="200" height="80">
+  <rect width="200" height="80" rx="12" fill="#003319"/>
+  <rect x="20" y="24" width="46" height="32" rx="4" fill="#009c3b"/>
+  <path d="M30,46 L37,32 L44,46 L40,46 L37,39 L34,46 Z" fill="#ffdf00"/>
+  <path d="M44,46 L51,32 L58,46 L54,46 L51,39 L48,46 Z" fill="#ffdf00"/>
+  <text x="76" y="38" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="14" fill="#ffdf00" letter-spacing="1">TV</text>
+  <text x="76" y="58" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="20" fill="#ffffff" letter-spacing="1">CÂMARA</text>
+</svg>

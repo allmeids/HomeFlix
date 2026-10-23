@@ -20,7 +20,7 @@ class CachedStaticFiles(StaticFiles):
         return resp
 
 from app.database import init_db
-from app.routers import media, streams, live_tv, profiles, progress, proxy, subtitles, app_update
+from app.routers import media, streams, live_tv, profiles, progress, proxy, subtitles, app_update, downloads
 from app.services import cloud_sync_service, backup_service
 
 app = FastAPI(
@@ -58,6 +58,7 @@ app.include_router(progress.router)
 app.include_router(proxy.router)
 app.include_router(subtitles.router)
 app.include_router(app_update.router)
+app.include_router(downloads.router)
 
 # Caminho do frontend estático
 FRONTEND_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "frontend"))

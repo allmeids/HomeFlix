@@ -32,7 +32,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/style.css?v=9.27">
+  <link rel="stylesheet" href="/static/css/style.css?v=9.30">
   <!-- HLS.js para streaming HLS/m3u8 no navegador -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
@@ -52,6 +52,9 @@
         <li class="nav-item" data-tab="categories">Categorias</li>
         <li class="nav-item" data-tab="live">TV ao Vivo</li>
         <li class="nav-item" data-tab="watchlist">Minha Lista</li>
+        <li class="nav-item" data-tab="downloads">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px; vertical-align: -2px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>Downloads
+        </li>
       </ul>
     </div>
 
@@ -125,6 +128,10 @@
         <button class="btn btn-netflix-info" id="heroInfoBtn">
           <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
           <span>Mais informações</span>
+        </button>
+        <button class="btn btn-netflix-info" id="heroDownloadBtn" title="Baixar título em destaque" style="background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2);">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          <span>Baixar</span>
         </button>
       </div>
       <div class="hero-indicators" id="heroIndicators"></div>
@@ -440,6 +447,10 @@
             <button class="btn btn-secondary btn-lg" id="detailsFavBtn">
               <span>+</span> Minha Lista
             </button>
+            <button class="btn btn-secondary btn-lg" id="detailsDownloadBtn" title="Baixar para assistir offline">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; vertical-align: -3px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              <span id="detailsDownloadBtnText">Baixar</span>
+            </button>
           </div>
 
           <p class="details-overview-text" id="detailsOverview">Carregando sinopse...</p>
@@ -608,6 +619,39 @@
     </div>
   </section>
 
+  <!-- TELA DEDICADA DE DOWNLOADS OFFLINE (ESTILO NETFLIX COM CARDS, PROGRESSO E CONTROLE DE DISCO) -->
+  <section class="live-tv-container categories-page-container" id="downloadsView" style="display: none;">
+    <div class="disney-page-header" style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 12px; margin-bottom: 24px;">
+      <div>
+        <h1 class="disney-page-title" style="display: flex; align-items: center; gap: 10px;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="color: #e50914;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          Downloads Offline
+        </h1>
+        <p style="color: #aaa; font-size: 14px; margin-top: 4px;" id="downloadsSubtitle">Gerencie seus títulos salvos para assistir sem internet.</p>
+      </div>
+      <div id="downloadsDiskUsage" style="font-size: 13px; color: #888; background: rgba(255,255,255,0.06); padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 8px;">
+        <span id="downloadsCountBadge">0 downloads</span>
+        <span style="opacity: 0.4;">•</span>
+        <span id="downloadsTotalSize">0 MB</span>
+      </div>
+    </div>
+
+    <!-- Grid de downloads -->
+    <div class="downloads-grid" id="downloadsGrid"></div>
+
+    <!-- Estado Vazio (Empty State) -->
+    <div class="downloads-empty-state" id="downloadsEmptyState" style="display: none;">
+      <div class="empty-state-icon">
+        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.5; color: #aaa;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+      </div>
+      <h3 style="font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 8px;">Nenhum download encontrado</h3>
+      <p style="color: #888; font-size: 14px; max-width: 440px; margin: 0 auto 22px; line-height: 1.6;">
+        Baixe filmes e séries clicando no botão "Baixar" na tela de qualquer título para assistir onde quiser, mesmo sem conexão à internet.
+      </p>
+      <button class="btn btn-primary" id="downloadsExploreBtn">Explorar Catálogo</button>
+    </div>
+  </section>
+
   <!-- Modal do Trailer Oficial (YouTube Player) -->
   <div class="modal-backdrop" id="trailerModal">
     <div class="modal-content trailer-modal-content">
@@ -641,6 +685,21 @@
     <div class="player-channel-number-indicator" id="playerChannelNumberIndicator">
       <span class="p-num-prefix">CANAL</span>
       <span class="p-num-val" id="playerChannelNumberValue">105</span>
+    </div>
+
+    <!-- OSD ELEGANTE DE ZAPPING (TOPO / CENTRO) -->
+    <div class="player-zapping-osd" id="playerZappingOsd">
+      <div class="zapping-osd-badge" id="zappingOsdNumber">CH 1</div>
+      <div class="zapping-osd-logo-wrap" id="zappingOsdLogoWrap">
+        <span class="zapping-osd-logo-fallback">📡</span>
+      </div>
+      <div class="zapping-osd-info">
+        <div class="zapping-osd-title" id="zappingOsdTitle">TV Brasil</div>
+        <div class="zapping-osd-sub">
+          <span class="zapping-live-dot"></span>
+          <span id="zappingOsdShow">Transmissão Ao Vivo</span>
+        </div>
+      </div>
     </div>
 
     <!-- Aviso de Qualidade Cinema CAM -->
@@ -1005,6 +1064,12 @@
       </div>
       <span class="nflx-bottom-nav-label">Séries</span>
     </button>
+    <button type="button" class="nflx-bottom-nav-item" data-tab="downloads" id="bottomNavDownloads">
+      <div class="nflx-bottom-nav-icon">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+      </div>
+      <span class="nflx-bottom-nav-label">Downloads</span>
+    </button>
     <button type="button" class="nflx-bottom-nav-item" id="bottomNavSearch">
       <div class="nflx-bottom-nav-icon">
         <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
@@ -1020,8 +1085,8 @@
   </nav>
 
   <!-- Scripts -->
-  <script src="/static/js/api.js?v=9.25"></script>
-  <script src="/static/js/player.js?v=9.25"></script>
-  <script src="/static/js/app.js?v=9.25"></script>
+  <script src="/static/js/api.js?v=9.30"></script>
+  <script src="/static/js/player.js?v=9.30"></script>
+  <script src="/static/js/app.js?v=9.30"></script>
 </body>
 </html>

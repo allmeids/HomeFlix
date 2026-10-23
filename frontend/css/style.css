@@ -2569,6 +2569,105 @@ body.player-open .navbar,
   color: #fff;
 }
 
+/* OSD ELEGANTE DE ZAPPING (TOPO / CENTRO) */
+.player-zapping-osd {
+  position: absolute;
+  top: 32px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-24px) scale(0.96);
+  background: rgba(14, 16, 22, 0.92);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 16px;
+  padding: 10px 22px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  z-index: 650;
+  opacity: 0;
+  pointer-events: none;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.85), 0 0 24px rgba(229, 9, 20, 0.25);
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.player-zapping-osd.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0) scale(1);
+}
+
+.zapping-osd-badge {
+  background: linear-gradient(135deg, #e50914, #b20710);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+  padding: 5px 11px;
+  border-radius: 8px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(229, 9, 20, 0.4);
+  white-space: nowrap;
+}
+
+.zapping-osd-logo-wrap {
+  min-width: 44px;
+  max-width: 80px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.zapping-osd-logo-img {
+  max-height: 36px;
+  max-width: 80px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+.zapping-osd-logo-fallback {
+  font-size: 22px;
+}
+
+.zapping-osd-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.zapping-osd-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.3px;
+  white-space: nowrap;
+}
+
+.zapping-osd-sub {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.72);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.zapping-live-dot {
+  width: 7px;
+  height: 7px;
+  background-color: #e50914;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 8px #e50914;
+  animation: pulseZappingDot 1.4s infinite ease-in-out;
+}
+
+@keyframes pulseZappingDot {
+  0% { transform: scale(0.9); opacity: 0.7; }
+  50% { transform: scale(1.3); opacity: 1; }
+  100% { transform: scale(0.9); opacity: 0.7; }
+}
+
 /* BANNER EPG / OSD AO VIVO (ESTILO BROADCAST / PLUTO TV) */
 .player-live-osd {
   position: absolute;
@@ -6471,6 +6570,7 @@ body.tv-perf-mode *::before,
 body.tv-perf-mode *::after {
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
+  text-shadow: none !important;
 }
 
 body.tv-perf-mode .navbar.scrolled {
@@ -6480,9 +6580,11 @@ body.tv-perf-mode .navbar.scrolled {
 body.tv-perf-mode .media-card,
 body.tv-perf-mode .continue-card,
 body.tv-perf-mode .continue-netflix-card,
-body.tv-perf-mode .channel-card {
+body.tv-perf-mode .channel-card,
+body.tv-perf-mode .download-card,
+body.tv-perf-mode .episode-card {
   will-change: auto !important;
-  transition: transform 0.10s ease-out !important;
+  transition: transform 0.08s ease-out !important;
   box-shadow: none !important;
 }
 
@@ -6493,11 +6595,27 @@ body.tv-perf-mode .continue-card:focus-visible,
 body.tv-perf-mode .continue-netflix-card.tv-focused,
 body.tv-perf-mode .continue-netflix-card:focus-visible,
 body.tv-perf-mode .channel-card.tv-focused,
-body.tv-perf-mode .channel-card:focus-visible {
-  transform: scale(1.04) !important;
-  outline: none !important;
+body.tv-perf-mode .channel-card:focus-visible,
+body.tv-perf-mode .download-card.tv-focused,
+body.tv-perf-mode .download-card:focus-visible,
+body.tv-perf-mode .episode-card.tv-focused,
+body.tv-perf-mode .episode-card:focus-visible {
+  transform: scale(1.03) !important;
+  outline: 3px solid #ffffff !important;
+  outline-offset: 2px !important;
   border-color: #ffffff !important;
-  box-shadow: 0 0 0 2px #ffffff, 0 6px 14px rgba(0, 0, 0, 0.85) !important;
+  box-shadow: 0 0 0 1px #000000 !important;
+}
+
+body.tv-perf-mode .download-play-btn.tv-focused,
+body.tv-perf-mode .download-play-btn:focus-visible,
+body.tv-perf-mode .download-delete-btn.tv-focused,
+body.tv-perf-mode .download-delete-btn:focus-visible,
+body.tv-perf-mode .episode-download-btn.tv-focused,
+body.tv-perf-mode .episode-download-btn:focus-visible {
+  outline: 3px solid #ffffff !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 1px #000000 !important;
 }
 
 /* Ajuste vertical de Hero e Detalhes em telas 16:9 com viewport 960x540 (Android TV) */
@@ -6532,5 +6650,292 @@ body.tv-perf-mode .channel-card:focus-visible {
   }
   .details-main-title {
     font-size: 28px !important;
+  }
+}
+
+/* ================================================================
+   SISTEMA DE DOWNLOADS OFFLINE (ESTILO NETFLIX & CONTROLE REMOTO)
+   ================================================================ */
+
+.downloads-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+  margin-top: 10px;
+  padding-bottom: 60px;
+}
+
+.download-card {
+  display: flex;
+  background: rgba(22, 23, 30, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  outline: none;
+}
+
+.download-card:hover {
+  background: rgba(30, 32, 42, 0.98);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.5);
+}
+
+.download-card:focus,
+.download-card:focus-visible,
+.download-card.tv-focused {
+  border-color: #ffffff !important;
+  outline: 3px solid #ffffff !important;
+  outline-offset: 3px;
+  transform: scale(1.03) !important;
+  box-shadow: 0 0 16px rgba(255, 255, 255, 0.9), 0 12px 30px rgba(0, 0, 0, 0.8) !important;
+}
+
+.download-card-poster {
+  width: 105px;
+  min-height: 155px;
+  object-fit: cover;
+  background: #111;
+  flex-shrink: 0;
+}
+
+.download-card-body {
+  flex: 1;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.download-card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.download-card-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+
+.download-card-sub {
+  font-size: 12.5px;
+  color: #999999;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.download-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.download-status-completed {
+  background: rgba(46, 213, 115, 0.15);
+  color: #2ed573;
+  border: 1px solid rgba(46, 213, 115, 0.3);
+}
+
+.download-status-downloading {
+  background: rgba(229, 9, 20, 0.15);
+  color: #ff4757;
+  border: 1px solid rgba(229, 9, 20, 0.3);
+}
+
+.download-status-pending {
+  background: rgba(255, 165, 2, 0.15);
+  color: #ffa502;
+  border: 1px solid rgba(255, 165, 2, 0.3);
+}
+
+.download-status-error {
+  background: rgba(255, 71, 87, 0.2);
+  color: #ff4757;
+  border: 1px solid rgba(255, 71, 87, 0.4);
+}
+
+.download-progress-wrap {
+  margin: 10px 0 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.download-progress-bar-bg {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.download-progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #e50914, #ff5252);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.download-progress-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11.5px;
+  color: #888888;
+}
+
+.download-card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.download-play-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  color: #000000;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.download-play-btn:hover {
+  background: #e6e6e6;
+  transform: scale(1.03);
+}
+
+.download-play-btn:focus,
+.download-play-btn:focus-visible,
+.download-play-btn.tv-focused {
+  outline: 3px solid #ffffff !important;
+  outline-offset: 2px;
+  background: #ffffff !important;
+  color: #000000 !important;
+  transform: scale(1.08) !important;
+  box-shadow: 0 0 14px rgba(255, 255, 255, 0.9) !important;
+}
+
+.download-delete-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #ff6b6b;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.download-delete-btn:hover {
+  background: rgba(255, 71, 87, 0.25);
+  border-color: #ff4757;
+  color: #ffffff;
+}
+
+.download-delete-btn:focus,
+.download-delete-btn:focus-visible,
+.download-delete-btn.tv-focused {
+  outline: 3px solid #ffffff !important;
+  outline-offset: 2px;
+  border-color: #ff4757 !important;
+  background: rgba(255, 71, 87, 0.4) !important;
+  color: #ffffff !important;
+  transform: scale(1.15) !important;
+  box-shadow: 0 0 14px rgba(255, 71, 87, 0.8) !important;
+}
+
+.downloads-empty-state {
+  text-align: center;
+  padding: 80px 20px 100px;
+  margin: 0 auto;
+}
+
+.downloads-empty-state .empty-state-icon {
+  margin-bottom: 16px;
+}
+
+/* Botão de Download nos Episódios de Séries */
+.episode-download-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #cccccc;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  margin-left: 12px;
+}
+
+.episode-download-btn:hover {
+  background: #e50914;
+  border-color: #e50914;
+  color: #ffffff;
+  transform: scale(1.08);
+}
+
+.episode-download-btn:focus,
+.episode-download-btn:focus-visible,
+.episode-download-btn.tv-focused {
+  outline: 3px solid #ffffff !important;
+  outline-offset: 2px;
+  border-color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.35) !important;
+  color: #ffffff !important;
+  transform: scale(1.15) !important;
+  box-shadow: 0 0 14px rgba(255, 255, 255, 0.85) !important;
+}
+
+.episode-download-btn.downloading {
+  color: #ff9f43;
+  animation: pulseDownload 1.4s infinite;
+}
+
+.episode-download-btn.completed {
+  color: #2ed573;
+  border-color: rgba(46, 213, 115, 0.5);
+  background: rgba(46, 213, 115, 0.15);
+}
+
+@keyframes pulseDownload {
+  0% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.8; }
+}
+
+@media (max-width: 600px) {
+  .downloads-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
   }
 }

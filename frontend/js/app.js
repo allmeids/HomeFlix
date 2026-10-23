@@ -70,22 +70,31 @@ class HomeFlixApp {
     this.categoryPage = 1;
     this.allCategoriesList = [];
     this.categoryLoading = false;
+    this.downloadPollingInterval = null;
 
     this.player = new HomeFlixPlayer();
     this.init();
   }
 
   async init() {
-    if (window.HomeFlixApp || /MIBOX|Android TV|AFT|Bravia|SmartTV|Web0S|Tizen/i.test(navigator.userAgent)) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const hasTvParam = urlParams.get('tv') === '1' || urlParams.get('mode') === 'tv';
+    const isTvUserAgent = /MIBOX|Android TV|AFT|Bravia|SmartTV|Web0S|Tizen|Nexus Player|SHIELD|GoogleTV|Amlogic|Mali-450/i.test(navigator.userAgent);
+    const isAndroidApp = !!window.HomeFlixApp;
+
+    if (hasTvParam || isTvUserAgent || isAndroidApp) {
       this.isTvMode = true;
       document.body.classList.add('tv-perf-mode');
+      document.documentElement.classList.add('tv-mode');
     }
     this.setupPwa();
+    this.setupNetworkStatusListeners();
     this.setupNavbar();
     this.setupCategoryBar();
     this.setupModals();
     this.setupCarouselArrows();
     this.setupTvNavigation();
+    this.setupDownloadsView();
     await this.loadProfiles();
     this.loadHome();
 
@@ -361,6 +370,17 @@ class HomeFlixApp {
      MODO SMART TV & NAVEGAÇÃO POR CONTROLE REMOTO / 10-FOOT UI
      ================================================================ */
 
+  setTvFocus(el) {
+    if (!el) return;
+    document.querySelectorAll('.tv-focused').forEach(e => {
+      if (e !== el) e.classList.remove('tv-focused');
+    });
+    el.classList.add('tv-focused');
+    if (typeof el.focus === 'function') {
+      try { el.focus(); } catch (_) {}
+    }
+  }
+
   setupTvNavigation() {
     // Sincroniza classes visuais de foco (.tv-focused)
     document.addEventListener('focusin', (e) => {
@@ -442,6 +462,50 @@ class HomeFlixApp {
   navigateDetailsView(key, e) {
     const detailsView = document.getElementById('detailsView');
     const active = document.activeElement;
+
+    // Sub-navegação D-Pad precisa para botão de baixar episódio dentro do card
+    if (active && active.classList.contains('episode-download-btn')) {
+      if (key === 'ArrowLeft') {
+        e.preventDefault();
+        const epCard = active.closest('.episode-card');
+        if (epCard) {
+          epCard.focus();
+          epCard.scrollIntoView({ behavior: 'auto', block: 'nearest' });
+        }
+        return;
+      }
+      if (key === 'Enter') {
+        e.preventDefault();
+        active.click();
+        return;
+      }
+      if (key === 'ArrowDown' || key === 'ArrowUp') {
+        const epCard = active.closest('.episode-card');
+        const episodeCards = Array.from(detailsView.querySelectorAll('#detailsEpisodesGrid .episode-card'));
+        const idx = episodeCards.indexOf(epCard);
+        if (idx !== -1) {
+          const nextIdx = key === 'ArrowDown' ? idx + 1 : idx - 1;
+          if (nextIdx >= 0 && nextIdx < episodeCards.length) {
+            e.preventDefault();
+            const targetBtn = episodeCards[nextIdx].querySelector('.episode-download-btn') || episodeCards[nextIdx];
+            targetBtn.focus();
+            targetBtn.scrollIntoView({ behavior: 'auto', block: 'center' });
+            return;
+          }
+        }
+      }
+    }
+
+    if (active && active.classList.contains('episode-card')) {
+      if (key === 'ArrowRight') {
+        const epDlBtn = active.querySelector('.episode-download-btn');
+        if (epDlBtn) {
+          e.preventDefault();
+          epDlBtn.focus();
+          return;
+        }
+      }
+    }
 
     // Coleta zonas interativas na tela de detalhes
     const topBtns = Array.from(detailsView.querySelectorAll('.details-topbar button:not([disabled])'));
@@ -530,9 +594,78 @@ class HomeFlixApp {
 
   navigateMainView(key, e) {
     const active = document.activeElement;
+    const isDownloadsTab = this.currentTab === 'downloads';
     const isLiveTab = this.currentTab === 'live';
     const isCategoriesTab = this.currentTab === 'categories';
     const isSearchTab = this.currentTab === 'search' || (document.getElementById('searchContainer') && document.getElementById('searchContainer').style.display !== 'none');
+
+    // Sub-navegação interativa no controle remoto para a aba de Downloads (cards, assistir, excluir)
+    if (isDownloadsTab && active) {
+      const activeCard = active.classList.contains('download-card') ? active : active.closest('.download-card');
+      const isInsideAction = active.classList.contains('download-play-btn') || active.classList.contains('download-delete-btn') || (active.tagName === 'BUTTON' && activeCard);
+
+      if (active.classList.contains('download-card')) {
+        if (key === 'ArrowRight') {
+          const actionBtn = active.querySelector('.download-play-btn') || active.querySelector('.download-delete-btn') || active.querySelector('button');
+          if (actionBtn) {
+            e.preventDefault();
+            actionBtn.focus();
+            return;
+          }
+        } else if (key === 'Enter') {
+          e.preventDefault();
+          const playBtn = active.querySelector('.download-play-btn') || active.querySelector('button');
+          if (playBtn) playBtn.click();
+          else active.click();
+          return;
+        }
+      } else if (isInsideAction && activeCard) {
+        if (key === 'ArrowLeft') {
+          e.preventDefault();
+          if (active.classList.contains('download-delete-btn')) {
+            const playBtn = activeCard.querySelector('.download-play-btn') || activeCard.querySelector('button:not(.download-delete-btn)');
+            if (playBtn && playBtn !== active) {
+              playBtn.focus();
+              return;
+            }
+          }
+          activeCard.focus();
+          return;
+        } else if (key === 'ArrowRight') {
+          if (active.classList.contains('download-play-btn') || !active.classList.contains('download-delete-btn')) {
+            const delBtn = activeCard.querySelector('.download-delete-btn');
+            if (delBtn && delBtn !== active) {
+              e.preventDefault();
+              delBtn.focus();
+              return;
+            }
+          }
+        } else if (key === 'Enter') {
+          e.preventDefault();
+          active.click();
+          return;
+        } else if (key === 'ArrowDown' || key === 'ArrowUp') {
+          const dlCards = Array.from(document.querySelectorAll('#downloadsGrid .download-card'));
+          const idx = dlCards.indexOf(activeCard);
+          if (idx !== -1) {
+            const cols = this.calcGridColumns(dlCards);
+            const nextIdx = key === 'ArrowDown' ? idx + cols : idx - cols;
+            if (nextIdx >= 0 && nextIdx < dlCards.length) {
+              e.preventDefault();
+              dlCards[nextIdx].focus();
+              dlCards[nextIdx].scrollIntoView({ behavior: 'auto', block: 'center' });
+              return;
+            } else if (key === 'ArrowUp' && nextIdx < 0) {
+              e.preventDefault();
+              const navItems = Array.from(document.querySelectorAll('.navbar .nav-item'));
+              const targetNav = navItems.find(n => n.dataset.tab === 'downloads') || navItems[0];
+              if (targetNav) targetNav.focus();
+              return;
+            }
+          }
+        }
+      }
+    }
 
     // 1. Zona Navbar
     const navItems = Array.from(document.querySelectorAll('.navbar .nav-item, #searchInput, #profileBtn'));
@@ -541,7 +674,7 @@ class HomeFlixApp {
     const heroSection = document.getElementById('heroSection');
     const heroVisible = heroSection && heroSection.style.display !== 'none';
     const heroBtns = heroVisible
-      ? Array.from(heroSection.querySelectorAll('#heroPlayBtn, #heroInfoBtn'))
+      ? Array.from(heroSection.querySelectorAll('#heroPlayBtn, #heroInfoBtn, #heroDownloadBtn'))
       : [];
 
     // 3. Zona Barra de Categorias
@@ -553,6 +686,11 @@ class HomeFlixApp {
 
     // 4. Zonas de Conteúdo
     const contentZones = [];
+
+    if (isDownloadsTab) {
+      const dlCards = Array.from(document.querySelectorAll('#downloadsGrid .download-card, #downloadsEmptyState button'));
+      if (dlCards.length) contentZones.push({ el: document.getElementById('downloadsGrid'), items: dlCards, type: 'grid' });
+    }
 
     if (isLiveTab) {
       const catPills = Array.from(document.querySelectorAll('#liveCategoryPills .category-pill'));
@@ -805,6 +943,7 @@ class HomeFlixApp {
     const collectionsContainer = document.getElementById('collectionsContainer');
     const categoriesContainer = document.getElementById('categoriesContainer');
     const searchContainer = document.getElementById('searchContainer');
+    const downloadsView = document.getElementById('downloadsView');
 
     // Esconde a tela de detalhes e views dedicadas ao trocar de aba principal
     document.body.classList.remove('in-details-view');
@@ -812,6 +951,10 @@ class HomeFlixApp {
     if (searchContainer) searchContainer.style.display = 'none';
     if (collectionsContainer) collectionsContainer.style.display = 'none';
     if (categoriesContainer) categoriesContainer.style.display = 'none';
+    if (downloadsView && tab !== 'downloads') {
+      downloadsView.style.display = 'none';
+      this.stopDownloadProgressPolling();
+    }
 
     // Helper para aplicar transição suave nas telas
     const showWithFade = (el) => {
@@ -881,6 +1024,16 @@ class HomeFlixApp {
       sectionsContainer.style.display = 'none';
       liveTvContainer.style.display = 'none';
       this.loadWatchlist();
+    } else if (tab === 'downloads') {
+      heroSection.style.display = 'none';
+      if (categoriesBar) categoriesBar.style.display = 'none';
+      sectionsContainer.style.display = 'none';
+      liveTvContainer.style.display = 'none';
+      if (downloadsView) {
+        downloadsView.style.display = 'block';
+        showWithFade(downloadsView);
+      }
+      this.loadDownloadsTab();
     }
   }
 
@@ -1930,6 +2083,14 @@ class HomeFlixApp {
       this.openMediaDetails(mediaType, item.id);
     };
 
+    const heroDlBtn = document.getElementById('heroDownloadBtn');
+    if (heroDlBtn) {
+      heroDlBtn.onclick = () => {
+        const poster = item.poster_path ? `https://image.tmdb.org/t/p/w500${item.poster_path}` : null;
+        this.triggerDownload(mediaType, item.id, title, poster);
+      };
+    }
+
     // Renderiza os dots indicadores do slideshow
     const indicators = document.getElementById('heroIndicators');
     if (indicators && this.heroItems && this.heroItems.length > 1) {
@@ -2349,7 +2510,19 @@ class HomeFlixApp {
               </div>
               <p class="episode-desc">${ep.overview || 'Sem sinopse disponível.'}</p>
             </div>
+            <button class="episode-download-btn" title="Baixar episódio offline" aria-label="Baixar episódio">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            </button>
           `;
+
+          const epDlBtn = epRow.querySelector('.episode-download-btn');
+          if (epDlBtn) {
+            epDlBtn.onclick = (e) => {
+              e.stopPropagation();
+              const epPoster = ep.still_path ? `https://image.tmdb.org/t/p/w500${ep.still_path}` : poster;
+              this.triggerDownload('tv', tmdbId, `${title} - T${seasonNum}:E${ep.episode_number} "${ep.name}"`, epPoster, seasonNum, ep.episode_number);
+            };
+          }
 
           epRow.onclick = () => {
             currentSeason = seasonNum;
@@ -2481,6 +2654,23 @@ class HomeFlixApp {
         }
         this.fetchAndPlay(mediaType, tmdbId, title, details, season, episode, null, 0);
       };
+    }
+
+    const dlBtn = document.getElementById('detailsDownloadBtn');
+    if (dlBtn) {
+      if (isUpcoming) {
+        dlBtn.style.display = 'none';
+      } else {
+        dlBtn.style.display = 'inline-flex';
+        dlBtn.onclick = () => {
+          const poster = details?.poster_path ? `https://image.tmdb.org/t/p/w500${details.poster_path}` : null;
+          if (mediaType === 'tv') {
+            this.triggerDownload('tv', tmdbId, `${title} - T${season}:E${episode}`, poster, season, episode);
+          } else {
+            this.triggerDownload('movie', tmdbId, title, poster);
+          }
+        };
+      }
     }
   }
 
@@ -2645,6 +2835,7 @@ class HomeFlixApp {
             title: first.name,
             episodeTitle: first.current_show,
             isLive: true,
+            isLiveTv: true,
             channel: first,
             liveChannels: this.channels,
             streams: [{ quality: 'HD 1080p', audio: 'Português', url: first.stream_url }],
@@ -2742,6 +2933,7 @@ class HomeFlixApp {
           title: ch.name,
           episodeTitle: ch.current_show,
           isLive: true,
+          isLiveTv: true,
           channel: ch,
           liveChannels: this.channels,
           streams: [{ quality: 'HD 1080p', audio: 'Português', url: ch.stream_url }],
@@ -2769,12 +2961,17 @@ class HomeFlixApp {
     const liveTvContainer = document.getElementById('liveTvContainer');
     const searchContainer = document.getElementById('searchContainer');
     const detailsView = document.getElementById('detailsView');
+    const downloadsView = document.getElementById('downloadsView');
 
     heroSection.style.display = 'none';
     if (categoriesBar) categoriesBar.style.display = 'none';
     sectionsContainer.style.display = 'none';
     if (liveTvContainer) liveTvContainer.style.display = 'none';
     if (detailsView) detailsView.style.display = 'none';
+    if (downloadsView) {
+      downloadsView.style.display = 'none';
+      this.stopDownloadProgressPolling();
+    }
     searchContainer.style.display = 'block';
 
     const titleEl = document.getElementById('searchTitle');
@@ -2883,6 +3080,11 @@ class HomeFlixApp {
     if (searchContainer) searchContainer.style.display = 'none';
     const detailsView = document.getElementById('detailsView');
     if (detailsView) detailsView.style.display = 'none';
+    const downloadsView = document.getElementById('downloadsView');
+    if (downloadsView) {
+      downloadsView.style.display = 'none';
+      this.stopDownloadProgressPolling();
+    }
     document.body.classList.remove('in-details-view');
     this.switchTab('home');
   }
@@ -2904,6 +3106,11 @@ class HomeFlixApp {
     if (categoriesContainer) categoriesContainer.style.display = 'none';
     if (collectionsContainer) collectionsContainer.style.display = 'none';
     if (detailsView) detailsView.style.display = 'none';
+    const downloadsView = document.getElementById('downloadsView');
+    if (downloadsView) {
+      downloadsView.style.display = 'none';
+      this.stopDownloadProgressPolling();
+    }
     document.body.classList.remove('in-details-view');
 
     if (searchContainer) searchContainer.style.display = 'block';
@@ -3676,6 +3883,313 @@ class HomeFlixApp {
       modal.style.display = 'none';
       this.loadHome();
     };
+  }
+
+  /* ================================================================
+     DOWNLOADS OFFLINE
+     ================================================================ */
+
+  setupNetworkStatusListeners() {
+    window.addEventListener('offline', () => {
+      this.showToast('📶 Modo Offline ativo — Acesse seus Downloads para assistir sem internet.', 5500);
+    });
+    window.addEventListener('online', () => {
+      this.showToast('🌐 Conexão à internet restabelecida.', 3500);
+    });
+  }
+
+  setupDownloadsView() {
+    const dlExpBtn = document.getElementById('downloadsExploreBtn');
+    if (dlExpBtn) {
+      dlExpBtn.onclick = () => {
+        const homeTab = document.querySelector('.nav-links .nav-item[data-tab="home"]');
+        if (homeTab) homeTab.click();
+      };
+    }
+  }
+
+  formatBytes(bytes) {
+    if (!bytes || bytes <= 0) return '0 MB';
+    const mb = bytes / (1024 * 1024);
+    if (mb < 1000) return `${mb.toFixed(1)} MB`;
+    return `${(mb / 1024).toFixed(2)} GB`;
+  }
+
+  async loadDownloadsTab() {
+    const grid = document.getElementById('downloadsGrid');
+    const emptyState = document.getElementById('downloadsEmptyState');
+    const countBadge = document.getElementById('downloadsCountBadge');
+    const totalSizeEl = document.getElementById('downloadsTotalSize');
+
+    if (!grid) return;
+    grid.innerHTML = '<div style="color: #aaa; grid-column: 1/-1; text-align: center; padding: 40px;">Carregando seus downloads...</div>';
+
+    const downloads = await API.getDownloads();
+    this.renderDownloadsList(downloads);
+  }
+
+  renderDownloadsList(downloads) {
+    const grid = document.getElementById('downloadsGrid');
+    const emptyState = document.getElementById('downloadsEmptyState');
+    const countBadge = document.getElementById('downloadsCountBadge');
+    const totalSizeEl = document.getElementById('downloadsTotalSize');
+
+    if (!grid) return;
+
+    if (!downloads || downloads.length === 0) {
+      grid.innerHTML = '';
+      if (emptyState) emptyState.style.display = 'block';
+      if (countBadge) countBadge.textContent = '0 downloads';
+      if (totalSizeEl) totalSizeEl.textContent = '0 MB';
+      this.stopDownloadProgressPolling();
+      return;
+    }
+
+    if (emptyState) emptyState.style.display = 'none';
+
+    let totalBytes = 0;
+    let hasActive = false;
+
+    grid.innerHTML = '';
+
+    downloads.forEach(item => {
+      const isCompleted = item.status === 'completed';
+      const isDownloading = item.status === 'downloading' || item.status === 'pending';
+      const isError = item.status === 'error';
+      const sizeBytes = item.file_size || item.downloaded_bytes || 0;
+      totalBytes += sizeBytes;
+
+      if (isDownloading) hasActive = true;
+
+      const posterSrc = item.poster_path 
+        ? (item.poster_path.startsWith('http') ? item.poster_path : `https://image.tmdb.org/t/p/w300${item.poster_path}`)
+        : '/static/icons/favicon.svg';
+
+      let statusBadge = '';
+      if (isCompleted) {
+        statusBadge = `<span class="download-status-badge download-status-completed">✓ Concluído</span>`;
+      } else if (isDownloading) {
+        statusBadge = `<span class="download-status-badge download-status-downloading">⏳ Baixando</span>`;
+      } else if (isError) {
+        statusBadge = `<span class="download-status-badge download-status-error">✕ Erro</span>`;
+      } else {
+        statusBadge = `<span class="download-status-badge download-status-pending">${item.status}</span>`;
+      }
+
+      let subtitle = item.media_type === 'tv' ? 'Série' : 'Filme';
+      if (item.season_number && item.episode_number) {
+        subtitle += ` • T${item.season_number}:E${item.episode_number}`;
+      }
+
+      const card = document.createElement('div');
+      card.className = 'download-card';
+      card.id = `download-card-${item.id}`;
+      card.setAttribute('tabindex', '0');
+
+      card.innerHTML = `
+        <img class="download-card-poster" src="${posterSrc}" alt="${item.title}" loading="lazy" />
+        <div class="download-card-body">
+          <div class="download-card-header">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+              <span class="download-card-title" title="${item.title}">${item.title}</span>
+              ${statusBadge}
+            </div>
+            <span class="download-card-sub">${subtitle}</span>
+          </div>
+
+          ${isDownloading ? `
+            <div class="download-progress-wrap">
+              <div class="download-progress-bar-bg">
+                <div class="download-progress-bar-fill" id="dl-progress-bar-${item.id}" style="width: ${Math.max(5, item.progress || 0)}%;"></div>
+              </div>
+              <div class="download-progress-info">
+                <span id="dl-progress-pct-${item.id}">${Math.round(item.progress || 0)}%</span>
+                <span id="dl-progress-bytes-${item.id}">${this.formatBytes(item.downloaded_bytes)}</span>
+              </div>
+            </div>
+          ` : `
+            <div style="margin: 8px 0; font-size: 12px; color: #888;">
+              Tamanho: <strong style="color: #ddd;">${this.formatBytes(sizeBytes)}</strong>
+            </div>
+          `}
+
+          <div class="download-card-actions">
+            ${isCompleted ? `
+              <button class="download-play-btn" id="play-dl-${item.id}">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M5 3.5v17l15-8.5-15-8.5z"/></svg>
+                <span>Assistir</span>
+              </button>
+            ` : (isDownloading ? `
+              <button class="btn btn-secondary" style="font-size: 11px; padding: 4px 10px;" id="cancel-dl-${item.id}">
+                Cancelar
+              </button>
+            ` : `
+              <button class="btn btn-secondary" style="font-size: 11px; padding: 4px 10px;" id="retry-dl-${item.id}">
+                Tentar Novamente
+              </button>
+            `)}
+
+            <button class="download-delete-btn" id="del-dl-${item.id}" title="Excluir download do dispositivo" aria-label="Excluir download">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+            </button>
+          </div>
+        </div>
+      `;
+
+      // Eventos dos botões
+      const playBtn = card.querySelector(`#play-dl-${item.id}`);
+      if (playBtn) {
+        playBtn.onclick = (e) => {
+          e.stopPropagation();
+          this.playDownloadedItem(item);
+        };
+      }
+
+      const cancelBtn = card.querySelector(`#cancel-dl-${item.id}`);
+      if (cancelBtn) {
+        cancelBtn.onclick = async (e) => {
+          e.stopPropagation();
+          await API.cancelDownload(item.id);
+          this.showToast('Download cancelado');
+          this.loadDownloadsTab();
+        };
+      }
+
+      const retryBtn = card.querySelector(`#retry-dl-${item.id}`);
+      if (retryBtn) {
+        retryBtn.onclick = async (e) => {
+          e.stopPropagation();
+          await API.startDownload({
+            title: item.title,
+            media_type: item.media_type,
+            tmdb_id: item.tmdb_id,
+            season_number: item.season_number,
+            episode_number: item.episode_number,
+            poster_path: item.poster_path,
+            stream_url: item.stream_url
+          });
+          this.showToast(`Reiniciando download de ${item.title}...`);
+          this.loadDownloadsTab();
+        };
+      }
+
+      const delBtn = card.querySelector(`#del-dl-${item.id}`);
+      if (delBtn) {
+        delBtn.onclick = async (e) => {
+          e.stopPropagation();
+          if (confirm(`Deseja remover "${item.title}" dos downloads e liberar espaço no disco?`)) {
+            await API.deleteDownload(item.id);
+            this.showToast('Download excluído com sucesso');
+            this.loadDownloadsTab();
+          }
+        };
+      }
+
+      card.onclick = () => {
+        if (isCompleted) {
+          this.playDownloadedItem(item);
+        }
+      };
+
+      grid.appendChild(card);
+    });
+
+    if (countBadge) countBadge.textContent = `${downloads.length} ${downloads.length === 1 ? 'download' : 'downloads'}`;
+    if (totalSizeEl) totalSizeEl.textContent = this.formatBytes(totalBytes);
+
+    if (hasActive) {
+      this.startDownloadProgressPolling();
+    } else {
+      this.stopDownloadProgressPolling();
+    }
+  }
+
+  startDownloadProgressPolling() {
+    if (this.downloadPollingInterval) return;
+    this.downloadPollingInterval = setInterval(async () => {
+      const downloads = await API.getDownloads();
+      const hasActive = (downloads || []).some(d => d.status === 'downloading' || d.status === 'pending');
+      
+      const grid = document.getElementById('downloadsGrid');
+      const downloadsView = document.getElementById('downloadsView');
+
+      if (downloadsView && downloadsView.style.display !== 'none' && grid) {
+        const existingCards = grid.querySelectorAll('.download-card');
+        if (existingCards.length === downloads.length) {
+          downloads.forEach(d => {
+            const bar = document.getElementById(`dl-progress-bar-${d.id}`);
+            const pct = document.getElementById(`dl-progress-pct-${d.id}`);
+            const bytes = document.getElementById(`dl-progress-bytes-${d.id}`);
+            if (bar && pct && bytes) {
+              bar.style.width = `${Math.max(5, d.progress || 0)}%`;
+              pct.textContent = `${Math.round(d.progress || 0)}%`;
+              bytes.textContent = this.formatBytes(d.downloaded_bytes);
+            }
+          });
+          if (!hasActive) {
+            this.renderDownloadsList(downloads);
+          }
+        } else {
+          this.renderDownloadsList(downloads);
+        }
+      }
+
+      if (!hasActive) {
+        this.stopDownloadProgressPolling();
+      }
+    }, 2500);
+  }
+
+  stopDownloadProgressPolling() {
+    if (this.downloadPollingInterval) {
+      clearInterval(this.downloadPollingInterval);
+      this.downloadPollingInterval = null;
+    }
+  }
+
+  async triggerDownload(mediaType, tmdbId, title, poster, season = null, episode = null, streamUrl = null) {
+    this.showToast(`📥 Iniciando download de "${title}"...`, 3500);
+    const res = await API.startDownload({
+      title,
+      media_type: mediaType,
+      tmdb_id: Number(tmdbId),
+      season_number: season ? Number(season) : null,
+      episode_number: episode ? Number(episode) : null,
+      poster_path: poster,
+      stream_url: streamUrl
+    });
+
+    if (res && res.download) {
+      this.showToast(`✅ Download de "${title}" em andamento! Acompanhe na aba Downloads.`, 4000);
+      this.startDownloadProgressPolling();
+    } else {
+      this.showToast(`⚠️ Não foi possível iniciar o download de "${title}".`);
+    }
+  }
+
+  playDownloadedItem(item) {
+    if (!this.player) return;
+    if (typeof this.player.enterFullscreenWithOrientation === 'function') {
+      this.player.enterFullscreenWithOrientation();
+    }
+
+    const streamUrl = `/api/downloads/stream/${item.id}`;
+    let subtitle = '';
+    if (item.season_number && item.episode_number) {
+      subtitle = `Temporada ${item.season_number} • Episódio ${item.episode_number}`;
+    }
+
+    this.player.play({
+      mediaId: item.tmdb_id,
+      mediaType: item.media_type,
+      title: item.title,
+      episodeTitle: subtitle,
+      poster: item.poster_path,
+      season: item.season_number,
+      episode: item.episode_number,
+      currentStreamUrl: streamUrl,
+      streams: [{ url: streamUrl, label: 'Offline (Baixado)', quality: 'Local', audio: 'Original/Dub' }]
+    });
   }
 }
 

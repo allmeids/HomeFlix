@@ -50,10 +50,23 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences prefs;
     private String currentServerUrl;
     private boolean isTv = false;
+    private long lastBackPressTime = 0;
+    private Toast exitToast;
 
     private boolean detectTvDevice() {
         UiModeManager uiModeManager = (UiModeManager) getSystemService(UI_MODE_SERVICE);
-        return uiModeManager != null && uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION;
+        if (uiModeManager != null && uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION) {
+            return true;
+        }
+        if (getPackageManager().hasSystemFeature("android.software.leanback") ||
+            getPackageManager().hasSystemFeature("android.hardware.type.television")) {
+            return true;
+        }
+        String model = Build.MODEL != null ? Build.MODEL.toLowerCase() : "";
+        String brand = Build.BRAND != null ? Build.BRAND.toLowerCase() : "";
+        String device = Build.DEVICE != null ? Build.DEVICE.toLowerCase() : "";
+        return model.contains("mibox") || model.contains("aft") || model.contains("tv") ||
+               brand.contains("xiaomi") || device.contains("amlogic") || device.contains("once");
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -68,6 +81,11 @@ public class MainActivity extends AppCompatActivity {
 
         // Bloqueia desligamento de tela durante o uso
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        // Aceleração por hardware no nível da janela para máxima fluidez na GPU Mali-450
+        getWindow().setFlags(
+                WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+                WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
 
         // Ativa tela cheia imersiva (cinema mode)
         applyImmersiveMode();
@@ -131,17 +149,35 @@ public class MainActivity extends AppCompatActivity {
 
     @SuppressLint("SetJavaScriptEnabled")
     private void setupWebView() {
+        // Garante aceleração por hardware ativa no WebView para 60fps na GPU Mali-450
+        webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+
         webView.addJavascriptInterface(new AndroidBridge(), "HomeFlixApp");
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
         settings.setDatabaseEnabled(true);
+        settings.setAppCacheEnabled(true);
+        try {
+            settings.setAppCachePath(getApplicationContext().getCacheDir().getAbsolutePath());
+        } catch (Exception ignored) {}
         settings.setMediaPlaybackRequiresUserGesture(false);
         settings.setAllowFileAccess(true);
         settings.setAllowContentAccess(true);
         settings.setLoadsImagesAutomatically(true);
         settings.setCacheMode(WebSettings.LOAD_DEFAULT);
         settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+
+        // Otimização de renderização suave para Mali-450
+        try {
+            settings.setRenderPriority(WebSettings.RenderPriority.HIGH);
+        } catch (Exception ignored) {}
+
+        // User-Agent estendido com tag Android TV para auto-detect no frontend
+        String defaultUa = settings.getUserAgentString();
+        if (defaultUa != null && !defaultUa.contains("Android TV")) {
+            settings.setUserAgentString(defaultUa + " HomeFlixApp/1.0 (Android TV; Xiaomi MiBox3; Mali-450)");
+        }
 
         // Cookies
         CookieManager.getInstance().setAcceptCookie(true);
@@ -341,9 +377,47 @@ public class MainActivity extends AppCompatActivity {
                 jsKey = "Enter";
                 break;
             case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
+                jsKey = "MediaPlayPause";
+                break;
             case KeyEvent.KEYCODE_MEDIA_PLAY:
+                jsKey = "MediaPlay";
+                break;
             case KeyEvent.KEYCODE_MEDIA_PAUSE:
-                jsKey = " ";
+                jsKey = "MediaPause";
+                break;
+            case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD:
+                jsKey = "MediaFastForward";
+                break;
+            case KeyEvent.KEYCODE_MEDIA_REWIND:
+                jsKey = "MediaRewind";
+                break;
+            case KeyEvent.KEYCODE_MEDIA_NEXT:
+            case KeyEvent.KEYCODE_MEDIA_STEP_FORWARD:
+                jsKey = "MediaTrackNext";
+                break;
+            case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
+            case KeyEvent.KEYCODE_MEDIA_STEP_BACKWARD:
+                jsKey = "MediaTrackPrevious";
+                break;
+            case KeyEvent.KEYCODE_CHANNEL_UP:
+            case KeyEvent.KEYCODE_PAGE_UP:
+                jsKey = "ChannelUp";
+                break;
+            case KeyEvent.KEYCODE_CHANNEL_DOWN:
+            case KeyEvent.KEYCODE_PAGE_DOWN:
+                jsKey = "ChannelDown";
+                break;
+            case KeyEvent.KEYCODE_INFO:
+                jsKey = "i";
+                break;
+            case KeyEvent.KEYCODE_GUIDE:
+                jsKey = "g";
+                break;
+            case KeyEvent.KEYCODE_CAPTIONS:
+                jsKey = "c";
+                break;
+            case KeyEvent.KEYCODE_VOLUME_MUTE:
+                jsKey = "m";
                 break;
         }
 
@@ -381,49 +455,88 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (customView != null) {
-            // Se estiver com vídeo em tela cheia, sai da tela cheia primeiro
-            WebChromeClient client = new WebChromeClient();
-            client.onHideCustomView();
+            // Se estiver com vídeo em tela cheia do WebChromeClient, sai primeiro
+            if (customViewCallback != null) {
+                customViewCallback.onCustomViewHidden();
+                customViewCallback = null;
+            }
             return;
         }
 
-        // Tenta fechar Player aberto ou modal através de script JS no WebView
+        // Tenta fechar Player aberto, trailer, modal de detalhes ou trocar de aba suavemente
         if (webView != null) {
             String checkAndCloseJs =
                     "(function() {" +
                     "  if (window.app && window.app.player && window.app.player.overlay && window.app.player.overlay.classList.contains('open')) {" +
                     "    window.app.player.close();" +
-                    "    return true;" +
+                    "    return 'PLAYER_CLOSED';" +
+                    "  }" +
+                    "  const trailerModal = document.getElementById('trailerModal');" +
+                    "  if (trailerModal && trailerModal.classList.contains('active')) {" +
+                    "    const closeBtn = document.getElementById('trailerCloseBtn');" +
+                    "    if (closeBtn) closeBtn.click();" +
+                    "    else trailerModal.classList.remove('active');" +
+                    "    return 'TRAILER_CLOSED';" +
                     "  }" +
                     "  const detailsView = document.getElementById('detailsView');" +
                     "  if (detailsView && detailsView.style.display !== 'none') {" +
-                    "    detailsView.style.display = 'none';" +
-                    "    document.body.classList.remove('in-details-view');" +
-                    "    if (window.app) window.app.switchTab('home');" +
-                    "    return true;" +
+                    "    const backBtn = document.getElementById('detailsViewBackBtn');" +
+                    "    if (backBtn) backBtn.click();" +
+                    "    else {" +
+                    "      detailsView.style.display = 'none';" +
+                    "      document.body.classList.remove('in-details-view');" +
+                    "      if (window.app) window.app.switchTab('home');" +
+                    "    }" +
+                    "    return 'DETAILS_CLOSED';" +
                     "  }" +
-                    "  const openModal = document.querySelector('.modal-backdrop.open, .modal-backdrop.active');" +
+                    "  const openModal = document.querySelector('.modal-backdrop.open, .modal-backdrop.active, .modal.active');" +
                     "  if (openModal && !openModal.id.includes('profileModal')) {" +
                     "    openModal.classList.remove('open', 'active');" +
-                    "    return true;" +
+                    "    return 'MODAL_CLOSED';" +
                     "  }" +
-                    "  return false;" +
+                    "  if (window.app && window.app.currentTab && window.app.currentTab !== 'home') {" +
+                    "    window.app.switchTab('home');" +
+                    "    return 'TAB_HOME';" +
+                    "  }" +
+                    "  return 'ON_HOME';" +
                     "})();";
 
             webView.evaluateJavascript(checkAndCloseJs, value -> {
-                if ("true".equals(value)) {
-                    // O player ou modal foi fechado com sucesso, sem sair da tela
-                    return;
+                if (value != null) {
+                    String clean = value.replace("\"", "").trim();
+                    if ("PLAYER_CLOSED".equals(clean) || "TRAILER_CLOSED".equals(clean)
+                            || "DETAILS_CLOSED".equals(clean) || "MODAL_CLOSED".equals(clean)
+                            || "TAB_HOME".equals(clean)) {
+                        return; // Ação tratada internamente sem sair do app
+                    }
+                    if ("ON_HOME".equals(clean)) {
+                        handleExitConfirmation();
+                        return;
+                    }
                 }
                 if (webView.canGoBack()) {
                     webView.goBack();
                 } else {
-                    super.onBackPressed();
+                    handleExitConfirmation();
                 }
             });
             return;
         }
 
-        super.onBackPressed();
+        handleExitConfirmation();
+    }
+
+    private void handleExitConfirmation() {
+        long now = System.currentTimeMillis();
+        if (now - lastBackPressTime < 2500) {
+            if (exitToast != null) {
+                exitToast.cancel();
+            }
+            finish();
+        } else {
+            lastBackPressTime = now;
+            exitToast = Toast.makeText(this, "Pressione Voltar novamente para sair", Toast.LENGTH_SHORT);
+            exitToast.show();
+        }
     }
 }
