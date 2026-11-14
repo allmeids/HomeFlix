@@ -36,11 +36,13 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String PREFS_NAME = "HomeFlixPrefs";
     private static final String KEY_SERVER_URL = "server_url";
-    private static final String DEFAULT_SERVER = "http://10.224.253.104:8080";
+    private static final String DEFAULT_SERVER = "http://192.168.1.4:8086";
     private static final String[] CANDIDATE_SERVERS = new String[]{
-            "http://10.224.253.104:8080",
-            "http://100.114.206.70:8080",
-            "http://100.111.162.28:8080"
+            "http://192.168.1.4:8086",
+            "http://192.168.1.6:8086",
+            "http://100.121.19.61:8086",
+            "http://100.111.162.28:8080",
+            "http://100.114.206.70:8080"
     };
 
     private WebView webView;
@@ -165,7 +167,8 @@ public class MainActivity extends AppCompatActivity {
         settings.setAllowFileAccess(true);
         settings.setAllowContentAccess(true);
         settings.setLoadsImagesAutomatically(true);
-        settings.setCacheMode(WebSettings.LOAD_DEFAULT);
+        webView.clearCache(true);
+        settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
 
         // Otimização de renderização suave para Mali-450
