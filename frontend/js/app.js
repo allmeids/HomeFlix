@@ -2649,7 +2649,13 @@ class HomeFlixApp {
     let savedProgress = null;
 
     if (!resumeTime && this.currentProfile?.id) {
-      savedProgress = await API.getMediaProgress(this.currentProfile.id, tmdbId, season, episode);
+      if (typeof API.getMediaProgress === 'function') {
+        try {
+          savedProgress = await API.getMediaProgress(this.currentProfile.id, tmdbId, season, episode);
+        } catch (e) {
+          console.warn('[HomeFlix] Falha ao recuperar progresso:', e);
+        }
+      }
       if (savedProgress && savedProgress.position > 15) {
         const isNearEnd = savedProgress.duration > 0 && (savedProgress.position / savedProgress.duration) > 0.95;
         if (!isNearEnd) {
@@ -2676,18 +2682,12 @@ class HomeFlixApp {
       playBtn.innerHTML = `<span>▶</span> Continuar Assistindo${remText ? `<small style="font-size:12px; font-weight:normal; opacity:0.85; margin-left:6px;">${remText}</small>` : ''}`;
       playBtn.title = `Continuar aos ${min} min`;
       playBtn.onclick = () => {
-        if (this.player && typeof this.player.enterFullscreenWithOrientation === 'function') {
-          this.player.enterFullscreenWithOrientation();
-        }
         this.fetchAndPlay(mediaType, tmdbId, title, details, season, episode, null, resumeTime);
       };
     } else {
       playBtn.innerHTML = `<span>▶</span> Assistir Agora`;
       playBtn.title = `Iniciar reprodução`;
       playBtn.onclick = () => {
-        if (this.player && typeof this.player.enterFullscreenWithOrientation === 'function') {
-          this.player.enterFullscreenWithOrientation();
-        }
         this.fetchAndPlay(mediaType, tmdbId, title, details, season, episode, null, 0);
       };
     }
