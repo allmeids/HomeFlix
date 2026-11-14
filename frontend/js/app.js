@@ -896,9 +896,27 @@ class HomeFlixApp {
     const active = document.activeElement;
     const idx = focusable.indexOf(active);
 
+    const closeBtn = document.getElementById('profileCloseBtn');
+
+    // Navegação vertical direta para o botão de fechar (X)
+    if (key === 'ArrowUp') {
+      if (closeBtn && closeBtn.style.display !== 'none' && active && active.classList.contains('profile-card')) {
+        e.preventDefault();
+        closeBtn.focus();
+        return;
+      }
+    } else if (key === 'ArrowDown') {
+      if (closeBtn && active === closeBtn) {
+        e.preventDefault();
+        const firstCard = containerEl.querySelector('.profile-card');
+        if (firstCard) firstCard.focus();
+        return;
+      }
+    }
+
     if (key === 'ArrowRight' || key === 'ArrowDown') {
       e.preventDefault();
-      const next = idx < focusable.length - 1 ? focusable[idx + 1] : focusable[0];
+      const next = (idx >= 0 && idx < focusable.length - 1) ? focusable[idx + 1] : focusable[0];
       next.focus();
     } else if (key === 'ArrowLeft' || key === 'ArrowUp') {
       e.preventDefault();

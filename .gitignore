@@ -36,5 +36,6 @@ android/.gradle/
 android/build/
 android/app/build/
 android/local.properties
+build_tmp/
 dist/
 *.apk

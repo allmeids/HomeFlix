@@ -106,40 +106,96 @@ def fetch_superstream(media_type: str, imdb_id: str, season: Optional[int] = Non
         print(f"[SuperStream Error] {exc}")
     return []
 
-def fetch_fenixflix(media_type: str, query_id: str, season: Optional[int] = None, episode: Optional[int] = None) -> List[Dict[str, Any]]:
-    """Provedor FenixFlix: catálogo ultra-rápido focado em PT-BR (Dublado 1080p/720p)."""
-    stype = "series" if media_type in ("tv", "series") else "movie"
-    if stype == "series":
-        s = season or 1
-        ep = episode or 1
-        url = f"{FENIXFLIX_URL}/stream/series/{query_id}:{s}:{ep}.json"
-    else:
-        url = f"{FENIXFLIX_URL}/stream/movie/{query_id}.json"
+def clean_no_emoji(text: str) -> str:
+    """Remove emojis e pictogramas para manter a interface e labels perfeitamente limpos."""
+    if not text:
+        return ""
+    emoji_pattern = re.compile(
+        "[\U00010000-\U0010ffff"
+        "\u2600-\u27BF"
+        "\u2300-\u23FF"
+        "\u2B50-\u2B55"
+        "\u200D"
+        "\uFE0F"
+        "]+",
+        flags=re.UNICODE
+    )
+    cleaned = emoji_pattern.sub("", text)
+    cleaned = re.sub(r"\s+", " ", cleaned).strip()
+    return cleaned
 
-    try:
-        r = _vod_session.get(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}, timeout=7)
-        if r.status_code == 200:
-            return r.json().get("streams", [])
-    except Exception as exc:
-        print(f"[FenixFlix Error] {exc}")
+def extract_server_name(text: str) -> Optional[str]:
+    """Extrai nome do servidor dedicado (Zeus, Badger, Atlas, Hypex, Figgs, FenixHub, etc.)."""
+    clean = clean_no_emoji(text)
+    servers = ["Zeus", "Badger", "Atlas", "Hypex", "Figgs", "FenixHub", "Arthur", "Maya", "Malfoy", "Odin", "Thor"]
+    for srv in servers:
+        if re.search(rf"\b{srv}\b", clean, re.IGNORECASE):
+            return srv
+    m = re.search(r'(?:Servidor\s+|Server\s+)([A-Za-z0-9]+)', clean, re.IGNORECASE)
+    if m:
+        return m.group(1).capitalize()
+    return None
+
+def fetch_fenixflix(media_type: str, primary_id: str, fallback_id: Optional[str] = None, season: Optional[int] = None, episode: Optional[int] = None) -> List[Dict[str, Any]]:
+    """Provedor FenixFlix: catálogo ultra-rápido focado em PT-BR (Dublado 1080p/720p). Suporta IMDb ID e TMDB ID."""
+    stype = "series" if media_type in ("tv", "series") else "movie"
+    s = season or 1
+    ep = episode or 1
+
+    ids_to_try = [primary_id]
+    if fallback_id and fallback_id != primary_id:
+        ids_to_try.append(fallback_id)
+
+    for qid in ids_to_try:
+        if not qid:
+            continue
+        if stype == "series":
+            url = f"{FENIXFLIX_URL}/stream/series/{qid}:{s}:{ep}.json"
+        else:
+            url = f"{FENIXFLIX_URL}/stream/movie/{qid}.json"
+
+        try:
+            r = _vod_session.get(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}, timeout=10)
+            if r.status_code == 200:
+                streams = r.json().get("streams", [])
+                if streams:
+                    for s in streams:
+                        if s.get("url", "").startswith("http://fenixflix.fenixhub.online"):
+                            s["url"] = s["url"].replace("http://", "https://", 1)
+                    return streams
+        except Exception as exc:
+            print(f"[FenixFlix Error {url}] {exc}")
     return []
 
-def fetch_bestcine(media_type: str, query_id: str, season: Optional[int] = None, episode: Optional[int] = None) -> List[Dict[str, Any]]:
+def fetch_bestcine(media_type: str, primary_id: str, fallback_id: Optional[str] = None, season: Optional[int] = None, episode: Optional[int] = None) -> List[Dict[str, Any]]:
     """Provedor BestCine: catálogo massivo nacional com múltiplos servidores dedicados em alta fidelidade."""
     stype = "series" if media_type in ("tv", "series") else "movie"
-    if stype == "series":
-        s = season or 1
-        ep = episode or 1
-        url = f"{BESTCINE_URL}/stream/series/{query_id}:{s}:{ep}.json"
-    else:
-        url = f"{BESTCINE_URL}/stream/movie/{query_id}.json"
+    s = season or 1
+    ep = episode or 1
 
-    try:
-        r = _vod_session.get(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}, timeout=7)
-        if r.status_code == 200:
-            return r.json().get("streams", [])
-    except Exception as exc:
-        print(f"[BestCine Error] {exc}")
+    ids_to_try = [primary_id]
+    if fallback_id and fallback_id != primary_id:
+        ids_to_try.append(fallback_id)
+
+    for qid in ids_to_try:
+        if not qid:
+            continue
+        if stype == "series":
+            url = f"{BESTCINE_URL}/stream/series/{qid}:{s}:{ep}.json"
+        else:
+            url = f"{BESTCINE_URL}/stream/movie/{qid}.json"
+
+        try:
+            r = _vod_session.get(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}, timeout=10)
+            if r.status_code == 200:
+                streams = r.json().get("streams", [])
+                if streams:
+                    for s in streams:
+                        if s.get("url", "").startswith("http://fenixflix.fenixhub.online"):
+                            s["url"] = s["url"].replace("http://", "https://", 1)
+                    return streams
+        except Exception as exc:
+            print(f"[BestCine Error {url}] {exc}")
     return []
 
 def fetch_embedplayer(media_type: str, imdb_id: str, season: Optional[int] = None, episode: Optional[int] = None) -> List[Dict[str, Any]]:
@@ -295,6 +351,10 @@ def validate_stream_alive(item: Dict[str, Any], title: str = "", orig_title: str
         except Exception:
             return None
 
+    # 2. Streams em tempo real FenixFlix / Koyeb (links recém-gerados e com CDN ativa)
+    if "fenixflix.fenixhub.online" in url or "koyeb.app" in url or "112234152.xyz" in url:
+        return item
+
     # 2. Validação FrostStream
     if "froststream.cloutteam.com" in url:
         try:
@@ -408,18 +468,23 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
     raw_streams = []
     tmdb_query_id = f"tmdb:{tmdb_id}" if tmdb_id else imdb_id
 
-    # 2. Busca paralela de alta velocidade (FrostStream + FenixFlix + BestCine + SuperStream + EmbedPlayer simultaneamente)
+    # 2. Busca paralela de alta velocidade (FenixFlix + BestCine + FrostStream + SuperStream + EmbedPlayer simultaneamente)
     with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
         tasks = {}
         if imdb_id:
             tasks[executor.submit(fetch_froststream, media_type, imdb_id, season, episode)] = "FrostStream"
             tasks[executor.submit(fetch_superstream, media_type, imdb_id, season, episode)] = "SuperStream"
             tasks[executor.submit(fetch_embedplayer, media_type, imdb_id, season, episode)] = "EmbedPlayer"
-        if tmdb_query_id:
-            tasks[executor.submit(fetch_fenixflix, media_type, tmdb_query_id, season, episode)] = "FenixFlix"
-            tasks[executor.submit(fetch_bestcine, media_type, tmdb_query_id, season, episode)] = "BestCine"
 
-        done, not_done = concurrent.futures.wait(tasks.keys(), timeout=9.0)
+        # Prioriza IMDb ID (que o FenixFlix/BestCine indexam perfeitamente) e fallback para TMDB ID
+        query_primary = imdb_id or tmdb_query_id
+        query_fallback = tmdb_query_id if query_primary != tmdb_query_id else imdb_id
+
+        if query_primary:
+            tasks[executor.submit(fetch_fenixflix, media_type, query_primary, query_fallback, season, episode)] = "FenixFlix"
+            tasks[executor.submit(fetch_bestcine, media_type, query_primary, query_fallback, season, episode)] = "BestCine"
+
+        done, not_done = concurrent.futures.wait(tasks.keys(), timeout=12.0)
 
         for f in done:
             provider = tasks[f]
@@ -456,7 +521,7 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
 
         raw_title = s.get("title", "") or ""
         provider_name = s.get("_provider") or ("EmbedPlayer" if "embedplayer" in url or "plosia" in url else "Servidor")
-        name = s.get("name", "") or provider_name
+        name = clean_no_emoji(s.get("name", "") or provider_name)
         is_cam = is_cinema_cam(raw_title, name)
         quality = parse_quality(raw_title, name, is_cam=is_cam)
         audio = parse_audio(raw_title, name)
@@ -464,26 +529,27 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
         # Detecta se é HEVC/H.265
         is_hevc = bool(re.search(r'\b(HEVC|H\.?265|X265|2160P|4K)\b', f"{raw_title} {name} {url}", re.IGNORECASE)) and ("4K" in quality or "HEVC" in raw_title)
 
-        # Detecta nome de servidor específico no título (ex: Servidor Maya, Arthur, Malfoy)
-        srv_match = re.search(r'(?:⚡\s*Servidor\s+|Servidor\s+|🚗\s*|🐉\s*|💧\s*)([A-Za-z0-9]+)', raw_title)
-        srv_subname = srv_match.group(1) if srv_match else None
+        # Detecta nome de servidor específico no título (Zeus, Badger, Atlas, Hypex, Figgs, Arthur, Maya, etc.)
+        srv_subname = extract_server_name(f"{raw_title} {name}")
 
         mirror_key = f"{provider_name}_{quality}_{audio}"
         provider_counts[mirror_key] = provider_counts.get(mirror_key, 0) + 1
         mirror_num = provider_counts[mirror_key]
 
         if srv_subname and srv_subname.lower() not in provider_name.lower():
-            prov_display = f"{provider_name} ({srv_subname})"
+            prov_display = f"{srv_subname}"
         elif mirror_num > 1:
             prov_display = f"{provider_name} #{mirror_num}"
         else:
             prov_display = provider_name
 
-        clean_name = f"{quality} • {audio} [{prov_display}]"
+        clean_name = f"{quality} • {audio} • {prov_display}"
         if is_hevc:
             clean_name += " • HEVC"
 
-        details_label = raw_title.replace("\n", " • ").strip()
+        clean_details = clean_no_emoji(raw_title).replace("\n", " • ").strip()
+        if not clean_details:
+            clean_details = clean_name
 
         normalized.append({
             "id": f"stream_{idx+1}",
@@ -491,10 +557,11 @@ def resolve_streams(media_type: str, tmdb_id: str, season: Optional[int] = None,
             "raw_title": raw_title,
             "quality": quality,
             "audio": audio,
+            "server": srv_subname or provider_name,
             "is_cinema": is_cam,
             "is_hevc": is_hevc,
             "label": clean_name,
-            "details": details_label,
+            "details": clean_details,
             "url": url,
             "provider": provider_name,
             "behaviorHints": s.get("behaviorHints", {})
