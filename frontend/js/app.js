@@ -255,6 +255,17 @@ class HomeFlixApp {
 
     if (searchInput) searchInput.addEventListener('input', handleSearchInput);
     if (mobileSearchInput) mobileSearchInput.addEventListener('input', handleSearchInput);
+    const handleSearchKeydown = (e) => {
+      if (e.key === 'Enter') {
+        clearTimeout(debounceTimer);
+        const q = e.target.value.trim();
+        if (q.length > 0) {
+          this.searchMedia(q);
+        }
+      }
+    };
+    if (searchInput) searchInput.addEventListener('keydown', handleSearchKeydown);
+    if (mobileSearchInput) mobileSearchInput.addEventListener('keydown', handleSearchKeydown);
     if (mobileSearchClearBtn) {
       mobileSearchClearBtn.addEventListener('click', () => {
         if (searchInput) searchInput.value = '';
@@ -1185,9 +1196,19 @@ class HomeFlixApp {
   }
 
   async getAvatarCatalog() {
-    if (this.avatarCatalog) return this.avatarCatalog;
+    if (this.avatarCatalog && this.avatarCatalog.categories && this.avatarCatalog.categories.length > 0) {
+      return this.avatarCatalog;
+    }
     await this.loadAvatarCatalog();
-    return this.avatarCatalog || { categories: [], avatars: CATALOG_AVATARS };
+    if (this.avatarCatalog && this.avatarCatalog.categories && this.avatarCatalog.categories.length > 0) {
+      return this.avatarCatalog;
+    }
+    return {
+      categories: [
+        { id: 'classicos', name: 'Os Clássicos HomeFlix', items: CATALOG_AVATARS }
+      ],
+      avatars: CATALOG_AVATARS
+    };
   }
 
   getAvatarVisual(avatarKey, name = 'P') {
@@ -2091,9 +2112,6 @@ class HomeFlixApp {
     document.getElementById('heroOverview').textContent = overview;
 
     document.getElementById('heroPlayBtn').onclick = () => {
-      if (this.player && typeof this.player.enterFullscreenWithOrientation === 'function') {
-        this.player.enterFullscreenWithOrientation();
-      }
       this.openMediaDetails(mediaType, item.id, { autoPlay: true });
     };
 
@@ -2762,26 +2780,40 @@ class HomeFlixApp {
   }
 
   async fetchAndPlay(mediaType, tmdbId, title, details, season = 1, episode = 1, epTitle = null, resumeTime = 0) {
-    // 1. Abre imediatamente o player com feedback visual cinematográfico e status de carregamento
-    if (this.player && typeof this.player.preparePlayback === 'function') {
-      this.player.preparePlayback({
-        title,
-        mediaType,
-        season,
-        episode,
-        episodeTitle: epTitle,
-        backdrop: details?.backdrop_path || details?.poster_path
-      });
+    const playBtn = document.getElementById('detailsPlayBtn');
+    if (playBtn) {
+      playBtn.disabled = true;
+      playBtn.innerHTML = '<span>⏳</span> Conectando ao melhor servidor...';
     }
 
-    const playBtn = document.getElementById('detailsPlayBtn');
-    if (playBtn) playBtn.innerHTML = 'Conectando ao melhor servidor...';
+    // 1. Abre imediatamente o player com feedback visual cinematográfico e status de carregamento
+    if (this.player && typeof this.player.preparePlayback === 'function') {
+      try {
+        this.player.preparePlayback({
+          title,
+          mediaType,
+          season,
+          episode,
+          episodeTitle: epTitle,
+          backdrop: details?.backdrop_path || details?.poster_path
+        });
+      } catch (err) {
+        console.warn('[HomeFlix] Erro ao preparar playback:', err);
+      }
+    }
 
-    const resolved = await API.resolveStreams(mediaType, tmdbId, season, episode);
+    let resolved = null;
+    try {
+      resolved = await API.resolveStreams(mediaType, tmdbId, season, episode);
+    } catch (err) {
+      console.error('[HomeFlix] Erro ao resolver streams:', err);
+    }
+
     if (this.player && typeof this.player.setLoadingProgress === 'function') {
       this.player.setLoadingProgress(70);
     }
     if (playBtn) {
+      playBtn.disabled = false;
       this.updateDetailsPlayButton(mediaType, tmdbId, title, details, season, episode, resumeTime);
     }
 
@@ -3135,7 +3167,8 @@ class HomeFlixApp {
 
     const titleEl = document.getElementById('searchTitle');
     const subEl = document.getElementById('searchStatusSubtitle');
-    if (backBtn) backBtn.style.display = (this.previousTab && this.previousTab !== 'search') ? 'inline-flex' : 'none';
+    const searchBackBtn = document.getElementById('searchBackBtn');
+    if (searchBackBtn) searchBackBtn.style.display = (this.previousTab && this.previousTab !== 'search') ? 'inline-flex' : 'none';
     if (titleEl) titleEl.textContent = 'Explorar & Buscar';
     if (subEl) subEl.textContent = 'Digite o nome de filmes, séries, atores ou gêneros para pesquisar em tempo real.';
 
@@ -3528,7 +3561,7 @@ class HomeFlixApp {
     grid.innerHTML = '<p style="color:#aaa; grid-column:1/-1; text-align:center; padding:35px 20px;">Buscando no catálogo mundial do HomeFlix...</p>';
 
     const data = await API.search(query);
-    const results = data?.results || [];
+    const results = data?.results || (Array.isArray(data) ? data : []);
     const similar = data?.similar || [];
     const matchedVia = data?.matched_via;
 
